@@ -1,5 +1,4 @@
-import type { Metadata } from "next";
-import { Alexandria } from '@next/font/google';
+import { Alexandria } from "next/font/google";
 import '../styles/globals.css';
 
 

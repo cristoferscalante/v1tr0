@@ -21,7 +21,7 @@ export default function Navbar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4">
-      <nav className={`bg-[rgba(12,12,12,0.85)] backdrop-blur-xl w-[90%] text-white rounded-full transition-all duration-300 ease-in-out ${scrolled ? 'shadow-lg' : ''}`}>
+      <nav className={`bg-[rgba(12,12,12,0.85)] backdrop-blur-xl max-w-[1400px] text-white rounded-full transition-all duration-300 ease-in-out ${scrolled ? 'shadow-lg' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo/Brand */}
@@ -30,8 +30,8 @@ export default function Navbar() {
                 <Image                
                   src={LogoVitroSvg}
                   alt="Logo"
-                  width={80}
-                  height={80}                
+                  width={40}
+                  height={40}                
                 />
               </Link>
             </div>
@@ -39,17 +39,12 @@ export default function Navbar() {
             {/* Desktop Menu */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-center space-x-4">
-                <Link
-                  href="/"
-                  className="text-[#26FFDF] hover:text-[#08A696] px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  Home
-                </Link>
+                
                 <Link
                   href="/about"
                   className="text-[#26FFDF] hover:text-[#08A696] px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  Sobre Nosotros
+                  Sobre V1TR0
                 </Link>
                 <Link
                   href="/blog"
@@ -88,7 +83,7 @@ export default function Navbar() {
             </div>
 
             {/* Login Button */}
-            <div className="hidden md:block">
+            <div className="hidden md:block ml-6" >
               <button className="bg-[#F26A1B] hover:bg-[#FF2C10] text-white px-4 py-2 rounded-full text-sm font-medium transition-colors transform hover:scale-105">
                 Login
               </button>

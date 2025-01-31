@@ -1,5 +1,5 @@
-import BackgroundAnimation from "@/src/components/BackgroungAnimation";
-import HomeBanner from "@/src/components/HomeBanner";
+import BackgroundAnimation from "@/src/components/home/BackgroungAnimation";
+import HomeBanner from "@/src/components/home/HomeBanner";
 
 export default function Home() {
   return (
