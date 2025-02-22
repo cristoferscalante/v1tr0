@@ -6,7 +6,7 @@ import DataSvg from "@/public/home/svg/data.svg";
 import DevSvg from "@/public/home/svg/dev.svg";
 import PmSvg from "@/public/home/svg/pm.svg";
 
-import CardBanner from "@/src/components/home/CardBanner";
+import CardBanner from "@/src/components/home/shared/CardBanner";
 
 const textVariant = {
   hidden: { opacity: 0 },
