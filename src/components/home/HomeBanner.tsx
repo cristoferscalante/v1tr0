@@ -6,15 +6,15 @@ import DataSvg from "@/public/home/svg/data.svg";
 import DevSvg from "@/public/home/svg/dev.svg";
 import PmSvg from "@/public/home/svg/pm.svg";
 
-import CardBanner from "@/src/components/home/shared/CardBanner";
+import CardBanner from "@/src/components/home/shared/CardBanner"; 
 
 const textVariant = {
   hidden: { opacity: 0 },
   visible: (i: number) => ({
     opacity: 1,
     transition: {
-      delay: i * 0.3, // Aumenta este valor para hacer la animación más lenta
-      duration: 0.5,  // Tiempo que tarda cada palabra en aparecer
+      delay: i * 0.3,
+      duration: 0.5,
     },
   }),
 };
@@ -29,8 +29,8 @@ export default function HomeBanner() {
         <motion.h1
           className="text-4xl md:text-7xl font-bold text-white mb-4 text-center"
           style={{
-            wordBreak: "break-word", // Permite ajustar el texto sin cortarlo
-            display: "inline-block", // Necesario para centrar el texto
+            wordBreak: "break-word",
+            display: "inline-block",
           }}
           initial="hidden"
           animate="visible"
@@ -44,7 +44,7 @@ export default function HomeBanner() {
               style={{
                 marginRight:
                   index < title.split(" ").length - 1 ? "0.25em" : "0",
-              }} // Espaciado entre palabras
+              }}
             >
               {word}
             </motion.span>
@@ -58,12 +58,13 @@ export default function HomeBanner() {
 
         {/* Tarjetas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <CardBanner icon={DevSvg} title="Desarrollo de Software a Medida" />
+          <CardBanner icon={DevSvg} title="Desarrollo de Software a Medida" onClick={() => {}} />
           <CardBanner
             icon={DataSvg}
             title="Procesamiento, Análisis y Visualización de Datos"
+            onClick={() => {}}
           />
-          <CardBanner icon={PmSvg} title="Creación y Gestión de Proyectos" />
+          <CardBanner icon={PmSvg} title="Creación y Gestión de Proyectos" onClick={() => {}} />
         </div>
       </div>
     </section>
