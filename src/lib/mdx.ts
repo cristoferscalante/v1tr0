@@ -98,8 +98,8 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
           };
 
           // Validar campos requeridos
-          const requiredFields = ["title", "date", "excerpt", "author", "coverImage"];
-          const missingFields = requiredFields.filter((field) => !metadata[field]);
+          const requiredFields: (keyof PostMetadata)[] = ["title", "date", "excerpt", "author", "coverImage"];
+          const missingFields = requiredFields.filter((field: keyof PostMetadata) => !metadata[field]);
 
           if (missingFields.length > 0) {
             console.warn(`Campos faltantes en ${fileName}: ${missingFields.join(", ")}`);
