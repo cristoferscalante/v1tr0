@@ -1,3 +1,11 @@
-export default function page(){
-    return <h1>Pagina para info de empresa</h1>
+import About from "@/src/components/about/about"
+import Team from "@/src/components/about/team"
+
+export default function Home() {
+  return (
+    <main className="bg-background text-textPrimary">
+      <About />
+      <Team />
+    </main>
+  )
 }

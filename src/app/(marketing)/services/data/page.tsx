@@ -1,3 +1,9 @@
-export default function page(){
-    return <h1>Pagina para analisis y visualizacion de datos</h1>
+import DataScience from "@/src/components/service/data-science"
+
+export default function DataSciencePage() {
+  return (
+    <main className="bg-background text-textPrimary">
+      <DataScience />
+    </main>
+  )
 }

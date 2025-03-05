@@ -10,17 +10,17 @@ export default function SoftwarePortfolio() {
       description:
         "Plataforma integral para la gestión de recursos y procesos empresariales.",
       image: "/home/images/project/project1.png",
-      tags: ["React", "Node.js", "MongoDB"],
-      link: "/home/images/project/project1.png",
+      tags: ["React", "Next.js", "Tailwindcss","TypeScript"],
+      link: "https://dashboard-five-green.vercel.app/dashboard",
     },
     {
       id: 2,
-      title: "App de Análisis de Datos",
+      title: "Generador de Códigos QR",
       description:
-        "Aplicación móvil para visualización y análisis de datos en tiempo real.",
+        "Crea y personaliza tu QR al instante.",
       image: "/home/images/project/project2.png",
       tags: ["React Native", "Python", "TensorFlow"],
-      link: "/proyectos/analisis-datos",
+      link: "https://qr-generator-eight-omega.vercel.app/",
     },
     {
       id: 3,
