@@ -6,7 +6,7 @@ import SoftwarePortfolio from "@/src/components/home/SoftwarePortfolio";
 import DataAnalysisPage from "@/src/components/home/DataAnalysisPage";
 import DataAnalysisPortfolio from "@/src/components/home/DataAnalysisPortfolio";
 import ProjectManagementPage from "@/src/components/home/ProjectManagementPage";
-import ProjectManagementPortfolio from "@/src/components/home/ProjectManagementPortfolio";
+
 
 
 
@@ -20,8 +20,7 @@ export default function Home() {
       <SoftwarePortfolio />        
       <DataAnalysisPage />
       <DataAnalysisPortfolio /> 
-      <ProjectManagementPage />
-      <ProjectManagementPortfolio />        
+      <ProjectManagementPage />              
     </>
   );
 }

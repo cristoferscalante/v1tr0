@@ -20,7 +20,7 @@ const textVariant = {
 };
 
 export default function HomeBanner() {
-  const title = "Gestiona tus proyectos como nunca antes";
+  const title = "Transformamos tu potencial en innovación y resultados";
 
   return (
     <section className="h-screen w-screen px-4 py-16 flex justify-center items-center">
@@ -53,18 +53,26 @@ export default function HomeBanner() {
 
         {/* Descripción */}
         <p className="text-gray-400 text-lg mb-12">
-          Con VITRO, tus proyectos son completamente transparentes
+          Gestionando tus proyectos con un flujo transparente
         </p>
 
         {/* Tarjetas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <CardBanner icon={DevSvg} title="Desarrollo de Software a Medida" onClick={() => {}} />
+          <CardBanner 
+            icon={DevSvg} 
+            title="Desarrollo de Software a Medida" 
+            href="/services/dev" 
+          />
           <CardBanner
             icon={DataSvg}
             title="Procesamiento, Análisis y Visualización de Datos"
-            onClick={() => {}}
+            href="/services/data" 
           />
-          <CardBanner icon={PmSvg} title="Creación y Gestión de Proyectos" onClick={() => {}} />
+          <CardBanner 
+          icon={PmSvg}
+          title="Creación y Gestión de Proyectos" 
+          href="/services/pm" 
+          />
         </div>
       </div>
     </section>

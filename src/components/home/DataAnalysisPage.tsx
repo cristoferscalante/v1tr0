@@ -6,9 +6,9 @@ import analisisVisualizacion from "@/public/home/images/analisis-visualizacion.w
 
 export default function DataAnalysisPage() {
   const serviceData = {
-    title: "Análisis y Visualización de Datos",
+    title: "Potencia tu Estrategia con Ciencia de Datos",
     description:
-      "Transformamos datos en insights poderosos a través de análisis avanzados y visualizaciones impactantes que impulsan la toma de decisiones.",
+      "Implementamos un proceso técnico integral: desde la ingesta y limpieza de datos hasta su modelización y visualización, respaldado por prácticas DataOps y MLOps para garantizar calidad, seguridad y escalabilidad.",
     features: [
       {
         icon: <BarChart2 className="w-6 h-6" />,
@@ -20,7 +20,7 @@ export default function DataAnalysisPage() {
       },
       {
         icon: <TrendingUp className="w-6 h-6" />,
-        text: "Análisis predictivo para anticipar tendencias y oportunidades",
+        text: "Sistematización de Procesos de ETL y Análisis Predictivo",
       },
     ],
     imageSrc: analisisVisualizacion,

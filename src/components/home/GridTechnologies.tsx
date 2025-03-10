@@ -21,7 +21,7 @@ export default function ModernTechnologiesSection() {
       icon: <Server className="w-8 h-8" />,
       name: "Backend",
       description: "Arquitecturas robustas y escalables",
-      techs: ["Node.js", "Python", "Java", "Express"],
+      techs: ["Node.js", "Python"],
       color: "from-custom-2 to-custom-3",
     },
     {
@@ -29,7 +29,7 @@ export default function ModernTechnologiesSection() {
       icon: <Database className="w-8 h-8" />,
       name: "Bases de Datos",
       description: "Gestión eficiente de datos",
-      techs: ["PostgreSQL", "MongoDB", "MySQL", "Redis"],
+    techs: ["PostgreSQL", "MongoDB","AWS","Cloudflare"],
       color: "from-custom-1 to-custom-2",
     },
     {
@@ -45,7 +45,7 @@ export default function ModernTechnologiesSection() {
       icon: <Smartphone className="w-8 h-8" />,
       name: "Mobile",
       description: "Apps nativas y multiplataforma",
-      techs: ["React Native", "Flutter", "iOS", "Android"],
+      techs: ["React Native","iOS", "Android"],
       color: "from-custom-3 to-accent",
     },
     {

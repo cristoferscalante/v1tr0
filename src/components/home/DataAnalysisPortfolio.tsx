@@ -8,7 +8,7 @@ export default function DataAnalysisPortfolio() {
       id: 1,
       title: "Densidad forestal, 2000 - 2022",
       description:
-        "Esta animación para visualizar y comparar la densidad forestal en distintos territorios entre los años 2000 y 2020.",
+        "Explora esta animación interactiva que ilustra cómo ha cambiado la densidad forestal en distintos territorios durante las dos últimas décadas. Observa patrones de deforestación, recuperación y expansión de áreas verdes.",
         image: "/home/images/project/project1-data.png",
       tags: ["Next.js", "Python", "D3.js"],
       link: "https://forest-density-globe.vercel.app/",
@@ -17,7 +17,7 @@ export default function DataAnalysisPortfolio() {
       id: 2,
       title: "Presidentes de Colombia, 1810 - 2025",
       description:
-        "Visualiza de forma interactiva la línea temporal de presidentes de Colombia desde 1810 hasta 2025",
+        "Descubre la evolución del liderazgo en Colombia a lo largo de más de dos siglos. Esta línea temporal interactiva te permite conocer la trayectoria de cada presidente, desde los inicios de la república en 1810 hasta el año 2025.",
         image: "/home/images/project/project2-data.png",
       tags: ["JavaScript", "D3.js", "Next.js"],
       link: "https://presidents-timeline.vercel.app/",

@@ -6,7 +6,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body>
         <div className="flex">
           {/* Sidebar */}

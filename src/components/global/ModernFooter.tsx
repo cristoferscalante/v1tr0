@@ -2,14 +2,27 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Github, Linkedin, Twitter, Mail, ChevronUp, Code, Palette, Lightbulb } from "lucide-react"
+import { Github, Linkedin, Mail, ChevronUp, Code, Palette, Lightbulb } from "lucide-react"
+import LogoTiktok from "@/public/home/svg/logo-tiktok.svg"
 import Link from "next/link"
+import Image from "next/image"
+
+
 
 const socialLinks = [
-  { icon: <Github className="w-6 h-6" />, href: "https://github.com/yourusername" },
-  { icon: <Linkedin className="w-6 h-6" />, href: "https://linkedin.com/in/yourusername" },
-  { icon: <Twitter className="w-6 h-6" />, href: "https://twitter.com/yourusername" },
-  { icon: <Mail className="w-6 h-6" />, href: "mailto:your@email.com" },
+  { icon: <Github className="w-6 h-6 text-custom-2" />, href: "https://github.com/v1tro-code" },
+  { icon: <Linkedin className="w-6 h-6 text-custom-2" />, href: "https://www.linkedin.com/company/v1tr0/" },
+  { icon: (
+    <div className="relative w-6 h-6 text-custom-2">
+      <Image 
+        src={LogoTiktok}
+        alt="TikTok"
+        fill
+        className="object-cover"
+      />
+    </div>
+  ), href: "https://www.tiktok.com/@v1tr0_tech" },
+  { icon: <Mail className="w-6 h-6 text-custom-2" />, href: "mailto:vtr.techh@gmail.com" },
 ]
 
 const footerSections = [
@@ -133,7 +146,7 @@ export default function ModernFooter() {
           className="flex flex-col md:flex-row justify-between items-center gap-8 pt-8 border-t border-custom-2"
         >
           <div className="flex flex-col md:flex-row items-center gap-4">
-            <p className="text-textMuted">&copy; {new Date().getFullYear()} Tu Empresa</p>
+            <p className="text-textMuted">&copy; {new Date().getFullYear()} V1TR0</p>
             <nav className="flex gap-4">
               <Link href="/terminos" className="text-textMuted hover:text-highlight transition-colors duration-300">
                 Términos

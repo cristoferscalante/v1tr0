@@ -1,19 +1,17 @@
 "use server"; // Indica a Next.js 13 que este archivo se ejecute en el servidor
 
-import type React from "react";
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { compileMDX } from "next-mdx-remote/rsc";
-import rehypeHighlight from "rehype-highlight";
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
+import { type ReactElement } from "react";
+import React from "react"; // Added for using React.createElement in fallback
 
 // Directorio donde se almacenarán los archivos MDX
-const postsDirectory = path.join(process.cwd(), "content", "blog");
+const postsDirectory = path.join(process.cwd(), "src", "content", "blog");
 
 // Tipo para los metadatos del post
-export type PostMetadata = {
+export interface PostMetadata {
   title: string;
   date: string;
   excerpt: string;
@@ -22,19 +20,30 @@ export type PostMetadata = {
   authorImage?: string;
   tags?: string[];
   slug: string;
-};
+  readingTime?: string;
+}
 
 // Tipo para el post completo
-export type Post = {
-  content: React.ReactNode;
-  metadata: PostMetadata;
-};
+export interface Post {
+  meta: PostMetadata;
+  content: ReactElement; // Now compiled MDX content as a React element
+  headings: Array<{ level: number; text: string; id: string }>;
+}
 
 // Función para verificar y crear el directorio si no existe
 function ensureDirectoryExists() {
   if (!fs.existsSync(postsDirectory)) {
-    console.log(`Creando directorio: ${postsDirectory}`);
+    console.log(`Creando directorio: ${postsDirectory}`);;
+    console.log(`Current working directory: ${process.cwd()}`);
     fs.mkdirSync(postsDirectory, { recursive: true });
+  } else {
+    console.log(`Found directory: ${postsDirectory}`);
+    try {
+      const files = fs.readdirSync(postsDirectory);
+      console.log(`Files in directory: ${files.join(", ")}`);
+    } catch (error) {
+      console.error(`Error reading directory: ${error}`);
+    }
   }
 }
 
@@ -98,8 +107,10 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
           };
 
           // Validar campos requeridos
-          const requiredFields: (keyof PostMetadata)[] = ["title", "date", "excerpt", "author", "coverImage"];
-          const missingFields = requiredFields.filter((field: keyof PostMetadata) => !metadata[field]);
+          const requiredFields = ["title", "date", "excerpt", "author", "coverImage"] as const;
+          const missingFields = requiredFields.filter(
+            (field) => !metadata[field as keyof typeof metadata]
+          );
 
           if (missingFields.length > 0) {
             console.warn(`Campos faltantes en ${fileName}: ${missingFields.join(", ")}`);
@@ -126,44 +137,167 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
 }
 
 // Función para obtener un post por su slug
+function extractHeadings(content: string) {
+  if (!content) return [];
+  
+  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  const headings: { level: number; text: string; id: string }[] = [];
+  let match;
+
+  try {
+    while ((match = headingRegex.exec(content)) !== null) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      const id = text.toLowerCase().replace(/[^\w\s]/g, "").replace(/\s+/g, "-");
+      headings.push({ level, text, id });
+    }
+  } catch (error) {
+    console.error("Error extracting headings:", error);
+  }
+
+  return headings;
+}
+
+// Agregar logging adicional para depuración
+// Add a simple in-memory cache for posts
+const postCache = new Map<string, Post>();
+
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  ensureDirectoryExists();
+  // If we've already compiled this post, return it
+  if (postCache.has(slug)) {
+    return postCache.get(slug)!;
+  }
 
   try {
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
-
-    // Verificar si el archivo existe
+    console.log(`[getPostBySlug] Buscando post con slug: ${slug}`);
+    console.log(`[getPostBySlug] Directorio de posts: ${postsDirectory}`);
+    console.log(`[getPostBySlug] Ruta completa del archivo: ${fullPath}`);
+    
     if (!fs.existsSync(fullPath)) {
-      console.log(`Archivo no encontrado: ${fullPath}`);
+      console.log(`File not found: ${fullPath}`);
       return null;
     }
-
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    console.log(`Contenido leído para ${slug}`);
-
-    // Usar gray-matter para analizar la sección de metadatos
-    const { data, content } = matter(fileContents);
-
-    // Compilar el contenido MDX a React
-    const { content: mdxContent } = await compileMDX({
-      source: content,
-      options: {
-        mdxOptions: {
-          remarkPlugins: [remarkGfm],
-          rehypePlugins: [rehypeHighlight, rehypeSlug],
-        },
-      },
-    });
-
-    return {
-      content: mdxContent,
-      metadata: {
-        ...(data as Omit<PostMetadata, "slug">),
-        slug,
-      },
+    
+    // Leer contenido del archivo
+    const source = fs.readFileSync(fullPath, "utf8");
+    console.log(`[getPostBySlug] Contenido leído: ${source.substring(0, 100)}...`);
+    
+    // Usar gray-matter para extraer frontmatter y contenido
+    const { data, content } = matter(source);
+    
+    // Verificar si hay frontmatter
+    if (Object.keys(data).length === 0) {
+      console.log("El contenido MDX no tiene frontmatter");
+      // Si no hay frontmatter, vamos a crear uno predeterminado
+    }
+    
+    if (!content || content.trim() === '') {
+      console.warn(`Invalid or empty content in MDX file: ${slug}.mdx`);
+      // Podemos devolver un post con contenido predeterminado en lugar de null
+    }
+    
+    const headings = extractHeadings(content);
+    
+    // Asigna valores predeterminados usando un objeto para metadatos por defecto
+    const defaultMetadata: PostMetadata = {
+      title: `Post: ${slug.replace(/-/g, ' ')}`,
+      date: new Date().toISOString(),
+      excerpt: "Este es un post de ejemplo sin descripción proporcionada.",
+      author: "Sistema",
+      coverImage: "/placeholder.svg?height=630&width=1200",
+      slug: slug,
+      readingTime: "1 min read",
+      tags: ["sin-categorizar"]
     };
-  } catch (error) {
-    console.error(`Error al procesar el post ${slug}:`, error);
+    
+    // Combina los datos existentes con los valores predeterminados
+    const metadata = {
+      ...defaultMetadata,
+      ...(data as Partial<PostMetadata>),
+      slug, // Aseguramos que el slug siempre esté establecido correctamente
+    };
+    
+    // Si hay una imagen de portada personalizada, verificarla
+    if (metadata.coverImage && metadata.coverImage !== defaultMetadata.coverImage) {
+      const publicImagePath = path.join(process.cwd(), "public", metadata.coverImage);
+      if (!fs.existsSync(publicImagePath)) {
+        console.warn(`La imagen ${metadata.coverImage} no se encontró. Usando placeholder.`);
+        metadata.coverImage = defaultMetadata.coverImage;
+      }
+    }
+    
+    // Crear contenido ficticio si el contenido está vacío
+    const actualContent = content && content.trim() 
+      ? content 
+      : `# ${metadata.title}\n\nEste post no tiene contenido. Por favor, edita el archivo ${slug}.mdx para agregar contenido.`;
+    
+    // Compilación MDX sin opciones adicionales para evitar stream errors.
+    let compiledContent: ReactElement;
+    try {
+      const compiled = await compileMDX({
+        source: actualContent
+      });
+      compiledContent = compiled.content;
+    } catch (compileError: unknown) {
+      console.error(`Error compiling MDX for post "${slug}":`, compileError);
+      compiledContent = React.createElement("div", null, actualContent);
+    }
+    
+    // Asegurarse de que el tiempo de lectura se calcule correctamente
+    const wordsCount = actualContent.split(/\s+/).length;
+    metadata.readingTime = `${Math.max(1, Math.ceil(wordsCount / 200))} min read`;
+    
+    const post: Post = {
+      meta: metadata as PostMetadata,
+      content: compiledContent,
+      headings,
+    };
+    
+    // Cache the result to avoid re-compilation on subsequent calls
+    postCache.set(slug, post);
+    
+    return post;
+  } catch (error: unknown) {
+    // ...existing error handling...
+    console.error(`Error processing post ${slug}:`);
+    
+    // Safe error handling
+    if (error) {
+      if (typeof error === 'object') {
+        console.error('Error details:', 
+          error instanceof Error ? error.message : 'Unknown error object');
+      } else {
+        console.error('Error value:', error);
+      }
+    } else {
+      console.error('Unknown error (undefined)');
+    }
+    
     return null;
   }
+}
+
+export async function getAllPosts(): Promise<Post[]> {
+  try {
+    const slugs = await getAllPostSlugs();
+    const posts = await Promise.all(
+      slugs.map(async ({ slug }) => {
+        const post = await getPostBySlug(slug);
+        return post;
+      })
+    );
+
+    return posts
+      .filter((post): post is Post => post !== null)
+      .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
+  } catch (error) {
+    console.error("Error getting all posts:", error);
+    return [];
+  }
+}
+
+export async function getPostsByTag(tag: string): Promise<Post[]> {
+  const allPosts = await getAllPosts();
+  return allPosts.filter((post) => post.meta.tags?.includes(tag));
 }

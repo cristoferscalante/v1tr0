@@ -8,7 +8,7 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body>
         <NavBar />        {/* Barra de navegación */}
         <main>{children}</main>  {/* Contenido específico de cada página */}
