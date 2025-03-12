@@ -235,9 +235,9 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     // Compilación MDX sin opciones adicionales para evitar stream errors.
     let compiledContent: ReactElement;
     try {
-      const compiled = await compileMDX({
-        source: actualContent
-      });
+      console.log(`[getPostBySlug] Compilando MDX con contenido: ${actualContent.substring(0, 100)}...`);
+      const compiled = await compileMDX({ source: actualContent });
+      console.log(`[getPostBySlug] Compilación MDX exitosa`);
       compiledContent = compiled.content;
     } catch (compileError: unknown) {
       console.error(`Error compiling MDX for post "${slug}":`, compileError);
