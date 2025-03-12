@@ -7,6 +7,7 @@ import NavigationButtons from "@/src/components/blog/NavigationButtons"
 import { getPostBySlug, getAllPostSlugs } from "@/src/lib/mdx"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import BackgroundAnimation from "@/src/components/home/BackgroungAnimation"
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -148,7 +149,9 @@ export default async function Page({ params }: Props) {
   const { slug } = await params;
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-12">
+    <> 
+    <BackgroundAnimation />
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-32">
       <div className="mb-8">
         <Link href="/blog" className="inline-flex items-center text-textMuted hover:text-highlight transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -160,6 +163,7 @@ export default async function Page({ params }: Props) {
         <PostContent slug={slug} />
       </Suspense>
     </div>
+    </>
   )
 }
 
