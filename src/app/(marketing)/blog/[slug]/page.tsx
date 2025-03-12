@@ -1,24 +1,27 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import TableOfContents from "@/src/components/blog/TableOfContents";
-import PostHeader from "@/src/components/blog/PostHeader";
-import { getPostBySlug, getAllPostSlugs } from "@/src/lib/mdx";
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { Suspense } from "react"
+import TableOfContents from "@/src/components/blog/TableOfContents"
+import PostHeader from "@/src/components/blog/PostHeader"
+import NavigationButtons from "@/src/components/blog/NavigationButtons"
+import { getPostBySlug, getAllPostSlugs } from "@/src/lib/mdx"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 type Props = {
-  params: Promise<{ slug: string }>;
-};
+  params: Promise<{ slug: string }>
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = await params
 
   try {
-    const post = await getPostBySlug(slug);
+    const post = await getPostBySlug(slug)
     if (!post) {
       return {
         title: "Post no encontrado",
         description: "El artículo que buscas no existe",
-      };
+      }
     }
     return {
       title: post.meta.title,
@@ -44,81 +47,120 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: post.meta.excerpt,
         images: [post.meta.coverImage],
       },
-    };
+    }
   } catch (error) {
-    console.error("Error generating metadata:", error);
+    console.error("Error generating metadata:", error)
     return {
       title: "Error",
       description: "Ocurrió un error al cargar el artículo",
-    };
+    }
   }
 }
 
 export async function generateStaticParams() {
-  const posts = await getAllPostSlugs();
+  const posts = await getAllPostSlugs()
   return posts.map(({ slug }) => ({
     slug,
-  }));
+  }))
 }
 
-export default async function PostPage({ params }: Props) {
-  const { slug } = await params;
+// Componente para el contenido del post
+async function PostContent({ slug }: { slug: string }) {
+  const post = await getPostBySlug(slug)
 
-  try {
-    console.log(`Intentando cargar el post con slug: ${slug}`);
-    const post = await getPostBySlug(slug);
-    
-    if (!post) {
-      console.error(`Post no encontrado para el slug: ${slug}`);
-      notFound();
-    }
+  if (!post) {
+    notFound()
+  }
 
-    // Verificar que el contenido del post sea válido
-    if (!post.content) {
-      console.error(`Contenido del post vacío para el slug: ${slug}`);
-      notFound();
-    }
+  // Verificar que el contenido del post sea válido
+  if (!post.content) {
+    notFound()
+  }
 
-    return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-12">
-        <article className="max-w-4xl mx-auto">
-          <PostHeader
-            title={post.meta.title}
-            date={post.meta.date}
-            author={post.meta.author}
-            coverImage={post.meta.coverImage}
-            readingTime={post.meta.readingTime || ""}
-            tags={post.meta.tags}
-          />
+  return (
+    <article className="max-w-4xl mx-auto">
+      <PostHeader
+        title={post.meta.title}
+        date={post.meta.date}
+        author={post.meta.author}
+        coverImage={post.meta.coverImage}
+        readingTime={post.meta.readingTime || ""}
+        tags={post.meta.tags}
+      />
 
-          <div className="flex flex-col md:flex-row gap-8 mt-8">
-            <aside className="md:w-64 md:sticky md:top-24 h-fit hidden md:block">
-              <TableOfContents headings={post.headings} />
-            </aside>
+      <div className="flex flex-col md:flex-row gap-8 mt-8">
+        <aside className="md:w-72 md:sticky md:top-24 h-fit order-2 md:order-1">
+          <TableOfContents headings={post.headings} />
+        </aside>
 
-            <div className="flex-1">
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                <Suspense fallback={
-                  <div className="animate-pulse">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-                  </div>
-                }>
-                  <div className="mdx-content prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:p-1 prose-code:rounded prose-img:rounded-lg prose-img:shadow-md hover:prose-a:text-blue-500">
-                    {post.content}
-                  </div>
-                </Suspense>
-              </div>
+        <div className="flex-1 order-1 md:order-2">
+          <div className="prose prose-lg dark:prose-invert max-w-none">
+            <div className="mdx-content prose-headings:scroll-mt-20 prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-p:leading-relaxed prose-a:text-accent prose-a:font-medium prose-a:underline-offset-2 prose-a:decoration-2 prose-code:bg-custom-1/30 prose-code:p-1 prose-code:rounded prose-img:rounded-lg prose-img:shadow-lg hover:prose-a:text-accent/80">
+              {post.content}
             </div>
           </div>
-        </article>
+
+          <div className="mt-12 flex justify-center">
+            <NavigationButtons direction="up" />
+          </div>
+        </div>
       </div>
-    );
-  } catch (error) {
-    console.error(`Error al renderizar el post ${slug}:`, error);
-    console.error('Stack trace:', (error as Error).stack);
-    notFound();
-  }
+    </article>
+  )
 }
+
+// Componente de carga para usar con Suspense
+function PostLoading() {
+  return (
+    <div className="max-w-4xl mx-auto animate-pulse">
+      <div className="mb-12">
+        <div className="flex gap-2 mb-6">
+          <div className="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+          <div className="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+        </div>
+        <div className="h-12 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-6"></div>
+        <div className="flex gap-6 mb-8">
+          <div className="h-5 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="h-5 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="h-5 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
+        </div>
+        <div className="aspect-[21/9] w-full bg-gray-300 dark:bg-gray-700 rounded-xl mb-4"></div>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="md:w-72 order-2 md:order-1">
+          <div className="h-64 bg-gray-300 dark:bg-gray-700 rounded-xl"></div>
+        </div>
+        <div className="flex-1 order-1 md:order-2 space-y-4">
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-5/6"></div>
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-2/3"></div>
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-4/5"></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Change the page component to an async function with the correct type:
+export default async function Page({ params }: Props) {
+  const { slug } = await params;
+
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-12">
+      <div className="mb-8">
+        <Link href="/blog" className="inline-flex items-center text-textMuted hover:text-highlight transition-colors">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Volver al blog
+        </Link>
+      </div>
+
+      <Suspense fallback={<PostLoading />}>
+        <PostContent slug={slug} />
+      </Suspense>
+    </div>
+  )
+}
+
 
