@@ -147,10 +147,11 @@ export const mdxComponents: MDXComponents = {
   },
   pre: ({ children, className }) => {
     const language = className?.replace("language-", "")
-    const reactChildren = Children.toArray(children)
-      .filter(isValidElement) as React.ReactElement<{ children?: React.ReactNode }>[];
-    const codeContent = reactChildren.find((child) => child.props.children)?.props.children || "";
-    
+    const reactChildren = Children.toArray(children).filter(isValidElement) as React.ReactElement<{
+      children?: React.ReactNode
+    }>[]
+    const codeContent = reactChildren.find((child) => child.props.children)?.props.children || ""
+
     return (
       <pre
         className={`relative mb-6 overflow-hidden rounded-lg bg-custom-1/30 p-4 text-sm font-mono ${className || ""}`}

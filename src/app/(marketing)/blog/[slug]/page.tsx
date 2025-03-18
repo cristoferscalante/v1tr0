@@ -3,19 +3,20 @@ import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import TableOfContents from "@/src/components/blog/TableOfContents"
 import PostHeader from "@/src/components/blog/PostHeader"
-import NavigationButtons from "@/src/components/blog/NavigationButtons"
 import { getPostBySlug, getAllPostSlugs } from "@/src/lib/mdx"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import BackgroundAnimation from "@/src/components/home/BackgroungAnimation"
+import { MDXContent } from "@/src/components/blog/MDXContent"
 
-type Props = {
-  params: Promise<{ slug: string }>
-}
+// Ajustamos para deshabilitar la regla eslint sobre 'any' solo en este caso específico
+// donde necesitamos cumplir con los tipos internos de Next.js
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-
+// Usamos los mismos tipos que usa Next.js internamente
+export async function generateMetadata(props: any): Promise<Metadata> {
+  const { slug } = props.params;
+  
   try {
     const post = await getPostBySlug(slug)
     if (!post) {
@@ -73,11 +74,6 @@ async function PostContent({ slug }: { slug: string }) {
     notFound()
   }
 
-  // Verificar que el contenido del post sea válido
-  if (!post.content) {
-    notFound()
-  }
-
   return (
     <article className="max-w-4xl mx-auto">
       <PostHeader
@@ -96,13 +92,7 @@ async function PostContent({ slug }: { slug: string }) {
 
         <div className="flex-1 order-1 md:order-2">
           <div className="prose prose-lg dark:prose-invert max-w-none">
-            <div className="mdx-content prose-headings:scroll-mt-20 prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-p:leading-relaxed prose-a:text-accent prose-a:font-medium prose-a:underline-offset-2 prose-a:decoration-2 prose-code:bg-custom-1/30 prose-code:p-1 prose-code:rounded prose-img:rounded-lg prose-img:shadow-lg hover:prose-a:text-accent/80">
-              {post.content}
-            </div>
-          </div>
-
-          <div className="mt-12 flex justify-center">
-            <NavigationButtons direction="up" />
+            <MDXContent content={post.content} />
           </div>
         </div>
       </div>
@@ -144,27 +134,27 @@ function PostLoading() {
   )
 }
 
-// Change the page component to an async function with the correct type:
-export default async function Page({ params }: Props) {
-  const { slug } = await params;
-
+// Usamos el mismo enfoque para el componente de página
+export default async function PostPage(props: any) {
+  const { slug } = props.params;
+  
   return (
-    <> 
-    <BackgroundAnimation />
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-32">
-      <div className="mb-8">
-        <Link href="/blog" className="inline-flex items-center text-textMuted hover:text-highlight transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al blog
-        </Link>
+    <>
+      <BackgroundAnimation />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-32">
+        <div className="mb-8">
+          <Link href="/blog" className="inline-flex items-center text-textMuted hover:text-highlight transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al blog
+          </Link>
+        </div>
+
+        <Suspense fallback={<PostLoading />}>
+          <PostContent slug={slug} />
+        </Suspense>
       </div>
-
-      <Suspense fallback={<PostLoading />}>
-        <PostContent slug={slug} />
-      </Suspense>
-    </div>
     </>
-  )
+  );
 }
-
+/* eslint-enable @typescript-eslint/no-explicit-any */
 

@@ -3,9 +3,7 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
-import { compileMDX } from "next-mdx-remote/rsc"
-import type { ReactElement } from "react"
-import React from "react"
+import { slugify, calculateReadingTime } from "./utils"
 
 // Directorio donde se almacenarán los archivos MDX
 const postsDirectory = path.join(process.cwd(), "src", "content", "blog")
@@ -26,7 +24,7 @@ export interface PostMetadata {
 // Tipo para el post completo
 export interface Post {
   meta: PostMetadata
-  content: ReactElement
+  content: string
   headings: Array<{ level: number; text: string; id: string }>
 }
 
@@ -34,16 +32,7 @@ export interface Post {
 function ensureDirectoryExists() {
   if (!fs.existsSync(postsDirectory)) {
     console.log(`Creando directorio: ${postsDirectory}`)
-    console.log(`Current working directory: ${process.cwd()}`)
     fs.mkdirSync(postsDirectory, { recursive: true })
-  } else {
-    console.log(`Found directory: ${postsDirectory}`)
-    try {
-      const files = fs.readdirSync(postsDirectory)
-      console.log(`Files in directory: ${files.join(", ")}`)
-    } catch (error) {
-      console.error(`Error reading directory: ${error}`)
-    }
   }
 }
 
@@ -53,16 +42,9 @@ export async function getAllPostSlugs() {
 
   try {
     const fileNames = fs.readdirSync(postsDirectory)
-    console.log(`Archivos encontrados: ${fileNames.length}`)
 
     return fileNames
-      .filter((fileName) => {
-        const isMdx = fileName.endsWith(".mdx")
-        if (!isMdx) {
-          console.log(`Ignorando archivo no MDX: ${fileName}`)
-        }
-        return isMdx
-      })
+      .filter((fileName) => fileName.endsWith(".mdx"))
       .map((fileName) => ({
         slug: fileName.replace(/\.mdx$/, ""),
       }))
@@ -78,16 +60,9 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
 
   try {
     const fileNames = fs.readdirSync(postsDirectory)
-    console.log(`Total de archivos encontrados: ${fileNames.length}`)
 
     const allPostsData = fileNames
-      .filter((fileName) => {
-        const isMdx = fileName.endsWith(".mdx")
-        if (!isMdx) {
-          console.log(`Ignorando archivo no MDX: ${fileName}`)
-        }
-        return isMdx
-      })
+      .filter((fileName) => fileName.endsWith(".mdx"))
       .map((fileName) => {
         try {
           // Eliminar la extensión ".mdx" para obtener el slug
@@ -98,20 +73,17 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
           const fileContents = fs.readFileSync(fullPath, "utf8")
 
           // Usar gray-matter para analizar la sección de metadatos (frontmatter)
-          const { data } = matter(fileContents)
+          const { data, content } = matter(fileContents)
+
+          // Calcular tiempo de lectura si no está definido
+          if (!data.readingTime) {
+            data.readingTime = calculateReadingTime(content)
+          }
 
           // Construimos los metadatos
           const metadata: PostMetadata = {
             ...(data as Omit<PostMetadata, "slug">),
             slug,
-          }
-
-          // Validar campos requeridos
-          const requiredFields = ["title", "date", "excerpt", "author", "coverImage"] as const
-          const missingFields = requiredFields.filter((field) => !metadata[field as keyof typeof metadata])
-
-          if (missingFields.length > 0) {
-            console.warn(`Campos faltantes en ${fileName}: ${missingFields.join(", ")}`)
           }
 
           return metadata
@@ -125,7 +97,6 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
 
     // Ordenar los posts por fecha, del más reciente al más antiguo
     return allPostsData.sort((a, b) => {
-      // Convertimos a Date para mayor confiabilidad
       return new Date(b.date).getTime() - new Date(a.date).getTime()
     })
   } catch (error) {
@@ -138,66 +109,63 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
 function extractHeadings(content: string) {
   if (!content) return []
 
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm
+  // Dividir el contenido en líneas para procesarlo
+  const lines = content.split("\n")
   const headings: { level: number; text: string; id: string }[] = []
-  let match
 
-  try {
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length
-      const text = match[2].trim()
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\s]/g, "")
-        .replace(/\s+/g, "-")
+  // Variable para rastrear si estamos dentro de un bloque de código
+  let inCodeBlock = false
+
+  // Procesamos línea por línea
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+
+    // Detectar inicio/fin de bloques de código
+    if (line.startsWith("```")) {
+      inCodeBlock = !inCodeBlock
+      continue
+    }
+
+    // Ignorar líneas dentro de bloques de código
+    if (inCodeBlock) continue
+
+    // Expresión regular para detectar encabezados - solo al inicio de línea
+    const headingMatch = line.match(/^(#{1,6})\s+(.+?)(?:\s*#*\s*)?$/)
+    if (headingMatch) {
+      const level = headingMatch[1].length
+      const text = headingMatch[2].trim()
+      // Generar ID usando la función unificada slugify
+      const id = slugify(text)
       headings.push({ level, text, id })
     }
-  } catch (error) {
-    console.error("Error extracting headings:", error)
   }
 
   return headings
 }
 
-// Agregar logging adicional para depuración
-// Add a simple in-memory cache for posts
+// Cache para posts
 const postCache = new Map<string, Post>()
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  // If we've already compiled this post, return it
+  // Si ya tenemos el post en caché, lo devolvemos
   if (postCache.has(slug)) {
     return postCache.get(slug)!
   }
 
   try {
     const fullPath = path.join(postsDirectory, `${slug}.mdx`)
-    console.log(`[getPostBySlug] Buscando post con slug: ${slug}`)
-    console.log(`[getPostBySlug] Directorio de posts: ${postsDirectory}`)
-    console.log(`[getPostBySlug] Ruta completa del archivo: ${fullPath}`)
 
     if (!fs.existsSync(fullPath)) {
-      console.log(`File not found: ${fullPath}`)
       return null
     }
 
     // Leer contenido del archivo
     const source = fs.readFileSync(fullPath, "utf8")
-    console.log(`[getPostBySlug] Contenido leído: ${source.substring(0, 100)}...`)
 
     // Usar gray-matter para extraer frontmatter y contenido
     const { data, content } = matter(source)
 
-    // Verificar si hay frontmatter
-    if (Object.keys(data).length === 0) {
-      console.log("El contenido MDX no tiene frontmatter")
-      // Si no hay frontmatter, vamos a crear uno predeterminado
-    }
-
-    if (!content || content.trim() === "") {
-      console.warn(`Invalid or empty content in MDX file: ${slug}.mdx`)
-      // Podemos devolver un post con contenido predeterminado en lugar de null
-    }
-
+    // Extraer encabezados del contenido
     const headings = extractHeadings(content)
 
     // Asigna valores predeterminados usando un objeto para metadatos por defecto
@@ -208,7 +176,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       author: "Sistema",
       coverImage: "/placeholder.svg?height=630&width=1200",
       slug: slug,
-      readingTime: "1 min read",
+      readingTime: calculateReadingTime(content),
       tags: ["sin-categorizar"],
     }
 
@@ -216,64 +184,29 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     const metadata = {
       ...defaultMetadata,
       ...(data as Partial<PostMetadata>),
-      slug, // Aseguramos que el slug siempre esté establecido correctamente
+      slug,
     }
 
     // Si hay una imagen de portada personalizada, verificarla
     if (metadata.coverImage && metadata.coverImage !== defaultMetadata.coverImage) {
       const publicImagePath = path.join(process.cwd(), "public", metadata.coverImage)
       if (!fs.existsSync(publicImagePath)) {
-        console.warn(`La imagen ${metadata.coverImage} no se encontró. Usando placeholder.`)
         metadata.coverImage = defaultMetadata.coverImage
       }
     }
 
-    // Crear contenido ficticio si el contenido está vacío
-    const actualContent =
-      content && content.trim()
-        ? content
-        : `# ${metadata.title}\n\nEste post no tiene contenido. Por favor, edita el archivo ${slug}.mdx para agregar contenido.`
-
-    // Compilación MDX usando la API de React Server Components
-    let compiledContent: ReactElement
-    try {
-      console.log(`[getPostBySlug] Compilando MDX con contenido: ${actualContent.substring(0, 100)}...`)
-      const compiled = await compileMDX({ source: actualContent })
-      console.log(`[getPostBySlug] Compilación MDX exitosa`)
-      compiledContent = compiled.content
-    } catch (compileError: unknown) {
-      console.error(`Error compiling MDX for post "${slug}":`, compileError)
-      compiledContent = React.createElement("div", null, actualContent)
-    }
-
-    // Asegurarse de que el tiempo de lectura se calcule correctamente
-    const wordsCount = actualContent.split(/\s+/).length
-    metadata.readingTime = `${Math.max(1, Math.ceil(wordsCount / 200))} min read`
-
     const post: Post = {
       meta: metadata as PostMetadata,
-      content: compiledContent,
+      content: content || `# ${metadata.title}\n\nEste post no tiene contenido.`,
       headings,
     }
 
-    // Cache the result to avoid re-compilation on subsequent calls
+    // Guardar en caché
     postCache.set(slug, post)
 
     return post
-  } catch (error: unknown) {
-    console.error(`Error processing post ${slug}:`)
-
-    // Safe error handling
-    if (error) {
-      if (typeof error === "object") {
-        console.error("Error details:", error instanceof Error ? error.message : "Unknown error object")
-      } else {
-        console.error("Error value:", error)
-      }
-    } else {
-      console.error("Unknown error (undefined)")
-    }
-
+  } catch (error) {
+    console.error(`Error processing post ${slug}:`, error)
     return null
   }
 }
@@ -301,4 +234,5 @@ export async function getPostsByTag(tag: string): Promise<Post[]> {
   const allPosts = await getAllPosts()
   return allPosts.filter((post) => post.meta.tags?.includes(tag))
 }
+
 

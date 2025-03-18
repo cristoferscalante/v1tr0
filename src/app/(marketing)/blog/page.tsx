@@ -3,7 +3,7 @@ import { getAllPostsMetadata } from "@/src/lib/mdx"
 import type { Metadata } from "next"
 import { BookOpen } from "lucide-react"
 import { Suspense } from "react"
-import BackgroundAnimation from "@/src/components/home/BackgroungAnimation";
+import BackgroundAnimation from "@/src/components/home/BackgroungAnimation"
 
 export const metadata: Metadata = {
   title: "Blog | Artículos sobre desarrollo web y tecnología",
@@ -67,25 +67,26 @@ async function PostsList() {
 export default function BlogPage() {
   return (
     <>
-    <BackgroundAnimation />    
-    <div className="container mx-auto px-8 sm:px-6 lg:px-8 max-w-6xl py-32">
-      
-      <header className="mb-16 text-center">
-        <div className="inline-flex items-center justify-center p-2 bg-custom-2/20 rounded-full mb-4">
-          <BookOpen className="w-6 h-6 text-highlight" />
-        </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Blog</h1>
-        <p className="text-lg text-textMuted max-w-2xl mx-auto">
-          Explora todos nuestros artículos sobre desarrollo web, tecnología y más. Optimizados para SEO y escritos con
-          las mejores prácticas.
-        </p>
-      </header>
+      <BackgroundAnimation />
+      <div className="container mx-auto px-8 sm:px-6 lg:px-8 max-w-6xl py-32">
+        <header className="mb-16 text-center">
+          <div className="inline-flex items-center justify-center p-2 bg-custom-2/20 rounded-full mb-4">
+            <BookOpen className="w-6 h-6 text-highlight" />
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Blog</h1>
+          <p className="text-lg text-textMuted max-w-2xl mx-auto">
+            Explora todos nuestros artículos sobre desarrollo web, tecnología y más. Optimizados para SEO y escritos con
+            las mejores prácticas.
+          </p>
+        </header>
 
-      <Suspense fallback={<PostsLoading />}>
-        <PostsList />
-      </Suspense>
-    </div>
+        <Suspense fallback={<PostsLoading />}>
+          <PostsList />
+        </Suspense>
+      </div>
     </>
   )
 }
+
+
 

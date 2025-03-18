@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useEffect, useTransition, ReactNode } from "react"
+import React, { useState, useEffect, useTransition, type ReactNode } from "react"
 import { FileText, ChevronDown } from "lucide-react"
+import { slugify, findElementByIdOrText, logAllHeadings } from "@/src/lib/utils"
 
 interface TableOfContentsProps {
   headings: {
@@ -17,38 +18,72 @@ export default function TableOfContents({ headings, children }: TableOfContentsP
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [, startTransition] = useTransition()
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            startTransition(() => {
-              setActiveId(entry.target.id)
-            })
-          }
-        })
-      },
-      { rootMargin: "0% 0% -80% 0%" },
-    )
+  // Función para inicializar los IDs de encabezados
+  const initializeHeadingIds = React.useCallback(() => {
+    if (typeof document === "undefined") return
 
-    headings.forEach(({ id }) => {
-      const element = document.getElementById(id)
-      if (element) {
-        observer.observe(element)
+    // Recorrer todos los encabezados del documento
+    const documentHeadings = document.querySelectorAll("h1, h2, h3, h4, h5, h6")
+
+    documentHeadings.forEach((heading) => {
+      const headingText = heading.textContent?.trim() || ""
+      if (!heading.id) {
+        // Si el encabezado no tiene ID, asignarle uno basado en su texto
+        heading.id = slugify(headingText)
       }
     })
 
-    return () => {
-      headings.forEach(({ id }) => {
-        const element = document.getElementById(id)
+    // Log para depuración en desarrollo
+    if (process.env.NODE_ENV === "development") {
+      logAllHeadings()
+    }
+  }, [])
+
+  // Efecto para inicializar IDs
+  useEffect(() => {
+    // Retrasar la inicialización para dar tiempo a que el DOM se renderice
+    const initTimeout = setTimeout(() => {
+      initializeHeadingIds()
+    }, 500)
+
+    return () => clearTimeout(initTimeout)
+  }, [initializeHeadingIds])
+
+  // Efecto para configurar el observador de intersección
+  useEffect(() => {
+    // Retrasar la configuración del observador
+    const observerTimeout = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              startTransition(() => {
+                setActiveId(entry.target.id)
+              })
+            }
+          })
+        },
+        { rootMargin: "0% 0% -80% 0%" },
+      )
+
+      // Observar los encabezados
+      headings.forEach(({ text, id }) => {
+        const slugId = id || slugify(text)
+        const element = document.getElementById(slugId)
+
         if (element) {
-          observer.unobserve(element)
+          observer.observe(element)
         }
       })
-    }
+
+      return () => observer.disconnect()
+    }, 800)
+
+    return () => clearTimeout(observerTimeout)
   }, [headings])
 
-  if (headings.length === 0) {
+  // Si no hay encabezados, no mostramos nada
+  if (!headings || headings.length === 0) {
     return null
   }
 
@@ -70,31 +105,55 @@ export default function TableOfContents({ headings, children }: TableOfContentsP
       >
         <nav className="p-4">
           <ul className="space-y-2 text-sm">
-            {headings.map(({ level, text, id }) => (
-              <li key={id} style={{ paddingLeft: `${(level - 1) * 12}px` }} className="transition-all duration-300">
-                <a
-                  href={`#${id}`}
-                  className={`block py-1 border-l-2 pl-3 hover:text-highlight transition-all duration-300 ${
-                    activeId === id
-                      ? "border-highlight text-highlight font-medium"
-                      : "border-transparent text-textMuted hover:border-custom-2/50"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    document.getElementById(id)?.scrollIntoView({
-                      behavior: "smooth",
-                    })
-                  }}
+            {headings.map(({ level, text, id }) => {
+              const slugId = id || slugify(text)
+
+              return (
+                <li
+                  key={slugId}
+                  style={{ paddingLeft: `${(level - 1) * 12}px` }}
+                  className="transition-all duration-300"
                 >
-                  {text}
-                </a>
-              </li>
-            ))}
+                  <a
+                    href={`#${slugId}`}
+                    className={`block py-1 border-l-2 pl-3 hover:text-highlight transition-all duration-300 ${
+                      activeId === slugId
+                        ? "border-highlight text-highlight font-medium"
+                        : "border-transparent text-textMuted hover:border-custom-2/50"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault()
+
+                      // Búsqueda inteligente de elementos
+                      const targetElement = findElementByIdOrText(slugId, text)
+
+                      if (targetElement) {
+                        targetElement.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        })
+
+                        // Asegurar que el elemento tenga ID
+                        if (!targetElement.id) {
+                          targetElement.id = slugId
+                        }
+
+                        // Actualizar URL y estado activo
+                        window.history.pushState(null, "", `#${targetElement.id}`)
+                        setActiveId(targetElement.id)
+                      } else if (process.env.NODE_ENV === "development") {
+                        console.error(`No se pudo encontrar ningún elemento para "${text}"`)
+                      }
+                    }}
+                  >
+                    {text}
+                  </a>
+                </li>
+              )
+            })}
           </ul>
         </nav>
-        {React.Children.map(children, (child) => {
-          return child;
-        })}
+        {React.Children.map(children, (child) => child)}
       </div>
     </div>
   )
