@@ -26,10 +26,10 @@ export default function SoftwarePortfolio() {
       id: 3,
       title: "Plataforma E-commerce",
       description:
-        "Aplicación web para la venta de productos y servicios en línea.",
-      image: "/portfolio/project3.jpg",
+        "Personalizador de prendas para tiendas online, con integración de pagos y gestión de inventario.",
+      image: "/home/images/project/project3.png",
       tags: ["Next.js","Supabase"],
-      link: "/proyectos/e-learning",
+      link: "https://template-store-six.vercel.app/",
     },
   ]
 
