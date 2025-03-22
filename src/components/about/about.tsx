@@ -1,22 +1,24 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
 
-const Team = () => {
+const About = () => {
   return (
-    <section className="w-full py-24 bg-background font-alexandria">
+    <section className="w-full py-32 bg-background font-alexandria">
       <div className="container px-4 md:px-6 mx-auto">
         {/* Encabezado de sección */}
         <div className="grid gap-10 md:gap-16 lg:grid-cols-2 mb-20">
           <div className="space-y-4">
-            <div className="text-highlight text-sm">Nuestro Equipo</div>
+            <div className="text-highlight text-sm">Sobre Nosotros</div>
             <h2 className="text-4xl font-bold tracking-tighter text-textPrimary sm:text-5xl">
-              Impulsando la innovación digital
+              Innovación y tecnología para la gestión de proyectos
             </h2>
           </div>
           <div className="flex flex-col items-start space-y-4">
             <p className="text-textMuted text-lg md:text-xl">
-              Somos un equipo interdisciplinario enfocado en crear soluciones que transforman la gestión de proyectos de
-              software. Conoce a las personas detrás de V1TR0.
+              En <span className="font-bold text-primary">V1TR0</span>, 
+              transformamos la gestión de proyectos con tecnología de vanguardia, 
+              inteligencia artificial y visualización en tiempo real. Nuestro equipo 
+              multidisciplinario trabaja para crear soluciones ágiles, eficientes y escalables 
+              para empresas y profesionales del desarrollo de software.
             </p>
           </div>
         </div>
@@ -24,120 +26,131 @@ const Team = () => {
         {/* Línea divisoria */}
         <div className="w-full h-px bg-custom-2 my-10"></div>
 
-        {/* Sección 01 */}
+        {/* Sección del equipo */}
         <div className="mb-20">
           <div className="text-2xl text-primary mb-10">01</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Liderazgo</h3>
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">Nuestro Equipo</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
-            <div>
+          <div className="grid md:grid-cols-3 gap-16">
+            {/* Cristofer */}
+            <div className="text-center">
               <Image
                 src="/placeholder.svg?height=500&width=400"
-                alt="Ana Martínez"
+                alt="Cristofer Bolaños"
                 width={400}
                 height={500}
-                className="rounded-md mb-6 object-cover"
+                className="rounded-md mb-6 object-cover mx-auto"
               />
-              <h4 className="text-2xl font-bold text-textPrimary">Ana Martínez</h4>
-              <p className="text-primary mb-4">Directora de Tecnología</p>
+              <h4 className="text-2xl font-bold text-textPrimary">Cristofer Bolaños</h4>
+              <p className="text-primary mb-4">Desarrollador de Software & Líder Técnico</p>
               <p className="text-textMuted">
-                Especialista en arquitectura de software con más de 10 años de experiencia en desarrollo de plataformas
-                de gestión de proyectos.
+                Especialista en desarrollo de software con tecnologías como Next.js y Python. 
+                Enfocado en la creación de soluciones innovadoras con IA y automatización.
               </p>
             </div>
 
-            <div>
+            {/* María Paz */}
+            <div className="text-center">
               <Image
                 src="/placeholder.svg?height=500&width=400"
-                alt="Carlos Rodríguez"
+                alt="Maria Paz Morales"
                 width={400}
                 height={500}
-                className="rounded-md mb-6 object-cover"
+                className="rounded-md mb-6 object-cover mx-auto"
               />
-              <h4 className="text-2xl font-bold text-textPrimary">Carlos Rodríguez</h4>
-              <p className="text-primary mb-4">Director de Operaciones</p>
+              <h4 className="text-2xl font-bold text-textPrimary">María Paz Morales</h4>
+              <p className="text-primary mb-4">Gestión de Proyectos</p>
               <p className="text-textMuted">
-                Experto en gestión de proyectos ágiles y metodologías de desarrollo, con enfoque en la optimización de
-                procesos y eficiencia operativa.
+                Socióloga con experiencia en gestión de proyectos tecnológicos y 
+                metodologías ágiles. Su enfoque está en la eficiencia y optimización de procesos.
+              </p>
+            </div>
+
+            {/* Álvaro Efren */}
+            <div className="text-center">
+              <Image
+                src="/placeholder.svg?height=500&width=400"
+                alt="Álvaro Efren Bolaños"
+                width={400}
+                height={500}
+                className="rounded-md mb-6 object-cover mx-auto"
+              />
+              <h4 className="text-2xl font-bold text-textPrimary">Álvaro Efren Bolaños</h4>
+              <p className="text-primary mb-4">Analista de Datos & IA</p>
+              <p className="text-textMuted">
+                Politólogo y analista de datos, con un enfoque en el uso de inteligencia 
+                artificial y big data para la toma de decisiones en proyectos tecnológicos.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Sección 02 */}
+        {/* Línea divisoria */}
+        <div className="w-full h-px bg-custom-2 my-10"></div>
+
+        {/* Sección de Servicios */}
         <div className="mb-20">
           <div className="text-2xl text-primary mb-10">02</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Desarrollo e Innovación</h3>
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">Nuestros Servicios</h3>
 
           <div className="grid md:grid-cols-2 gap-16">
+            {/* Desarrollo de Software */}
             <div>
-              <Image
-                src="/placeholder.svg?height=500&width=400"
-                alt="Elena Gómez"
-                width={400}
-                height={500}
-                className="rounded-md mb-6 object-cover"
-              />
-              <h4 className="text-2xl font-bold text-textPrimary">Elena Gómez</h4>
-              <p className="text-primary mb-4">Ingeniera de IA</p>
+              <h4 className="text-2xl font-bold text-textPrimary">Desarrollo de Software</h4>
               <p className="text-textMuted">
-                Especialista en inteligencia artificial y aprendizaje automático, enfocada en la implementación de
-                soluciones predictivas para la gestión de proyectos.
+                Creación de aplicaciones web modernas y escalables con <span className="font-bold">Next.js</span> y <span className="font-bold">Python</span>, 
+                optimizando rendimiento y seguridad.
               </p>
             </div>
 
+            {/* Ciencia de Datos */}
             <div>
-              <Image
-                src="/placeholder.svg?height=500&width=400"
-                alt="Miguel Sánchez"
-                width={400}
-                height={500}
-                className="rounded-md mb-6 object-cover"
-              />
-              <h4 className="text-2xl font-bold text-textPrimary">Miguel Sánchez</h4>
-              <p className="text-primary mb-4">Desarrollador Full Stack</p>
+              <h4 className="text-2xl font-bold text-textPrimary">Ciencia de Datos & IA</h4>
               <p className="text-textMuted">
-                Experto en tecnologías web modernas y arquitecturas escalables para aplicaciones en tiempo real con
-                enfoque en la experiencia de usuario.
+                Implementamos modelos de <span className="font-bold">machine learning</span> 
+                e inteligencia artificial para análisis de datos y toma de decisiones estratégicas.
+              </p>
+            </div>
+
+            {/* Gestión de Proyectos */}
+            <div>
+              <h4 className="text-2xl font-bold text-textPrimary">Gestión de Proyectos</h4>
+              <p className="text-textMuted">
+                Aplicamos metodologías ágiles y herramientas avanzadas para optimizar 
+                el desarrollo y ejecución de proyectos tecnológicos.
+              </p>
+            </div>
+
+            {/* Visualización de Datos */}
+            <div>
+              <h4 className="text-2xl font-bold text-textPrimary">Visualización de Datos</h4>
+              <p className="text-textMuted">
+                Desarrollamos dashboards interactivos y herramientas para representar 
+                datos en tiempo real, facilitando el análisis y toma de decisiones.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Sección de unirse al equipo */}
-        <div className="w-full py-12 border-t border-custom-2">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <h3 className="text-2xl font-bold text-textPrimary">Únete a nuestro equipo</h3>
-            <Link
-              href="/careers"
-              className="flex items-center gap-2 text-textPrimary hover:text-highlight transition-colors"
-            >
-              <span>Ver oportunidades</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </Link>
-          </div>
+        {/* Línea divisoria */}
+        <div className="w-full h-px bg-custom-2 my-10"></div>
+
+        {/* Misión y Visión */}
+        <div className="mb-20">
+          <div className="text-2xl text-primary mb-10">03</div>
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">Nuestra Visión</h3>
+          <p className="text-textMuted text-lg">
+            En <span className="font-bold">V1TR0</span>, creemos en el poder de la tecnología 
+            para transformar la manera en que se gestionan los proyectos. Nos enfocamos en 
+            brindar soluciones eficientes e inteligentes que potencien la productividad y la 
+            toma de decisiones estratégicas. Nuestro compromiso es innovar continuamente, 
+            integrando las últimas tendencias en desarrollo de software, ciencia de datos y 
+            metodologías ágiles para impulsar el éxito de nuestros clientes.
+          </p>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Team
-
-
-  
-  
-  
+export default About;

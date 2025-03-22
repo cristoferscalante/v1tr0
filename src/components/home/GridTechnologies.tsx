@@ -52,8 +52,8 @@ export default function ModernTechnologiesSection() {
       id: 6,
       icon: <Smartphone className="w-8 h-8" />,
       name: "Ciencia de Datos",
-      description: "Visualización y análisis de datos",
-      techs: ["Next.js","Pythom","R","Tableau","Power BI"],
+      description: "Visualización y análisis de datos avanzado",
+      techs: ["Next.js","Python","R","Tableau","Power BI"],
       color: "from-custom-3 to-accent",
     },
   ]

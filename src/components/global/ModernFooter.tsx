@@ -125,13 +125,7 @@ export default function ModernFooter() {
                     </div>
                     <p className="text-textMuted text-lg mb-6">
                       {footerSections.find((section) => section.id === expandedId)?.content}
-                    </p>
-                    <Link
-                      href={`/servicios#${footerSections.find((section) => section.id === expandedId)?.title.toLowerCase()}`}
-                      className="inline-block px-6 py-3 bg-highlight text-white rounded-lg hover:bg-opacity-90 transition-colors duration-300"
-                    >
-                      Saber más
-                    </Link>
+                    </p>                    
                   </div>
                 )}
               </motion.div>

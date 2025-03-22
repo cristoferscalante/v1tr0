@@ -2,14 +2,6 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowRight,
-  BarChart2,
-  Brain,
-  PieChartIcon as ChartPieIcon,
-  ClipboardCheck,
-  Database,
-  LineChart,
-  Search,
-  TrendingUp,
 } from "lucide-react"
 
 const DataScience = () => {
@@ -19,16 +11,22 @@ const DataScience = () => {
         {/* Encabezado de sección */}
         <div className="grid gap-10 md:gap-16 lg:grid-cols-2 mb-20">
           <div className="space-y-4">
-            <div className="text-highlight text-sm">Ciencia de Datos</div>
+            <div className="text-highlight text-sm">
+              Ciencia de Datos y Análisis Avanzado
+            </div>
             <h2 className="text-4xl font-bold tracking-tighter text-textPrimary sm:text-5xl">
-              Transformando datos en decisiones estratégicas
+              Ciencia de Datos y Análisis Avanzado
             </h2>
+            <div className="font-semibold text-xl text-textPrimary">
+              Convertimos datos en sistemas inteligentes
+            </div>
           </div>
           <div className="flex flex-col items-start space-y-4">
             <p className="text-textMuted text-lg md:text-xl">
-              En V1TR0 convertimos el potencial oculto de tus datos en ventajas competitivas. Nuestras soluciones de
-              ciencia de datos te permiten descubrir patrones, predecir tendencias y optimizar procesos para impulsar el
-              crecimiento de tu negocio.
+              Bienvenido a la dependencia de Ciencia de Datos y Análisis Avanzado de V1TR0. Te encuentras en el epicentro donde los datos cobran vida y se transforman en conocimiento estratégico. Todo lo que nos rodea—las dinámicas sociales, las organizaciones y el mundo en general—funciona a través de datos, modelos algorítmicos e inteligencia artificial. No es solo información, es la clave para comprender patrones, anticipar comportamientos y tomar decisiones fundamentadas.
+            </p>
+            <p className="text-textMuted text-lg md:text-xl">
+              Lo que descubrirás a continuación es la base sobre la cual se construyen estrategias efectivas y soluciones innovadoras. Adéntrate en este universo donde los datos nos enseñan el funcionamiento de la totalidad.
             </p>
           </div>
         </div>
@@ -39,55 +37,35 @@ const DataScience = () => {
         {/* Sección 01 - Análisis de Datos */}
         <div className="mb-20">
           <div className="text-2xl text-primary mb-10">01</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Análisis de Datos</h3>
-
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">
+            Análisis de Datos
+          </h3>
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <p className="text-textMuted text-lg mb-8">
-                Transformamos grandes volúmenes de datos en insights accionables mediante técnicas avanzadas de
-                análisis. Nuestro enfoque combina experiencia estadística con conocimiento de negocio para identificar
-                oportunidades de mejora y optimización.
+                La información fluye incesante, vastos océanos de datos que contienen la esencia misma de nuestras interacciones, decisiones y estructuras se definen sin ordenarse. Con V1TR0 navegamos a través de este océano, aplicando técnicas avanzadas de análisis que nos permiten extraer insights accionables. Así nuestro enfoque fusiona la rigurosidad de la estadística con el análisis estratégico, trazando un puente entre el conocimiento crudo y la toma de decisiones informada. Cada cifra, cada anomalía, cada correlación es un indicio de una estructura más grande, un modelo subyacente que moldea su funcionamiento. Así, avanzamos en la exploración de este universo de datos, desentrañando su lógica interna para convertirlo en ventaja competitiva y solución innovadora.
               </p>
-
-              <div className="space-y-8">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <Search className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Análisis Exploratorio</h4>
-                    <p className="text-textMuted">
-                      Descubrimos patrones, tendencias y anomalías en tus datos para generar hipótesis valiosas.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Análisis Predictivo</h4>
-                    <p className="text-textMuted">
-                      Utilizamos modelos estadísticos y machine learning para prever comportamientos futuros.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <Database className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Minería de Datos</h4>
-                    <p className="text-textMuted">
-                      Extraemos conocimiento valioso de grandes conjuntos de datos estructurados y no estructurados.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <p className="text-textMuted text-lg mb-8">
+                <strong>El proceso de análisis de datos sigue diversas etapas esenciales:</strong>
+              </p>
+              <ul className="list-disc list-inside text-textMuted text-lg space-y-2">
+                <li>
+                  <strong>Recopilación y Preparación de Datos:</strong> Recolectamos datos de múltiples fuentes, los limpiamos y los estructuramos para garantizar su calidad y utilidad.
+                </li>
+                <li>
+                  <strong>Análisis Exploratorio:</strong> Descubrimos patrones, tendencias y anomalías en los datos para generar hipótesis valiosas que guíen la toma de decisiones.
+                </li>
+                <li>
+                  <strong>Modelado y Análisis Predictivo:</strong> Utilizamos modelos estadísticos y machine learning para prever comportamientos futuros y anticipar posibles escenarios.
+                </li>
+                <li>
+                  <strong>Minería de Datos:</strong> Extraemos conocimiento valioso de grandes conjuntos de datos estructurados y no estructurados mediante técnicas avanzadas de exploración.
+                </li>
+                <li>
+                  <strong>Interpretación y Comunicación:</strong> Traducimos los hallazgos en recomendaciones accionables y visualizaciones que facilitan su comprensión y aplicación estratégica.
+                </li>
+              </ul>
             </div>
-
             <div>
               <Image
                 src="/placeholder.svg?height=600&width=500"
@@ -103,8 +81,9 @@ const DataScience = () => {
         {/* Sección 02 - Visualización de Datos */}
         <div className="mb-20">
           <div className="text-2xl text-primary mb-10">02</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Visualización de Datos</h3>
-
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">
+            Visualización de Datos
+          </h3>
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <Image
@@ -115,51 +94,24 @@ const DataScience = () => {
                 className="rounded-md object-cover"
               />
             </div>
-
             <div>
               <p className="text-textMuted text-lg mb-8">
-                Convertimos datos complejos en visualizaciones interactivas y comprensibles que facilitan la toma de
-                decisiones. Nuestros dashboards personalizados presentan la información clave de forma clara y accesible
-                para todos los niveles de tu organización.
+                Los datos, por sí solos, son una maraña de cifras y variables sin rostro. Pero cuando se les otorga forma, cuando se traducen en imágenes, gráficos y narrativas visuales, adquieren un nuevo significado. La visualización de datos es el puente entre la complejidad y la comprensión, la clave que transforma la información en conocimiento accesible.
               </p>
-
-              <div className="space-y-8">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <BarChart2 className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Dashboards Interactivos</h4>
-                    <p className="text-textMuted">
-                      Creamos paneles de control dinámicos que permiten explorar los datos desde múltiples perspectivas.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <LineChart className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Informes Automatizados</h4>
-                    <p className="text-textMuted">
-                      Implementamos sistemas de generación automática de informes para monitoreo continuo.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <ChartPieIcon className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Storytelling con Datos</h4>
-                    <p className="text-textMuted">
-                      Construimos narrativas visuales que comunican eficazmente los insights más relevantes.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <p className="text-textMuted text-lg mb-8">
+                Aquí, cada punto de datos es una pieza dentro de un lienzo dinámico que revela patrones, tendencias y relaciones invisibles a simple vista. Convertimos datos complejos en visualizaciones interactivas que iluminan decisiones estratégicas.
+              </p>
+              <ul className="list-disc list-inside text-textMuted text-lg space-y-2">
+                <li>
+                  <strong>Dashboards Interactivos:</strong> Paneles de control dinámicos que permiten explorar los datos desde múltiples perspectivas, ofreciendo una visión en tiempo real de la realidad operativa.
+                </li>
+                <li>
+                  <strong>Informes Automatizados:</strong> Sistemas inteligentes que generan reportes de manera continua, asegurando que la información crítica esté siempre disponible sin esfuerzo manual.
+                </li>
+                <li>
+                  <strong>Storytelling con Datos:</strong> Construcción de narrativas visuales impactantes que comunican eficazmente los insights más relevantes, permitiendo que los datos hablen con claridad y precisión.
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -167,43 +119,26 @@ const DataScience = () => {
         {/* Sección 03 - Auditorías de Datos */}
         <div className="mb-20">
           <div className="text-2xl text-primary mb-10">03</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Auditorías de Datos</h3>
-
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">
+            Auditorías de Datos
+          </h3>
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <p className="text-textMuted text-lg mb-8">
-                Evaluamos la calidad, integridad y seguridad de tus datos para identificar riesgos y oportunidades de
-                mejora. Nuestras auditorías proporcionan una visión clara del estado actual de tus activos de datos y
-                recomendaciones concretas para optimizar su gestión.
+                En la inmensidad de los sistemas de información, cada dato es un engranaje que mantiene en marcha la maquinaria de una organización. Pero, ¿qué sucede cuando estos engranajes están corroídos por la inconsistencia, la duplicidad o la imprecisión? La integridad de los datos es la piedra angular de cualquier estrategia basada en información. Nuestras auditorías no solo examinan la calidad de los datos, sino que también iluminan su fiabilidad, revelando riesgos ocultos y oportunidades de mejora que de otro modo permanecerían velados.
               </p>
-
-              <div className="space-y-6">
-                <div className="p-6 bg-custom-1 border border-custom-2 rounded-lg">
-                  <h4 className="text-xl font-bold text-textPrimary mb-2">Calidad de Datos</h4>
-                  <p className="text-textMuted">
-                    Evaluamos la precisión, completitud, consistencia y fiabilidad de tus datos para garantizar que las
-                    decisiones se basen en información confiable.
-                  </p>
-                </div>
-
-                <div className="p-6 bg-custom-1 border border-custom-2 rounded-lg">
-                  <h4 className="text-xl font-bold text-textPrimary mb-2">Cumplimiento Normativo</h4>
-                  <p className="text-textMuted">
-                    Verificamos que tus procesos de gestión de datos cumplan con las regulaciones aplicables (GDPR,
-                    LOPD, etc.) y estándares de la industria.
-                  </p>
-                </div>
-
-                <div className="p-6 bg-custom-1 border border-custom-2 rounded-lg">
-                  <h4 className="text-xl font-bold text-textPrimary mb-2">Seguridad de Datos</h4>
-                  <p className="text-textMuted">
-                    Identificamos vulnerabilidades y recomendamos medidas para proteger tus activos de datos contra
-                    accesos no autorizados y brechas de seguridad.
-                  </p>
-                </div>
-              </div>
+              <ul className="list-disc list-inside text-textMuted text-lg space-y-2">
+                <li>
+                  <strong>Calidad de Datos:</strong> Diseccionamos la precisión, completitud y consistencia de los datos, garantizando que sean confiables y útiles para la toma de decisiones estratégicas.
+                </li>
+                <li>
+                  <strong>Cumplimiento Normativo:</strong> Aseguramos que la gestión de datos cumpla con las regulaciones vigentes (GDPR, LOPD, etc.), evitando riesgos legales y operacionales.
+                </li>
+                <li>
+                  <strong>Seguridad de Datos:</strong> Examinamos vulnerabilidades y aplicamos estrategias para blindar los activos de información contra accesos no autorizados y brechas de seguridad.
+                </li>
+              </ul>
             </div>
-
             <div>
               <Image
                 src="/placeholder.svg?height=600&width=500"
@@ -219,8 +154,9 @@ const DataScience = () => {
         {/* Sección 04 - Inteligencia Artificial y Machine Learning */}
         <div className="mb-20">
           <div className="text-2xl text-primary mb-10">04</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Inteligencia Artificial y Machine Learning</h3>
-
+          <h3 className="text-3xl font-bold text-textPrimary mb-10">
+            Inteligencia Artificial y Machine Learning
+          </h3>
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <Image
@@ -231,92 +167,24 @@ const DataScience = () => {
                 className="rounded-md object-cover"
               />
             </div>
-
             <div>
               <p className="text-textMuted text-lg mb-8">
-                Implementamos soluciones avanzadas de IA y Machine Learning para automatizar procesos, detectar patrones
-                complejos y generar predicciones precisas. Nuestros modelos se adaptan a las necesidades específicas de
-                tu negocio, proporcionando resultados tangibles y medibles.
+                La inteligencia artificial no es solo una herramienta; es una nueva forma de percibir el software. Cada modelo que construimos es un sistema que aprende, se adapta y evoluciona con el entorno, descubriendo patrones donde el ojo humano solo vería cajas negras. En esta frontera del conocimiento, la IA y el Machine Learning se erigen como arquitectos del futuro, automatizando procesos, revelando estructuras invisibles y generando predicciones con una precisión sin precedentes.
               </p>
-
-              <div className="space-y-8">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <Brain className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Modelos Predictivos</h4>
-                    <p className="text-textMuted">
-                      Desarrollamos algoritmos que anticipan comportamientos, tendencias y resultados futuros.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <ClipboardCheck className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Sistemas de Recomendación</h4>
-                    <p className="text-textMuted">
-                      Creamos sistemas inteligentes que sugieren productos, contenidos o acciones personalizadas.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-custom-2 flex items-center justify-center flex-shrink-0">
-                    <Search className="w-6 h-6 text-highlight" />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-textPrimary mb-2">Procesamiento de Lenguaje Natural</h4>
-                    <p className="text-textMuted">
-                      Analizamos textos para extraer sentimientos, temas y entidades relevantes para tu negocio.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Sección 05 - Tendencias del Mercado */}
-        <div className="mb-20">
-          <div className="text-2xl text-primary mb-10">05</div>
-          <h3 className="text-3xl font-bold text-textPrimary mb-10">Tendencias del Mercado en Ciencia de Datos</h3>
-
-          <div className="grid md:grid-cols-3 gap-10">
-            <div>
-              <div className="w-16 h-16 rounded-full bg-custom-2 flex items-center justify-center mb-6">
-                <span className="text-highlight text-2xl font-bold">1</span>
-              </div>
-              <h4 className="text-xl font-bold text-textPrimary mb-4">DataOps y MLOps</h4>
-              <p className="text-textMuted">
-                Implementamos prácticas de DataOps y MLOps para automatizar y optimizar el ciclo de vida de los
-                proyectos de datos, reduciendo el tiempo de implementación y mejorando la calidad de los resultados.
-              </p>
-            </div>
-
-            <div>
-              <div className="w-16 h-16 rounded-full bg-custom-2 flex items-center justify-center mb-6">
-                <span className="text-highlight text-2xl font-bold">2</span>
-              </div>
-              <h4 className="text-xl font-bold text-textPrimary mb-4">IA Explicable (XAI)</h4>
-              <p className="text-textMuted">
-                Desarrollamos modelos de IA transparentes y comprensibles, permitiendo entender el razonamiento detrás
-                de cada predicción o recomendación, fundamental para sectores regulados y decisiones críticas.
-              </p>
-            </div>
-
-            <div>
-              <div className="w-16 h-16 rounded-full bg-custom-2 flex items-center justify-center mb-6">
-                <span className="text-highlight text-2xl font-bold">3</span>
-              </div>
-              <h4 className="text-xl font-bold text-textPrimary mb-4">Análisis en Tiempo Real</h4>
-              <p className="text-textMuted">
-                Implementamos soluciones de procesamiento de datos en tiempo real que permiten responder inmediatamente
-                a cambios en el comportamiento de usuarios, mercados o sistemas operativos.
-              </p>
+              <ul className="list-disc list-inside text-textMuted text-lg space-y-2">
+                <li>
+                  <strong>Modelos Predictivos:</strong> Diseñamos algoritmos capaces de anticipar comportamientos, tendencias y resultados futuros, transformando la incertidumbre en conocimiento estratégico.
+                </li>
+                <li>
+                  <strong>Sistemas de Recomendación:</strong> Desarrollamos motores de inteligencia capaces de sugerir productos, contenidos o acciones personalizadas, potenciando la interacción con los usuarios.
+                </li>
+                <li>
+                  <strong>Procesamiento de Lenguaje Natural:</strong> Desciframos el significado oculto en textos, extrayendo sentimientos, temas y entidades clave para comprender mejor las dinámicas del lenguaje y su impacto en el negocio.
+                </li>
+                <li>
+                  <strong>Automatización de Tareas:</strong> Implementamos soluciones en Python e IA que agilizan procesos repetitivos, optimizando tiempos y reduciendo errores humanos en operaciones críticas.
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -347,4 +215,3 @@ const DataScience = () => {
 }
 
 export default DataScience
-
