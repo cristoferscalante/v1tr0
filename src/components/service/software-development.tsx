@@ -100,10 +100,10 @@ const SoftwareDevelopment = () => {
 
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/ciclo-de-vida-del-software.png"
                 alt="Ciclo de vida del software"
-                width={500}
-                height={600}
+                width={800}
+                height={900}
                 className="rounded-md object-cover"
               />
             </div>
@@ -118,10 +118,10 @@ const SoftwareDevelopment = () => {
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/tecnologias-modernas.png"
                 alt="Tecnologías modernas"
-                width={500}
-                height={600}
+                width={600}
+                height={700}
                 className="rounded-md object-cover"
               />
             </div>
@@ -227,7 +227,7 @@ const SoftwareDevelopment = () => {
 
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/desarrollo-a-medida.png"
                 alt="Desarrollo a medida"
                 width={500}
                 height={600}

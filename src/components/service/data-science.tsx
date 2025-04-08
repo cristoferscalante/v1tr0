@@ -68,10 +68,10 @@ const DataScience = () => {
             </div>
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/analisis-de-datos.png"
                 alt="Análisis de datos"
-                width={500}
-                height={600}
+                width={800}
+                height={900}
                 className="rounded-md object-cover"
               />
             </div>
@@ -84,13 +84,13 @@ const DataScience = () => {
           <h3 className="text-3xl font-bold text-textPrimary mb-10">
             Visualización de Datos
           </h3>
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-16 ">
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/visualizacion-de-datos.png"
                 alt="Visualización de datos"
-                width={500}
-                height={600}
+                width={400}
+                height={500}
                 className="rounded-md object-cover"
               />
             </div>
@@ -141,10 +141,10 @@ const DataScience = () => {
             </div>
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/auditorias-de-datos.png"
                 alt="Auditorías de datos"
-                width={500}
-                height={600}
+                width={400}
+                height={500}
                 className="rounded-md object-cover"
               />
             </div>
@@ -160,10 +160,10 @@ const DataScience = () => {
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/inteligencia-artificial.png"
                 alt="Inteligencia Artificial"
-                width={500}
-                height={600}
+                width={600}
+                height={700}
                 className="rounded-md object-cover"
               />
             </div>

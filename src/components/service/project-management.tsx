@@ -94,7 +94,7 @@ const ProjectManagement = () => {
 
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/gestion-de-proyectos.png"
                 alt="Gestión de proyectos"
                 width={500}
                 height={600}
@@ -112,7 +112,7 @@ const ProjectManagement = () => {
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/implementacion-de-proyectos.png"
                 alt="Implementación de proyectos"
                 width={500}
                 height={600}
@@ -212,7 +212,7 @@ const ProjectManagement = () => {
 
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/investigacion-e-innovacion.png"
                 alt="Investigación e innovación"
                 width={500}
                 height={600}
@@ -230,7 +230,7 @@ const ProjectManagement = () => {
           <div className="grid md:grid-cols-2 gap-16">
             <div>
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/service/consultoria-estrategica.png"
                 alt="Consultoría estratégica"
                 width={500}
                 height={600}
