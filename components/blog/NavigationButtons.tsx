@@ -64,7 +64,7 @@ export default function NavigationButtons({ direction }: NavigationButtonsProps)
           </>
         ) : (
           <>
-            Ver posts
+            Ver post
             <ChevronDown className="w-4 h-4" />
           </>
         )}
