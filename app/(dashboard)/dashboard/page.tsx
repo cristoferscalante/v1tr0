@@ -124,14 +124,14 @@ export default function DashboardPage() {
       {/* Header mejorado */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold tracking-tight text-[#26FFDF]">
             Dashboard
           </h2>
           <p className="text-muted-foreground mt-1">
             Gestiona tus proyectos y supervisa el progreso del equipo
           </p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+        <Button className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold">
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Proyecto
         </Button>
@@ -139,72 +139,72 @@ export default function DashboardPage() {
       
       {/* Tarjetas de estadísticas mejoradas */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+        <Card className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">
+            <CardTitle className="text-sm font-medium text-[#26FFDF]">
               Total Proyectos
             </CardTitle>
-            <div className="p-2 bg-blue-500 rounded-full">
-              <Briefcase className="h-4 w-4 text-white" />
+            <div className="p-2 bg-[#08A696]/20 rounded-xl">
+              <Briefcase className="h-4 w-4 text-[#26FFDF]" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">12</div>
-            <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 mt-1">
+            <div className="text-2xl font-bold text-[#26FFDF]">12</div>
+            <div className="flex items-center text-xs text-textMuted mt-1">
               <TrendingUp className="h-3 w-3 mr-1" />
               +2 desde el mes pasado
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+        <Card className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">
+            <CardTitle className="text-sm font-medium text-[#26FFDF]">
               Proyectos Activos
             </CardTitle>
-            <div className="p-2 bg-green-500 rounded-full">
-              <ClipboardList className="h-4 w-4 text-white" />
+            <div className="p-2 bg-[#08A696]/20 rounded-xl">
+              <ClipboardList className="h-4 w-4 text-[#26FFDF]" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-900 dark:text-green-100">5</div>
-            <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-1">
+            <div className="text-2xl font-bold text-[#26FFDF]">5</div>
+            <div className="flex items-center text-xs text-textMuted mt-1">
               <Clock className="h-3 w-3 mr-1" />
               En desarrollo
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+        <Card className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">
+            <CardTitle className="text-sm font-medium text-[#26FFDF]">
               Clientes
             </CardTitle>
-            <div className="p-2 bg-purple-500 rounded-full">
-              <Users className="h-4 w-4 text-white" />
+            <div className="p-2 bg-[#08A696]/20 rounded-xl">
+              <Users className="h-4 w-4 text-[#26FFDF]" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">8</div>
-            <div className="flex items-center text-xs text-purple-600 dark:text-purple-400 mt-1">
+            <div className="text-2xl font-bold text-[#26FFDF]">8</div>
+            <div className="flex items-center text-xs text-textMuted mt-1">
               <TrendingUp className="h-3 w-3 mr-1" />
               +1 cliente nuevo
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900">
+        <Card className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">
+            <CardTitle className="text-sm font-medium text-[#26FFDF]">
               Completados
             </CardTitle>
-            <div className="p-2 bg-orange-500 rounded-full">
-              <CheckCircle className="h-4 w-4 text-white" />
+            <div className="p-2 bg-[#08A696]/20 rounded-xl">
+              <CheckCircle className="h-4 w-4 text-[#26FFDF]" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">3</div>
-            <div className="flex items-center text-xs text-orange-600 dark:text-orange-400 mt-1">
+            <div className="text-2xl font-bold text-[#26FFDF]">3</div>
+            <div className="flex items-center text-xs text-textMuted mt-1">
               <Calendar className="h-3 w-3 mr-1" />
               Este mes
             </div>
@@ -215,11 +215,11 @@ export default function DashboardPage() {
       {/* Sección de proyectos y actividad */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Proyectos Recientes */}
-        <Card className="col-span-2 border-0 shadow-lg">
+        <Card className="col-span-2 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl transition-all duration-300">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold">Proyectos Recientes</CardTitle>
-              <Button variant="ghost" size="sm" asChild>
+              <CardTitle className="text-lg font-semibold text-[#26FFDF]">Proyectos Recientes</CardTitle>
+              <Button className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] px-4 py-2" asChild>
                 <Link href="/dashboard/projects">
                   Ver todos
                   <Eye className="ml-2 h-4 w-4" />
@@ -229,26 +229,26 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {projects.map((project) => (
-              <div key={project.id} className="flex items-center space-x-4 p-4 rounded-lg border bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 hover:shadow-md transition-all duration-200">
+              <div key={project.id} className="flex items-center space-x-4 p-4 rounded-2xl border border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm hover:shadow-md hover:border-[#08A696] transition-all duration-300">
                 <div className={`w-2 h-12 rounded-full ${getStatusColor(project.status)}`} />
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">{project.name}</h4>
+                    <h4 className="font-medium text-[#26FFDF]">{project.name}</h4>
                     <Badge variant={getPriorityColor(project.priority)}>
                       {project.priority}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{project.client}</p>
+                  <p className="text-sm text-textMuted">{project.client}</p>
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span>Progreso</span>
-                      <span>{project.progress}%</span>
+                      <span className="text-textMuted">Progreso</span>
+                      <span className="text-[#26FFDF]">{project.progress}%</span>
                     </div>
                     <Progress value={project.progress} className="h-2" />
                   </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center justify-between text-xs text-textMuted">
                     <span>Vence: {new Date(project.dueDate).toLocaleDateString()}</span>
-                    <Button variant="ghost" size="sm">
+                    <Button className="bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-1 h-6 w-6 rounded">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </div>
@@ -259,26 +259,26 @@ export default function DashboardPage() {
         </Card>
 
         {/* Actividad Reciente */}
-        <Card className="border-0 shadow-lg">
+        <Card className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl transition-all duration-300">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold">Actividad Reciente</CardTitle>
+            <CardTitle className="text-lg font-semibold text-[#26FFDF]">Actividad Reciente</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {activities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+              <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-2xl bg-[#08A696]/5 hover:bg-[#08A696]/10 transition-colors border border-[#08A696]/10">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={activity.avatar} />
-                  <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+                  <AvatarFallback className="text-xs bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30">
                     {activity.user.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm">
-                    <span className="font-medium">{activity.user}</span>{' '}
-                    {activity.action}{' '}
-                    <span className="font-medium text-blue-600">{activity.project}</span>
+                    <span className="font-medium text-[#26FFDF]">{activity.user}</span>{' '}
+                    <span className="text-textMuted">{activity.action}</span>{' '}
+                    <span className="font-medium text-[#08A696]">{activity.project}</span>
                   </p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
+                  <p className="text-xs text-textMuted">{activity.time}</p>
                 </div>
               </div>
             ))}

@@ -33,11 +33,11 @@ export function DashboardHeader() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-custom-2/20 bg-backgroundSecondary/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between py-4">
         <div className="flex items-center gap-4">
           {isMobile && (
-            <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden">
+            <Button className="md:hidden bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-2 h-8 w-8 rounded" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle Menu</span>
             </Button>
@@ -45,7 +45,7 @@ export function DashboardHeader() {
 
           <Link href="/dashboard" className="flex items-center gap-2">
             <Image src="/v1tr0-logo.svg" alt="V1TR0 Logo" width={32} height={32} />
-            <span className="hidden font-bold sm:inline-block">V1TR0 Dashboard</span>
+            <span className="hidden font-bold sm:inline-block text-[#26FFDF]">V1TR0</span>
           </Link>
         </div>
 
@@ -55,21 +55,21 @@ export function DashboardHeader() {
             <input
               type="search"
               placeholder="Buscar..."
-              className="pl-10 h-9 w-64 rounded-md border border-custom-2/20 bg-custom-1/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
+              className="pl-10 h-9 w-64 rounded-2xl border border-[#08A696]/30 bg-[#02505931] backdrop-blur-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#08A696]/20 focus:border-[#08A696] text-[#26FFDF]"
             />
           </div>
 
-          <Button variant="ghost" size="icon" className="relative">
+          <Button className="relative bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-2 h-9 w-9 rounded-xl">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-highlight"></span>
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#08A696]"></span>
           </Button>
 
           <ThemeToggle />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+              <Button className="relative h-9 w-9 rounded-full bg-[#08A696]/10 hover:bg-[#08A696]/20 border border-[#08A696]/30 p-0">
                 <Image
                   src="/diverse-professional-profiles.png"
                   alt="Avatar"

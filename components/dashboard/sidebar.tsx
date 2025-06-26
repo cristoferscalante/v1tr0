@@ -33,8 +33,10 @@ function SidebarItem({ href, icon, title, isActive, isExpanded, hasChildren, onC
     return (
       <div
         className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all cursor-pointer",
-          isActive ? "bg-custom-2/30 text-highlight" : "text-textMuted hover:bg-custom-1/50 hover:text-textPrimary",
+          "flex items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-all cursor-pointer border",
+          isActive 
+            ? "bg-[#02505931] backdrop-blur-sm border-[#08A696]/30 text-[#26FFDF]" 
+            : "text-textMuted hover:bg-[#02505931] hover:backdrop-blur-sm hover:border-[#08A696]/20 hover:text-[#26FFDF] border-transparent",
         )}
         onClick={onClick}
         role="button"
@@ -53,8 +55,10 @@ function SidebarItem({ href, icon, title, isActive, isExpanded, hasChildren, onC
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-        isActive ? "bg-custom-2/30 text-highlight" : "text-textMuted hover:bg-custom-1/50 hover:text-textPrimary",
+        "flex items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-all border",
+        isActive 
+          ? "bg-[#02505931] backdrop-blur-sm border-[#08A696]/30 text-[#26FFDF]" 
+          : "text-textMuted hover:bg-[#02505931] hover:backdrop-blur-sm hover:border-[#08A696]/20 hover:text-[#26FFDF] border-transparent",
       )}
     >
       {icon}
@@ -78,9 +82,9 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="hidden md:flex w-64 flex-col border-r border-custom-2/20 bg-backgroundSecondary">
+    <aside className="hidden md:flex w-64 flex-col border-r border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm">
       <div className="flex-1 overflow-auto py-4 px-3">
-        <nav className="grid gap-1">
+        <nav className="grid gap-2">
           <SidebarItem
             href="/dashboard"
             icon={<LayoutDashboard className="h-4 w-4" />}
@@ -139,8 +143,8 @@ export function DashboardSidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto border-t border-custom-2/20 py-4 px-3">
-        <nav className="grid gap-1">
+      <div className="mt-auto border-t border-[#08A696]/20 py-4 px-3">
+        <nav className="grid gap-2">
           <SidebarItem
             href="/dashboard/settings"
             icon={<Settings className="h-4 w-4" />}

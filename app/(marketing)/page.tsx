@@ -7,18 +7,22 @@ import SoftwarePortfolio from "@/components/home/SoftwarePortfolio"
 import DataAnalysisPage from "@/components/home/DataAnalysisPage"
 import DataAnalysisPortfolio from "@/components/home/DataAnalysisPortfolio"
 import ProjectManagementPage from "@/components/home/ProjectManagementPage"
+import PinnedScrollSection from "@/components/home/PinnedScrollSection"
+import SmoothTransitionWrapper from "@/components/home/SmoothTransitionWrapper"
 
 export default function Home() {
   return (
     <>
       <BackgroundAnimation />
-      <HomeBanner />
-      <TechnologiesSection />
-      <SoftwareDevelopmentBanner />
-      <SoftwarePortfolio />
-      <DataAnalysisPage />
-      <DataAnalysisPortfolio />
-      <ProjectManagementPage />
+      <HomeBanner />      
+      <PinnedScrollSection>
+        <SoftwareDevelopmentBanner />
+        <DataAnalysisPage />
+        <ProjectManagementPage />
+      </PinnedScrollSection>
+      <SmoothTransitionWrapper>
+        <TechnologiesSection />
+      </SmoothTransitionWrapper>
     </>
   )
 }
