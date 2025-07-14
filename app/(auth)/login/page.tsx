@@ -137,10 +137,7 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"></div>
-                      <span className="ml-2">Iniciando sesión...</span>
-                    </div>
+                    "Iniciando sesión..."
                   ) : (
                     <>
                       <LogIn className="mr-2 h-4 w-4" />
