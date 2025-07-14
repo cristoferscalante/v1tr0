@@ -40,8 +40,12 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.51.0",
     "@tailwindcss/typography": "latest",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.6.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -59,6 +63,7 @@
     "react": "^18",
     "react-day-picker": "latest",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.0",
     "react-hook-form": "^7.54.1",
     "react-markdown": "latest",
     "react-resizable-panels": "^2.1.7",
@@ -67,14 +72,12 @@
     "rehype-raw": "latest",
     "rehype-slug": "latest",
     "remark-gfm": "latest",
+    "socket.io-client": "^4.7.0",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
-    "zod": "^3.24.1",
-    "axios": "^1.6.0",
-    "socket.io-client": "^4.7.0",
-    "react-dropzone": "^14.2.0"
+    "zod": "^3.24.1"
   },
   "overrides": {
     "prismjs": "^1.30.0"

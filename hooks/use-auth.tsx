@@ -1,97 +1,192 @@
-'use client';
+"use client"
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { User, authApi } from '@/lib/api';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
+import { User as SupabaseUser, Session } from '@supabase/supabase-js'
+import { supabase, AuthUser } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  isAuthenticated: boolean;
-  isAdmin: boolean;
+  user: AuthUser | null
+  session: Session | null
+  isLoading: boolean
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  signUp: (email: string, password: string, name?: string) => Promise<{ success: boolean; error?: string }>
+  signOut: () => Promise<void>
+  signInWithProvider: (provider: 'google') => Promise<{ success: boolean; error?: string }>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
-    // Verificar si hay token guardado al cargar la página
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('Error getting session:', error)
+      }
+      
+      setSession(session)
+      if (session?.user) {
+        await fetchUserProfile(session.user)
+      }
+      setIsLoading(false)
     }
 
-    setLoading(false);
-  }, []);
+    getInitialSession()
 
-  useEffect(() => {
-    // Verificar token con el servidor si existe
-    if (token && !user) {
-      verifyToken();
-    }
-  }, [token]);
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session)
+      
+      if (session?.user) {
+        await fetchUserProfile(session.user)
+      } else {
+        setUser(null)
+      }
+      
+      setIsLoading(false)
+    })
 
-  const verifyToken = async () => {
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
-      const response = await authApi.me();
-      setUser(response.data);
-      localStorage.setItem('user', JSON.stringify(response.data));
-    } catch (error) {
-      // Token inválido
-      logout();
-    }
-  };
+      // Fetch user profile from profiles table
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single()
 
-  const login = async (email: string, password: string) => {
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching user profile:', error)
+        return
+      }
+
+      const userProfile: AuthUser = {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: data?.name || supabaseUser.user_metadata?.name || '',
+        avatar: data?.avatar || supabaseUser.user_metadata?.avatar_url || '',
+        role: data?.role || 'user'
+      }
+
+      setUser(userProfile)
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+    }
+  }
+
+  const signIn = async (email: string, password: string) => {
     try {
-      const response = await authApi.login(email, password);
-      const { access_token } = response.data;
+      setIsLoading(true)
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
 
-      setToken(access_token);
-      localStorage.setItem('token', access_token);
+      if (error) {
+        return { success: false, error: error.message }
+      }
 
-      // Obtener datos del usuario
-      const userResponse = await authApi.me();
-      setUser(userResponse.data);
-      localStorage.setItem('user', JSON.stringify(userResponse.data));
+      return { success: true }
     } catch (error) {
-      throw error;
+      return { success: false, error: 'Error inesperado al iniciar sesión' }
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  };
+  const signUp = async (email: string, password: string, name?: string) => {
+    try {
+      setIsLoading(true)
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name || ''
+          }
+        }
+      })
 
-  const value: AuthContextType = {
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: 'Error inesperado al registrarse' }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const signOut = async () => {
+    try {
+      setIsLoading(true)
+      await supabase.auth.signOut()
+      setUser(null)
+      setSession(null)
+      router.push('/')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const signInWithProvider = async (provider: 'google') => {
+    try {
+      setIsLoading(true)
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: 'Error inesperado al iniciar sesión con proveedor' }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const value = {
     user,
-    token,
-    loading,
-    login,
-    logout,
-    isAuthenticated: !!user,
-    isAdmin: user?.is_admin || false,
-  };
+    session,
+    isLoading,
+    signIn,
+    signUp,
+    signOut,
+    signInWithProvider
+  }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider')
   }
-  return context;
+  return context
 }

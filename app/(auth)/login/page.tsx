@@ -2,57 +2,59 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, LogIn, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import BackgroundAnimation from "@/components/home/BackgroungAnimation"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-
-// Importar las credenciales y la función de validación
-import { demoCredentials, validateCredentials } from "@/lib/auth/credentials"
+import { useAuth } from "@/hooks/use-auth"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [message, setMessage] = useState("")
+  const { signIn, signInWithProvider, isLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
-  // Modificar la función handleSubmit para usar la validación
+  useEffect(() => {
+    const urlMessage = searchParams.get('message')
+    if (urlMessage === 'check_email') {
+      setMessage('Revisa tu correo electrónico para verificar tu cuenta antes de iniciar sesión.')
+    }
+  }, [searchParams])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError("")
 
-    try {
-      // Validar credenciales
-      const result = validateCredentials(email, password)
+    const result = await signIn(email, password)
 
-      // Simular un pequeño retraso para mostrar el estado de carga
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      if (result.success) {
-        // Redirigir según el rol
-        if (result.user.role === "admin") {
-          router.push("/dashboard")
-        } else if (result.user.role === "client") {
-          router.push("/dashboard/client")
-        }
-      } else {
-        setError(result.error)
-      }
-    } catch (err) {
-      setError("Error al iniciar sesión. Por favor, inténtalo de nuevo.")
-    } finally {
-      setIsLoading(false)
+    if (result.success) {
+      // Redirigir al dashboard - el AuthProvider se encargará de determinar el rol
+      router.push("/dashboard")
+    } else {
+      setError(result.error || "Error al iniciar sesión")
     }
+  }
+
+  const handleProviderSignIn = async (provider: 'google') => {
+    setError("")
+    
+    const result = await signInWithProvider(provider)
+    
+    if (!result.success) {
+      setError(result.error || `Error al iniciar sesión con ${provider}`)
+    }
+    // Si es exitoso, la redirección se maneja automáticamente
   }
 
   return (
@@ -73,6 +75,13 @@ export default function LoginPage() {
             </CardHeader>
 
             <CardContent>
+              {message && (
+                <div className="bg-blue-500/20 border border-blue-500/30 text-blue-400 px-4 py-3 rounded-2xl mb-4 text-sm backdrop-blur-sm flex items-center">
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  {message}
+                </div>
+              )}
+
               {error && (
                 <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-2xl mb-4 text-sm backdrop-blur-sm">
                   {error}
@@ -147,39 +156,23 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              {/* Añadir información de credenciales de demostración */}
-              {/* Añadir después del formulario, antes del CardFooter */}
-              <div className="mt-6 p-4 bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20">
-                <h3 className="text-sm font-medium mb-2 text-[#26FFDF]">Credenciales de demostración:</h3>
-                <div className="space-y-2 text-xs text-textMuted">
-                  <div>
-                    <p className="font-semibold text-[#26FFDF]">Administrador:</p>
-                    <p>Email: {demoCredentials.admin.email}</p>
-                    <p>Contraseña: {demoCredentials.admin.password}</p>
+              <div className="mt-6">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-[#08A696]/20"></span>
                   </div>
-                  <div>
-                    <p className="font-semibold text-[#26FFDF]">Cliente:</p>
-                    <p>Email: {demoCredentials.client.email}</p>
-                    <p>Contraseña: {demoCredentials.client.password}</p>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-[#02505931] px-2 text-textMuted">O continúa con</span>
                   </div>
-                </div>
-              </div>
-
-              <div className="mt-6">                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-[#08A696]/20"></span>
-                    </div>
-                    <div className="relative flex justify-center text-xs">
-                      <span className="bg-[#02505931] px-2 text-textMuted">O continúa con</span>
-                    </div>
-                  </div>                  <div className="mt-4 flex gap-2">
-                    <Button className="w-full bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF]">
+                </div>                  <div className="mt-4">
+                    <Button 
+                      type="button"
+                      onClick={() => handleProviderSignIn('google')}
+                      disabled={isLoading}
+                      className="w-full bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF]"
+                    >
                       <Image src="/icons/google.svg" width={16} height={16} alt="Google" className="mr-2" />
-                      Google
-                    </Button>
-                    <Button className="w-full bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF]">
-                      <Image src="/icons/microsoft.svg" width={16} height={16} alt="Microsoft" className="mr-2" />
-                      Microsoft
+                      Continuar con Google
                     </Button>
                   </div>
               </div>
