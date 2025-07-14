@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
 import { User as SupabaseUser, Session } from '@supabase/supabase-js'
-import { supabase, AuthUser } from '@/lib/supabase/client'
+import { supabase, AuthUser, getSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 interface AuthContextType {
@@ -24,19 +24,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
+    // Check if Supabase client is available
+    if (!supabase) {
+      console.warn('Supabase client not available, skipping auth initialization')
+      setIsLoading(false)
+      return
+    }
+
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      
-      if (error) {
-        console.error('Error getting session:', error)
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('Error getting session:', error)
+        }
+        
+        setSession(session)
+        if (session?.user) {
+          await fetchUserProfile(session.user)
+        }
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Error in getInitialSession:', error)
+        setIsLoading(false)
       }
-      
-      setSession(session)
-      if (session?.user) {
-        await fetchUserProfile(session.user)
-      }
-      setIsLoading(false)
     }
 
     getInitialSession()
@@ -76,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: supabaseUser.email!,
         name: data?.name || supabaseUser.user_metadata?.name || '',
         avatar: data?.avatar || supabaseUser.user_metadata?.avatar_url || '',
-        role: data?.role || 'user'
+        role: (data?.role as 'admin' | 'user') || 'user'
       }
 
       setUser(userProfile)
