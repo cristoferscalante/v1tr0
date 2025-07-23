@@ -12,11 +12,13 @@ export default function DataAnalysisPage() {
     features: [
       {
         icon: <BarChartIcon className="w-6 h-6" />,
-        text: "Consultoría en cultura de datos & análisis avanzados.",
+        text: "Sistemas de gestión de datos institucionales, agenciales & comerciales.",
       },
       {
         icon: <PieChartIcon className="w-6 h-6" />,
-        text: "Visualización de estructuras de datos jerárquicas, relacionales, espaciales y temporales.",
+
+        text: "Análisis avanzado & Visualización de estructuras de datos jerárquicas, relacionales, espaciales y temporales.",
+
       },
       {
         icon: <TrendingUpIcon className="w-6 h-6" />,
