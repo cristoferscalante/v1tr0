@@ -8,7 +8,7 @@ export default function DataAnalysisPage() {
   const serviceData = {
     title: "¡Potencia tu estrategia, automatiza tu información!", // ← EDITA ESTE TÍTULO
     description:
-      "Los datos son un activo estratégico. Comprenderlos, gestionarlos y convertirlos en decisiones inteligentes es lo que marca la diferencia. ¿Cómo se logra esto? Construyendo una infraestructura de datos robusta: desde fomentar una cultura de datos, a la identificación de insights o patrones. Ello permite llegar a automatizar el proceso con reportes que revelen lo que está ocurriendo mes a mes en tu entorno organizativo o sistema de trabajo.", // ← EDITA ESTA DESCRIPCIÓN
+      "Los datos son un activo estratégico. Comprenderlos, gestionarlos y convertirlos en decisiones inteligentes es lo que marca la diferencia.", // ← EDITA ESTA DESCRIPCIÓN
     features: [
       {
         icon: <BarChartIcon className="w-6 h-6" />,
@@ -16,11 +16,11 @@ export default function DataAnalysisPage() {
       },
       {
         icon: <PieChartIcon className="w-6 h-6" />,
-        text: "Automatización de reportes de Análisis y Visualización de datos",
+        text: "Visualización de estructuras de datos jerárquicas, relacionales, espaciales y temporales.",
       },
       {
         icon: <TrendingUpIcon className="w-6 h-6" />,
-        text: "Automatización de tareas e implementacion de agentes IA",
+        text: "Diseño de dashboards e informes interactivos para la toma de decisiones.",
       },
     ],
     imageSrc:
