@@ -16,7 +16,9 @@ export default function DataAnalysisPage() {
       },
       {
         icon: <PieChartIcon className="w-6 h-6" />,
+
         text: "Análisis avanzado & Visualización de estructuras de datos jerárquicas, relacionales, espaciales y temporales.",
+
       },
       {
         icon: <TrendingUpIcon className="w-6 h-6" />,

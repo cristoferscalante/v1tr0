@@ -23,7 +23,7 @@ export default function ModernTechnologiesSection() {
       id: 2,
       icon: <Server className="w-8 h-8" />,
       name: "Backend",
-      description: "Arquitecturas robustas y escalables",
+      description: "Arquitecturas robustas",
       techs: ["Node.js", "Python"],
       color: "from-custom-2 to-custom-3",
     },
