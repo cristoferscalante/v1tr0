@@ -170,6 +170,29 @@ body {
   border-radius: 0.5em;
 }
 
+/* Optimizaciones para animaciones GSAP */
+.gsap-section {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.gsap-container {
+  overflow: hidden;
+  position: relative;
+}
+
+/* Aceleración por hardware para smooth scrolling */
+.horizontal-scroll-container {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.horizontal-scroll-section {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
 /* Transiciones suaves para cambios de tema */
 * {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
