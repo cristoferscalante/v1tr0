@@ -28,16 +28,21 @@ export default function PinnedScrollSection({
   useEffect(() => {
     setMounted(true)
     
-    // Detectar móvil
+    // Detectar móvil de manera simple y directa
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768)
+      const width = window.innerWidth
+      setIsMobile(width < 1024) // Simplemente usar el ancho como criterio principal
     }
     
     checkMobile()
+    
+    // Listener simple para resize
     window.addEventListener('resize', checkMobile)
+    window.addEventListener('orientationchange', checkMobile)
     
     return () => {
       window.removeEventListener('resize', checkMobile)
+      window.removeEventListener('orientationchange', checkMobile)
     }
   }, [])
 
@@ -70,7 +75,8 @@ export default function PinnedScrollSection({
         start: "top top",
         end: "+=5000",
         anticipatePin: 1,
-        invalidateOnRefresh: true
+        invalidateOnRefresh: true,
+        refreshPriority: -1 // Prioridad baja para evitar conflictos con resize
       }
     })
 
@@ -182,18 +188,28 @@ export default function PinnedScrollSection({
     )
   }
 
-  // Si es móvil, renderizar layout normal sin scroll pinned
+  // Si es móvil, renderizar layout simple y plano
   if (isMobile) {
     return (
       <div className={`w-full ${className}`}>
-        {children.map((child, index) => (
-          <div 
-            key={index}
-            className="w-full min-h-screen"
-          >
-            {child}
-          </div>
-        ))}
+        {children.map((child, index) => {
+          // La última sección no debería tener min-h-screen para evitar espacio extra
+          const isLastSection = index === children.length - 1
+          
+          return (
+            <div 
+              key={index}
+              className={`w-full ${isLastSection ? 'min-h-fit' : 'min-h-screen'} flex items-center justify-center`}
+              style={{ 
+                minHeight: isLastSection ? 'fit-content' : '100vh'
+              }}
+            >
+              <div className={`w-full h-full flex flex-col justify-center px-4 ${isLastSection ? 'py-4' : 'py-8'}`}>
+                {child}
+              </div>
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -212,7 +228,7 @@ export default function PinnedScrollSection({
         {children.map((child, index) => (
           <div 
             key={index}
-            ref={(el: HTMLDivElement | null) => sectionsRef.current[index] = el}
+            ref={(el: HTMLDivElement | null) => { sectionsRef.current[index] = el }}
             className="flex-shrink-0 w-full h-full gsap-section horizontal-scroll-section"
             style={{ width: `${100 / sectionsCount}%` }}
           >
