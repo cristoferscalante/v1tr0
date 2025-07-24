@@ -6,6 +6,7 @@ import { Menu, X, LogIn } from "lucide-react"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "@/components/theme-provider"
+import { motion } from "framer-motion"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,7 +23,12 @@ export default function Navbar() {
   }, [])
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4">
+    <motion.div 
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+    >
       <nav
         className={`bg-backgroundSecondary/85 backdrop-blur-xl max-w-[1400px] text-textPrimary rounded-full transition-all duration-300 ease-in-out`}
       >
@@ -46,7 +52,7 @@ export default function Navbar() {
                   alt="V1TR0 Logo" 
                   width={scrolled ? 44 : 58} 
                   height={scrolled ? 44 : 58} 
-                  className={`${scrolled ? 'h-11' : 'h-16'} w-auto filter brightness-110 hover:brightness-125 transition-all duration-300`} 
+                  className={`${scrolled ? 'h-11' : 'h-16'} w-auto filter brightness-110 hover:brightness-125 hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer`} 
                 />
               </Link>
             </div>
@@ -144,7 +150,7 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 
