@@ -1,11 +1,38 @@
 "use client"
 import CardBanner from "@/components/home/shared/CardBanner"
 import { useTheme } from "@/components/theme-provider"
+import { motion } from "framer-motion"
 
 // Rutas a los archivos SVG
 const devSvg = "/dev.svg"
 const dataSvg = "/data.svg"
 const pmSvg = "/pm.svg"
+
+// Variantes de animación
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1
+    }
+  }
+}
+
+const itemVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 30
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6
+    }
+  }
+}
 
 export default function HomeBanner() {
   const { theme } = useTheme()
@@ -21,9 +48,17 @@ export default function HomeBanner() {
       <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-custom-3 opacity-20 blur-xl" />
       <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full bg-custom-4 opacity-20 blur-xl" />
 
-      <div className="max-w-6xl mx-auto z-10 flex flex-col items-center text-center">
+      <motion.div 
+        className="max-w-6xl mx-auto z-10 flex flex-col items-center text-center"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Badge */}
-        <div className="relative group mt-[30px] md:mt-0 mb-8 inline-flex items-center">
+        <motion.div 
+          className="relative group mt-[30px] md:mt-0 mb-8 inline-flex items-center"
+          variants={itemVariants}
+        >
           {/* Gradiente de fondo con blur */}
           <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`} />
           
@@ -36,26 +71,35 @@ export default function HomeBanner() {
               →
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Título principal */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight max-w-5xl">
+        <motion.h1 
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight max-w-5xl"
+          variants={itemVariants}
+        >
           <span className="block text-textPrimary">Transformamos tu potencial</span>
           <span className={`block ${isDark ? "text-highlight" : "text-primary"}`}>en innovación y resultados</span>
-        </h1>
+        </motion.h1>
 
         {/* Subtítulo */}
-        <p className="text-textMuted text-lg md:text-xl max-w-3xl mb-12">
+        <motion.p 
+          className="text-textMuted text-lg md:text-xl max-w-3xl mb-12"
+          variants={itemVariants}
+        >
           Gestionando tus proyectos con un flujo transparente
-        </p>
+        </motion.p>
 
         {/* Tarjetas con servicios */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-8"
+          variants={itemVariants}
+        >
           <CardBanner icon={devSvg} title="Desarrollo de Software a Medida" href="/services/dev" />
           <CardBanner icon={dataSvg} title="Análisis y visualización de datos" href="/services/data" />
           <CardBanner icon={pmSvg} title="Creación y Gestión de Proyectos" href="/services/pm" />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   )
 }
