@@ -41,9 +41,12 @@ export function FloatingLoginButton() {
           <motion.button
             className="flex items-center justify-center gap-2 px-6 py-3 rounded-full text-white shadow-lg"
             style={{
-              background: "linear-gradient(135deg, rgba(242, 106, 27, 0.7), rgba(255, 140, 66, 0.7))",
-              boxShadow: isHovered ? "0 10px 25px rgba(242, 106, 27, 0.3)" : "0 6px 15px rgba(242, 106, 27, 0.2)",
+              background: "linear-gradient(135deg, rgba(38, 255, 223, 0.7), rgba(38, 255, 223, 0.7))",
+              boxShadow: isHovered
+                ? "0 10px 25px rgba(38, 255, 223, 0.3)"
+                : "0 6px 15px rgba(38, 255, 223, 0.2)",
             }}
+
             whileHoverScale={1.05}
             whileTap={{ scale: 0.95 }}
             onMouseEnter={() => setIsHovered(true)}

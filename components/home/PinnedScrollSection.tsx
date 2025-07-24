@@ -1,6 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+// Registrar el plugin
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 interface PinnedScrollSectionProps {
   children: React.ReactNode[]
@@ -12,17 +19,16 @@ export default function PinnedScrollSection({
   className = "" 
 }: PinnedScrollSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [currentSection, setCurrentSection] = useState(0)
-  const [isFixed, setIsFixed] = useState(false)
+  const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
   const [mounted, setMounted] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const sectionsCount = children.length
+  const tlRef = useRef<gsap.core.Timeline | null>(null)
 
   useEffect(() => {
     setMounted(true)
     
-    // Detectar móvil de manera simple
+    // Detectar móvil
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768)
     }
@@ -35,92 +41,130 @@ export default function PinnedScrollSection({
     }
   }, [])
 
-  // Desktop: comportamiento de scroll pinned
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || !contentRef.current) return
-
-    const container = containerRef.current
-    const content = contentRef.current
-    const rect = container.getBoundingClientRect()
-    const windowHeight = window.innerHeight
-    const containerHeight = container.offsetHeight
-
-    // Simplificar la lógica de fijación
-    const shouldBeFixed = rect.top <= 0 && rect.bottom > windowHeight
-
-    if (shouldBeFixed !== isFixed) {
-      setIsFixed(shouldBeFixed)
-    }
-
-    if (shouldBeFixed) {
-      // Cálculo más simple del progreso
-      const scrolled = Math.abs(rect.top)
-      const maxScroll = containerHeight - windowHeight
-      const progress = Math.min(scrolled / maxScroll, 1)
-      
-      // Determinar sección actual de manera más directa
-      const section = Math.floor(progress * sectionsCount)
-      const clampedSection = Math.max(0, Math.min(section, sectionsCount - 1))
-      
-      if (clampedSection !== currentSection) {
-        setCurrentSection(clampedSection)
-      }
-
-      // Fijar el contenido
-      content.style.position = 'fixed'
-      content.style.top = '0'
-      content.style.left = '0'
-      content.style.width = '100%'
-      content.style.height = '100vh'
-      content.style.zIndex = '10'
-      content.style.opacity = '1'
-    } else {
-      // Liberar el contenido
-      content.style.position = 'relative'
-      content.style.top = 'auto'
-      content.style.left = 'auto'
-      content.style.zIndex = 'auto'
-      content.style.opacity = '1'
-    }
-  }, [isFixed, currentSection, sectionsCount])
-
   useEffect(() => {
-    // Si es móvil o no está montado, no ejecutar la lógica de scroll pinned
-    if (!mounted || isMobile || !containerRef.current) return
+    if (!mounted || isMobile || !containerRef.current || sectionsCount <= 1) return
 
-    // Altura simple y consistente
-    const totalHeight = sectionsCount * window.innerHeight * 1.5
-    containerRef.current.style.height = `${totalHeight}px`
-
-    let ticking = false
-    const scrollHandler = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll()
-          ticking = false
-        })
-        ticking = true
-      }
+    // Limpiar animaciones previas
+    if (tlRef.current) {
+      tlRef.current.kill()
     }
+    ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
 
-    window.addEventListener('scroll', scrollHandler, { passive: true })
-    window.addEventListener('resize', scrollHandler, { passive: true })
+    const sections = sectionsRef.current.filter(Boolean) as HTMLDivElement[]
+    if (sections.length === 0) return
+
+    // Configurar el timeline principal con GSAP
+    const duration = 10
+    const sectionIncrement = duration / (sections.length - 1)
     
-    handleScroll()
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        pin: true,
+        scrub: 1,
+        snap: {
+          snapTo: 1 / (sections.length - 1),
+          duration: { min: 0.2, max: 0.6 },
+          delay: 0.1
+        },
+        start: "top top",
+        end: "+=5000",
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      }
+    })
+
+    // Animación horizontal principal
+    tl.to(sections, {
+      xPercent: -100 * (sections.length - 1),
+      duration: duration,
+      ease: "none"
+    })
+
+    // Animaciones de entrada/salida para cada sección
+    sections.forEach((section, index) => {
+      // Configurar cada sección para optimización de GPU
+      gsap.set(section, { 
+        willChange: 'transform',
+        force3D: true 
+      })
+
+      let tween = gsap.from(section, {
+        opacity: 0,
+        scale: 0.9,
+        y: 50,
+        duration: 1,
+        force3D: true,
+        paused: true,
+        ease: "power2.out"
+      })
+
+      // Usar la función helper para callbacks
+      addSectionCallbacks(tl, {
+        start: sectionIncrement * (index - 0.99),
+        end: sectionIncrement * (index + 0.99),
+        onEnter: () => tween.play(),
+        onLeave: () => tween.reverse(),
+        onEnterBack: () => tween.play(),
+        onLeaveBack: () => tween.reverse()
+      })
+
+      // La primera sección debe empezar visible
+      if (index === 0) tween.progress(1)
+    })
+
+    tlRef.current = tl
 
     return () => {
-      window.removeEventListener('scroll', scrollHandler)
-      window.removeEventListener('resize', scrollHandler)
-      if (contentRef.current) {
-        const content = contentRef.current
-        content.style.position = 'relative'
-        content.style.top = 'auto'
-        content.style.left = 'auto'
-        content.style.zIndex = 'auto'
-        content.style.opacity = '1'
-      }
+      tl.kill()
+      ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
     }
-  }, [handleScroll, sectionsCount, isMobile, mounted])
+  }, [mounted, isMobile, sectionsCount])
+
+  // Función helper para callbacks de secciones (adaptada del ejemplo GSAP)
+  const addSectionCallbacks = (timeline: any, {
+    start, end, onEnter, onLeave, onEnterBack, onLeaveBack
+  }: {
+    start: number
+    end: number
+    onEnter?: () => void
+    onLeave?: () => void
+    onEnterBack?: () => void
+    onLeaveBack?: () => void
+  }) => {
+    const trackDirection = (animation: any) => {
+      const onUpdate = animation.eventCallback("onUpdate")
+      let prevTime = animation.time()
+      
+      animation.direction = animation.reversed() ? -1 : 1
+      animation.eventCallback("onUpdate", () => {
+        const time = animation.time()
+        if (prevTime !== time) {
+          animation.direction = time < prevTime ? -1 : 1
+          prevTime = time
+        }
+        onUpdate && onUpdate.call(animation)
+      })
+    }
+
+    const empty = () => {} // callback vacío por defecto
+    
+    if (!timeline.direction) trackDirection(timeline)
+    
+    if (start >= 0) {
+      timeline.add(() => {
+        const callback = timeline.direction < 0 ? onLeaveBack : onEnter
+        ;(callback || empty)()
+      }, start)
+    }
+    
+    if (end <= timeline.duration()) {
+      timeline.add(() => {
+        const callback = timeline.direction < 0 ? onEnterBack : onLeave
+        ;(callback || empty)()
+      }, end)
+    }
+  }
 
   // Si no está montado, renderizar layout básico para evitar hydration mismatch
   if (!mounted) {
@@ -154,36 +198,27 @@ export default function PinnedScrollSection({
     )
   }
 
-  // Desktop: renderizar con scroll pinned
+  // Desktop: renderizar con scroll horizontal usando GSAP
   return (
     <div 
       ref={containerRef}
-      className={`relative w-full ${className}`}
+      className={`relative w-full gsap-container ${className}`}
+      style={{ height: '100vh' }}
     >
       <div 
-        ref={contentRef}
-        className="relative w-full h-screen overflow-hidden"
+        className="flex h-full horizontal-scroll-container"
+        style={{ width: `${sectionsCount * 100}%` }}
       >
-        {children.map((child, index) => {
-          const isActive = index === currentSection
-          
-          return (
-            <div 
-              key={index}
-              className="absolute inset-0 w-full h-full"
-              style={{
-                opacity: isActive ? 1 : 0,
-                transform: isActive ? 'translateX(0)' : 'translateX(50px)',
-                transition: 'all 0.3s ease-out',
-                zIndex: isActive ? 1 : 0,
-                pointerEvents: isActive ? 'auto' : 'none',
-                visibility: isActive ? 'visible' : 'hidden'
-              }}
-            >
-              {child}
-            </div>
-          )
-        })}
+        {children.map((child, index) => (
+          <div 
+            key={index}
+            ref={(el: HTMLDivElement | null) => sectionsRef.current[index] = el}
+            className="flex-shrink-0 w-full h-full gsap-section horizontal-scroll-section"
+            style={{ width: `${100 / sectionsCount}%` }}
+          >
+            {child}
+          </div>
+        ))}
       </div>
     </div>
   )
