@@ -258,3 +258,64 @@ body {
 .interactive-image:hover {
   transform: scale(1.02);
 }
+
+/* Estilos para scroll snap y responsive */
+.scroll-snap-container {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Optimizaciones para móviles */
+@media (max-width: 1024px) {
+  .gsap-container {
+    overflow: visible;
+  }
+  
+  .horizontal-scroll-container {
+    width: 100% !important;
+    display: block;
+  }
+  
+  .horizontal-scroll-section {
+    width: 100% !important;
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+}
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .interactive-image:hover {
+    transform: none;
+  }
+  
+  .interactive-image:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Optimización para orientación */
+@media (orientation: portrait) and (max-width: 768px) {
+  .scroll-snap-section {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height para móviles */
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .scroll-snap-section {
+    min-height: 100vh;
+    padding: 1rem;
+  }
+}

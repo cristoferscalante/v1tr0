@@ -92,7 +92,7 @@ export default function ServiceBanner({
   const placeholderImage = `/placeholder.svg?height=400&width=500&query=${encodeURIComponent(imageAlt)}`
 
   return (
-    <section className="min-h-screen w-full px-4 py-16 flex items-center bg-transparent">
+    <section className="min-h-screen lg:min-h-screen w-full px-4 py-8 lg:py-16 flex items-center bg-transparent">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 lg:pr-12">
           <motion.h1
