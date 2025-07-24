@@ -10,7 +10,7 @@ export default function SoftwareDevelopmentPage() {
     features: [
       {
         icon: <CodeIcon className="w-6 h-6" />,
-        text: "Soluciones personalizadas que se adaptan a tus necesidades específicas", // ← EDITA ESTE TEXTO DE CARACTERÍSTICA
+        text: "Soluciones personalizadas que se adaptan a tus necesidades ", // ← EDITA ESTE TEXTO DE CARACTERÍSTICA
       },
       {
         icon: <GitBranchIcon className="w-6 h-6" />,
