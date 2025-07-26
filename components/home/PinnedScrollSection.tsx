@@ -12,6 +12,21 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, useGSAP)
 }
 
+/**
+ * PinnedScrollSection - Componente responsive para scroll horizontal con GSAP
+ * 
+ * Breakpoints:
+ * - Mobile (< 800px): Layout vertical sin scroll horizontal - pantallas menores a 11 pulgadas
+ * - Tablet (800px - 1023px): Layout vertical optimizado para tablet
+ * - Desktop (>= 1024px): Scroll horizontal con GSAP
+ * 
+ * Características responsive:
+ * - Detección automática de tamaño de pantalla con debounce
+ * - Layouts adaptativos para cada breakpoint
+ * - Optimizaciones de performance según dispositivo
+ * - Configuración dinámica de distancia de scroll según viewport
+ */
+
 interface PinnedScrollSectionProps {
   children: React.ReactNode[]
   className?: string
@@ -24,7 +39,7 @@ export default function PinnedScrollSection({
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
   const [mounted, setMounted] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
   const sectionsCount = children.length
   const tlRef = useRef<gsap.core.Timeline | null>(null)
   const sectionTweensRef = useRef<gsap.core.Tween[]>([])
@@ -34,27 +49,41 @@ export default function PinnedScrollSection({
   useEffect(() => {
     setMounted(true)
     
-    // Detectar móvil de manera simple y directa
-    const checkMobile = () => {
+    // Detectar tamaño de pantalla de manera responsive
+    const checkScreenSize = () => {
       const width = window.innerWidth
-      setIsMobile(width < 1024) // Simplemente usar el ancho como criterio principal
+      
+      if (width < 800) {
+        setScreenSize('mobile') // pantallas menores a 11 pulgadas
+      } else if (width < 1024) {
+        setScreenSize('tablet') // md/lg breakpoint
+      } else {
+        setScreenSize('desktop') // xl/2xl breakpoint
+      }
     }
     
-    checkMobile()
+    checkScreenSize()
     
-    // Listener simple para resize
-    window.addEventListener('resize', checkMobile)
-    window.addEventListener('orientationchange', checkMobile)
+    // Listener para resize con debounce para mejor performance
+    let timeoutId: NodeJS.Timeout
+    const debouncedResize = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(checkScreenSize, 150)
+    }
+    
+    window.addEventListener('resize', debouncedResize)
+    window.addEventListener('orientationchange', debouncedResize)
     
     return () => {
-      window.removeEventListener('resize', checkMobile)
-      window.removeEventListener('orientationchange', checkMobile)
+      clearTimeout(timeoutId)
+      window.removeEventListener('resize', debouncedResize)
+      window.removeEventListener('orientationchange', debouncedResize)
     }
   }, [])
 
   useGSAP(() => {
-    // Solo ejecutar cuando GSAP esté completamente listo
-    if (!mounted || isMobile || !containerRef.current || sectionsCount <= 1 || !gsapReady) {
+    // Solo ejecutar cuando GSAP esté completamente listo y en desktop
+    if (!mounted || screenSize !== 'desktop' || !containerRef.current || sectionsCount <= 1 || !gsapReady) {
       return
     }
 
@@ -90,9 +119,15 @@ export default function PinnedScrollSection({
     })
     sectionTweensRef.current = []
 
-    // Configurar el timeline principal con GSAP
+    // Configurar el timeline principal con GSAP optimizado para desktop
     const duration = 10
     const sectionIncrement = duration / (sections.length - 1)
+    
+    // Configuración adaptativa según el viewport
+    const viewportWidth = window.innerWidth
+    const scrollDistance = viewportWidth > 1536 ? 6000 : // 2xl
+                          viewportWidth > 1280 ? 5500 : // xl
+                          5000 // lg y menores
     
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -105,7 +140,7 @@ export default function PinnedScrollSection({
           delay: 0.1
         },
         start: "top top",
-        end: "+=5000",
+        end: `+=${scrollDistance}`,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         refreshPriority: -1
@@ -156,7 +191,7 @@ export default function PinnedScrollSection({
 
     tlRef.current = tl
   }, { 
-    dependencies: [mounted, isMobile, sectionsCount, gsapReady],
+    dependencies: [mounted, screenSize, sectionsCount, gsapReady],
     scope: containerRef 
   })
 
@@ -223,24 +258,32 @@ export default function PinnedScrollSection({
     )
   }
 
-  // Si es móvil, renderizar layout simple y plano
-  if (isMobile) {
+  // Renderizado responsive para móvil y tablet
+  if (screenSize === 'mobile' || screenSize === 'tablet') {
     return (
       <PinnedScrollContext.Provider value={false}>
         <div className={`w-full ${className}`}>
           {children.map((child, index) => {
-            // La última sección no debería tener min-h-screen para evitar espacio extra
             const isLastSection = index === children.length - 1
             
             return (
               <div 
                 key={index}
-                className={`w-full ${isLastSection ? 'min-h-fit' : 'min-h-screen'} flex items-center justify-center`}
+                className={`
+                  w-full flex items-center justify-center
+                  ${isLastSection ? 'min-h-fit' : 'min-h-screen'}
+                  ${screenSize === 'mobile' ? 'px-4 py-6' : 'px-6 py-8'}
+                `}
                 style={{ 
-                  minHeight: isLastSection ? 'fit-content' : '100vh'
+                  minHeight: isLastSection ? 'fit-content' : 
+                    screenSize === 'mobile' ? '100vh' : '100vh'
                 }}
               >
-                <div className={`w-full h-full flex flex-col justify-center px-4 ${isLastSection ? 'py-4' : 'py-8'}`}>
+                <div className={`
+                  w-full h-full flex flex-col justify-center
+                  ${screenSize === 'mobile' ? 'max-w-sm' : 'max-w-4xl'}
+                  ${isLastSection ? 'py-4' : screenSize === 'mobile' ? 'py-6' : 'py-8'}
+                `}>
                   {child}
                 </div>
               </div>
@@ -256,21 +299,38 @@ export default function PinnedScrollSection({
     <PinnedScrollContext.Provider value={true}>
       <div 
         ref={containerRef}
-        className={`relative w-full gsap-container ${className}`}
-        style={{ height: '100vh' }}
+        className={`
+          relative w-full gsap-container overflow-hidden
+          ${className}
+        `}
+        style={{ 
+          height: '100vh',
+          minHeight: '600px' // Altura mínima para pantallas muy pequeñas
+        }}
       >
         <div 
           className="flex h-full horizontal-scroll-container"
-          style={{ width: `${sectionsCount * 100}%` }}
+          style={{ 
+            width: `${sectionsCount * 100}%`,
+            minWidth: '100%' // Asegurar ancho mínimo
+          }}
         >
           {children.map((child, index) => (
             <div 
               key={index}
               ref={(el: HTMLDivElement | null) => { sectionsRef.current[index] = el }}
-              className="flex-shrink-0 w-full h-full gsap-section horizontal-scroll-section"
-              style={{ width: `${100 / sectionsCount}%` }}
+              className={`
+                flex-shrink-0 w-full h-full gsap-section horizontal-scroll-section
+                flex items-center justify-center
+              `}
+              style={{ 
+                width: `${100 / sectionsCount}%`,
+                minWidth: `${100 / sectionsCount}%`
+              }}
             >
-              {child}
+              <div className="w-full h-full max-w-7xl mx-auto px-4 lg:px-6 xl:px-8">
+                {child}
+              </div>
             </div>
           ))}
         </div>
