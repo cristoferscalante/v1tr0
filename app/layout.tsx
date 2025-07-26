@@ -3,6 +3,9 @@ import { Bricolage_Grotesque } from "next/font/google"
 import "../styles/globals.css"
 import type { Metadata } from "next"
 import { Providers } from "./providers"
+import { GsapErrorBoundary } from "../components/global/GsapErrorBoundary"
+import { GsapProvider } from "../components/global/GsapProvider"
+import { GlobalErrorHandler } from "../components/global/GlobalErrorHandler"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -25,7 +28,11 @@ export default function RootLayout({
   return (
     <html lang="es" className={bricolageGrotesque.variable} suppressHydrationWarning>
       <body>
-        <Providers>{children}</Providers>
+        <GsapErrorBoundary>
+          <GsapProvider initialDelay={200} maxRetries={5} showProgress={true}>
+            <Providers>{children}</Providers>
+          </GsapProvider>
+        </GsapErrorBoundary>
       </body>
     </html>
   )

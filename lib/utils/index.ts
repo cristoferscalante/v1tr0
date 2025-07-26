@@ -104,10 +104,7 @@ export function logAllHeadings() {
   if (typeof document === "undefined") return
 
   const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6")
-  console.log("Todos los encabezados en el documento:")
-  headings.forEach((h) => {
-    console.log(`${h.tagName}: "${h.textContent}" (ID: "${h.id}")`)
-  })
+  // Debug logs removed for production
 }
 
 /**

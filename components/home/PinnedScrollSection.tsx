@@ -3,10 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+import { useGsapReady } from '../../hooks/use-gsap-ready'
+import { PinnedScrollContext } from './shared/ServiceBanner'
 
-// Registrar el plugin
+// Registrar los plugins
 if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
+  gsap.registerPlugin(ScrollTrigger, useGSAP)
 }
 
 interface PinnedScrollSectionProps {
@@ -24,6 +27,9 @@ export default function PinnedScrollSection({
   const [isMobile, setIsMobile] = useState(false)
   const sectionsCount = children.length
   const tlRef = useRef<gsap.core.Timeline | null>(null)
+  const sectionTweensRef = useRef<gsap.core.Tween[]>([])
+  
+  const { isReady: gsapReady } = useGsapReady()
 
   useEffect(() => {
     setMounted(true)
@@ -46,17 +52,43 @@ export default function PinnedScrollSection({
     }
   }, [])
 
-  useEffect(() => {
-    if (!mounted || isMobile || !containerRef.current || sectionsCount <= 1) return
+  useGSAP(() => {
+    // Solo ejecutar cuando GSAP esté completamente listo
+    if (!mounted || isMobile || !containerRef.current || sectionsCount <= 1 || !gsapReady) {
+      return
+    }
 
-    // Limpiar animaciones previas
+    const container = containerRef.current
+    const sections = sectionsRef.current.filter(Boolean) as HTMLDivElement[]
+    
+    if (sections.length === 0) return
+
+    // Validar que todos los elementos están conectados al DOM
+    if (!container.isConnected || !document.contains(container)) {
+      console.warn('Container not connected to DOM, skipping animation')
+      return
+    }
+    
+    const invalidSections = sections.filter(section => 
+      !section.isConnected || !document.contains(section)
+    )
+    
+    if (invalidSections.length > 0) {
+      console.warn('Some sections not connected to DOM, skipping animation')
+      return
+    }
+
+    // Limpiar animaciones previas de forma segura
     if (tlRef.current) {
       tlRef.current.kill()
+      tlRef.current = null
     }
-    ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
-
-    const sections = sectionsRef.current.filter(Boolean) as HTMLDivElement[]
-    if (sections.length === 0) return
+    
+    // Limpiar tweens de secciones previas
+    sectionTweensRef.current.forEach(tween => {
+      if (tween) tween.kill()
+    })
+    sectionTweensRef.current = []
 
     // Configurar el timeline principal con GSAP
     const duration = 10
@@ -64,7 +96,7 @@ export default function PinnedScrollSection({
     
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: containerRef.current,
+        trigger: container,
         pin: true,
         scrub: 1,
         snap: {
@@ -76,7 +108,7 @@ export default function PinnedScrollSection({
         end: "+=5000",
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        refreshPriority: -1 // Prioridad baja para evitar conflictos con resize
+        refreshPriority: -1
       }
     })
 
@@ -104,6 +136,9 @@ export default function PinnedScrollSection({
         paused: true,
         ease: "power2.out"
       })
+      
+      // Almacenar el tween para limpieza posterior
+      sectionTweensRef.current.push(tween)
 
       // Usar la función helper para callbacks
       addSectionCallbacks(tl, {
@@ -120,12 +155,10 @@ export default function PinnedScrollSection({
     })
 
     tlRef.current = tl
-
-    return () => {
-      tl.kill()
-      ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
-    }
-  }, [mounted, isMobile, sectionsCount])
+  }, { 
+    dependencies: [mounted, isMobile, sectionsCount, gsapReady],
+    scope: containerRef 
+  })
 
   // Función helper para callbacks de secciones (adaptada del ejemplo GSAP)
   const addSectionCallbacks = (timeline: any, {
@@ -175,67 +208,73 @@ export default function PinnedScrollSection({
   // Si no está montado, renderizar layout básico para evitar hydration mismatch
   if (!mounted) {
     return (
-      <div className={`w-full ${className}`}>
-        {children.map((child, index) => (
-          <div 
-            key={index}
-            className="w-full min-h-screen"
-          >
-            {child}
-          </div>
-        ))}
-      </div>
+      <PinnedScrollContext.Provider value={false}>
+        <div className={`w-full ${className}`}>
+          {children.map((child, index) => (
+            <div 
+              key={index}
+              className="w-full min-h-screen"
+            >
+              {child}
+            </div>
+          ))}
+        </div>
+      </PinnedScrollContext.Provider>
     )
   }
 
   // Si es móvil, renderizar layout simple y plano
   if (isMobile) {
     return (
-      <div className={`w-full ${className}`}>
-        {children.map((child, index) => {
-          // La última sección no debería tener min-h-screen para evitar espacio extra
-          const isLastSection = index === children.length - 1
-          
-          return (
-            <div 
-              key={index}
-              className={`w-full ${isLastSection ? 'min-h-fit' : 'min-h-screen'} flex items-center justify-center`}
-              style={{ 
-                minHeight: isLastSection ? 'fit-content' : '100vh'
-              }}
-            >
-              <div className={`w-full h-full flex flex-col justify-center px-4 ${isLastSection ? 'py-4' : 'py-8'}`}>
-                {child}
+      <PinnedScrollContext.Provider value={false}>
+        <div className={`w-full ${className}`}>
+          {children.map((child, index) => {
+            // La última sección no debería tener min-h-screen para evitar espacio extra
+            const isLastSection = index === children.length - 1
+            
+            return (
+              <div 
+                key={index}
+                className={`w-full ${isLastSection ? 'min-h-fit' : 'min-h-screen'} flex items-center justify-center`}
+                style={{ 
+                  minHeight: isLastSection ? 'fit-content' : '100vh'
+                }}
+              >
+                <div className={`w-full h-full flex flex-col justify-center px-4 ${isLastSection ? 'py-4' : 'py-8'}`}>
+                  {child}
+                </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      </PinnedScrollContext.Provider>
     )
   }
 
   // Desktop: renderizar con scroll horizontal usando GSAP
   return (
-    <div 
-      ref={containerRef}
-      className={`relative w-full gsap-container ${className}`}
-      style={{ height: '100vh' }}
-    >
+    <PinnedScrollContext.Provider value={true}>
       <div 
-        className="flex h-full horizontal-scroll-container"
-        style={{ width: `${sectionsCount * 100}%` }}
+        ref={containerRef}
+        className={`relative w-full gsap-container ${className}`}
+        style={{ height: '100vh' }}
       >
-        {children.map((child, index) => (
-          <div 
-            key={index}
-            ref={(el: HTMLDivElement | null) => { sectionsRef.current[index] = el }}
-            className="flex-shrink-0 w-full h-full gsap-section horizontal-scroll-section"
-            style={{ width: `${100 / sectionsCount}%` }}
-          >
-            {child}
-          </div>
-        ))}
+        <div 
+          className="flex h-full horizontal-scroll-container"
+          style={{ width: `${sectionsCount * 100}%` }}
+        >
+          {children.map((child, index) => (
+            <div 
+              key={index}
+              ref={(el: HTMLDivElement | null) => { sectionsRef.current[index] = el }}
+              className="flex-shrink-0 w-full h-full gsap-section horizontal-scroll-section"
+              style={{ width: `${100 / sectionsCount}%` }}
+            >
+              {child}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </PinnedScrollContext.Provider>
   )
 }

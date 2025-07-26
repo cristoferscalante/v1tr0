@@ -31,7 +31,7 @@ export interface Post {
 // Función para verificar y crear el directorio si no existe
 function ensureDirectoryExists() {
   if (!fs.existsSync(postsDirectory)) {
-    console.log(`Creando directorio: ${postsDirectory}`)
+    // Creating posts directory
     fs.mkdirSync(postsDirectory, { recursive: true })
   }
 }
