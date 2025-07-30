@@ -54,9 +54,18 @@ export default function HomeBanner() {
         initial="hidden"
         animate="visible"
       >
+        {/* Título principal */}
+        <motion.h1 
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight max-w-5xl mt-[30px] md:mt-0"
+          variants={itemVariants}
+        >
+          <span className="block text-textPrimary">Transformamos tu potencial</span>
+          <span className={`block ${isDark ? "text-highlight" : "text-primary"}`}>en innovación y resultados</span>
+        </motion.h1>
+
         {/* Badge */}
         <motion.div 
-          className="relative group mt-[30px] md:mt-0 mb-8 inline-flex items-center"
+          className="relative group mb-8 inline-flex items-center"
           variants={itemVariants}
         >
           {/* Gradiente de fondo con blur */}
@@ -73,22 +82,7 @@ export default function HomeBanner() {
           </div>
         </motion.div>
 
-        {/* Título principal */}
-        <motion.h1 
-          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight max-w-5xl"
-          variants={itemVariants}
-        >
-          <span className="block text-textPrimary">Transformamos tu potencial</span>
-          <span className={`block ${isDark ? "text-highlight" : "text-primary"}`}>en innovación y resultados</span>
-        </motion.h1>
 
-        {/* Subtítulo */}
-        <motion.p 
-          className="text-textMuted text-lg md:text-xl max-w-3xl mb-12"
-          variants={itemVariants}
-        >
-          Gestionando tus proyectos con un flujo transparente
-        </motion.p>
 
         {/* Tarjetas con servicios */}
         <motion.div 
