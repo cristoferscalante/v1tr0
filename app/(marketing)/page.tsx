@@ -4,23 +4,32 @@ import HomeBanner from "@/components/home/HomeBanner"
 import TechnologiesSection from "@/components/home/GridTechnologies"
 import SoftwareDevelopmentBanner from "@/components/home/SoftwareDevelopmentBanner"
 import DataAnalysisPage from "@/components/home/DataAnalysisPage"
-import ProjectManagementPage from "@/components/home/ProjectManagementPage"
+import TaskAutomationPage from "@/components/home/TaskAutomationPage"
+
 import PinnedScrollSection from "@/components/home/PinnedScrollSection"
-import SmoothTransitionWrapper from "@/components/home/SmoothTransitionWrapper"
+import HomeScrollSnap from "@/components/home/HomeScrollSnap"
+import ImageSection from "@/components/home/ImageSection"
 
 export default function Home() {
   return (
     <>
       <BackgroundAnimation />
-      <HomeBanner />      
+      
+      {/* Sección 1: Hero */}
+      <HomeBanner />
+      
+      {/* Sección 2: Scroll Horizontal */}
       <PinnedScrollSection>
         <SoftwareDevelopmentBanner />
         <DataAnalysisPage />
-        <ProjectManagementPage />
+        <TaskAutomationPage />
       </PinnedScrollSection>
-      <SmoothTransitionWrapper>
-        <TechnologiesSection />
-      </SmoothTransitionWrapper>
+      
+      {/* Sección 3: Nueva Imagen */}
+      <ImageSection />
+      
+      {/* Sección 4: Tecnologías */}
+      <TechnologiesSection />
     </>
   )
 }

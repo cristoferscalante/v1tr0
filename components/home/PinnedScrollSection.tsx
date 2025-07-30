@@ -134,24 +134,34 @@ export default function PinnedScrollSection({
         trigger: container,
         pin: true,
         scrub: 1,
-        snap: {
-          snapTo: 1 / (sections.length - 1),
-          duration: { min: 0.2, max: 0.6 },
-          delay: 0.1
-        },
         start: "top top",
         end: `+=${scrollDistance}`,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        refreshPriority: -1
+        refreshPriority: -1,
+        snap: {
+          snapTo: 1 / (sections.length - 1),
+          duration: { min: 0.3, max: 0.8 },
+          delay: 0.1,
+          ease: "power2.inOut"
+        }
       }
     })
 
-    // Animación horizontal principal
+    // Animación horizontal principal con snap mejorado
     tl.to(sections, {
       xPercent: -100 * (sections.length - 1),
       duration: duration,
       ease: "none"
+    })
+    
+    // Agregar snap points individuales para cada sección
+    sections.forEach((section, index) => {
+      const progress = index / (sections.length - 1)
+      tl.add(() => {
+        // Callback para cuando se llega a cada sección
+        console.log(`Snap to section ${index + 1}`)
+      }, progress * duration)
     })
 
     // Animaciones de entrada/salida para cada sección
