@@ -144,3 +144,30 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Estilos para HomeScrollSnap */
+.snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Optimizaciones para scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 768px) {
+  .snap-section {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height */
+  }
+}
+
+/* Optimizaciones para landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .snap-section {
+    min-height: 100vh;
+    min-height: 100lvh; /* Large viewport height */
+  }
+}

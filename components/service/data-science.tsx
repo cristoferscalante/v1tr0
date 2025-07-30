@@ -85,7 +85,7 @@ export default function DataScience() {
           <div className="space-y-4">
             <div className="text-highlight text-sm">Ciencia de datos & Análisis avanzado</div>
             <h2 className="text-4xl font-bold tracking-tighter text-textPrimary sm:text-5xl">
-              ¡Potencia tu estrategia, automatiza tu información!
+              Sistemas de Información
             </h2>
           </div>
           <div className="flex flex-col items-start space-y-4">

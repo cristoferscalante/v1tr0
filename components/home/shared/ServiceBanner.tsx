@@ -245,10 +245,10 @@ export default function ServiceBanner({
             <Image
               src={imageSrc || placeholderImage}
               alt={imageAlt}
-              width={600}
-              height={600}
+              width={400}
+              height={400}
               onClick={handleImageClick}
-              className={`w-full h-auto object-cover transition-all duration-700 ease-in-out hover:scale-105 ${
+              className={`w-full h-auto max-w-md object-cover transition-all duration-700 ease-in-out hover:scale-105 ${
                 isGlowing ? "animate-glow-pulse" : ""
               } ${isShaking ? "animate-shake" : ""}`}
               style={{

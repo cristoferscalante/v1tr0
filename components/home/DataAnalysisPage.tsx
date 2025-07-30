@@ -6,9 +6,9 @@ import { BarChartIcon, PieChartIcon, TrendingUpIcon } from "@/lib/icons"
 export default function DataAnalysisPage() {
   // Aquí puedes editar los textos relacionados con Análisis de Datos
   const serviceData = {
-    title: "¡Potencia tu estrategia, automatiza tu información!", // ← EDITA ESTE TÍTULO
+    title: "Sistemas de Información", // ← EDITA ESTE TÍTULO
     description:
-      "Los datos son un activo estratégico. Comprenderlos, gestionarlos y convertirlos en decisiones inteligentes es lo que marca la diferencia.", // ← EDITA ESTA DESCRIPCIÓN
+      "Los datos son un activo estratégico. Comprenderlos, gestionarlos y convertirlos en decisiones estratégicas es lo que marca la diferencia.", // ← EDITA ESTA DESCRIPCIÓN
     features: [
       {
         icon: <BarChartIcon className="w-6 h-6" />,
@@ -16,9 +16,7 @@ export default function DataAnalysisPage() {
       },
       {
         icon: <PieChartIcon className="w-6 h-6" />,
-
         text: "Análisis avanzado & Visualización de estructuras de datos jerárquicas, relacionales, espaciales y temporales.",
-
       },
       {
         icon: <TrendingUpIcon className="w-6 h-6" />,

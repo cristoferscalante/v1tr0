@@ -347,3 +347,42 @@ body {
     padding: 1rem;
   }
 }
+
+/* Mejoras para scroll snap en diferentes navegadores */
+@supports (scroll-snap-type: y mandatory) {
+  .scroll-snap-container {
+    -webkit-scroll-snap-type: y mandatory;
+    -ms-scroll-snap-type: y mandatory;
+  }
+  
+  .scroll-snap-item {
+    -webkit-scroll-snap-align: start;
+    -ms-scroll-snap-align: start;
+  }
+}
+
+/* Estilos para scroll horizontal con snap */
+.horizontal-scroll-container {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.horizontal-scroll-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  flex-shrink: 0;
+}
+
+/* Optimizaciones para GSAP scroll horizontal */
+.gsap-container {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.gsap-section {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
