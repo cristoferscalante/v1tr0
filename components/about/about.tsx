@@ -19,7 +19,7 @@ const About = () => {
               Sobre Nosotros
             </div>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-textPrimary leading-tight">
-              Innovación y tecnología para la gestión de proyectos
+              Innovación y tecnología
             </h2>
           </div>
           <div className="flex flex-col justify-center space-y-6">
