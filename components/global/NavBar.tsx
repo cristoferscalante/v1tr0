@@ -48,11 +48,11 @@ export default function Navbar() {
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
                 <Image 
-                  src="/v1tr0-logo.svg" 
+                  src={isDark ? "/v1tr0-logo.svg" : "/Imagotipo  modo claro5.svg"} 
                   alt="V1TR0 Logo" 
-                  width={scrolled ? 44 : 58} 
-                  height={scrolled ? 44 : 58} 
-                  className={`${scrolled ? 'h-11' : 'h-16'} w-auto filter brightness-110 hover:brightness-125 hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer`} 
+                  width={isDark ? (scrolled ? 44 : 58) : (scrolled ? 35 : 45)} 
+                  height={isDark ? (scrolled ? 44 : 58) : (scrolled ? 35 : 45)} 
+                  className={`${isDark ? (scrolled ? 'h-11' : 'h-16') : (scrolled ? 'h-9' : 'h-11')} w-auto filter brightness-110 hover:brightness-125 hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer`} 
                 />
               </Link>
             </div>
@@ -71,6 +71,7 @@ export default function Navbar() {
                       <SubNavLink href="/services/dev">Desarrollo</SubNavLink>
                       <SubNavLink href="/services/pm">Gestión de Proyectos</SubNavLink>
                       <SubNavLink href="/services/data">Análisis de Datos</SubNavLink>
+                      <SubNavLink href="/services/new">Sistemas de Información</SubNavLink>
                     </div>
                   </div>
                 </div>
@@ -128,6 +129,9 @@ export default function Navbar() {
                 </MobileNavLink>
                 <MobileNavLink href="/services/data" onClick={() => setIsOpen(false)}>
                   Análisis de Datos
+                </MobileNavLink>
+                <MobileNavLink href="/services/new" onClick={() => setIsOpen(false)}>
+                  Sistemas de Información
                 </MobileNavLink>
               </div>
 

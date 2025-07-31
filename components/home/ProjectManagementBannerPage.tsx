@@ -3,24 +3,24 @@
 import ServiceBanner from "@/components/home/shared/ServiceBanner"
 import { CalendarIcon, CheckBoxIcon, PeopleIcon } from "@/lib/icons"
 
-export default function ProjectManagementPage() {
-  // Aquí puedes editar los textos relacionados con Gestión de Proyectos
+export default function ProjectManagementBannerPage() {
+  // Datos del servicio de Gestión de Proyectos
   const serviceData = {
-    title: "Gestión de Proyectos", // ← EDITA ESTE TÍTULO
+    title: "Gestión de Proyectos",
     description:
-      "Organizamos y coordinamos cada fase de tus proyectos, garantizando el cumplimiento de objetivos y optimizando recursos para el éxito de tu negocio.", // ← EDITA ESTA DESCRIPCIÓN
+      "Organizamos y coordinamos cada fase de tus proyectos tecnológicos, garantizando el cumplimiento de objetivos, optimizando recursos y asegurando la entrega exitosa de resultados medibles.",
     features: [
       {
         icon: <CalendarIcon className="w-6 h-6" />,
-        text: "Planificación detallada y seguimiento continuo",
+        text: "Planificación estratégica y seguimiento continuo de hitos",
       },
       {
         icon: <CheckBoxIcon className="w-6 h-6" />,
-        text: "Ejecución y control para asegurar resultados",
+        text: "Metodologías ágiles y control de calidad integrado",
       },
       {
         icon: <PeopleIcon className="w-6 h-6" />,
-        text: "Colaboración eficaz entre equipos multidisciplinarios",
+        text: "Coordinación eficaz de equipos multidisciplinarios",
       },
     ],
     imageSrc:
