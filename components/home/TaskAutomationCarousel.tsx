@@ -9,12 +9,12 @@ export default function TaskAutomationCarousel() {
   ));
 
   return (
-    <div className="w-full h-full py-10 sm:py-16 md:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary mb-3 sm:mb-4 text-center sm:text-left">
+    <div className="w-full h-full py-6 sm:py-8 md:py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-text-primary mb-2 sm:mb-3 text-center sm:text-left">
           Automatización de Tareas
         </h2>
-        <p className="text-base sm:text-lg md:text-xl text-text-muted mb-6 sm:mb-8 max-w-3xl text-center sm:text-left leading-relaxed">
+        <p className="text-sm sm:text-base md:text-lg text-text-muted mb-4 sm:mb-6 max-w-2xl text-center sm:text-left leading-relaxed">
           Optimizamos tus procesos empresariales mediante la automatización inteligente, 
           liberando tiempo valioso y reduciendo errores humanos para maximizar la eficiencia operativa.
         </p>
