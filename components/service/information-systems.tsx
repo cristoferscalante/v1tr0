@@ -5,10 +5,9 @@ import type React from "react"
 import { useState, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Database, X, Send } from "lucide-react"
+import { Database, X, Send, ChevronLeft, ChevronRight, ExternalLink, Calendar, Users, Code } from "lucide-react"
 import { useEffect } from "react"
-import BokehBackground from "@/components/about/BokehBackground"
-import InformationSystemsCarousel from "@/components/home/InformationSystemsCarousel"
+import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
 
 // Register GSAP plugins
@@ -21,6 +20,7 @@ export default function InformationSystems() {
   const sectionsRef = useRef<HTMLDivElement[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isContactPopupOpen, setIsContactPopupOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState(0)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,24 +30,101 @@ export default function InformationSystems() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
+  // Datos de proyectos de V1TR0
+  const projects = [
+    {
+      id: 1,
+      title: "Sistema de Gestión Hospitalaria",
+      description: "Plataforma integral para la gestión de pacientes, citas médicas, historiales clínicos y administración hospitalaria con dashboards en tiempo real.",
+      tech: ["React", "Node.js", "PostgreSQL", "WebSocket"],
+      year: "2024",
+      status: "Activo",
+      image: "/service/clinica.png"
+    },
+    {
+      id: 2,
+      title: "Dashboard Financiero Corporativo",
+      description: "Sistema de análisis financiero con visualización de KPIs, reportes automatizados y predicciones basadas en IA para empresas.",
+      tech: ["Vue.js", "Python", "MongoDB", "TensorFlow"],
+      year: "2024",
+      status: "En desarrollo",
+      image: "/placeholder.svg"
+    },
+    {
+      id: 3,
+      title: "Plataforma E-learning Interactiva",
+      description: "Sistema educativo con videoconferencias, evaluaciones automáticas, seguimiento de progreso y gamificación para instituciones.",
+      tech: ["Next.js", "Express", "MySQL", "WebRTC"],
+      year: "2023",
+      status: "Completado",
+      image: "/placeholder.svg"
+    },
+    {
+      id: 4,
+      title: "Sistema de Inventario Inteligente",
+      description: "Gestión automatizada de inventarios con predicción de demanda, alertas de stock y optimización de cadena de suministro.",
+      tech: ["Angular", "Java", "Oracle", "Machine Learning"],
+      year: "2023",
+      status: "Completado",
+      image: "/placeholder.svg"
+    },
+    {
+      id: 5,
+      title: "Portal de Gestión Municipal",
+      description: "Plataforma ciudadana para trámites en línea, seguimiento de solicitudes y comunicación directa con autoridades municipales.",
+      tech: ["React", "Laravel", "MySQL", "Redis"],
+      year: "2024",
+      status: "En desarrollo",
+      image: "/placeholder.svg"
+    },
+    {
+      id: 6,
+      title: "Sistema CRM Empresarial",
+      description: "Gestión completa de relaciones con clientes, automatización de ventas, seguimiento de leads y análisis de comportamiento.",
+      tech: ["Svelte", "Django", "PostgreSQL", "Elasticsearch"],
+      year: "2023",
+      status: "Activo",
+      image: "/placeholder.svg"
+    }
+  ]
+
+  // Funciones para navegación de proyectos
+  const nextProject = () => {
+    setSelectedProject((prev) => (prev + 1) % projects.length)
+  }
+
+  const prevProject = () => {
+    setSelectedProject((prev) => (prev - 1 + projects.length) % projects.length)
+  }
+
+  const selectProject = (index: number) => {
+    setSelectedProject(index)
+  }
+
   // Función para manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simular envío de datos
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    // Mostrar mensaje de éxito
-    setSubmitSuccess(true)
-    setIsSubmitting(false)
-
-    // Cerrar el popup después de 3 segundos
-    setTimeout(() => {
-      setIsContactPopupOpen(false)
-      setSubmitSuccess(false)
-      setFormData({ name: "", email: "", message: "", serviceArea: "sistemas" })
-    }, 3000)
+    try {
+      // Simular envío del formulario
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      setSubmitSuccess(true)
+      setTimeout(() => {
+        setIsContactPopupOpen(false)
+        setSubmitSuccess(false)
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+          serviceArea: "sistemas",
+        })
+      }, 2000)
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   // Función para manejar cambios en los campos del formulario
@@ -124,7 +201,7 @@ export default function InformationSystems() {
           ref={addToRefs}
           className="min-h-screen flex items-center justify-center snap-start relative overflow-hidden"
         >
-          <BokehBackground />
+          <CharacterBackground />
           <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
             <div className="mb-8">
               <Database className="w-20 h-20 mx-auto mb-6 text-highlight animate-gentle-balance" />
@@ -140,12 +217,106 @@ export default function InformationSystems() {
           </div>
         </div>
 
-        {/* Section 2: Apple Cards Carousel de Sistemas de Información */}
+        {/* Section 2: Panel Interactivo de Proyectos */}
         <div 
-          ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background"
-        >
-          <InformationSystemsCarousel />
+           ref={addToRefs}
+           className="min-h-screen flex items-center justify-center snap-start relative overflow-hidden px-4 pt-24 pb-8"
+         >
+          <div className="max-w-6xl mx-auto w-full relative z-10">
+            {/* Panel interactivo de proyectos - Layout horizontal */}
+            <div className="relative bg-background/80 backdrop-blur-md rounded-3xl p-8 border-2 border-highlight/30 shadow-2xl overflow-hidden">
+              <div className="grid lg:grid-cols-5 gap-8">
+                {/* Panel izquierdo - Información del proyecto */}
+                 <div className="space-y-6 lg:col-span-2">
+                  <div className="bg-gradient-to-br from-custom-2/20 to-highlight/20 rounded-2xl p-6 border border-custom-2/30">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-textPrimary text-sm font-medium bg-highlight/20 px-3 py-1 rounded-full border border-highlight/30">
+                        {projects[selectedProject].status}
+                      </span>
+                      <div className="flex items-center text-textMuted text-sm">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        {projects[selectedProject].year}
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-textPrimary mb-4">
+                      {projects[selectedProject].title}
+                    </h3>
+                    <p className="text-textMuted mb-6 leading-relaxed">
+                      {projects[selectedProject].description}
+                    </p>
+                    <div className="mb-6">
+                      <h4 className="text-textPrimary font-semibold mb-3 flex items-center">
+                        <Code className="w-5 h-5 mr-2" />
+                        Tecnologías
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {projects[selectedProject].tech.map((tech, index) => (
+                          <span key={index} className="bg-highlight/20 text-highlight px-3 py-1 rounded-full text-sm border border-highlight/30">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <button className="w-full bg-gradient-to-r from-highlight to-accent hover:from-accent hover:to-highlight text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center">
+                      <ExternalLink className="w-5 h-5 mr-2" />
+                      Ver Proyecto
+                    </button>
+                  </div>
+                </div>
+
+                {/* Panel derecho - Vista previa del proyecto */}
+                 <div className="space-y-6 lg:col-span-3">
+                  <div className="bg-gradient-to-br from-custom-2/20 to-highlight/20 rounded-2xl p-6 border border-custom-2/30 h-full">
+                    <div className="bg-background/50 rounded-xl p-6 h-80 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-20 h-20 bg-gradient-to-br from-highlight to-accent rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+                          <ExternalLink className="w-10 h-10 text-white" />
+                        </div>
+                        <p className="text-textMuted mb-3">Vista previa del proyecto</p>
+                        <p className="text-textPrimary font-medium text-lg">{projects[selectedProject].title}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Panel inferior - Navegación */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-highlight/20">
+                {/* Botón anterior */}
+                <button 
+                  onClick={prevProject}
+                  className="bg-highlight/20 hover:bg-highlight/30 text-textPrimary p-3 rounded-xl transition-all duration-300 border border-highlight/30 hover:border-highlight/50"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+
+                {/* Números de proyectos */}
+                <div className="flex space-x-3">
+                  {projects.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => selectProject(index)}
+                      className={`w-14 h-14 rounded-xl border transition-all duration-300 flex items-center justify-center text-xl font-bold ${
+                        selectedProject === index
+                          ? 'bg-highlight/30 border-highlight/50 text-textPrimary scale-110'
+                          : 'bg-custom-2/20 border-custom-2/30 text-textMuted hover:bg-custom-2/30 hover:border-custom-2/50'
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Botón siguiente */}
+                <button 
+                  onClick={nextProject}
+                  className="bg-highlight/20 hover:bg-highlight/30 text-textPrimary p-3 rounded-xl transition-all duration-300 border border-highlight/30 hover:border-highlight/50"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Section 3: Footer integrado con snap */}
