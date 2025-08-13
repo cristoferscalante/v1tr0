@@ -95,21 +95,7 @@ export default function PortfolioBanner({
         }}
       />
 
-      {/* Elementos decorativos con colores según el tema */}
-      <div
-        className="absolute top-20 left-10 w-64 h-64 rounded-full blur-3xl"
-        style={{
-          background: isDark ? "#08a696" : "#d0d0d0",
-          opacity: isDark ? 0.05 : 0.1, // Reducida la opacidad
-        }}
-      />
-      <div
-        className="absolute bottom-20 right-10 w-80 h-80 rounded-full blur-3xl"
-        style={{
-          background: isDark ? "#1e7d7d" : "#c0c0c0",
-          opacity: isDark ? 0.05 : 0.1, // Reducida la opacidad
-        }}
-      />
+
 
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         <motion.div
