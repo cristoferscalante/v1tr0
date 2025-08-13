@@ -43,10 +43,7 @@ export default function HomeBanner() {
       {/* Fondo con gradiente */}
       <div className="absolute inset-0 z-0" />
 
-      {/* Elementos decorativos */}
 
-      <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-custom-3 opacity-20 blur-xl" />
-      <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full bg-custom-4 opacity-20 blur-xl" />
 
       <motion.div 
         className="max-w-6xl mx-auto z-10 flex flex-col items-center text-center"

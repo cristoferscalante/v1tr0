@@ -62,7 +62,7 @@ export default function ModernTechnologiesSection() {
   ]
 
   return (
-    <section className="w-[100hv] bg-custom-1/20 dark:bg-custom-1/80 py-20 px-4 font-sans overflow-hidden relative">
+    <section className="min-h-screen w-full bg-custom-1/20 dark:bg-custom-1/80 py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center">
       <div className="absolute inset-0 bg-grid-pattern opacity-15 dark:opacity-20"></div>
       <div className="max-w-7xl mx-auto relative">
         <motion.div
@@ -183,9 +183,7 @@ export default function ModernTechnologiesSection() {
           )}
         </AnimatePresence>
 
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-64 h-64 bg-custom-3 rounded-full filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-custom-4 rounded-full filter blur-3xl opacity-20 animate-pulse" />
+
       </div>
     </section>
   )

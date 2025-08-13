@@ -90,7 +90,7 @@ export interface ChatMessage {
   user_id: number;
   message: string;
   ai_response?: string;
-  context_used?: any[];
+  context_used?: Record<string, unknown>[];
   created_at: string;
   user_name: string;
 }

@@ -1,7 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import { motion } from "framer-motion"
+import V1tr0Logo3D from "../3d/V1tr0Logo3D"
 
 export default function ImageSection() {
   return (
@@ -10,24 +10,9 @@ export default function ImageSection() {
       <div className="absolute inset-0 bg-grid-pattern" style={{height: '400%', top: '-150%', opacity: '0.05'}}></div>
       
       <div className="max-w-7xl mx-auto relative z-10 h-full px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="flex justify-center items-center h-full"
-        >
-          <Image
-            alt="Gestora de proyectos con gráfico de red y visualización de datos, rodeada de elementos digitales en color turquesa"
-            loading="lazy"
-            width={600}
-            height={600}
-            decoding="async"
-            data-nimg="1"
-            className="w-full h-auto max-w-md sm:max-w-lg md:max-w-xl lg:max-w-3xl object-cover transition-all duration-700 ease-in-out hover:scale-105"
-            src="/service/proximamente_gestor.png"
-            style={{ color: "transparent", cursor: "pointer", opacity: "0.9" }}
-          />
-        </motion.div>
+        <div className="flex justify-center items-center h-full">
+          <V1tr0Logo3D />
+        </div>
       </div>
     </section>
   )
