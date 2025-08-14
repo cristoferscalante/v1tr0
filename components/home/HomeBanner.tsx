@@ -86,9 +86,9 @@ export default function HomeBanner() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-8"
           variants={itemVariants}
         >
-          <CardBanner icon={devSvg} title="Desarrollo de Software a Medida" href="/services/dev" />
-          <CardBanner icon={dataSvg} title="Análisis y visualización de datos" href="/services/data" />
-          <CardBanner icon={pmSvg} title="Creación y Gestión de Proyectos" href="/services/pm" />
+          <CardBanner icon={devSvg} title="Desarrollo de Software" href="/services/dev" />
+          <CardBanner icon={dataSvg} title="Sistemas de Información" href="/services/new" />
+          <CardBanner icon={pmSvg} title="Automatización de Tareas" href="/services/pm" />
         </motion.div>
       </motion.div>
     </section>

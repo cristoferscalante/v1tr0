@@ -7,7 +7,52 @@ import BackgroundAnimation from "@/components/home/BackgroungAnimation"
 
 gsap.registerPlugin(Observer)
 
-export default function GsapSlider() {
+interface SlideExample {
+  title: string;
+  bgColor?: string;
+  url?: string;
+  img?: string;
+}
+
+interface GsapSliderProps {
+  title?: string;
+  examples?: SlideExample[];
+}
+
+const defaultExamples: SlideExample[] = [
+  {
+    title: "Sistema de control contractual",
+    bgColor: "#1E1E1E",
+    url: "/portfolio/ejemplo-1",
+    img: "/images/alcaldia_contractual.png"
+  },
+  {
+    title: "Ejemplo 2",
+    bgColor: "#06414D",
+    url: "/portfolio/ejemplo-2",
+    img: "/service/analisis-de-datos.png"
+  },
+  {
+    title: "Ejemplo 3",
+    bgColor: "#025159",
+    url: "/portfolio/ejemplo-3",
+    img: "/service/gestion-de-proyectos.png"
+  },
+  {
+    title: "Ejemplo 4",
+    bgColor: "#D9D9D9",
+    url: "/portfolio/ejemplo-4",
+    img: "/service/consultoria-estrategica.png"
+  },
+  {
+    title: "Ejemplo 5",
+    bgColor: "#1E1E1E",
+    url: "/portfolio/ejemplo-5",
+    img: "/service/inteligencia-artificial.png"
+  }
+];
+
+export default function GsapSlider({ title = "Portafolio", examples = defaultExamples }: GsapSliderProps) {
   // Referencias para los elementos DOM que GSAP manipulará
   const sectionsRef = useRef<(HTMLElement | null)[]>([])
   const outerWrappersRef = useRef<(HTMLElement | null)[]>([])
@@ -22,38 +67,9 @@ export default function GsapSlider() {
   // Datos de las diapositivas
   const slides = [
     {
-      title: "Sistemas de Información",
+      title: title,
     },
-    {
-      title: "Sistema de control contractual",
-      bgColor: "#1E1E1E",
-      url: "/portfolio/ejemplo-1",
-      img: "/images/alcaldia_contractual.png"
-    },
-    {
-      title: "Ejemplo 2",
-      bgColor: "#06414D",
-      url: "/portfolio/ejemplo-2",
-      img: "/service/analisis-de-datos.png"
-    },
-    {
-      title: "Ejemplo 3",
-      bgColor: "#025159",
-      url: "/portfolio/ejemplo-3",
-      img: "/service/gestion-de-proyectos.png"
-    },
-    {
-      title: "Ejemplo 4",
-      bgColor: "#D9D9D9",
-      url: "/portfolio/ejemplo-4",
-      img: "/service/consultoria-estrategica.png"
-    },
-    {
-      title: "Ejemplo 5",
-      bgColor: "#1E1E1E",
-      url: "/portfolio/ejemplo-5",
-      img: "/service/inteligencia-artificial.png"
-    }
+    ...examples
   ]
 
   // Función central que maneja la lógica de la animación de transición entre diapositivas
