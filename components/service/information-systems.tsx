@@ -207,7 +207,7 @@ export default function InformationSystems() {
               <Code2 className="w-20 h-20 mx-auto mb-6 text-highlight animate-gentle-balance" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-highlight to-accent bg-clip-text text-transparent">
-              Sistemas de Información
+              Desarrollo de Software
             </h1>
             <p className="text-xl md:text-2xl text-textMuted leading-relaxed max-w-3xl mx-auto">
               Diseñamos y desarrollamos sistemas de información integrales que optimizan la gestión de datos 
