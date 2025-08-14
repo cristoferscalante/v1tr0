@@ -9,6 +9,8 @@ import {
   Linkedin,
   Mail,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Code,
   Palette,
   Lightbulb,
@@ -54,6 +56,8 @@ import {
   Target,
   Kanban,
   Settings,
+  Shield,
+  BrainCircuit,
   type LucideIcon,
 } from "lucide-react"
 
@@ -118,6 +122,10 @@ export const GitBranchIcon = GitBranch
 export const TargetIcon = Target
 export const KanbanIcon = Kanban
 export const SettingsIcon = Settings
+export const ChevronLeftIcon = ChevronLeft
+export const ChevronRightIcon = ChevronRight
+export const ShieldIcon = Shield
+export const BrainCircuitIcon = BrainCircuit
 
 // Exportamos también el tipo LucideIcon para facilitar el tipado
 export type { LucideIcon }
@@ -178,5 +186,9 @@ export {
   Target,
   Kanban,
   Settings,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  BrainCircuit,
   CustomTikTokIcon,
 }

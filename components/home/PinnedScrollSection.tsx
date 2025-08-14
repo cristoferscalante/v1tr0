@@ -40,7 +40,7 @@ export default function PinnedScrollSection({
       
       autoScrollIntervalRef.current = setInterval(() => {
         setCurrentSection(prev => (prev + 1) % sectionsCount)
-      }, 5000)
+      }, 2000)
     }
 
     startAutoScroll()
@@ -98,7 +98,7 @@ export default function PinnedScrollSection({
       if (isVisible) {
         autoScrollIntervalRef.current = setInterval(() => {
           setCurrentSection(prev => (prev + 1) % sectionsCount)
-        }, 5000)
+        }, 2000)
       }
     }
   }

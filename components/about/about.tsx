@@ -275,7 +275,7 @@ const About = () => {
 
           <div className="grid gap-8 md:gap-12 lg:grid-cols-2">
             {/* Development */}
-            <div className="bg-custom-1/30 backdrop-blur-sm rounded-2xl p-8 border border-custom-2/20 hover:border-highlight/30 transition-all duration-300">
+            <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl p-8 text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-highlight/20 rounded-xl flex items-center justify-center">
@@ -295,7 +295,7 @@ const About = () => {
             </div>
 
             {/* Data Science */}
-            <div className="bg-custom-1/30 backdrop-blur-sm rounded-2xl p-8 border border-custom-2/20 hover:border-highlight/30 transition-all duration-300">
+            <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl p-8 text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-highlight/20 rounded-xl flex items-center justify-center">
@@ -315,7 +315,7 @@ const About = () => {
             </div>
 
             {/* Project Management */}
-            <div className="bg-custom-1/30 backdrop-blur-sm rounded-2xl p-8 border border-custom-2/20 hover:border-highlight/30 transition-all duration-300">
+            <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl p-8 text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-highlight/20 rounded-xl flex items-center justify-center">
@@ -334,7 +334,7 @@ const About = () => {
             </div>
 
             {/* Data Visualization */}
-            <div className="bg-custom-1/30 backdrop-blur-sm rounded-2xl p-8 border border-custom-2/20 hover:border-highlight/30 transition-all duration-300">
+            <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl p-8 text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-highlight/20 rounded-xl flex items-center justify-center">
@@ -376,7 +376,7 @@ const About = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-custom-1/80 to-transparent"></div>
             </div>
 
-            <div className="bg-custom-1/30 backdrop-blur-sm rounded-2xl p-8 border border-custom-2/20">
+            <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl p-8 text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
               <div className="text-center mb-8">
                 <div className="inline-block px-3 py-1 rounded-full bg-custom-1 text-highlight text-sm font-medium mb-4">
                   Visión
@@ -386,13 +386,10 @@ const About = () => {
                 </h3>
               </div>
               <p className="text-textMuted text-lg leading-relaxed">
-                En <span className="font-bold text-highlight">V1TR0</span>, creemos en el poder de la tecnología para
-                transformar la manera en que se gestionan los proyectos. Nos enfocamos en brindar soluciones eficientes
-                e inteligentes que potencien la productividad y la toma de decisiones estratégicas.
+                En <span className="font-bold text-highlight">V1TR0</span>, creemos en el poder de la tecnología para transformar la manera en que se gestionan los proyectos. Nos enfocamos en brindar soluciones eficientes e inteligentes que potencien la productividad y la toma de decisiones estratégicas.
               </p>
               <p className="text-textMuted text-lg leading-relaxed mt-6">
-                Nuestro compromiso es innovar continuamente, integrando las últimas tendencias en desarrollo de
-                software, ciencia de datos y metodologías ágiles para impulsar el éxito de nuestros clientes.
+                Nuestro compromiso es innovar continuamente, integrando las últimas tendencias en desarrollo de software, ciencia de datos y metodologías ágiles para impulsar el éxito de nuestros clientes.
               </p>
             </div>
           </div>

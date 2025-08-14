@@ -321,7 +321,7 @@ export default function V1tr0Logo3D() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-            className="absolute top-1/3 left-12 transform -translate-y-1/2 z-20 pointer-events-none max-w-md"
+            className="absolute top-1/3 left-20 transform -translate-y-1/2 z-20 pointer-events-none max-w-md"
           >
             <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 transition-all duration-300 hover:border-[#08A696]">
               <p className="text-highlight text-sm leading-relaxed">
