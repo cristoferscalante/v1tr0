@@ -1,9 +1,11 @@
-import SoftwareDevelopment from "@/components/service/software-development"
+import SoftwareDevelopment from "@/components/service/software-development-new";
+import GsapSlider from "@/components/gsap/GsapSlider";
 
 export default function SoftwareDevelopmentPage() {
   return (
-    <main className="text-textPrimary">
+    <>
       <SoftwareDevelopment />
-    </main>
-  )
+      <GsapSlider />
+    </>
+  );
 }

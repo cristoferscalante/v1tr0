@@ -66,11 +66,10 @@ export default function Navbar() {
                   <button className="text-highlight hover:text-highlight/90 px-3 py-2 text-sm font-medium transition-all duration-300 hover:glow-effect">
                     Servicios
                   </button>
-                  <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-backgroundSecondary ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <div className="py-1">
-                      <SubNavLink href="/services/dev">Desarrollo</SubNavLink>
-                      <SubNavLink href="/services/pm">Gestión de Proyectos</SubNavLink>
-                      <SubNavLink href="/services/data">Análisis de Datos</SubNavLink>
+                  <div className="absolute left-0 mt-2 w-56 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
+                    <div className="py-2">
+                      <SubNavLink href="/services/dev">Desarrollo de Software</SubNavLink>
+                      <SubNavLink href="/services/pm">Automatización de tareas</SubNavLink>
                       <SubNavLink href="/services/new">Sistemas de Información</SubNavLink>
                     </div>
                   </div>
@@ -122,14 +121,12 @@ export default function Navbar() {
               <div className="w-full max-w-xs border-t border-custom-2/20 pt-4 mt-4">
                 <h3 className="text-[#f26a1b] font-bold text-base mb-3 text-center">Servicios</h3>
                 <MobileNavLink href="/services/dev" onClick={() => setIsOpen(false)}>
-                  Desarrollo
+                  Desarrollo de Software
                 </MobileNavLink>
                 <MobileNavLink href="/services/pm" onClick={() => setIsOpen(false)}>
-                  Gestión de Proyectos
+                  Automatización de tareas
                 </MobileNavLink>
-                <MobileNavLink href="/services/data" onClick={() => setIsOpen(false)}>
-                  Análisis de Datos
-                </MobileNavLink>
+
                 <MobileNavLink href="/services/new" onClick={() => setIsOpen(false)}>
                   Sistemas de Información
                 </MobileNavLink>
@@ -171,7 +168,7 @@ const SubNavLink: FC<{ href: string; children: ReactNode }> = ({ href, children 
   return (
     <Link
       href={href}
-      className="block px-4 py-2 text-sm text-highlight hover:text-highlight/90 transition-all duration-300 hover:glow-effect"
+      className="block px-4 py-3 text-sm text-[#26FFDF] hover:text-[#26FFDF]/90 transition-all duration-300 hover:bg-[#08A696]/10 rounded-xl mx-2 first:mt-0 last:mb-0"
     >
       {children}
     </Link>

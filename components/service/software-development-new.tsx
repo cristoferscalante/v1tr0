@@ -1,94 +1,80 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Code2, X, Send, ChevronLeft, ChevronRight, ExternalLink, Calendar, Users, Code } from "lucide-react"
+import { Code, Database, Layers, Rocket, Server, Zap, X, Send, ChevronLeft, ChevronRight, ExternalLink, Calendar, Users, GitBranch } from "lucide-react"
 import { useEffect } from "react"
 import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
 
-// Register GSAP plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-export default function InformationSystems() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const sectionsRef = useRef<HTMLDivElement[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isContactPopupOpen, setIsContactPopupOpen] = useState(false)
+export default function SoftwareDevelopment() {
   const [selectedProject, setSelectedProject] = useState(0)
+  const [isContactPopupOpen, setIsContactPopupOpen] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-    serviceArea: "desarrollo", // Preseleccionamos desarrollo de software
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  // Datos de proyectos de V1TR0
+  // Projects data adapted from the original content
   const projects = [
     {
       id: 1,
-      title: "Sistema de Gestión Hospitalaria",
-      description: "Plataforma integral para la gestión de pacientes, citas médicas, historiales clínicos y administración hospitalaria con dashboards en tiempo real.",
-      tech: ["React", "Node.js", "PostgreSQL", "WebSocket"],
-      year: "2024",
+      title: "Aplicaciones Empresariales",
+      description: "Sistemas ERP, CRM y de gestión interna adaptados a tus procesos específicos para maximizar la eficiencia operativa.",
+      tech: ["React", "Node.js", "PostgreSQL", "Docker"],
+      category: "Enterprise",
       status: "Activo",
-      image: "/service/clinica.png"
+      image: "/images/ciclo-vida-software.png"
     },
     {
       id: 2,
-      title: "Dashboard Financiero Corporativo",
-      description: "Sistema de análisis financiero con visualización de KPIs, reportes automatizados y predicciones basadas en IA para empresas.",
-      tech: ["Vue.js", "Python", "MongoDB", "TensorFlow"],
-      year: "2024",
-      status: "En desarrollo",
-      image: "/placeholder.svg"
+      title: "Plataformas Web",
+      description: "Portales, e-commerce y aplicaciones web progresivas con experiencias de usuario excepcionales y alto rendimiento.",
+      tech: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+      category: "Web",
+      status: "Activo",
+      image: "/images/ciclo-vida-software.png"
     },
     {
       id: 3,
-      title: "Plataforma E-learning Interactiva",
-      description: "Sistema educativo con videoconferencias, evaluaciones automáticas, seguimiento de progreso y gamificación para instituciones.",
-      tech: ["Next.js", "Express", "MySQL", "WebRTC"],
-      year: "2023",
-      status: "Completado",
-      image: "/placeholder.svg"
+      title: "Aplicaciones Móviles",
+      description: "Apps nativas y multiplataforma que conectan con tus usuarios en cualquier dispositivo con interfaces intuitivas.",
+      tech: ["React Native", "Flutter", "Swift", "Kotlin"],
+      category: "Mobile",
+      status: "Activo",
+      image: "/images/ciclo-vida-software.png"
     },
     {
       id: 4,
-      title: "Sistema de Inventario Inteligente",
-      description: "Gestión automatizada de inventarios con predicción de demanda, alertas de stock y optimización de cadena de suministro.",
-      tech: ["Angular", "Java", "Oracle", "Machine Learning"],
-      year: "2023",
-      status: "Completado",
-      image: "/placeholder.svg"
-    },
-    {
-      id: 5,
-      title: "Portal de Gestión Municipal",
-      description: "Plataforma ciudadana para trámites en línea, seguimiento de solicitudes y comunicación directa con autoridades municipales.",
-      tech: ["React", "Laravel", "MySQL", "Redis"],
-      year: "2024",
-      status: "En desarrollo",
-      image: "/placeholder.svg"
-    },
-    {
-      id: 6,
-      title: "Sistema CRM Empresarial",
-      description: "Gestión completa de relaciones con clientes, automatización de ventas, seguimiento de leads y análisis de comportamiento.",
-      tech: ["Svelte", "Django", "PostgreSQL", "Elasticsearch"],
-      year: "2023",
+      title: "Soluciones de IA",
+      description: "Implementación de inteligencia artificial y machine learning para automatizar procesos y generar insights.",
+      tech: ["Python", "TensorFlow", "PyTorch", "AWS"],
+      category: "AI/ML",
       status: "Activo",
-      image: "/placeholder.svg"
+      image: "/images/ciclo-vida-software.png"
     }
   ]
 
-  // Funciones para navegación de proyectos
+  const addToRefs = (el: HTMLDivElement | null) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el)
+    }
+  }
+
+  const selectProject = (index: number) => {
+    setSelectedProject(index)
+  }
+
   const nextProject = () => {
     setSelectedProject((prev) => (prev + 1) % projects.length)
   }
@@ -97,175 +83,187 @@ export default function InformationSystems() {
     setSelectedProject((prev) => (prev - 1 + projects.length) % projects.length)
   }
 
-  const selectProject = (index: number) => {
-    setSelectedProject(index)
-  }
-
-  // Función para manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
-      // Simular envío del formulario
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      setSubmitSuccess(true)
-      setTimeout(() => {
-        setIsContactPopupOpen(false)
-        setSubmitSuccess(false)
-        setFormData({
-          name: "",
-          email: "",
-          message: "",
-          serviceArea: "sistemas",
-        })
-      }, 2000)
-    } catch (error) {
-      console.error("Error al enviar el formulario:", error)
-    } finally {
-      setIsSubmitting(false)
-    }
+    // Simulate form submission
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    setSubmitSuccess(true)
+    setIsSubmitting(false)
+
+    // Close popup after 3 seconds
+    setTimeout(() => {
+      setIsContactPopupOpen(false)
+      setSubmitSuccess(false)
+      setFormData({ name: "", email: "", message: "" })
+    }, 3000)
   }
 
-  // Función para manejar cambios en los campos del formulario
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const isMobile = window.innerWidth <= 768
+    const isMobile = window.innerWidth < 768
     
-    // Only apply GSAP snap on desktop
-    if (!isMobile && containerRef.current && sectionsRef.current.length > 0) {
-      const sections = sectionsRef.current
-      
-      // Set up snap scrolling
+    if (!isMobile) {
+      // Desktop: Enable snap scrolling and animations
       ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
+        trigger: ".snap-container",
+        start: "top top",
+        end: "bottom bottom",
         snap: {
-          snapTo: 1 / (sections.length - 1),
+          snapTo: 1 / 3, // Snap to thirds of the container
           duration: { min: 0.2, max: 0.6 },
           delay: 0.1,
-          ease: 'power2.inOut'
-        }
+        },
       })
 
-      // Add entrance animations for each section
-      sections.forEach((section, index) => {
-        gsap.fromTo(section, 
-          {
-            opacity: 0,
-            y: 50
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 80%',
-              end: 'bottom 20%',
-              toggleActions: 'play none none reverse'
+      // Animate sections on scroll
+      sectionsRef.current.forEach((section, index) => {
+        if (section) {
+          gsap.fromTo(
+            section.children,
+            { opacity: 0, y: 50 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              stagger: 0.2,
+              scrollTrigger: {
+                trigger: section,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse",
+              },
             }
-          }
-        )
+          )
+        }
       })
     }
 
-    // Cleanup function
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill())
     }
   }, [])
 
-  const addToRefs = (el: HTMLDivElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el)
-    }
-  }
-
   return (
-    <section className="w-full font-sans relative">
-      <div 
-        ref={containerRef}
-        className="min-h-screen"
-      >
-        {/* Section 1: Sistemas de Información */}
+    <section className="relative">
+      <CharacterBackground />
+      
+      <div className="snap-container h-screen overflow-y-auto">
+        {/* Section 1: Hero - Desarrollo de Software */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start relative overflow-hidden"
+          className="min-h-screen flex items-center justify-center snap-start bg-background"
         >
-          <CharacterBackground />
-          <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-            <div className="mb-8">
-              <Code2 className="w-20 h-20 mx-auto mb-6 text-highlight animate-gentle-balance" />
+          <div className="container mx-auto px-4 py-20">
+            <div className="max-w-4xl mx-auto text-center space-y-8">
+              <div className="space-y-4">
+                <div className="inline-block px-4 py-2 bg-highlight/20 text-highlight rounded-full text-sm font-medium border border-highlight/30">
+                  Desarrollo de Software
+                </div>
+                <h1 className="text-5xl md:text-7xl font-bold text-textPrimary leading-tight">
+                  Soluciones digitales a la medida
+                </h1>
+                <p className="text-xl text-textMuted max-w-2xl mx-auto leading-relaxed">
+                  Transformamos ideas en soluciones tecnológicas innovadoras. Nuestro enfoque combina las últimas tecnologías con metodologías ágiles para crear software que impulsa el crecimiento de tu negocio.
+                </p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button 
+                  onClick={() => setIsContactPopupOpen(true)}
+                  className="bg-gradient-to-r from-highlight to-accent hover:from-accent hover:to-highlight text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Solicitar consulta
+                </button>
+                <div className="flex items-center text-textMuted">
+                  <Users className="w-5 h-5 mr-2" />
+                  <span>+50 proyectos exitosos</span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-highlight to-accent bg-clip-text text-transparent">
-              Sistemas de Información
-            </h1>
-            <p className="text-xl md:text-2xl text-textMuted leading-relaxed max-w-3xl mx-auto">
-              Diseñamos y desarrollamos sistemas de información integrales que optimizan la gestión de datos 
-              y procesos empresariales. Creamos soluciones que conectan, organizan y automatizan la información 
-              para mejorar la toma de decisiones y la eficiencia operativa.
-            </p>
           </div>
         </div>
 
-        {/* Section 2: Panel Interactivo de Proyectos */}
+        {/* Section 2: Interactive Projects Panel */}
         <div 
-           ref={addToRefs}
-           className="min-h-screen flex items-center justify-center snap-start relative overflow-hidden px-4 pt-24 pb-8"
-         >
-          <div className="max-w-6xl mx-auto w-full relative z-10">
-            {/* Panel interactivo de proyectos - Layout horizontal */}
-            <div className="relative bg-background/80 backdrop-blur-md rounded-3xl p-8 border-2 border-highlight/30 shadow-2xl overflow-hidden">
+          ref={addToRefs}
+          className="min-h-screen flex items-center justify-center snap-start bg-background"
+        >
+          <div className="container mx-auto px-4 py-20">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-bold text-textPrimary mb-4">
+                  Desarrollo de Software
+                </h2>
+                <p className="text-xl text-textMuted max-w-2xl mx-auto">
+                  Desarrollamos soluciones personalizadas que se adaptan perfectamente a tus necesidades específicas
+                </p>
+              </div>
+
               <div className="grid lg:grid-cols-5 gap-8">
-                {/* Panel izquierdo - Información del proyecto */}
-                 <div className="space-y-6 lg:col-span-2">
-                  <div className="bg-gradient-to-br from-custom-2/20 to-highlight/20 rounded-2xl p-6 border border-custom-2/30">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-textPrimary text-sm font-medium bg-highlight/20 px-3 py-1 rounded-full border border-highlight/30">
-                        {projects[selectedProject].status}
-                      </span>
-                      <div className="flex items-center text-textMuted text-sm">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {projects[selectedProject].year}
+                {/* Panel izquierdo - Lista de proyectos */}
+                <div className="space-y-4 lg:col-span-2">
+                  {projects.map((project, index) => (
+                    <div
+                      key={project.id}
+                      onClick={() => selectProject(index)}
+                      className={`p-6 rounded-2xl border cursor-pointer transition-all duration-300 hover:scale-105 ${
+                        selectedProject === index
+                          ? 'bg-gradient-to-r from-highlight/20 to-accent/20 border-highlight/50 shadow-lg'
+                          : 'bg-custom-2/20 border-custom-2/30 hover:bg-custom-2/30'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-lg font-bold text-textPrimary">{project.title}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          selectedProject === index ? 'bg-highlight/30 text-highlight' : 'bg-custom-3/30 text-custom-3'
+                        }`}>
+                          {project.category}
+                        </span>
+                      </div>
+                      <p className="text-textMuted text-sm mb-4 line-clamp-2">
+                        {project.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-textMuted">{project.status}</span>
+                        <div className="flex -space-x-1">
+                          {project.tech.slice(0, 3).map((tech, techIndex) => (
+                            <div key={techIndex} className="w-6 h-6 bg-gradient-to-br from-highlight to-accent rounded-full border-2 border-background flex items-center justify-center">
+                              <span className="text-xs text-white font-bold">{tech[0]}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <h3 className="text-2xl font-bold text-textPrimary mb-4">
-                      {projects[selectedProject].title}
-                    </h3>
-                    <p className="text-textMuted mb-6 leading-relaxed">
-                      {projects[selectedProject].description}
-                    </p>
-                    <div className="mb-6">
-                      <h4 className="text-textPrimary font-semibold mb-3 flex items-center">
-                        <Code className="w-5 h-5 mr-2" />
-                        Tecnologías
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {projects[selectedProject].tech.map((tech, index) => (
-                          <span key={index} className="bg-highlight/20 text-highlight px-3 py-1 rounded-full text-sm border border-highlight/30">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
+                  ))}
+                  
+                  <div className="mt-6">
+                    <h4 className="text-lg font-bold text-textPrimary mb-3">
+                      Tecnologías
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {projects[selectedProject].tech.map((tech, index) => (
+                        <span key={index} className="bg-highlight/20 text-highlight px-3 py-1 rounded-full text-sm border border-highlight/30">
+                          {tech}
+                        </span>
+                      ))}
                     </div>
-                    <button className="w-full bg-gradient-to-r from-highlight to-accent hover:from-accent hover:to-highlight text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center">
-                      <ExternalLink className="w-5 h-5 mr-2" />
-                      Ver Proyecto
-                    </button>
                   </div>
+                  <button className="w-full bg-gradient-to-r from-highlight to-accent hover:from-accent hover:to-highlight text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center">
+                    <ExternalLink className="w-5 h-5 mr-2" />
+                    Ver Proyecto
+                  </button>
                 </div>
 
                 {/* Panel derecho - Vista previa del proyecto */}
-                 <div className="space-y-6 lg:col-span-3">
+                <div className="space-y-6 lg:col-span-3">
                   <div className="bg-gradient-to-br from-custom-2/20 to-highlight/20 rounded-2xl p-6 border border-custom-2/30 h-full">
                     <div className="bg-background/50 rounded-xl p-6 h-80 flex items-center justify-center">
                       <div className="text-center">

@@ -1,9 +1,11 @@
-import ProjectManagement from "@/components/service/project-management"
+import ProjectManagement from "@/components/service/project-management-new"
+import GsapSlider from "@/components/gsap/GsapSlider"
 
 export default function ProjectManagementPage() {
   return (
-    <main className="text-textPrimary">
+    <>
       <ProjectManagement />
-    </main>
+      <GsapSlider />
+    </>
   )
 }
