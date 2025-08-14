@@ -77,7 +77,7 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {/* Theme Toggle Button and Login Button */}
+              {/* Theme Toggle Button */}
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
               </div>
@@ -139,11 +139,7 @@ export default function Navbar() {
               <div className="w-full max-w-xs border-t border-custom-2/20 pt-4 mt-4">
                 <Link
                   href="/login"
-                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-full text-white shadow-lg mx-auto w-fit"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(242, 106, 27, 0.7), rgba(255, 140, 66, 0.7))",
-                    boxShadow: "0 6px 15px rgba(242, 106, 27, 0.2)",
-                  }}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-white hover:text-white shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 mx-auto w-fit"
                   onClick={() => setIsOpen(false)}
                 >
                   <LogIn className="w-5 h-5" />

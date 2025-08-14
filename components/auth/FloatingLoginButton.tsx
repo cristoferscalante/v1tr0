@@ -27,7 +27,7 @@ export function FloatingLoginButton() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-8 right-8 z-50 hidden md:block"
+          className="fixed top-8 right-24 z-50 hidden md:block"
           initial={{ scale: 0, rotate: 180 }}
           animate={{ scale: 1, rotate: 0 }}
           exit={{ scale: 0, rotate: 180 }}
@@ -39,12 +39,11 @@ export function FloatingLoginButton() {
           }}
         >
           <motion.button
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-full text-white shadow-lg"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
             style={{
-              background: "linear-gradient(135deg, rgba(38, 255, 223, 0.7), rgba(38, 255, 223, 0.7))",
               boxShadow: isHovered
-                ? "0 10px 25px rgba(38, 255, 223, 0.3)"
-                : "0 6px 15px rgba(38, 255, 223, 0.2)",
+                ? "0 20px 40px rgba(8, 166, 150, 0.1), 0 10px 25px rgba(38, 255, 223, 0.1)"
+                : "0 6px 15px rgba(8, 166, 150, 0.05), 0 3px 8px rgba(38, 255, 223, 0.05)",
             }}
 
             whileHoverScale={1.05}
@@ -53,7 +52,7 @@ export function FloatingLoginButton() {
             onMouseLeave={() => setIsHovered(false)}
             onClick={handleClick}
           >
-            <LogIn className="w-5 h-5" />
+            <LogIn className="w-4 h-4" />
             <motion.span
               initial={{ width: 0, opacity: 0 }}
               animate={{
