@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, forwardRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
 import {
@@ -25,34 +25,37 @@ const socialLinks = [
 const footerSections = [
   {
     id: 1,
-    icon: <CodeIcon className="w-8 h-8" />,
+    icon: <CodeIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
     title: "Desarrollo",
     content: "Creamos soluciones digitales a medida para impulsar tu negocio al siguiente nivel.",
     color: "from-custom-3 to-custom-4",
   },
   {
     id: 2,
-    icon: <PaletteIcon className="w-8 h-8" />,
+    icon: <PaletteIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
     title: "Diseño",
     content: "Diseñamos experiencias visuales únicas que cautivan a tu audiencia.",
     color: "from-custom-2 to-custom-3",
   },
   {
     id: 3,
-    icon: <LightbulbIcon className="w-8 h-8" />,
+    icon: <LightbulbIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
     title: "Innovación",
     content: "Exploramos nuevas tecnologías para mantenerte a la vanguardia del mercado.",
     color: "from-custom-1 to-custom-2",
   },
 ]
 
-export default function FooterSection() {
+const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
   return (
-    <div className={`w-full h-full ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} py-12 sm:py-16 md:py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}>
+    <div 
+      ref={ref}
+      className={`w-full h-full ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
+    >
       <div className="max-w-7xl mx-auto relative w-full">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -83,20 +86,20 @@ export default function FooterSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={`relative overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} transition-all duration-300 cursor-pointer group hover:border-[#08A696]`}
             >
-              <div className="relative p-4 sm:p-6 h-full flex flex-col">
-                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <div className={`p-2 sm:p-3 rounded-2xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/30"} group-hover:scale-110 transition-transform duration-300`}>
-                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} w-6 h-6 sm:w-8 sm:h-8`}>
+              <div className="relative p-3 sm:p-4 md:p-5 h-full flex flex-col">
+                <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                  <div className={`p-1.5 sm:p-2 rounded-xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/30"} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                       {section.icon}
                     </div>
                   </div>
-                  <h3 className={`text-lg sm:text-xl md:text-2xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#08A696] group-hover:text-[#08A696]"} transition-colors duration-300`}>
+                  <h3 className={`text-base sm:text-lg md:text-xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#08A696] group-hover:text-[#08A696]"} transition-colors duration-300`}>
                     {section.title}
                   </h3>
                 </div>
-                <p className="text-textMuted text-sm sm:text-base">{section.content}</p>
+                <p className="text-textMuted text-xs sm:text-sm">{section.content}</p>
                 <ExpandLessIcon
-                  className={`w-6 h-6 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} mt-4 self-end transition-transform duration-300 ${expandedId === section.id ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 sm:w-5 sm:h-5 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} mt-3 self-end transition-transform duration-300 ${expandedId === section.id ? "rotate-180" : ""}`}
                 />
               </div>
             </motion.div>
@@ -143,7 +146,7 @@ export default function FooterSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-8 sm:mt-12 px-2 sm:px-0"
+          className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0"
         >
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
             <p className="text-textMuted text-sm sm:text-base">&copy; {new Date().getFullYear()} V1TR0</p>
@@ -181,4 +184,8 @@ export default function FooterSection() {
       </div>
     </div>
   )
-}
+})
+
+FooterSection.displayName = "FooterSection"
+
+export default FooterSection

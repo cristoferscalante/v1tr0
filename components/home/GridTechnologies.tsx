@@ -13,7 +13,7 @@ export default function ModernTechnologiesSection() {
   const technologies = [
     {
       id: 1,
-      icon: <Code2 className="w-8 h-8" />,
+      icon: <Code2 className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "Frontend",
       description: "Interfaces modernas y responsivas",
       techs: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
@@ -21,7 +21,7 @@ export default function ModernTechnologiesSection() {
     },
     {
       id: 2,
-      icon: <Server className="w-8 h-8" />,
+      icon: <Server className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "Backend",
       description: "Arquitecturas robustas",
       techs: ["Node.js", "Python"],
@@ -29,7 +29,7 @@ export default function ModernTechnologiesSection() {
     },
     {
       id: 3,
-      icon: <Database className="w-8 h-8" />,
+      icon: <Database className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "Bases de Datos",
       description: "Gestión eficiente de datos",
       techs: ["PostgreSQL", "MongoDB", "AWS", "Cloudflare"],
@@ -37,7 +37,7 @@ export default function ModernTechnologiesSection() {
     },
     {
       id: 4,
-      icon: <Terminal className="w-8 h-8" />,
+      icon: <Terminal className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "DevOps",
       description: "Automatización y despliegue continuo",
       techs: ["Docker", "AWS", "CI/CD", "Git"],
@@ -45,7 +45,7 @@ export default function ModernTechnologiesSection() {
     },
     {
       id: 5,
-      icon: <Smartphone className="w-8 h-8" />,
+      icon: <Smartphone className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "Mobile",
       description: "Apps nativas y multiplataforma",
       techs: ["React Native", "iOS", "Android"],
@@ -53,7 +53,7 @@ export default function ModernTechnologiesSection() {
     },
     {
       id: 6,
-      icon: <Smartphone className="w-8 h-8" />,
+      icon: <Smartphone className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "Ciencia de Datos",
       description: "Visualización y análisis de datos avanzado",
       techs: ["Next.js", "Python", "R", "Tableau", "Power BI"],
@@ -62,22 +62,22 @@ export default function ModernTechnologiesSection() {
   ]
 
   return (
-    <section className="min-h-screen w-full bg-custom-1/20 dark:bg-custom-1/80 py-12 sm:py-16 md:py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center">
+    <section className="w-full bg-custom-1/20 dark:bg-custom-1/80 py-8 sm:py-12 md:py-16 px-4 font-sans overflow-hidden relative">
       <div className="absolute inset-0 bg-grid-pattern opacity-15 dark:opacity-20"></div>
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2"
+          className="text-center mb-6 sm:mb-8 md:mb-10 relative z-10 px-2 pt-8 sm:pt-12 md:pt-16"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-textPrimary mb-3 sm:mb-4">Nuestras Tecnologías</h2>
-          <p className="text-textMuted text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-textPrimary mb-2 sm:mb-3">Nuestras Tecnologías</h2>
+          <p className="text-textMuted text-sm sm:text-base md:text-lg max-w-xl mx-auto px-2">
             Dominamos las herramientas más potentes para crear soluciones digitales excepcionales
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative z-10 px-2 sm:px-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 relative z-10 px-2 sm:px-0">
           {technologies.map((tech, index) => (
             <motion.div
               key={tech.id}
@@ -101,23 +101,23 @@ export default function ModernTechnologiesSection() {
                   />
                 )}
                 
-                <div className="relative p-4 sm:p-6 h-full flex flex-col">
-                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <div className={`p-2 sm:p-3 rounded-xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} group-hover:bg-[#08A696]/20 transition-all duration-300 group-hover:scale-110`}>
-                      <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-transform duration-300 group-hover:rotate-3 w-6 h-6 sm:w-8 sm:h-8`}>
+                <div className="relative p-3 sm:p-4 md:p-5 h-full flex flex-col">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <div className={`p-1.5 sm:p-2 rounded-xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} group-hover:bg-[#08A696]/20 transition-all duration-300 group-hover:scale-110`}>
+                      <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-transform duration-300 group-hover:rotate-3`}>
                         {tech.icon}
                       </div>
                     </div>
-                    <h3 className={`text-lg sm:text-xl md:text-2xl font-semibold transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                    <h3 className={`text-base sm:text-lg md:text-xl font-semibold transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                       {tech.name}
                     </h3>
                   </div>
-                  <p className="text-textMuted text-sm sm:text-base mb-3 sm:mb-4 flex-grow">{tech.description}</p>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  <p className="text-textMuted text-xs sm:text-sm mb-2 sm:mb-3 flex-grow">{tech.description}</p>
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {tech.techs.map((t) => (
                       <span 
                         key={t} 
-                        className={`px-2 sm:px-3 py-1 text-xs rounded-xl transition-all duration-300 ${isDark ? "text-[#26FFDF] bg-[#08A696]/10 group-hover:bg-[#08A696]/20" : "text-[#08A696] bg-[#08A696]/10 group-hover:bg-[#08A696]/20"}`}
+                        className={`px-1.5 sm:px-2 py-0.5 text-xs rounded-lg transition-all duration-300 ${isDark ? "text-[#26FFDF] bg-[#08A696]/10 group-hover:bg-[#08A696]/20" : "text-[#08A696] bg-[#08A696]/10 group-hover:bg-[#08A696]/20"}`}
                       >
                         {t}
                       </span>
