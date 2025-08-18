@@ -62,22 +62,22 @@ export default function ModernTechnologiesSection() {
   ]
 
   return (
-    <section className="min-h-screen w-full bg-custom-1/20 dark:bg-custom-1/80 py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center">
+    <section className="min-h-screen w-full bg-custom-1/20 dark:bg-custom-1/80 py-12 sm:py-16 md:py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center">
       <div className="absolute inset-0 bg-grid-pattern opacity-15 dark:opacity-20"></div>
       <div className="max-w-7xl mx-auto relative">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16 relative z-10"
+          className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2"
         >
-          <h2 className="text-5xl font-bold text-textPrimary mb-4">Nuestras Tecnologías</h2>
-          <p className="text-textMuted text-xl max-w-2xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-textPrimary mb-3 sm:mb-4">Nuestras Tecnologías</h2>
+          <p className="text-textMuted text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-2">
             Dominamos las herramientas más potentes para crear soluciones digitales excepcionales
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative z-10 px-2 sm:px-0">
           {technologies.map((tech, index) => (
             <motion.div
               key={tech.id}
@@ -101,23 +101,23 @@ export default function ModernTechnologiesSection() {
                   />
                 )}
                 
-                <div className="relative p-6 h-full flex flex-col">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className={`p-3 rounded-xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} group-hover:bg-[#08A696]/20 transition-all duration-300 group-hover:scale-110`}>
-                      <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-transform duration-300 group-hover:rotate-3`}>
+                <div className="relative p-4 sm:p-6 h-full flex flex-col">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                    <div className={`p-2 sm:p-3 rounded-xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} group-hover:bg-[#08A696]/20 transition-all duration-300 group-hover:scale-110`}>
+                      <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-transform duration-300 group-hover:rotate-3 w-6 h-6 sm:w-8 sm:h-8`}>
                         {tech.icon}
                       </div>
                     </div>
-                    <h3 className={`text-2xl font-semibold transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                    <h3 className={`text-lg sm:text-xl md:text-2xl font-semibold transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                       {tech.name}
                     </h3>
                   </div>
-                  <p className="text-textMuted mb-4 flex-grow">{tech.description}</p>
-                  <div className="flex flex-wrap gap-2">
+                  <p className="text-textMuted text-sm sm:text-base mb-3 sm:mb-4 flex-grow">{tech.description}</p>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {tech.techs.map((t) => (
                       <span 
                         key={t} 
-                        className={`px-3 py-1 text-xs rounded-xl transition-all duration-300 ${isDark ? "text-[#26FFDF] bg-[#08A696]/10 group-hover:bg-[#08A696]/20" : "text-[#08A696] bg-[#08A696]/10 group-hover:bg-[#08A696]/20"}`}
+                        className={`px-2 sm:px-3 py-1 text-xs rounded-xl transition-all duration-300 ${isDark ? "text-[#26FFDF] bg-[#08A696]/10 group-hover:bg-[#08A696]/20" : "text-[#08A696] bg-[#08A696]/10 group-hover:bg-[#08A696]/20"}`}
                       >
                         {t}
                       </span>

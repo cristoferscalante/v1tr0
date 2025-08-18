@@ -34,6 +34,7 @@ interface ServiceBannerProps {
   imageAlt: string
   ctaLink: string
   ctaText: string
+  imageSize?: 'sm' | 'md' | 'lg'
 }
 
 export default function ServiceBanner({
@@ -44,6 +45,7 @@ export default function ServiceBanner({
   imageAlt,
   ctaLink,
   ctaText,
+  imageSize = 'md',
 }: ServiceBannerProps) {
   const { theme } = useTheme()
   const isDark = theme === "dark"
@@ -194,14 +196,14 @@ export default function ServiceBanner({
         <div className="lg:w-1/2 lg:pr-12">
           <h1
             ref={titleRef}
-            className="text-4xl md:text-6xl font-bold text-textPrimary mb-6"
+            className="text-3xl md:text-5xl font-bold text-textPrimary mb-6"
           >
             {title}
           </h1>
 
           <p 
             ref={descriptionRef}
-            className="text-textMuted text-lg mb-8"
+            className="text-textMuted text-base mb-8"
           >
             {description}
           </p>
@@ -213,48 +215,44 @@ export default function ServiceBanner({
             {features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className="p-2 rounded-full bg-custom-2 text-highlight">{feature.icon}</div>
-                <p className="text-textPrimary">{feature.text}</p>
+                <p className="text-textPrimary text-sm">{feature.text}</p>
               </div>
             ))}
           </div>
-
-          {/* Botón CTA con el nuevo diseño glassmorphism */}
-          <div
-            ref={ctaRef}
-            className="mt-10"
-          >
-            <button
-              onClick={() => setIsPopupOpen(true)}
-              onMouseEnter={() => handleCtaHover(true)}
-              onMouseLeave={() => handleCtaHover(false)}
-              className={`${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950]" : "hover:bg-[#c5ebe7]"} inline-flex items-center px-8 py-4 text-lg font-semibold`}
-            >
-              <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-colors duration-300`}>
-                {ctaText}
-              </span>
-              <ArrowRightIcon className={`ml-3 w-5 h-5 transition-transform duration-300 hover:translate-x-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
-            </button>
-          </div>
         </div>
 
-        <div
-          ref={imageRef}
-          className="lg:w-1/2 mt-12 lg:mt-0"
-        >
-          <div className="flex items-center justify-center">
+        <div className="lg:w-1/2 mt-12 lg:mt-0 flex flex-col items-center">
+          <div 
+            ref={imageRef}
+            className="flex items-center justify-center mb-8"
+          >
             <Image
               src={imageSrc || placeholderImage}
               alt={imageAlt}
-              width={400}
-              height={400}
+              width={imageSize === 'sm' ? 200 : imageSize === 'lg' ? 400 : 300}
+              height={imageSize === 'sm' ? 200 : imageSize === 'lg' ? 400 : 300}
               onClick={handleImageClick}
-              className={`w-full h-auto max-w-md object-cover transition-all duration-700 ease-in-out hover:scale-105 ${
+              className={`w-full h-auto ${
+                imageSize === 'sm' ? 'max-w-xs' : imageSize === 'lg' ? 'max-w-md' : 'max-w-sm'
+              } object-cover transition-all duration-700 ease-in-out hover:scale-105 ${
                 isGlowing ? "animate-glow-pulse" : ""
               } ${isShaking ? "animate-shake" : ""}`}
               style={{
                 cursor: "pointer",
               }}
             />
+          </div>
+          
+          <div ref={ctaRef}>
+            <button
+              onClick={() => setIsPopupOpen(true)}
+              onMouseEnter={() => handleCtaHover(true)}
+              onMouseLeave={() => handleCtaHover(false)}
+              className="bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] inline-flex items-center px-8 py-4 text-lg font-semibold"
+            >
+              <span className="text-[#26FFDF] transition-colors duration-300">{ctaText}</span>
+              <ArrowRightIcon className="ml-3 w-5 h-5 transition-transform duration-300 hover:translate-x-1 text-[#26FFDF]" />
+            </button>
           </div>
         </div>
       </div>

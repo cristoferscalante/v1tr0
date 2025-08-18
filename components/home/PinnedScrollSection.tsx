@@ -112,9 +112,9 @@ export default function PinnedScrollSection({
           {children.map((child, index) => (
             <div 
               key={index}
-              className="w-full min-h-screen flex items-center justify-center px-4 py-6"
+              className="w-full min-h-screen flex items-center justify-center px-4 py-8 sm:py-12"
             >
-              <div className="w-full h-full max-w-sm flex flex-col justify-center">
+              <div className="w-full max-w-sm sm:max-w-md flex flex-col justify-center">
                 {child}
               </div>
             </div>

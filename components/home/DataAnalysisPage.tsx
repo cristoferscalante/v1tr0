@@ -108,8 +108,23 @@ export default function DataAnalysisPage() {
                   </div>
                 ))}
               </div>
+            </div>
+            
+            <div className="lg:w-1/2 mt-12 lg:mt-0 flex flex-col items-center">
+              <div ref={imageRef} className="flex items-center justify-center mb-8">
+                <img
+                  alt={serviceData.imageAlt}
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                  decoding="async"
+                  className="w-full h-auto max-w-sm object-cover transition-all duration-700 ease-in-out hover:scale-105"
+                  src={serviceData.imageSrc}
+                  style={{ color: "transparent", cursor: "pointer" }}
+                />
+              </div>
               
-              <div ref={ctaRef} className="mt-10">
+              <div ref={ctaRef}>
                 <button 
                   onClick={() => setIsModalOpen(true)}
                   className="bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] inline-flex items-center px-8 py-4 text-lg font-semibold"
@@ -133,21 +148,6 @@ export default function DataAnalysisPage() {
                     <path d="m12 5 7 7-7 7"></path>
                   </svg>
                 </button>
-              </div>
-            </div>
-            
-            <div ref={imageRef} className="lg:w-1/2 mt-12 lg:mt-0">
-              <div className="flex items-center justify-center">
-                <img
-                  alt={serviceData.imageAlt}
-                  loading="lazy"
-                  width="400"
-                  height="400"
-                  decoding="async"
-                  className="w-full h-auto max-w-md object-cover transition-all duration-700 ease-in-out hover:scale-105"
-                  src={serviceData.imageSrc}
-                  style={{ color: "transparent", cursor: "pointer" }}
-                />
               </div>
             </div>
           </div>
