@@ -2,7 +2,7 @@
 
 import type React from "react"
 import ModernFooter from "@/components/global/ModernFooter"
-import NavBar from "@/components/global/NavBar"
+import FloatingHeader from "@/components/global/FloatingHeader"
 // Importar el botón flotante
 import { FloatingLoginButton } from "@/components/auth/FloatingLoginButton"
 import { usePathname } from "next/navigation"
@@ -18,8 +18,8 @@ export default function MarketingLayout({
 
   return (
     <>
-      <NavBar />
-      <main className="min-h-screen pt-16">{children}</main>
+      <FloatingHeader />
+      <main className="min-h-screen">{children}</main>
       {!isServicesNewPage && !isHomePage && <ModernFooter />}
       <FloatingLoginButton /> {/* Añadir el botón flotante aquí */}
     </>

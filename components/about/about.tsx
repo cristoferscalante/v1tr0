@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CardViewerPremium from "./card-viewer-premium"
 import BackgroundAnimation from "../home/BackgroungAnimation"
+import ModernFooter from "../global/ModernFooter"
 
 // Dynamic import for 3D component (no SSR)
 const V1tr0Logo3D = dynamic(() => import("../3d/V1tr0Logo3D"), {
@@ -178,17 +179,17 @@ const About = () => {
         ref={addToRefs}
         role="region"
         aria-label="Presentación 3D de V1TR0"
-        className={`relative flex items-center justify-center overflow-hidden ${
-          isMobile ? 'min-h-screen py-12 px-4' : 'h-screen w-screen'
+        className={`relative flex items-end justify-center overflow-hidden ${
+          isMobile ? 'min-h-screen py-12 px-4' : 'h-screen w-screen pb-20'
         }`}
         style={!isMobile ? { height: "100svh" } : {}}
       >
         {!isMobile ? (
-          <div className="absolute inset-0 w-full h-full">
+          <div className="absolute inset-0 w-full h-full mt-16">
             <V1tr0Logo3D />
           </div>
         ) : (
-          <div className="w-full flex items-center justify-center bg-gradient-to-br from-custom-1/20 to-custom-2/20 rounded-2xl">
+          <div className="w-full flex items-center justify-center bg-gradient-to-br from-custom-1/20 to-custom-2/20 rounded-2xl mt-16">
             <div className="text-center py-16 px-8">
               <h1 className="text-3xl sm:text-4xl font-bold text-highlight mb-6">V1TR0</h1>
               <div className="space-y-4 text-textMuted text-sm sm:text-base leading-relaxed max-w-2xl">
@@ -213,83 +214,83 @@ const About = () => {
         role="region"
         aria-label="Nuestro equipo"
         className={`relative flex items-center justify-center overflow-hidden ${
-          isMobile ? 'py-16 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
+          isMobile ? 'py-12 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
         }`}
         style={!isMobile ? { height: "100svh" } : {}}
       >
-        <div className="max-w-7xl mx-auto w-full">
+        <div className="max-w-5xl mx-auto w-full">
           {/* Header */}
-          <div className={`text-center ${isMobile ? 'mb-8' : 'mb-12'}`}>
-            <div className="inline-block px-3 py-1 rounded-full bg-custom-1 text-highlight text-sm font-medium mb-4">
+          <div className={`text-center ${isMobile ? 'mb-6' : 'mb-8'}`}>
+            <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium mb-3">
               Nuestro Equipo
             </div>
-            <h2 className={`font-bold tracking-tighter text-textPrimary mb-6 ${
-              isMobile ? 'text-2xl sm:text-3xl' : 'text-3xl md:text-4xl lg:text-5xl'
+            <h2 className={`font-bold tracking-tighter text-textPrimary mb-4 ${
+              isMobile ? 'text-xl sm:text-2xl' : 'text-2xl md:text-3xl lg:text-4xl'
             }`}>
               Profesionales comprometidos con la excelencia
             </h2>
-            <p className={`text-textMuted max-w-3xl mx-auto ${
-              isMobile ? 'text-base' : 'text-lg md:text-xl'
+            <p className={`text-textMuted max-w-2xl mx-auto ${
+              isMobile ? 'text-sm' : 'text-base md:text-lg'
             }`}>
               Conoce a los expertos que hacen posible la innovación en cada proyecto
             </p>
           </div>
 
           {/* Team Cards */}
-          <div className={`gap-8 md:gap-12 ${
-            isMobile ? 'flex flex-col space-y-12' : 'grid lg:grid-cols-3'
+          <div className={`gap-6 md:gap-8 ${
+            isMobile ? 'flex flex-col space-y-8' : 'grid lg:grid-cols-3'
           }`}>
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-3">
               <div className={`w-full mx-auto ${
-                isMobile ? 'h-[300px] max-w-[250px]' : 'h-[420px] max-w-[300px]'
+                isMobile ? 'h-[240px] max-w-[200px]' : 'h-[320px] max-w-[240px]'
               }`}>
                 <CardViewerPremium frontImage="/about/card-efren.jpg" backImage="/about/card-back.jpg" />
               </div>
               <div>
                 <h4 className={`font-bold text-textPrimary ${
-                  isMobile ? 'text-lg' : 'text-xl'
+                  isMobile ? 'text-base' : 'text-lg'
                 }`}>Efrén Martínez</h4>
-                <p className="text-highlight font-medium">CEO & Fundador</p>
-                <p className={`text-textMuted mt-2 ${
-                  isMobile ? 'text-sm' : 'text-sm'
+                <p className="text-highlight font-medium text-sm">CEO & Fundador</p>
+                <p className={`text-textMuted mt-1 ${
+                  isMobile ? 'text-xs' : 'text-sm'
                 }`}>
                   Especialista en gestión de proyectos y desarrollo de software con más de 8 años de experiencia.
                 </p>
               </div>
             </div>
 
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-3">
               <div className={`w-full mx-auto ${
-                isMobile ? 'h-[300px] max-w-[250px]' : 'h-[420px] max-w-[300px]'
+                isMobile ? 'h-[240px] max-w-[200px]' : 'h-[320px] max-w-[240px]'
               }`}>
                 <CardViewerPremium frontImage="/about/card-cristofer.jpg" backImage="/about/card-back.jpg" />
               </div>
               <div>
                 <h4 className={`font-bold text-textPrimary ${
-                  isMobile ? 'text-lg' : 'text-xl'
+                  isMobile ? 'text-base' : 'text-lg'
                 }`}>Cristofer Javier</h4>
-                <p className="text-highlight font-medium">CTO & Co-fundador</p>
-                <p className={`text-textMuted mt-2 ${
-                  isMobile ? 'text-sm' : 'text-sm'
+                <p className="text-highlight font-medium text-sm">CTO & Co-fundador</p>
+                <p className={`text-textMuted mt-1 ${
+                  isMobile ? 'text-xs' : 'text-sm'
                 }`}>
                   Experto en arquitectura de software y tecnologías emergentes, líder en innovación tecnológica.
                 </p>
               </div>
             </div>
 
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-3">
               <div className={`w-full mx-auto ${
-                isMobile ? 'h-[300px] max-w-[250px]' : 'h-[420px] max-w-[300px]'
+                isMobile ? 'h-[240px] max-w-[200px]' : 'h-[320px] max-w-[240px]'
               }`}>
                 <CardViewerPremium frontImage="/about/card-maria.jpg" backImage="/about/card-back.jpg" />
               </div>
               <div>
                 <h4 className={`font-bold text-textPrimary ${
-                  isMobile ? 'text-lg' : 'text-xl'
+                  isMobile ? 'text-base' : 'text-lg'
                 }`}>María González</h4>
-                <p className="text-highlight font-medium">Data Scientist</p>
-                <p className={`text-textMuted mt-2 ${
-                  isMobile ? 'text-sm' : 'text-sm'
+                <p className="text-highlight font-medium text-sm">Data Scientist</p>
+                <p className={`text-textMuted mt-1 ${
+                  isMobile ? 'text-xs' : 'text-sm'
                 }`}>
                   Especialista en análisis de datos y machine learning, transformando datos en insights valiosos.
                 </p>
@@ -309,48 +310,50 @@ const About = () => {
         }`}
         style={!isMobile ? { height: "100svh" } : {}}
       >
-        <div className="max-w-7xl mx-auto w-full">
-          <div className={`text-center ${isMobile ? 'mb-8' : 'mb-12'}`}>
-            <div className="inline-block px-3 py-1 rounded-full bg-custom-1 text-highlight text-sm font-medium mb-4">
+        <div className="max-w-5xl mx-auto w-full">
+          <div className={`text-center ${
+            isMobile ? 'mb-6' : 'mb-8'
+          }`}>
+            <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium mb-3">
               Servicios
             </div>
-            <h3 className={`font-bold tracking-tighter text-textPrimary mb-6 ${
-              isMobile ? 'text-2xl sm:text-3xl' : 'text-3xl md:text-4xl lg:text-5xl'
+            <h3 className={`font-bold tracking-tighter text-textPrimary mb-4 ${
+              isMobile ? 'text-xl sm:text-2xl' : 'text-2xl md:text-3xl lg:text-4xl'
             }`}>
               Nuestros Servicios
             </h3>
-            <p className={`text-textMuted max-w-3xl mx-auto ${
-              isMobile ? 'text-base' : 'text-lg md:text-xl'
+            <p className={`text-textMuted max-w-2xl mx-auto ${
+              isMobile ? 'text-sm' : 'text-base md:text-lg'
             }`}>
               Soluciones integrales para impulsar tu negocio hacia el futuro digital
             </p>
           </div>
 
-          <div className={`gap-8 md:gap-12 ${
-            isMobile ? 'flex flex-col space-y-6' : 'grid lg:grid-cols-2'
+          <div className={`gap-6 md:gap-8 ${
+            isMobile ? 'flex flex-col space-y-4' : 'grid lg:grid-cols-2'
           }`}>
             {/* Development */}
             <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
-              isMobile ? 'p-6' : 'p-8'
+              isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-10 h-10' : 'w-12 h-12'
+                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
                   }`}>
                     <svg className={`text-highlight ${
-                      isMobile ? 'w-5 h-5' : 'w-6 h-6'
+                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
                     }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-3 ${
-                    isMobile ? 'text-lg' : 'text-xl'
+                  <h4 className={`font-bold text-textPrimary mb-2 ${
+                    isMobile ? 'text-base' : 'text-lg'
                   }`}>Desarrollo de Software</h4>
                   <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-sm' : 'text-base'
+                    isMobile ? 'text-xs' : 'text-sm'
                   }`}>
                     Creamos aplicaciones web y móviles robustas utilizando las últimas tecnologías como React, Next.js,
                     Node.js y bases de datos modernas.
@@ -361,26 +364,26 @@ const About = () => {
 
             {/* Data Science */}
             <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
-              isMobile ? 'p-6' : 'p-8'
+              isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-10 h-10' : 'w-12 h-12'
+                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
                   }`}>
                     <svg className={`text-highlight ${
-                      isMobile ? 'w-5 h-5' : 'w-6 h-6'
+                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
                     }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-3 ${
-                    isMobile ? 'text-lg' : 'text-xl'
+                  <h4 className={`font-bold text-textPrimary mb-2 ${
+                    isMobile ? 'text-base' : 'text-lg'
                   }`}>Ciencia de Datos</h4>
                   <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-sm' : 'text-base'
+                    isMobile ? 'text-xs' : 'text-sm'
                   }`}>
                     Transformamos datos en insights accionables mediante análisis avanzado, machine learning y
                     inteligencia artificial.
@@ -391,26 +394,26 @@ const About = () => {
 
             {/* Project Management */}
             <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
-              isMobile ? 'p-6' : 'p-8'
+              isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-10 h-10' : 'w-12 h-12'
+                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
                   }`}>
                     <svg className={`text-highlight ${
-                      isMobile ? 'w-5 h-5' : 'w-6 h-6'
+                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
                     }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-3 ${
-                    isMobile ? 'text-lg' : 'text-xl'
+                  <h4 className={`font-bold text-textPrimary mb-2 ${
+                    isMobile ? 'text-base' : 'text-lg'
                   }`}>Gestión de Proyectos</h4>
                   <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-sm' : 'text-base'
+                    isMobile ? 'text-xs' : 'text-sm'
                   }`}>
                     Implementamos metodologías ágiles como Scrum y Kanban para optimizar la entrega de proyectos.
                   </p>
@@ -420,26 +423,26 @@ const About = () => {
 
             {/* Data Visualization */}
             <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
-              isMobile ? 'p-6' : 'p-8'
+              isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
                   <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-10 h-10' : 'w-12 h-12'
+                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
                   }`}>
                     <svg className={`text-highlight ${
-                      isMobile ? 'w-5 h-5' : 'w-6 h-6'
+                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
                     }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                     </svg>
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-3 ${
-                    isMobile ? 'text-lg' : 'text-xl'
+                  <h4 className={`font-bold text-textPrimary mb-2 ${
+                    isMobile ? 'text-base' : 'text-lg'
                   }`}>Visualización de Datos</h4>
                   <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-sm' : 'text-base'
+                    isMobile ? 'text-xs' : 'text-sm'
                   }`}>
                     Creamos dashboards interactivos y visualizaciones impactantes que facilitan la comprensión de
                     datos complejos.
@@ -461,12 +464,12 @@ const About = () => {
         }`}
         style={!isMobile ? { height: "100svh" } : {}}
       >
-        <div className="max-w-7xl mx-auto w-full">
-          <div className={`gap-10 md:gap-16 items-center ${
-            isMobile ? 'flex flex-col space-y-8' : 'grid lg:grid-cols-2'
+        <div className="max-w-5xl mx-auto w-full">
+          <div className={`gap-6 md:gap-10 items-center ${
+            isMobile ? 'flex flex-col space-y-6' : 'grid lg:grid-cols-2'
           }`}>
             <div className={`relative rounded-2xl overflow-hidden ${
-              isMobile ? 'h-[250px]' : 'h-[300px] md:h-[400px]'
+              isMobile ? 'h-[200px]' : 'h-[250px] md:h-[300px]'
             }`}>
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/15-SzfeYK3mFDL4IOh7XyaucnbCXX7OPV.png"
@@ -478,27 +481,27 @@ const About = () => {
             </div>
 
             <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
-              isMobile ? 'p-6' : 'p-8'
+              isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className={`text-center ${
-                isMobile ? 'mb-6' : 'mb-8'
+                isMobile ? 'mb-4' : 'mb-6'
               }`}>
-                <div className="inline-block px-3 py-1 rounded-full bg-custom-1 text-highlight text-sm font-medium mb-4">
+                <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium mb-3">
                   Visión
                 </div>
-                <h3 className={`font-bold tracking-tighter text-textPrimary mb-6 ${
-                  isMobile ? 'text-2xl' : 'text-3xl md:text-4xl'
+                <h3 className={`font-bold tracking-tighter text-textPrimary mb-4 ${
+                  isMobile ? 'text-xl' : 'text-2xl md:text-3xl'
                 }`}>
                   Nuestra Visión
                 </h3>
               </div>
               <p className={`text-textMuted leading-relaxed ${
-                isMobile ? 'text-base' : 'text-lg'
+                isMobile ? 'text-sm' : 'text-base'
               }`}>
                 En <span className="font-bold text-highlight">V1TR0</span>, creemos en el poder de la tecnología para transformar la manera en que se gestionan los proyectos. Nos enfocamos en brindar soluciones eficientes e inteligentes que potencien la productividad y la toma de decisiones estratégicas.
               </p>
-              <p className={`text-textMuted leading-relaxed mt-6 ${
-                isMobile ? 'text-base' : 'text-lg'
+              <p className={`text-textMuted leading-relaxed mt-4 ${
+                isMobile ? 'text-sm' : 'text-base'
               }`}>
                 Nuestro compromiso es innovar continuamente, integrando las últimas tendencias en desarrollo de software, ciencia de datos y metodologías ágiles para impulsar el éxito de nuestros clientes.
               </p>
@@ -506,6 +509,11 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      {/* Section 5: Footer */}
+      <div ref={addToRefs} className="h-screen w-screen flex items-center justify-center">
+        <ModernFooter />
+      </div>
     </div>
   )
 }

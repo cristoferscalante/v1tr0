@@ -81,14 +81,12 @@ export default function HomeBanner() {
 
         {/* Tarjetas con servicios */}
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl px-2 sm:px-4"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full px-2 sm:px-4"
           variants={itemVariants}
         >
           <CardBanner icon={devSvg} title="Desarrollo de Software" href="/services/dev" />
           <CardBanner icon={dataSvg} title="Sistemas de Información" href="/services/new" />
-          <div className="sm:col-span-2 lg:col-span-1 flex justify-center">
-            <CardBanner icon={pmSvg} title="Automatización de Tareas" href="/services/pm" />
-          </div>
+          <CardBanner icon={pmSvg} title="Automatización de Tareas" href="/services/pm" />
         </motion.div>
       </motion.div>
     </section>
