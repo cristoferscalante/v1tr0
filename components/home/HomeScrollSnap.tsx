@@ -35,14 +35,21 @@ export default function HomeScrollSnap({
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 768
   const { isHorizontalScrollActive, horizontalScrollPosition, canScrollVertically } = useScrollContext()
 
-  // Implementar scroll snap limpio como en /about
+  // Implementar scroll snap limpio como en /about (solo desktop)
   useEffect(() => {
-    if (!containerRef.current || typeof window === "undefined" || isMobile) return
+    if (!containerRef.current || typeof window === "undefined") return
+
+    // En móviles, permitir scroll normal sin GSAP
+    if (isMobile) {
+      document.body.style.overflow = "auto"
+      document.documentElement.style.overflow = "auto"
+      return
+    }
 
     const sections = sectionsRef.current
     const totalSections = sections.length
 
-    // Configurar scroll snap limpio
+    // Configurar scroll snap limpio (solo desktop)
     const setupScrollSnap = () => {
       // Deshabilitar scroll normal
       document.body.style.overflow = "hidden"
@@ -160,6 +167,27 @@ export default function HomeScrollSnap({
     }
   }
 
+  // Renderizado responsive
+  if (isMobile) {
+    return (
+      <div ref={containerRef} className={`relative ${className}`}>
+        {children.map((child, index) => {
+          return (
+            <section 
+              key={index}
+              role="region"
+              aria-label={`Sección ${index + 1}`}
+              className="relative w-full min-h-screen"
+            >
+              {child}
+            </section>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // Desktop: scroll snap con GSAP
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       {children.map((child, index) => {

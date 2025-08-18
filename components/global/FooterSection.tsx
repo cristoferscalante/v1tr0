@@ -52,27 +52,27 @@ export default function FooterSection() {
   const isDark = theme === "dark"
 
   return (
-    <div className={`w-full h-full ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}>
+    <div className={`w-full h-full ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} py-12 sm:py-16 md:py-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}>
       <div className="max-w-7xl mx-auto relative w-full">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16 relative z-10"
+          className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2"
         >
-          <div className={`inline-block px-4 py-2 rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} text-sm font-medium mb-4`}>
+          <div className={`inline-block px-3 sm:px-4 py-2 rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} text-xs sm:text-sm font-medium mb-3 sm:mb-4`}>
             <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
               V1TR0 Technologies
             </span>
           </div>
-          <h2 className="text-4xl font-bold text-textPrimary mb-4">Impulsando tu Éxito Digital</h2>
-          <p className="text-textMuted text-xl max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-textPrimary mb-3 sm:mb-4">Impulsando tu Éxito Digital</h2>
+          <p className="text-textMuted text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-2">
             Descubre cómo nuestros servicios pueden transformar tu presencia en línea
           </p>
-          <div className={`w-24 h-1 ${isDark ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]" : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"} mx-auto mt-8 rounded-full`}></div>
+          <div className={`w-16 sm:w-20 md:w-24 h-1 ${isDark ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]" : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"} mx-auto mt-6 sm:mt-8 rounded-full`}></div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative z-10 mb-8 sm:mb-12 md:mb-16 px-2 sm:px-0">
           {footerSections.map((section, index) => (
             <motion.div
               key={section.id}
@@ -83,18 +83,18 @@ export default function FooterSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={`relative overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} transition-all duration-300 cursor-pointer group hover:border-[#08A696]`}
             >
-              <div className="relative p-6 h-full flex flex-col">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`p-3 rounded-2xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/30"} group-hover:scale-110 transition-transform duration-300`}>
-                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+              <div className="relative p-4 sm:p-6 h-full flex flex-col">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <div className={`p-2 sm:p-3 rounded-2xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/30"} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} w-6 h-6 sm:w-8 sm:h-8`}>
                       {section.icon}
                     </div>
                   </div>
-                  <h3 className={`text-2xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#08A696] group-hover:text-[#08A696]"} transition-colors duration-300`}>
+                  <h3 className={`text-lg sm:text-xl md:text-2xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#08A696] group-hover:text-[#08A696]"} transition-colors duration-300`}>
                     {section.title}
                   </h3>
                 </div>
-                <p className="text-textMuted">{section.content}</p>
+                <p className="text-textMuted text-sm sm:text-base">{section.content}</p>
                 <ExpandLessIcon
                   className={`w-6 h-6 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} mt-4 self-end transition-transform duration-300 ${expandedId === section.id ? "rotate-180" : ""}`}
                 />
@@ -143,24 +143,24 @@ export default function FooterSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col md:flex-row justify-between items-center gap-8 pt-8 mt-12"
+          className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-8 sm:mt-12 px-2 sm:px-0"
         >
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <p className="text-textMuted">&copy; {new Date().getFullYear()} V1TR0</p>
-            <span className={`hidden md:block ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>•</span>
-            <nav className="flex gap-4">
-              <Link href="/terminos" className={`text-textMuted ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
+            <p className="text-textMuted text-sm sm:text-base">&copy; {new Date().getFullYear()} V1TR0</p>
+            <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>•</span>
+            <nav className="flex gap-3 sm:gap-4">
+              <Link href="/terminos" className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
                 Términos
               </Link>
-              <Link href="/privacidad" className={`text-textMuted ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
+              <Link href="/privacidad" className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
                 Privacidad
               </Link>
-              <Link href="/cookies" className={`text-textMuted ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
+              <Link href="/cookies" className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
                 Cookies
               </Link>
             </nav>
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-4 sm:gap-6">
             {socialLinks.map((link, index) => (
               <motion.a
                 key={index}
@@ -171,7 +171,9 @@ export default function FooterSection() {
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
               >
-                {link.icon}
+                <div className="w-5 h-5 sm:w-6 sm:h-6">
+                  {link.icon}
+                </div>
               </motion.a>
             ))}
           </div>

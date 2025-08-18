@@ -89,7 +89,22 @@ export default function Navbar() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex items-center justify-center p-2 text-highlight hover:text-highlight/90 focus:outline-none transition-colors hover:glow-effect"
               >
-                <Menu className="h-6 w-6" />
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="3" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  className="h-6 w-6"
+                >
+                  <line x1="4" x2="20" y1="6" y2="6" rx="2" ry="2"></line>
+                  <line x1="4" x2="20" y1="12" y2="12" rx="2" ry="2"></line>
+                  <line x1="4" x2="20" y1="18" y2="18" rx="2" ry="2"></line>
+                </svg>
               </button>
             </div>
           </div>
@@ -110,26 +125,27 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col items-center justify-center flex-grow px-4 py-8 space-y-6">
               <MobileNavLink href="/" onClick={() => setIsOpen(false)}>
-                Home
+                Inicio
               </MobileNavLink>
               <MobileNavLink href="/about" onClick={() => setIsOpen(false)}>
-                Sobre Nosotros
+                V1TR0
               </MobileNavLink>
               <MobileNavLink href="/blog" onClick={() => setIsOpen(false)}>
                 Blog
               </MobileNavLink>
-              <div className="w-full max-w-xs border-t border-custom-2/20 pt-4 mt-4">
-                <h3 className="text-[#f26a1b] font-bold text-base mb-3 text-center">Servicios</h3>
-                <MobileNavLink href="/services/dev" onClick={() => setIsOpen(false)}>
-                  Desarrollo de Software
-                </MobileNavLink>
-                <MobileNavLink href="/services/pm" onClick={() => setIsOpen(false)}>
-                  Automatización de tareas
-                </MobileNavLink>
-
-                <MobileNavLink href="/services/new" onClick={() => setIsOpen(false)}>
-                  Sistemas de Información
-                </MobileNavLink>
+              <div className="w-full max-w-xs border-t border-[#08A696]/20 pt-6 mt-6">
+                <h3 className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-bold text-lg mb-4 text-center`}>Servicios</h3>
+                <div className="space-y-3">
+                  <MobileNavLink href="/services/dev" onClick={() => setIsOpen(false)} isService>
+                    Desarrollo de Software
+                  </MobileNavLink>
+                  <MobileNavLink href="/services/pm" onClick={() => setIsOpen(false)} isService>
+                    Automatización de tareas
+                  </MobileNavLink>
+                  <MobileNavLink href="/services/new" onClick={() => setIsOpen(false)} isService>
+                    Sistemas de Información
+                  </MobileNavLink>
+                </div>
               </div>
 
               {/* Botón de inicio de sesión para móvil */}
@@ -176,16 +192,21 @@ const SubNavLink: FC<{ href: string; children: ReactNode }> = ({ href, children 
 }
 
 // MobileNavLink
-const MobileNavLink: FC<{ href: string; children: ReactNode; indent?: boolean; onClick?: () => void }> = ({
+const MobileNavLink: FC<{ href: string; children: ReactNode; indent?: boolean; onClick?: () => void; isService?: boolean }> = ({
   href,
   children,
   indent = false,
   onClick,
+  isService = false,
 }) => {
   return (
     <Link
       href={href}
-      className="block text-highlight hover:text-highlight/90 px-6 py-3 text-xl font-medium transition-all duration-300 hover:glow-effect text-center w-full max-w-xs"
+      className={`block px-6 py-3 font-medium transition-all duration-300 text-center w-full max-w-xs rounded-xl ${
+        isService 
+          ? "text-white hover:text-white/90 text-lg hover:bg-[#08A696]/10" 
+          : "text-highlight hover:text-highlight/90 text-xl hover:glow-effect"
+      }`}
       onClick={onClick}
     >
       {children}

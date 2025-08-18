@@ -300,10 +300,10 @@ export default function V1tr0Logo3D() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-            className="absolute top-1/4 right-4 lg:right-8 xl:right-12 2xl:right-16 transform -translate-y-1/2 z-20 pointer-events-none max-w-sm lg:max-w-md xl:max-w-lg"
+            className="absolute top-[23%] right-4 lg:right-8 xl:right-12 2xl:right-16 transform -translate-y-1/2 z-20 pointer-events-none max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl"
           >
             <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl p-6 lg:p-8 xl:p-10 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 transition-all duration-300 hover:border-[#08A696] mr-2 lg:mr-4 xl:mr-6">
-              <p className="text-highlight text-sm lg:text-base xl:text-lg leading-relaxed text-left">
+              <p className="text-highlight text-xs lg:text-sm xl:text-base leading-relaxed text-left">
                 V1TR0 nace en 2025 con la misión de potenciar el rendimiento y la eficiencia de todo tipo de organizaciones —desde emprendedores y empresas en crecimiento, hasta agencias de cooperación internacional e instituciones consolidadas— mediante soluciones de software hechas a medida.
                 <br /><br />
                 Nuestra visión es integrar y optimizar las herramientas de gestión y operación diaria, unificando procesos y recursos para maximizar su impacto.
