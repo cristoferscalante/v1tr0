@@ -17,7 +17,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("http://localhost:3000"),
   title: "V1tr0",
   description: "Desarrollo de software a medida",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/v1tr0.ico',
+    shortcut: '/v1tr0.ico',
+    apple: '/v1tr0.ico',
+  },
 }
 
 export default function RootLayout({
