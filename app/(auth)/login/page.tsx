@@ -60,13 +60,13 @@ export default function LoginPage() {
   return (
     <>
       <BackgroundAnimation />
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-md mb-8">
-          <Link href="/" className="flex justify-center mb-8">
-            <Image src="/v1tr0-logo.svg" alt="V1TR0 Logo" width={80} height={80} className="h-20 w-auto" />
+      <div className="min-h-screen flex flex-col items-center justify-start pt-4 p-4">
+        <div className="w-full max-w-md mb-2">
+          <Link href="/" className="flex justify-center mb-2 animate-slideInRight">
+            <Image src="/v1tr0_imagotipo.svg" alt="V1TR0 Logo" width={100} height={100} className="h-25 w-auto transition-all duration-300 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(8,166,150,0.6)] hover:filter hover:brightness-110" />
           </Link>
 
-          <Card className="w-full bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl">
+          <Card className="w-full bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 rounded-2xl animate-slideInLeft">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold text-center text-white">Acceso al Portal</CardTitle>
               <CardDescription className="text-center text-textMuted">
