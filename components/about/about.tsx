@@ -9,7 +9,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CardViewerPremium from "./card-viewer-premium"
 import BackgroundAnimation from "../home/BackgroungAnimation"
-import ModernFooter from "../global/ModernFooter"
+import FooterSection from "@/components/global/FooterSection"
+
 
 // Dynamic import for 3D component (no SSR)
 const V1tr0Logo3D = dynamic(() => import("../3d/V1tr0Logo3D"), {
@@ -24,6 +25,123 @@ const V1tr0Logo3D = dynamic(() => import("../3d/V1tr0Logo3D"), {
 // Register GSAP plugins
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
+}
+
+// Team Member Slider Component
+const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
+  const [currentMember, setCurrentMember] = useState(0)
+  
+  const teamMembers = [
+    {
+      name: "Alvaro Efren B.S.",
+      role: "CEO & Fundador",
+      image: "/about/card-efren.png",
+      biography: "Soy politólogo y desarrollador de software apasionado por transformar datos en soluciones con impacto social. He trabajado con varias agencias de Cooperación Internacional creando sistemas de información y dashboards que fortalecen la coordinación humanitaria en contextos de emergencia. Domino Python, bases de datos relacionales y NoSQL, además de front-end con Next.js y TailwindCSS. Mi enfoque une tecnología y análisis social para diseñar herramientas que generan decisiones estratégicas y valor sostenible que aporten al desarrollo de las comunidades y las empresas."
+    },
+    {
+      name: "Cristofer Bolaños Scalante",
+      role: "CTO & Fundador",
+      image: "/about/card-cristofer.png",
+      biography: "Experto en arquitectura de software y tecnologías emergentes, líder en innovación tecnológica. Responsable de la dirección técnica y la implementación de las mejores prácticas de desarrollo. Su expertise incluye desarrollos a medida, microservicios, automatizaciones, infraestructura, seguridad, integraciones APIREST y tecnologías de vanguardia."
+    }
+  ]
+
+  const nextMember = () => {
+    setCurrentMember((prev) => (prev + 1) % teamMembers.length)
+  }
+
+  const prevMember = () => {
+    setCurrentMember((prev) => (prev - 1 + teamMembers.length) % teamMembers.length)
+  }
+
+  const member = teamMembers[currentMember]
+
+  return (
+    <div className="relative">
+      {/* Main Content */}
+      <div className={`flex items-center gap-8 ${
+        isMobile ? 'flex-col' : 'flex-row'
+      }`}>
+        {/* Card Section */}
+        <div className={`flex-shrink-0 ${
+          isMobile ? 'w-full max-w-[280px]' : 'w-[400px]'
+        }`}>
+          <div className={`w-full mx-auto ${
+            isMobile ? 'h-[300px]' : 'h-[480px]'
+          }`}>
+            <CardViewerPremium 
+              frontImage={member.image} 
+              backImage="/about/card-back.png" 
+            />
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className={`flex-1 space-y-6 ${
+          isMobile ? 'text-center' : 'text-left'
+        }`}>
+          <div>
+            <h2 className={`font-bold tracking-tighter text-textPrimary mb-2 ${
+              isMobile ? 'text-2xl sm:text-3xl text-center' : 'text-3xl md:text-4xl lg:text-5xl text-left'
+            }`}>
+              {member.name}
+            </h2>
+            <p className={`text-highlight font-medium ${
+              isMobile ? 'text-base' : 'text-lg md:text-xl'
+            }`}>
+              {member.role}
+            </p>
+          </div>
+          
+          <div className={`text-textMuted leading-relaxed ${
+            isMobile ? 'text-sm' : 'text-base md:text-lg'
+          }`}>
+            <p>{member.biography}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Arrows */}
+      <div className={`flex items-center justify-center gap-4 ${
+        isMobile ? 'mt-8' : 'mt-12'
+      }`}>
+        <button
+          onClick={prevMember}
+          className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
+          aria-label="Miembro anterior"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        <div className="flex gap-2">
+          {teamMembers.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentMember(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentMember 
+                  ? 'bg-highlight shadow-lg shadow-highlight/30' 
+                  : 'bg-[#08A696]/30 hover:bg-[#08A696]/50'
+              }`}
+              aria-label={`Ir a ${teamMembers[index].name}`}
+            />
+          ))}
+        </div>
+        
+        <button
+          onClick={nextMember}
+          className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
+          aria-label="Siguiente miembro"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  )
 }
 
 const About = () => {
@@ -218,85 +336,14 @@ const About = () => {
         }`}
         style={!isMobile ? { height: "100svh" } : {}}
       >
-        <div className="max-w-5xl mx-auto w-full">
-          {/* Header */}
-          <div className={`text-center ${isMobile ? 'mb-6' : 'mb-8'}`}>
-            <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium mb-3">
-              Nuestro Equipo
-            </div>
-            <h2 className={`font-bold tracking-tighter text-textPrimary mb-4 ${
-              isMobile ? 'text-xl sm:text-2xl' : 'text-2xl md:text-3xl lg:text-4xl'
-            }`}>
-              Profesionales comprometidos con la excelencia
-            </h2>
-            <p className={`text-textMuted max-w-2xl mx-auto ${
-              isMobile ? 'text-sm' : 'text-base md:text-lg'
-            }`}>
-              Conoce a los expertos que hacen posible la innovación en cada proyecto
-            </p>
-          </div>
+        {/* Floating "Nuestro Equipo" badge - aligned with card top */}
+        <div className="absolute top-24 right-24 z-10">
+          <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium">Nuestro Equipo</div>
+        </div>
 
-          {/* Team Cards */}
-          <div className={`gap-6 md:gap-8 ${
-            isMobile ? 'flex flex-col space-y-8' : 'grid lg:grid-cols-3'
-          }`}>
-            <div className="text-center space-y-3">
-              <div className={`w-full mx-auto ${
-                isMobile ? 'h-[240px] max-w-[200px]' : 'h-[320px] max-w-[240px]'
-              }`}>
-                <CardViewerPremium frontImage="/about/card-efren.jpg" backImage="/about/card-back.jpg" />
-              </div>
-              <div>
-                <h4 className={`font-bold text-textPrimary ${
-                  isMobile ? 'text-base' : 'text-lg'
-                }`}>Efrén Martínez</h4>
-                <p className="text-highlight font-medium text-sm">CEO & Fundador</p>
-                <p className={`text-textMuted mt-1 ${
-                  isMobile ? 'text-xs' : 'text-sm'
-                }`}>
-                  Especialista en gestión de proyectos y desarrollo de software con más de 8 años de experiencia.
-                </p>
-              </div>
-            </div>
-
-            <div className="text-center space-y-3">
-              <div className={`w-full mx-auto ${
-                isMobile ? 'h-[240px] max-w-[200px]' : 'h-[320px] max-w-[240px]'
-              }`}>
-                <CardViewerPremium frontImage="/about/card-cristofer.jpg" backImage="/about/card-back.jpg" />
-              </div>
-              <div>
-                <h4 className={`font-bold text-textPrimary ${
-                  isMobile ? 'text-base' : 'text-lg'
-                }`}>Cristofer Javier</h4>
-                <p className="text-highlight font-medium text-sm">CTO & Co-fundador</p>
-                <p className={`text-textMuted mt-1 ${
-                  isMobile ? 'text-xs' : 'text-sm'
-                }`}>
-                  Experto en arquitectura de software y tecnologías emergentes, líder en innovación tecnológica.
-                </p>
-              </div>
-            </div>
-
-            <div className="text-center space-y-3">
-              <div className={`w-full mx-auto ${
-                isMobile ? 'h-[240px] max-w-[200px]' : 'h-[320px] max-w-[240px]'
-              }`}>
-                <CardViewerPremium frontImage="/about/card-maria.jpg" backImage="/about/card-back.jpg" />
-              </div>
-              <div>
-                <h4 className={`font-bold text-textPrimary ${
-                  isMobile ? 'text-base' : 'text-lg'
-                }`}>María González</h4>
-                <p className="text-highlight font-medium text-sm">Data Scientist</p>
-                <p className={`text-textMuted mt-1 ${
-                  isMobile ? 'text-xs' : 'text-sm'
-                }`}>
-                  Especialista en análisis de datos y machine learning, transformando datos en insights valiosos.
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="max-w-6xl mx-auto w-full">
+          {/* Team Member Display */}
+          <TeamMemberSlider isMobile={isMobile} />
         </div>
       </section>
 
@@ -511,9 +558,20 @@ const About = () => {
       </section>
 
       {/* Section 5: Footer */}
-      <div ref={addToRefs} className="h-screen w-screen flex items-center justify-center">
-        <ModernFooter />
-      </div>
+      <section 
+        ref={addToRefs}
+        role="region"
+        aria-label="Footer"
+        className={`relative flex items-center justify-center overflow-hidden ${
+          isMobile ? 'py-0' : 'h-screen w-screen'
+        }`}
+        style={!isMobile ? { height: "100svh" } : {}}
+      >
+        <div className="w-full">
+          <FooterSection />
+        </div>
+      </section>
+
     </div>
   )
 }

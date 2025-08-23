@@ -247,7 +247,8 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
 
         <div
           ref={cardRef}
-          className="w-full h-full transition-all duration-700 ease-out relative"
+          className="w-full h-full transition-all duration-700 ease-out relative cursor-pointer"
+          onClick={showBack}
           style={{
             transformStyle: "preserve-3d",
             borderRadius: "16px",
@@ -402,16 +403,17 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
       <div className="mt-4 flex gap-2">
         <button
           onClick={() => setAutoRotate(!autoRotate)}
-          className="px-4 py-2 bg-[#005f7380] hover:bg-[#0a939680] backdrop-blur-sm rounded-md text-white text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,204,0.3)]"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
         >
-          {autoRotate ? "Detener rotación" : "Rotación automática"}
-        </button>
-
-        <button
-          onClick={showBack}
-          className="px-4 py-2 bg-[#003d4d80] hover:bg-[#005f7380] backdrop-blur-sm rounded-md text-white text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,204,0.3)]"
-        >
-          Ver Reverso
+          {autoRotate ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4h4v16H6V4zM14 4h4v16h-4V4z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
         </button>
       </div>
 

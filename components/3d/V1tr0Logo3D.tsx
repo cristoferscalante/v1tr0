@@ -13,13 +13,13 @@ type ViewKey = 'isometric' | 'perspective'
 const CAMERA_VIEWS = {
   isometric: {
     name: 'Isométrica',
-    position: [-25, 22, -6] as [number, number, number],
-    fov: 8
+    position: [-25, 25, -20] as [number, number, number],
+    fov: 4.5
   },
   perspective: {
     name: 'Perspectiva',
-    position: [2, 80, 30] as [number, number, number],
-    fov: 5
+    position: [5, 100, 35] as [number, number, number],
+    fov: 4.5
   }
 } as const
 
@@ -66,7 +66,7 @@ function Logo3DModel({
     if (meshRef.current) {
       let baseX
       if (currentView === 'isometric') {
-        baseX = position === 'left' ? -3 : 3
+        baseX = position === 'left' ? -1 : 1
       } else {
         baseX = position === 'left' ? -5 : 4
       }
@@ -125,8 +125,8 @@ function Logo3DModel({
     >
       <primitive 
         object={scene} 
-        scale={currentView === 'isometric' ? [5, 5, 5] : [7, 7, 7]}
-        position={currentView === 'isometric' ? [0.5, 0.7, 0.5] : [-2.5, -3.0, 0.5]}
+        scale={currentView === 'isometric' ? [3, 3, 3] : [4, 4, 4]}
+        position={currentView === 'isometric' ? [2.5, 0.2, 0.5] : [-2.5, -3.0, 0.5]}
       />
     </group>
   )
@@ -279,7 +279,7 @@ export default function V1tr0Logo3D() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute top-4 left-4 z-10 pointer-events-none"
           >
@@ -298,7 +298,7 @@ export default function V1tr0Logo3D() {
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
             className="absolute top-[23%] right-4 lg:right-8 xl:right-12 2xl:right-16 transform -translate-y-1/2 z-20 pointer-events-none max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl"
           >
@@ -319,7 +319,7 @@ export default function V1tr0Logo3D() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
+            exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
             className="absolute top-1/3 left-24 lg:left-28 xl:left-32 2xl:left-36 transform -translate-y-1/2 z-20 pointer-events-none max-w-md"
           >
@@ -337,8 +337,8 @@ export default function V1tr0Logo3D() {
       <Suspense fallback={<Loader />}>
         <Canvas
           camera={{ 
-            position: [10, 10, 10],
-            fov: 12,
+            position: [20, 20, 20],
+            fov: 10,
             up: [0, 1, 0]
           }}
           style={{ 

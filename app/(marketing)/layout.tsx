@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import ModernFooter from "@/components/global/ModernFooter"
+import FooterSection from "@/components/global/FooterSection"
 import FloatingHeader from "@/components/global/FloatingHeader"
 // Importar el botón flotante
 import { FloatingLoginButton } from "@/components/auth/FloatingLoginButton"
@@ -14,13 +14,13 @@ export default function MarketingLayout({
 }) {
   const pathname = usePathname()
   const isServicesNewPage = pathname === '/services/new'
-  const isHomePage = pathname === '/'
+  const isAboutPage = pathname === '/about'
 
   return (
     <>
       <FloatingHeader />
       <main className="min-h-screen">{children}</main>
-      {!isServicesNewPage && !isHomePage && <ModernFooter />}
+      {!isServicesNewPage && !isAboutPage && <FooterSection />}
       <FloatingLoginButton /> {/* Añadir el botón flotante aquí */}
     </>
   )
