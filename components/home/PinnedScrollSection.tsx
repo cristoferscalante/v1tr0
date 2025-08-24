@@ -151,20 +151,44 @@ export default function PinnedScrollSection({
           ))}
         </div>
         
-        {/* Barra de navegación inferior */}
-        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
-          {children.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => navigateToSection(index)}
-              className={`h-1 rounded-full transition-all duration-300 ${
-                currentSection === index
-                  ? 'w-8 bg-white shadow-lg'
-                  : 'w-6 bg-white/50 hover:bg-white/70'
-              }`}
-              aria-label={`Ir a servicio ${index + 1}`}
-            />
-          ))}
+        {/* Navegación con flechas y puntos indicadores */}
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-4 z-20">
+          <button
+            onClick={() => navigateToSection(currentSection - 1)}
+            disabled={currentSection === 0}
+            className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            aria-label="Servicio anterior"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <div className="flex gap-2">
+            {children.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => navigateToSection(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentSection 
+                    ? 'bg-highlight shadow-lg shadow-highlight/30' 
+                    : 'bg-[#08A696]/30 hover:bg-[#08A696]/50'
+                }`}
+                aria-label={`Ir a servicio ${index + 1}`}
+              />
+            ))}
+          </div>
+          
+          <button
+            onClick={() => navigateToSection(currentSection + 1)}
+            disabled={currentSection === sectionsCount - 1}
+            className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            aria-label="Siguiente servicio"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </PinnedScrollContext.Provider>

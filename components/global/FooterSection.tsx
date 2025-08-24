@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, forwardRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { forwardRef } from "react"
+import { motion } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
 import {
   GitHubIcon,
   LinkedInIcon,
   EmailIcon,
-  ExpandLessIcon,
   CodeIcon,
   PaletteIcon,
   LightbulbIcon,
@@ -47,7 +46,6 @@ const footerSections = [
 ]
 
 const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
-  const [expandedId, setExpandedId] = useState<number | null>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
@@ -69,9 +67,6 @@ const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-textPrimary mb-3 sm:mb-4">Impulsando tu Éxito Digital</h2>
-          <p className="text-textMuted text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-2">
-            Descubre cómo nuestros servicios pueden transformar tu presencia en línea
-          </p>
           <div className={`w-16 sm:w-20 md:w-24 h-1 ${isDark ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]" : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"} mx-auto mt-6 sm:mt-8 rounded-full`}></div>
         </motion.div>
 
@@ -79,12 +74,10 @@ const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
           {footerSections.map((section, index) => (
             <motion.div
               key={section.id}
-              layoutId={`section-${section.id}`}
-              onClick={() => setExpandedId(expandedId === section.id ? null : section.id)}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} transition-all duration-300 cursor-pointer group hover:border-[#08A696]`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.2, ease: "easeOut" }}
+              className={`relative overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} transition-all duration-300 group hover:border-[#08A696] hover:shadow-lg`}
             >
               <div className="relative p-3 sm:p-4 md:p-5 h-full flex flex-col">
                 <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
@@ -98,49 +91,12 @@ const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </h3>
                 </div>
                 <p className="text-textMuted text-xs sm:text-sm">{section.content}</p>
-                <ExpandLessIcon
-                  className={`w-4 h-4 sm:w-5 sm:h-5 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} mt-3 self-end transition-transform duration-300 ${expandedId === section.id ? "rotate-180" : ""}`}
-                />
               </div>
             </motion.div>
           ))}
         </div>
 
-        <AnimatePresence>
-          {expandedId && (
-            <motion.div
-              layoutId={`section-${expandedId}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-              onClick={() => setExpandedId(null)}
-            >
-              <motion.div
-                className={`${isDark ? "bg-[#02505950] backdrop-blur-md border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-md border border-[#08A696]/30"} rounded-2xl p-8 w-full max-w-2xl`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {footerSections.find((section) => section.id === expandedId) && (
-                  <div>
-                    <div className="flex items-center gap-6 mb-6">
-                      <div className={`p-4 rounded-2xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/30"}`}>
-                        <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
-                          {footerSections.find((section) => section.id === expandedId)?.icon}
-                        </div>
-                      </div>
-                      <h3 className={`text-3xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
-                        {footerSections.find((section) => section.id === expandedId)?.title}
-                      </h3>
-                    </div>
-                    <p className="text-textMuted text-lg mb-6">
-                      {footerSections.find((section) => section.id === expandedId)?.content}
-                    </p>
-                  </div>
-                )}
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
