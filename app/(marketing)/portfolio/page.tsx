@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import BackgroundAnimation from "@/components/home/BackgroungAnimation"
+import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { ExternalLink, GitBranch, X, Send } from "lucide-react"

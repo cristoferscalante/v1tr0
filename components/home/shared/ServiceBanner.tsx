@@ -243,17 +243,19 @@ export default function ServiceBanner({
             />
           </div>
           
-          <div ref={ctaRef}>
-            <button
-              onClick={() => setIsPopupOpen(true)}
-              onMouseEnter={() => handleCtaHover(true)}
-              onMouseLeave={() => handleCtaHover(false)}
-              className="bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] inline-flex items-center px-8 py-4 text-lg font-semibold"
-            >
-              <span className="text-[#26FFDF] transition-colors duration-300">{ctaText}</span>
-              <ArrowRightIcon className="ml-3 w-5 h-5 transition-transform duration-300 hover:translate-x-1 text-[#26FFDF]" />
-            </button>
-          </div>
+          {ctaText && (
+            <div ref={ctaRef}>
+              <button
+                onClick={() => setIsPopupOpen(true)}
+                onMouseEnter={() => handleCtaHover(true)}
+                onMouseLeave={() => handleCtaHover(false)}
+                className="bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] inline-flex items-center px-8 py-4 text-lg font-semibold"
+              >
+                <span className="text-[#26FFDF] transition-colors duration-300">{ctaText}</span>
+                <ArrowRightIcon className="ml-3 w-5 h-5 transition-transform duration-300 hover:translate-x-1 text-[#26FFDF]" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

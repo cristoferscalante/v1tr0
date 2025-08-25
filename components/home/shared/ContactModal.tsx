@@ -24,6 +24,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -36,10 +37,23 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError(null)
 
     try {
-      // Simular envío del formulario
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al enviar el mensaje')
+      }
+
       setSubmitSuccess(true)
       
       // Resetear formulario después de 3 segundos
@@ -55,6 +69,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }, 3000)
     } catch (error) {
       console.error("Error al enviar el formulario:", error)
+      setError(error instanceof Error ? error.message : 'Error desconocido al enviar el mensaje')
     } finally {
       setIsSubmitting(false)
     }
@@ -85,6 +100,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-textMuted mb-1">
                 Nombre
