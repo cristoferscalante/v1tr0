@@ -13,13 +13,17 @@ type ViewKey = 'isometric' | 'perspective'
 const CAMERA_VIEWS = {
   isometric: {
     name: 'Isométrica',
-    position: [-25, 25, -20] as [number, number, number],
+  position: [-25, 25, -25] as [number, number, number],
+  // Model position for this view (editable here)
+  modelPosition: [3.5, 0.2,0.1] as [number, number, number],
     fov: 4.5
   },
   perspective: {
     name: 'Perspectiva',
-    position: [5, 100, 35] as [number, number, number],
-    fov: 4.5
+  position: [5, 80, 45] as [number, number, number],
+  // Model position for this view (editable here)
+  modelPosition: [-0.1, -0.2, 0.1] as [number, number, number],
+    fov: 3
   }
 } as const
 
@@ -43,19 +47,19 @@ function Logo3DModel({
     if (child instanceof THREE.Mesh) {
       child.material = new THREE.MeshPhysicalMaterial({
         color: '#26FFDF', // V1TR0 primary turquoise color
-        metalness: 1.1, // Low metalness for glass effect
+        metalness: 0.8, // Low metalness for glass effect
         roughness: 0.01, // Very smooth surface
         transmission: 0.9, // High transmission for glass transparency
-        thickness: 1.5, // Glass thickness
+        thickness: 0.5, // Glass thickness
         transparent: true,
-        opacity: 0.8, // Lower opacity for glass effect
+        opacity: 0.9, // Lower opacity for glass effect
         clearcoat: 1.0, // Clear coat for glossy finish
         clearcoatRoughness: 0.3, // Smooth clear coat
         ior: 1.5, // Index of refraction for glass
-        reflectivity: 0.9, // High reflectivity
+        reflectivity: 1.9, // High reflectivity
         envMapIntensity: 1.5, // Enhanced environment reflections
-        emissive: '#06414D', // Subtle glow
-        emissiveIntensity: 0.1, // Low intensity glow
+        emissive: '#0b5f53ff', // Subtle glow
+        emissiveIntensity: 0.6, // Low intensity glow
         side: THREE.DoubleSide // Render both sides for better glass effect
       })
     }
@@ -86,7 +90,7 @@ function Logo3DModel({
       if (currentView === 'isometric') {
         baseX = position === 'left' ? -3 : 3
       } else {
-        baseX = position === 'left' ? -5 : 1
+        baseX = position === 'left' ? -2 : 1
       }
       targetPosition.current.set(baseX, 2.5, 0.5)
       
@@ -125,8 +129,10 @@ function Logo3DModel({
     >
       <primitive 
         object={scene} 
-        scale={currentView === 'isometric' ? [3, 3, 3] : [4, 4, 4]}
-        position={currentView === 'isometric' ? [2.5, 0.2, 0.5] : [-2.5, -3.0, 0.5]}
+        // Reduced scale by ~0.8 to make the model slightly smaller
+        scale={currentView === 'isometric' ? [2, 2, 2] : [3, 3, 3]}
+        // Use modelPosition from CAMERA_VIEWS so perspective position is editable there
+        position={CAMERA_VIEWS[currentView].modelPosition}
       />
     </group>
   )
@@ -241,7 +247,7 @@ export default function V1tr0Logo3D() {
   if (isMobile) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.1 }}
         className="w-full h-auto flex items-center justify-center"
@@ -268,7 +274,7 @@ export default function V1tr0Logo3D() {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.1 }}
       className="w-full h-full relative"
@@ -277,9 +283,9 @@ export default function V1tr0Logo3D() {
       <AnimatePresence>
         {showViewText && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute top-4 left-4 z-10 pointer-events-none"
           >
@@ -296,9 +302,9 @@ export default function V1tr0Logo3D() {
       <AnimatePresence>
         {currentView === 'isometric' && (
           <motion.div
-            initial={{ opacity: 0, y: -30 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
             className="absolute top-[23%] right-4 lg:right-8 xl:right-12 2xl:right-16 transform -translate-y-1/2 z-20 pointer-events-none max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl"
           >
@@ -338,7 +344,7 @@ export default function V1tr0Logo3D() {
         <Canvas
           camera={{ 
             position: [20, 20, 20],
-            fov: 10,
+            fov: 1,
             up: [0, 1, 0]
           }}
           style={{ 
@@ -348,26 +354,57 @@ export default function V1tr0Logo3D() {
           }}
           className="w-full h-full"
         >
-          {/* Enhanced lighting for Glass Morphism effect */}
-          <ambientLight intensity={0.4} color="#ffffff" />
-          <directionalLight 
-            position={[10, 10, 5]} 
-            intensity={0.8} 
-            color="#26FFDF"
-            castShadow
-          />
-          <directionalLight 
-            position={[-10, 5, 5]} 
-            intensity={0.4} 
-            color="#08A696"
-          />
-          <directionalLight 
-            position={[0, -5, -10]} 
-            intensity={0.3} 
-            color="#26FFDF"
-          />
-          <pointLight position={[5, 8, 5]} intensity={0.3} color="#08A696" />
-          <pointLight position={[-5, 8, 5]} intensity={0.3} color="#26FFDF" />
+          {/* Enhanced lighting for Glass Morphism effect - conditional by view */}
+          {currentView === 'perspective' ? (
+            // Perspective view: lights placed diagonally behind the model and higher
+            <>
+              <ambientLight intensity={0.25} color="#ffffff" />
+              {/* Main diagonal key light behind-right and above */}
+              <directionalLight
+                position={[6, 30, -18]}
+                intensity={0.2}
+                color="#26FFDF"
+                castShadow
+              />
+              {/* Fill light behind-left and slightly lower */}
+              <directionalLight
+                position={[-8, 24, -14]}
+                intensity={0.2}
+                color="#08A696"
+              />
+              {/* Rim/back light further behind to separate model from background */}
+              <directionalLight
+                position={[0, 22, -30]}
+                intensity={0.6}
+                color="#26FFDF"
+              />
+              <pointLight position={[2, 16, -10]} intensity={0.35} color="#122c2aff" />
+              <pointLight position={[-2, 14, -8]} intensity={0.25} color="#0d1a18f5" />
+            </>
+          ) : (
+            // Isometric view: keep original lighting setup
+            <>
+              <ambientLight intensity={0.4} color="#19213dff" />
+              <directionalLight 
+                position={[10, 10, 5]} 
+                intensity={0.8} 
+                color="#26FFDF"
+                castShadow
+              />
+              <directionalLight 
+                position={[-10,55, 50]} 
+                intensity={5.4} 
+                color="#08A696"
+              />
+              <directionalLight 
+                position={[0, -9, -50]} 
+                intensity={9.3} 
+                color="#26FFDF"
+              />
+              <pointLight position={[5, 8, 5]} intensity={0.3} color="#122c2aff" />
+              <pointLight position={[-5, 8, 5]} intensity={0.3} color="#0d1a18f5" />
+            </>
+          )}
           <Environment preset="studio" />
           <CameraController 
             currentView={currentView} 
