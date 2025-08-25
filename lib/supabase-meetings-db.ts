@@ -366,20 +366,22 @@ export class SupabaseMeetingsDB {
 
   async isTimeSlotOccupied(date: string, time: string): Promise<boolean> {
     try {
+      // Normalizar el formato de tiempo (agregar segundos si no los tiene)
+      const normalizedTime = time.includes(':') && time.split(':').length === 2 ? `${time}:00` : time;
+      
       const { data, error } = await supabase
         .from('meetings')
-        .select('id')
+        .select('id, time')
         .eq('date', date)
-        .eq('time', time)
-        .in('status', ['confirmed', 'scheduled'])
-        .single();
+        .or(`time.eq.${time},time.eq.${normalizedTime}`)
+        .in('status', ['confirmed', 'scheduled']);
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error checking time slot:', error);
         return false;
       }
-
-      return !!data;
+      
+      return data && data.length > 0;
     } catch (error) {
       console.error('Error in isTimeSlotOccupied:', error);
       return false;
@@ -431,13 +433,37 @@ export class SupabaseMeetingsDB {
   async getAvailableTimeSlots(date: string): Promise<string[]> {
     const slots: string[] = [];
     
+    // Verificar si la fecha ya pasó completamente
+    const today = new Date().toISOString().split('T')[0];
+    if (date < today) {
+      return slots; // Fecha pasada, no hay horarios disponibles
+    }
+    
+    // Obtener todas las reuniones del día de una sola vez
+    const meetings = await this.getMeetingsByDate(date);
+    
+    // Normalizar los tiempos ocupados para comparación
+    const occupiedTimes = new Set(
+      meetings
+        .filter(m => m.status === 'confirmed' || m.status === 'scheduled')
+        .map(m => {
+          // Normalizar formato: tanto "17:30" como "17:30:00" deben coincidir
+          const normalizedTime = m.time.includes(':') ? m.time.split(':').slice(0, 2).join(':') : m.time;
+          return normalizedTime;
+        })
+    );
+    
     // Horarios de tarde únicamente: 14:00 - 18:00 (cada 30 minutos)
     for (let hour = 14; hour < 18; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const time = this.minutesToTime(hour * 60 + minute);
-        const validation = await this.canScheduleAt(date, time);
-        if (validation.canSchedule) {
-          slots.push(time);
+        
+        // Verificar si el horario no está ocupado
+        if (!occupiedTimes.has(time)) {
+          // Verificar si el horario no ha pasado (solo para el día actual)
+          if (date > today || !this.isTimePast(date, time)) {
+            slots.push(time);
+          }
         }
       }
     }

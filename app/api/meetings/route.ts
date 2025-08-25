@@ -13,9 +13,45 @@ export async function GET(request: Request) {
     const email = searchParams.get('email')
     
     // Endpoint para obtener horarios disponibles
-    if (action === 'available-slots' && date) {
-      const availableSlots = await supabaseMeetingsDB.getAvailableTimeSlots(date)
-      return NextResponse.json({ success: true, availableSlots })
+    if (action === 'available-slots') {
+      if (date) {
+        // Consulta individual por fecha
+        const availableSlots = await supabaseMeetingsDB.getAvailableTimeSlots(date)
+        return NextResponse.json({ success: true, availableSlots })
+      }
+      
+      // Consulta en lote para múltiples fechas
+      const dates = searchParams.get('dates')
+      if (dates) {
+        try {
+          const dateList = JSON.parse(dates) as string[]
+          const batchResults: Record<string, string[]> = {}
+          
+          // Procesar todas las fechas en paralelo
+          const promises = dateList.map(async (dateStr) => {
+            const slots = await supabaseMeetingsDB.getAvailableTimeSlots(dateStr)
+            return { date: dateStr, slots }
+          })
+          
+          const results = await Promise.all(promises)
+          results.forEach(({ date: dateStr, slots }) => {
+            batchResults[dateStr] = slots
+          })
+          
+          return NextResponse.json({ success: true, batchResults })
+        } catch (error) {
+          console.error('Error parsing dates:', error)
+          return NextResponse.json(
+            { success: false, error: 'Invalid dates format' },
+            { status: 400 }
+          )
+        }
+      }
+      
+      return NextResponse.json(
+        { success: false, error: 'Date or dates parameter required' },
+        { status: 400 }
+      )
     }
     
     if (date) {

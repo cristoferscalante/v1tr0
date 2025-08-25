@@ -45,13 +45,16 @@ export default function AgendarReunionPage() {
   const [isLoadingSchedule, setIsLoadingSchedule] = useState(true)
   const [scheduleError, setScheduleError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
+  
+  // Cache para optimizar consultas repetitivas
+  const [scheduleCache, setScheduleCache] = useState<{[key: string]: {data: DaySchedule[], timestamp: number}}>({})
 
   // Función para cargar la disponibilidad desde la API local
   const loadAvailability = async () => {
     try {
       setIsLoadingSchedule(true)
       setScheduleError(null)
-      console.log('🚀 DEBUG: Iniciando carga de disponibilidad...')
+      console.log('🚀 DEBUG: Iniciando carga optimizada de disponibilidad...')
       
       // Generar 10 días laborales desde hoy
       const businessDays = generateBusinessDays(10)
@@ -59,73 +62,81 @@ export default function AgendarReunionPage() {
       
       console.log('📊 DEBUG: Días laborales a consultar:', businessDays.length)
       
-      for (const day of businessDays) {
-        console.log(`🔄 Consultando disponibilidad para: ${day.date} (${day.dayName})`)
-        
-        if (day.dayName === 'lunes') {
-          console.log('🎯 CONSULTANDO LUNES - Fecha:', day.date)
-        }
-        
-        try {
-          const apiUrl = `/api/meetings?action=available-slots&date=${day.date}`
-          console.log(`📡 API URL: ${apiUrl}`)
-          
-          // Obtener horarios disponibles para cada día
-          const response = await fetch(apiUrl)
-          const data = await response.json()
-          
-          console.log(`✅ Respuesta para ${day.date}:`, data)
+      // Verificar caché (válido por 2 minutos)
+      const dates = businessDays.map(day => day.date)
+      const cacheKey = dates.join(',')
+      const now = Date.now()
+      const cacheValidTime = 2 * 60 * 1000 // 2 minutos
+      
+      if (scheduleCache[cacheKey] && (now - scheduleCache[cacheKey].timestamp) < cacheValidTime) {
+        console.log('📦 Usando datos del caché')
+        setSchedule(scheduleCache[cacheKey].data)
+        setLastUpdated(new Date(scheduleCache[cacheKey].timestamp).toISOString())
+        return
+      }
+      
+      // Obtener todas las fechas en una sola llamada a la API
+      const apiUrl = `/api/meetings?action=available-slots&dates=${encodeURIComponent(JSON.stringify(dates))}`
+      
+      console.log('📡 API URL optimizada:', apiUrl)
+      console.log('📅 Fechas a consultar:', dates)
+      
+      const response = await fetch(apiUrl)
+      const data = await response.json()
+      
+      console.log('✅ Respuesta en lote:', data)
+      
+      if (data.success && data.batchResults) {
+        // Procesar cada día con sus horarios disponibles
+        for (const day of businessDays) {
+          const availableSlots = data.batchResults[day.date] || []
           
           if (day.dayName === 'lunes') {
             console.log('🎯 RESPUESTA PARA LUNES:', {
               fecha: day.date,
-              success: data.success,
-              slotsDisponibles: data.availableSlots?.length || 0,
-              slots: data.availableSlots
+              slotsDisponibles: availableSlots.length,
+              slots: availableSlots
             })
           }
           
-          if (data.success) {
-            // Solo horarios de tarde (2 PM a 6 PM)
-            const allWorkingHours = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
-            const availableSlots = data.availableSlots || []
+          // Solo horarios de tarde (2 PM a 6 PM)
+          const allWorkingHours = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+          
+          const slots: TimeSlot[] = allWorkingHours.map(time => {
+            const isAvailable = availableSlots.includes(time)
+            const isOccupied = !isAvailable && !isPastTime(day.date, time)
+            const hasPassed = isPastTime(day.date, time)
             
-            const slots: TimeSlot[] = allWorkingHours.map(time => {
-              const isAvailable = availableSlots.includes(time)
-              const isOccupied = !isAvailable && !isPastTime(day.date, time)
-              const hasPassed = isPastTime(day.date, time)
-              
-              return {
-                time,
-                available: isAvailable,
-                occupied: isOccupied,
-                passed: hasPassed
-              }
-            })
-            
-            scheduleData.push({
-              ...day,
-              slots,
-              hasAvailableSlots: slots.some(slot => slot.available)
-            })
-          } else {
-            console.error(`❌ Error en respuesta para ${day.date}:`, data.error)
-            
-            if (day.dayName === 'lunes') {
-              console.error('🎯 ERROR EN LUNES:', data.error)
+            return {
+              time,
+              available: isAvailable,
+              occupied: isOccupied,
+              passed: hasPassed
             }
-          }
-        } catch (fetchError) {
-          console.error(`❌ Error de fetch para ${day.date}:`, fetchError)
+          })
           
-          if (day.dayName === 'lunes') {
-            console.error('🎯 ERROR DE FETCH EN LUNES:', fetchError)
-          }
+          scheduleData.push({
+            ...day,
+            slots,
+            hasAvailableSlots: slots.some(slot => slot.available)
+          })
         }
+      } else {
+        console.error('❌ Error en respuesta en lote:', data.error)
+        setScheduleError('Error al cargar disponibilidad. Intenta recargar la página.')
       }
       
       console.log('📋 Datos de horarios finales generados:', scheduleData.length)
       console.log('🎯 Lunes en horarios:', scheduleData.filter(day => day.dayName === 'lunes'))
+      
+      // Guardar en caché
+      setScheduleCache(prev => ({
+        ...prev,
+        [cacheKey]: {
+          data: scheduleData,
+          timestamp: now
+        }
+      }))
       
       setSchedule(scheduleData)
       setLastUpdated(new Date().toISOString())
