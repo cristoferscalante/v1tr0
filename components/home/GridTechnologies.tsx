@@ -15,7 +15,7 @@ export default function ModernTechnologiesSection() {
       id: 1,
       icon: <Code2 className="w-5 h-5 sm:w-6 sm:h-6" />,
       name: "Frontend",
-      description: "Interfaces modernas y responsivas",
+      description: "Interfaces modernas y atractivas",
       techs: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
       color: "from-custom-3 to-custom-4",
     },

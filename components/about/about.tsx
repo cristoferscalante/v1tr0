@@ -64,10 +64,11 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
       }`}>
         {/* Card Section */}
         <div className={`flex-shrink-0 ${
-          isMobile ? 'w-full max-w-[280px]' : 'w-[400px]'
+          // Slightly larger cards for professionals (small increase)
+          isMobile ? 'w-full max-w-[300px]' : 'w-[420px]'
         }`}>
           <div className={`w-full mx-auto ${
-            isMobile ? 'h-[300px]' : 'h-[480px]'
+            isMobile ? 'h-[320px]' : 'h-[520px]'
           }`}>
             <CardViewerPremium 
               frontImage={member.image} 
