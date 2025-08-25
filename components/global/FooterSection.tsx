@@ -52,7 +52,7 @@ const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
   return (
     <div 
       ref={ref}
-      className={`w-full h-full ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
+      className={`w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
     >
       <div className="max-w-7xl mx-auto relative w-full">
         <motion.div
