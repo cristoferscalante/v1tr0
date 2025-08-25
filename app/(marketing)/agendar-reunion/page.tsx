@@ -286,22 +286,15 @@ export default function AgendarReunionPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-[#020B0A] relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden">
         {/* Animación de fondo */}
         <BackgroundAnimation />
-        
-        {/* Fondo con gradientes */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-[#08A696]/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#26FFDF]/20 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#08A696]/10 rounded-full blur-2xl" />
-        </div>
 
-        <div className="relative z-10 container mx-auto px-4 py-16 flex items-center justify-center min-h-screen">
+        <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 flex items-center justify-center min-h-screen">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[#02505931] backdrop-blur-sm rounded-3xl border border-[#08A696]/20 p-8 max-w-md w-full text-center"
+            className="rounded-3xl border border-[#08A696]/20 p-8 max-w-md w-full text-center"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -332,18 +325,11 @@ export default function AgendarReunionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020B0A] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Animación de fondo */}
       <BackgroundAnimation />
-      
-      {/* Fondo con gradientes */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-[#08A696]/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#26FFDF]/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#08A696]/10 rounded-full blur-2xl" />
-      </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      <div className="relative z-10 container mx-auto px-4 pt-40 pb-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -368,11 +354,11 @@ export default function AgendarReunionPage() {
         {/* Contenido principal */}
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-[#02505931] backdrop-blur-sm rounded-3xl border border-[#08A696]/20 p-6 mb-8"
-          >
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="rounded-3xl border border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm p-6 mb-8"
+            >
             <div className="flex items-center mb-4">
               <CalendarIcon className="w-6 h-6 text-[#26FFDF] mr-3" />
               <h2 className="text-xl font-semibold text-[#26FFDF]">Selecciona fecha y hora</h2>
@@ -424,10 +410,10 @@ export default function AgendarReunionPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: dayIndex * 0.05 }}
-                    className={`border rounded-2xl p-4 ${
+                    className={`border rounded-2xl p-4 bg-[#02505931] backdrop-blur-sm ${
                       day.hasAvailableSlots 
-                        ? 'border-[#08A696]/20 bg-[#02505931]' 
-                        : 'border-[#26FFDF]/10 bg-[#02505915]'
+                        ? 'border-[#08A696]/20' 
+                        : 'border-[#08A696]/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -496,7 +482,7 @@ export default function AgendarReunionPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                className="fixed inset-0 flex items-center justify-center z-50 p-4"
                 onClick={closeModal}
               >
                 <motion.div
@@ -504,7 +490,7 @@ export default function AgendarReunionPage() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: 20 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                  className="bg-gradient-to-br from-[#025059] to-[#02505950] border border-[#08A696]/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
+                  className="border border-[#08A696]/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header del modal */}
