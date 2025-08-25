@@ -6,7 +6,7 @@ import PostHeader from "@/components/blog/PostHeader"
 import { getPostBySlug, getAllPostSlugs } from "@/lib/mdx"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import BackgroundAnimation from "@/components/home/BackgroungAnimation"
+import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 import { MDXContent } from "@/components/blog/MDXContent"
 
 // Ajustamos para deshabilitar la regla eslint sobre 'any' solo en este caso específico

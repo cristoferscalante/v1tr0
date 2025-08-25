@@ -3,7 +3,7 @@ import { getAllPostsMetadata } from "@/lib/mdx"
 import type { Metadata } from "next"
 import { BookOpenIcon } from "@/lib/icons"
 import { Suspense } from "react"
-import BackgroundAnimation from "@/components/home/BackgroungAnimation"
+import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 
 export const metadata: Metadata = {
   title: "Blog | Artículos sobre desarrollo web y tecnología",

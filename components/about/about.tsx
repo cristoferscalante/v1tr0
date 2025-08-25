@@ -8,7 +8,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CardViewerPremium from "./card-viewer-premium"
-import BackgroundAnimation from "../home/BackgroungAnimation"
+import BackgroundAnimation from "../home/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
 
 

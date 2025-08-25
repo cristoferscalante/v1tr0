@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { gsap } from "gsap"
 import { Observer } from "gsap/Observer"
-import BackgroundAnimation from "@/components/home/BackgroungAnimation"
+import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 
 gsap.registerPlugin(Observer)
 

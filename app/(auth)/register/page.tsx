@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckCircle2, AlertCircle, Eye, EyeOff, Mail, Lock, User } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
-import BackgroundAnimation from "@/components/home/BackgroungAnimation"
+import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 import Image from "next/image"
 
 interface ValidationState {

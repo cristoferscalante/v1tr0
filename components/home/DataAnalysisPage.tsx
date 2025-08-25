@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { BarChartIcon, PieChartIcon, TrendingUpIcon } from "@/lib/icons"
-import ContactModal from "@/components/home/shared/ContactModal"
+
 
 export default function DataAnalysisPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descriptionRef = useRef<HTMLParagraphElement>(null)
   const featuresRef = useRef<HTMLDivElement>(null)
-  const ctaRef = useRef<HTMLDivElement>(null)
+
   const imageRef = useRef<HTMLDivElement>(null)
 
   const serviceData = {
@@ -32,7 +32,7 @@ export default function DataAnalysisPage() {
     ],
     imageSrc: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2.%20%C2%A1Potencia%20tu%20estrategia%2C%20automatiza%20tu%20informaci%C3%B3n%21-9D5wtuARJ7clWe9uK7UWmXN6Sd1HLj.png",
     imageAlt: "Analista de datos entusiasta con visualizaciones, gráficos y elementos de IA en estilo digital neón",
-    ctaText: "Solicita una consulta",
+
   }
 
   // Animación secuencial de entrada
@@ -40,7 +40,7 @@ export default function DataAnalysisPage() {
     const tl = gsap.timeline()
     
     // Reset inicial
-    gsap.set([titleRef.current, descriptionRef.current, featuresRef.current, ctaRef.current, imageRef.current], {
+    gsap.set([titleRef.current, descriptionRef.current, featuresRef.current, imageRef.current], {
       opacity: 0,
       y: 30
     })
@@ -64,12 +64,7 @@ export default function DataAnalysisPage() {
       duration: 0.6,
       ease: "power2.out"
     }, "-=0.4")
-    .to(ctaRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "-=0.4")
+
     .to(imageRef.current, {
       opacity: 1,
       y: 0,
@@ -124,40 +119,13 @@ export default function DataAnalysisPage() {
                 />
               </div>
               
-              <div ref={ctaRef}>
-                <button 
-                  onClick={() => setIsModalOpen(true)}
-                  className="bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] inline-flex items-center px-8 py-4 text-lg font-semibold"
-                >
-                  <span className="text-[#26FFDF] transition-colors duration-300">
-                    {serviceData.ctaText}
-                  </span>
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    className="ml-3 w-5 h-5 transition-transform duration-300 hover:translate-x-1 text-[#26FFDF]"
-                  >
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                  </svg>
-                </button>
-              </div>
+
             </div>
           </div>
         </section>
       </div>
       
-      <ContactModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+
     </>
   )
 }
