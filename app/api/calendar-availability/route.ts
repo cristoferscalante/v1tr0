@@ -5,7 +5,7 @@ import { withValidToken } from '@/lib/google-auth'
 // Configuración de Google Calendar
 const calendar = google.calendar('v3')
 
-// Función para obtener eventos ocupados en un rango de fechas
+// Función para obtener eventos ocupados en un rango de fechas s
 async function getBusyTimes(startDate: string, endDate: string) {
   return await withValidToken(async (accessToken: string) => {
     // Configurar OAuth2 Client con el token válido
