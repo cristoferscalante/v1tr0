@@ -482,7 +482,7 @@ export default function AgendarReunionPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 flex items-center justify-center z-50 p-4"
+                className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black/90 backdrop-blur-sm"
                 onClick={closeModal}
               >
                 <motion.div
@@ -490,7 +490,7 @@ export default function AgendarReunionPage() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: 20 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                  className="border border-[#08A696]/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
+                  className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header del modal */}
