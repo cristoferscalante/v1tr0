@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, CheckIcon, XMarkIcon, UserIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import BackgroundAnimation from '@/components/home/BackgroundAnimation'
-import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
+import { fromZonedTime, toZonedTime, format } from 'date-fns-tz'
 import { parseISO, addDays, isWeekend } from 'date-fns'
 
 interface TimeSlot {
@@ -158,7 +158,7 @@ export default function AgendarReunionPage() {
     
     // Obtener la fecha actual en zona horaria de Colombia
     const nowUTC = new Date()
-    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone)
+    const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone)
     
     console.log('🗓️ Generating business days:', {
       nowUTC: nowUTC.toISOString(),
@@ -205,14 +205,14 @@ export default function AgendarReunionPage() {
     
     // Obtener hora actual en zona horaria de Colombia
     const nowUTC = new Date()
-    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone)
+    const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone)
     
     // Crear fecha objetivo en zona horaria de Colombia
     const targetDateTimeString = `${date}T${time}:00`
     const targetDateTime = parseISO(targetDateTimeString)
     
     // Convertir a zona horaria de Colombia para comparación
-    const targetInColombia = utcToZonedTime(zonedTimeToUtc(targetDateTime, colombiaTimeZone), colombiaTimeZone)
+    const targetInColombia = toZonedTime(fromZonedTime(targetDateTime, colombiaTimeZone), colombiaTimeZone)
     
     // Buffer de 30 minutos
     const targetWithBuffer = new Date(targetInColombia.getTime() - 30 * 60000)
@@ -540,7 +540,7 @@ export default function AgendarReunionPage() {
                       <strong>Fecha:</strong> {selectedDate && (() => {
                         const colombiaTimeZone = 'America/Bogota'
                         const dateObj = parseISO(selectedDate)
-                        const dateInColombia = utcToZonedTime(zonedTimeToUtc(dateObj, colombiaTimeZone), colombiaTimeZone)
+                        const dateInColombia = toZonedTime(fromZonedTime(dateObj, colombiaTimeZone), colombiaTimeZone)
                         
                         // Formatear fecha manualmente en español
                         const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
@@ -567,7 +567,7 @@ export default function AgendarReunionPage() {
                         const [hours, minutes] = selectedTime.split(':')
                         const timeString = `${selectedDate}T${selectedTime}:00`
                         const timeObj = parseISO(timeString)
-                        const timeInColombia = utcToZonedTime(zonedTimeToUtc(timeObj, colombiaTimeZone), colombiaTimeZone)
+                        const timeInColombia = toZonedTime(fromZonedTime(timeObj, colombiaTimeZone), colombiaTimeZone)
                         const formattedTime = format(timeInColombia, 'h:mm a', { timeZone: colombiaTimeZone })
                         
                         console.log('🕐 Time formatting:', {
