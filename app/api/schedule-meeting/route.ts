@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
 import nodemailer from 'nodemailer'
+import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
+import { parseISO } from 'date-fns'
 import { withValidToken } from '@/lib/google-auth'
 import { SupabaseMeetingsDB } from '@/lib/supabase-meetings-db'
 
@@ -104,13 +106,27 @@ async function createCalendarEvent(date: string, time: string, email: string, na
     const colombiaTimeZone = 'America/Bogota'
     const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`
     
-    // Usar Intl.DateTimeFormat para crear la fecha en la zona horaria correcta
-    const startDateTime = new Date(dateTimeString)
-    const endDateTime = new Date(startDateTime.getTime() + 30 * 60000) // 30 minutos después
+    // Usar date-fns-tz para manejar correctamente la zona horaria
+    const zonedDate = parseISO(dateTimeString)
+    const startDateTimeUTC = zonedTimeToUtc(zonedDate, colombiaTimeZone)
+    const endDateTimeUTC = new Date(startDateTimeUTC.getTime() + 30 * 60000) // 30 minutos después
     
-    // Convertir a ISO string manteniendo la zona horaria
-    const startDateTimeISO = startDateTime.toISOString()
-    const endDateTimeISO = endDateTime.toISOString()
+    // Verificar las fechas en zona horaria Colombia
+    const startInColombia = utcToZonedTime(startDateTimeUTC, colombiaTimeZone)
+    const endInColombia = utcToZonedTime(endDateTimeUTC, colombiaTimeZone)
+    
+    console.log('🕐 Timezone conversion details:', {
+      original: dateTimeString,
+      startUTC: startDateTimeUTC.toISOString(),
+      endUTC: endDateTimeUTC.toISOString(),
+      startInColombia: format(startInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+      endInColombia: format(endInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+      timeZone: colombiaTimeZone
+    })
+    
+    // Convertir a ISO string
+    const startDateTimeISO = startDateTimeUTC.toISOString()
+    const endDateTimeISO = endDateTimeUTC.toISOString()
 
     const eventData = {
       summary: `Reunión de Consulta - ${name}`,

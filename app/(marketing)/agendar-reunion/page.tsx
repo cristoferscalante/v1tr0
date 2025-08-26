@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, CheckIcon, XMarkIcon, UserIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import BackgroundAnimation from '@/components/home/BackgroundAnimation'
+import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
+import { parseISO, addDays, isWeekend } from 'date-fns'
 
 interface TimeSlot {
   time: string
@@ -152,25 +154,31 @@ export default function AgendarReunionPage() {
   // Función auxiliar para generar días laborales
   const generateBusinessDays = (count: number) => {
     const days = []
-    // Obtener fecha actual en zona horaria de Colombia/Bogotá
-    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }))
-    let currentDate = new Date(today)
+    const colombiaTimeZone = 'America/Bogota'
     
-    console.log('🔍 DEBUG: Generando días laborales desde (Colombia/Bogotá):', today.toDateString())
+    // Obtener la fecha actual en zona horaria de Colombia
+    const nowUTC = new Date()
+    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone)
+    
+    console.log('🗓️ Generating business days:', {
+      nowUTC: nowUTC.toISOString(),
+      nowInColombia: format(nowInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone })
+    })
+    
+    // Empezar desde mañana en zona horaria de Colombia
+    let currentDate = addDays(nowInColombia, 1)
     
     while (days.length < count) {
-      const dayOfWeek = currentDate.getDay()
-      const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
-      const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-      
-      console.log(`📅 Evaluando fecha: ${currentDate.toDateString()} - ${dayNames[dayOfWeek]} (dayOfWeek: ${dayOfWeek})`)
-      
-      // Saltar fines de semana (0 = domingo, 6 = sábado)
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        const dateStr = currentDate.toISOString().split('T')[0]
+      // Solo días laborales (no fines de semana)
+      if (!isWeekend(currentDate)) {
+        const dateString = format(currentDate, 'yyyy-MM-dd', { timeZone: colombiaTimeZone })
+        const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+        const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+        
+        const dayOfWeek = currentDate.getDay()
         
         days.push({
-          date: dateStr,
+          date: dateString,
           dayName: dayNames[dayOfWeek],
           dayNumber: currentDate.getDate(),
           month: monthNames[currentDate.getMonth()]
@@ -181,11 +189,9 @@ export default function AgendarReunionPage() {
         if (dayOfWeek === 1) {
           console.log('🎯 LUNES DETECTADO Y AGREGADO CORRECTAMENTE!')
         }
-      } else {
-        console.log(`❌ DÍA EXCLUIDO (fin de semana): ${dayNames[dayOfWeek]}`)
       }
       
-      currentDate.setDate(currentDate.getDate() + 1)
+      currentDate = addDays(currentDate, 1)
     }
     
     console.log('📋 Días laborales generados:', days.map(d => `${d.date} (${d.dayName})`));
@@ -195,16 +201,32 @@ export default function AgendarReunionPage() {
   
   // Función auxiliar para verificar si un horario ya pasó
   const isPastTime = (date: string, time: string): boolean => {
-    // Obtener hora actual en zona horaria de Colombia/Bogotá
-    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }))
+    const colombiaTimeZone = 'America/Bogota'
     
-    // Crear fecha objetivo en zona horaria de Colombia/Bogotá
-    const targetDateTime = new Date(`${date}T${time}:00`)
+    // Obtener hora actual en zona horaria de Colombia
+    const nowUTC = new Date()
+    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone)
+    
+    // Crear fecha objetivo en zona horaria de Colombia
+    const targetDateTimeString = `${date}T${time}:00`
+    const targetDateTime = parseISO(targetDateTimeString)
+    
+    // Convertir a zona horaria de Colombia para comparación
+    const targetInColombia = utcToZonedTime(zonedTimeToUtc(targetDateTime, colombiaTimeZone), colombiaTimeZone)
     
     // Buffer de 30 minutos
-    targetDateTime.setMinutes(targetDateTime.getMinutes() - 30)
+    const targetWithBuffer = new Date(targetInColombia.getTime() - 30 * 60000)
     
-    return targetDateTime <= now
+    console.log('⏰ isPastTime check:', {
+      date,
+      time,
+      nowInColombia: format(nowInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+      targetInColombia: format(targetInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+      targetWithBuffer: format(targetWithBuffer, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+      isPast: targetWithBuffer <= nowInColombia
+    })
+    
+    return targetWithBuffer <= nowInColombia
   }
 
   // Cargar disponibilidad al montar el componente
@@ -515,26 +537,47 @@ export default function AgendarReunionPage() {
                   {/* Información de la cita */}
                   <div className="mb-6 p-4 bg-[#08A696]/10 rounded-2xl border border-[#08A696]/20">
                     <p className="text-[#26FFDF] text-sm mb-2">
-                      <strong>Fecha:</strong> {selectedDate && new Date(selectedDate).toLocaleDateString('es-ES', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        timeZone: 'America/Bogota'
-                      })}
+                      <strong>Fecha:</strong> {selectedDate && (() => {
+                        const colombiaTimeZone = 'America/Bogota'
+                        const dateObj = parseISO(selectedDate)
+                        const dateInColombia = utcToZonedTime(zonedTimeToUtc(dateObj, colombiaTimeZone), colombiaTimeZone)
+                        
+                        // Formatear fecha manualmente en español
+                        const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+                        const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+                        
+                        const dayName = dayNames[dateInColombia.getDay()]
+                        const day = dateInColombia.getDate()
+                        const monthName = monthNames[dateInColombia.getMonth()]
+                        const year = dateInColombia.getFullYear()
+                        
+                        console.log('📅 Date formatting:', {
+                          selectedDate,
+                          dateInColombia: format(dateInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+                          formatted: `${dayName}, ${day} de ${monthName} de ${year}`
+                        })
+                        
+                        return `${dayName}, ${day} de ${monthName} de ${year}`
+                      })()}
                     </p>
                     <p className="text-[#26FFDF] text-sm">
                       <strong>Hora:</strong> {selectedTime && (() => {
-                        console.log('selectedTime value:', selectedTime);
-                        const [hours, minutes] = selectedTime.split(':');
-                        const date = new Date();
-                        date.setHours(parseInt(hours), parseInt(minutes));
-                        return date.toLocaleTimeString('es-ES', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true,
-                          timeZone: 'America/Bogota'
-                        });
+                        console.log('🕐 Formatting selectedTime:', selectedTime)
+                        const colombiaTimeZone = 'America/Bogota'
+                        const [hours, minutes] = selectedTime.split(':')
+                        const timeString = `${selectedDate}T${selectedTime}:00`
+                        const timeObj = parseISO(timeString)
+                        const timeInColombia = utcToZonedTime(zonedTimeToUtc(timeObj, colombiaTimeZone), colombiaTimeZone)
+                        const formattedTime = format(timeInColombia, 'h:mm a', { timeZone: colombiaTimeZone })
+                        
+                        console.log('🕐 Time formatting:', {
+                          selectedTime,
+                          timeString,
+                          timeInColombia: format(timeInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
+                          formattedTime
+                        })
+                        
+                        return formattedTime
                       })()}
                     </p>
                   </div>
