@@ -5,32 +5,26 @@ const informationSystemsExamples = [
   {
     title: "Sistema de Control Contractual",
     bgColor: "#1E1E1E",
-    url: "/portfolio/sistema-contractual",
-    img: "/images/alcaldia_contractual.png"
+    url: "https://sgc.edux.com.co/",
+    video: "https://pub-95e2b14f2fe54500b9e9cb01e1ce9120.r2.dev/sistema-educacion.mp4"
   },
   {
     title: "Dashboard de Análisis de Datos",
     bgColor: "#06414D",
-    url: "/portfolio/dashboard-analytics",
-    img: "/service/analisis-de-datos.png"
-  },
+    url: "https://dashboard-five-green.vercel.app/",
+    video: "https://pub-95e2b14f2fe54500b9e9cb01e1ce9120.r2.dev/dash-demo-vitro.mp4"
+  },  
   {
-    title: "Sistema de Gestión Hospitalaria",
-    bgColor: "#025159",
-    url: "/portfolio/sistema-hospitalario",
-    img: "/service/clinica.png"
-  },
-  {
-    title: "Plataforma de Inventarios",
+    title: "Extructura Temporal: Linea de Tiempo ",
     bgColor: "#2D3748",
-    url: "/portfolio/sistema-inventarios",
-    img: "/service/inventarios.png"
+    url: "https://presidents-timeline.vercel.app/",
+    video: "https://pub-95e2b14f2fe54500b9e9cb01e1ce9120.r2.dev/presidents.mp4"
   },
   {
     title: "Sistema de Recursos Humanos",
     bgColor: "#4A5568",
-    url: "/portfolio/sistema-rrhh",
-    img: "/service/recursos-humanos.png"
+    url: "https://sgth.com.co/",
+    video: "https://pub-95e2b14f2fe54500b9e9cb01e1ce9120.r2.dev/sgth.mp4"
   }
 ];
 
