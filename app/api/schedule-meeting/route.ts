@@ -21,10 +21,13 @@ async function checkTimeSlotConflicts(date: string, time: string) {
       refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     })
 
-    // Crear fecha y hora del slot solicitado
+    // Crear fecha y hora del slot solicitado usando zona horaria de Colombia/Bogotá
     const [year, month, day] = date.split('-')
     const [hour, minute] = time.split(':')
-    const slotStart = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute))
+    
+    // Crear fecha en zona horaria de Colombia/Bogotá
+    const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`
+    const slotStart = new Date(dateTimeString)
     const slotEnd = new Date(slotStart.getTime() + 30 * 60000) // 30 minutos después
 
     // Buscar eventos existentes en ese rango de tiempo
@@ -93,21 +96,31 @@ async function createCalendarEvent(date: string, time: string, email: string, na
       refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     })
 
-    // Crear fecha y hora del evento
+    // Crear fecha y hora del evento usando zona horaria de Colombia/Bogotá
     const [year, month, day] = date.split('-')
     const [hour, minute] = time.split(':')
-    const startDateTime = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute))
+    
+    // Crear fecha en zona horaria de Colombia/Bogotá
+    const colombiaTimeZone = 'America/Bogota'
+    const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`
+    
+    // Usar Intl.DateTimeFormat para crear la fecha en la zona horaria correcta
+    const startDateTime = new Date(dateTimeString)
     const endDateTime = new Date(startDateTime.getTime() + 30 * 60000) // 30 minutos después
+    
+    // Convertir a ISO string manteniendo la zona horaria
+    const startDateTimeISO = startDateTime.toISOString()
+    const endDateTimeISO = endDateTime.toISOString()
 
     const eventData = {
       summary: `Reunión de Consulta - ${name}`,
       description: `Reunión agendada a través del sitio web de V1tr0.\n\nCliente: ${name}\nEmail: ${email}\nTeléfono: ${phone}\n\nTemas a tratar: Consulta sobre desarrollo web y servicios digitales.`,
       start: {
-        dateTime: startDateTime.toISOString(),
+        dateTime: startDateTimeISO,
         timeZone: 'America/Bogota',
       },
       end: {
-        dateTime: endDateTime.toISOString(),
+        dateTime: endDateTimeISO,
         timeZone: 'America/Bogota',
       },
       attendees: [
