@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { googleCalendarService } from './google-calendar';
+import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz';
+import { parseISO } from 'date-fns';
 
 // Configuración de Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -341,16 +343,26 @@ export class SupabaseMeetingsDB {
 
   // Métodos de validación de tiempo
   isTimePast(date: string, time: string): boolean {
-    const now = new Date();
-    // Crear la fecha de la reunión en la zona horaria local
-    const meetingDateTime = new Date(`${date}T${time}:00`);
+    const colombiaTimeZone = 'America/Bogota';
+    
+    // Obtener la hora actual en la zona horaria de Colombia
+    const nowUTC = new Date();
+    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone);
+    
+    // Crear la fecha de la reunión en la zona horaria de Colombia
+    const meetingDateTimeString = `${date}T${time}:00`;
+    const meetingDateTimeParsed = parseISO(meetingDateTimeString);
+    const meetingDateTimeInColombia = utcToZonedTime(meetingDateTimeParsed, colombiaTimeZone);
     
     // Agregar un margen de 5 minutos para evitar problemas de sincronización
-    const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+    const fiveMinutesFromNow = new Date(nowInColombia.getTime() + 5 * 60 * 1000);
     
-    console.log(`[DEBUG] Now: ${now.toISOString()}, Meeting: ${meetingDateTime.toISOString()}, Is past: ${meetingDateTime < fiveMinutesFromNow}`);
+    console.log(`[DEBUG TIMEZONE] Now UTC: ${nowUTC.toISOString()}`);
+    console.log(`[DEBUG TIMEZONE] Now in Colombia: ${format(nowInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone })}`);
+    console.log(`[DEBUG TIMEZONE] Meeting in Colombia: ${format(meetingDateTimeInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone })}`);
+    console.log(`[DEBUG TIMEZONE] Is past: ${meetingDateTimeInColombia < fiveMinutesFromNow}`);
     
-    return meetingDateTime < fiveMinutesFromNow;
+    return meetingDateTimeInColombia < fiveMinutesFromNow;
   }
 
   timeToMinutes(time: string): number {
@@ -417,11 +429,14 @@ export class SupabaseMeetingsDB {
       return { canSchedule: false, reason: 'Horario fuera del horario de trabajo (14:00-18:00)' };
     }
 
-    // Verificar que no sea fin de semana
-    // Crear la fecha en zona horaria local para evitar problemas de UTC
-    const meetingDate = new Date(date + 'T12:00:00');
-    const dayOfWeek = meetingDate.getDay();
-    console.log(`[DEBUG] Date: ${date}, Day of week: ${dayOfWeek} (${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][dayOfWeek]})`);
+    // Verificar que no sea fin de semana usando zona horaria de Colombia
+    const colombiaTimeZone = 'America/Bogota';
+    const meetingDateString = `${date}T12:00:00`;
+    const meetingDateParsed = parseISO(meetingDateString);
+    const meetingDateInColombia = utcToZonedTime(meetingDateParsed, colombiaTimeZone);
+    const dayOfWeek = meetingDateInColombia.getDay();
+    
+    console.log(`[DEBUG TIMEZONE] Date: ${date}, Day of week in Colombia: ${dayOfWeek} (${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][dayOfWeek]})`);
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       return { canSchedule: false, reason: 'No se pueden agendar reuniones los fines de semana' };
     }
@@ -432,10 +447,16 @@ export class SupabaseMeetingsDB {
 
   async getAvailableTimeSlots(date: string): Promise<string[]> {
     const slots: string[] = [];
+    const colombiaTimeZone = 'America/Bogota';
     
-    // Verificar si la fecha ya pasó completamente
-    const today = new Date().toISOString().split('T')[0];
-    if (date < today) {
+    // Verificar si la fecha ya pasó completamente usando zona horaria de Colombia
+    const nowUTC = new Date();
+    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone);
+    const todayInColombia = format(nowInColombia, 'yyyy-MM-dd', { timeZone: colombiaTimeZone });
+    
+    console.log(`[DEBUG TIMEZONE] Checking available slots for date: ${date}, today in Colombia: ${todayInColombia}`);
+    
+    if (date < todayInColombia) {
       return slots; // Fecha pasada, no hay horarios disponibles
     }
     
@@ -461,7 +482,7 @@ export class SupabaseMeetingsDB {
         // Verificar si el horario no está ocupado
         if (!occupiedTimes.has(time)) {
           // Verificar si el horario no ha pasado (solo para el día actual)
-          if (date > today || !this.isTimePast(date, time)) {
+          if (date > todayInColombia || !this.isTimePast(date, time)) {
             slots.push(time);
           }
         }

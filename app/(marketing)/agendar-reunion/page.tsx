@@ -207,26 +207,27 @@ export default function AgendarReunionPage() {
     const nowUTC = new Date()
     const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone)
     
-    // Crear fecha objetivo en zona horaria de Colombia
+    // Crear fecha objetivo directamente en zona horaria de Colombia
     const targetDateTimeString = `${date}T${time}:00`
     const targetDateTime = parseISO(targetDateTimeString)
+    const targetInColombia = toZonedTime(targetDateTime, colombiaTimeZone)
     
-    // Convertir a zona horaria de Colombia para comparación
-    const targetInColombia = toZonedTime(fromZonedTime(targetDateTime, colombiaTimeZone), colombiaTimeZone)
+    // Buffer de 30 minutos para dar tiempo al usuario
+    const bufferMinutes = 30
+    const targetWithBuffer = new Date(targetInColombia.getTime() - bufferMinutes * 60000)
     
-    // Buffer de 30 minutos
-    const targetWithBuffer = new Date(targetInColombia.getTime() - 30 * 60000)
+    const isPast = targetWithBuffer <= nowInColombia
     
-    console.log('⏰ isPastTime check:', {
+    console.log('⏰ [FRONTEND] isPastTime check:', {
       date,
       time,
-      nowInColombia: format(nowInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-      targetInColombia: format(targetInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-      targetWithBuffer: format(targetWithBuffer, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-      isPast: targetWithBuffer <= nowInColombia
+      nowInColombia: format(nowInColombia, 'yyyy-MM-dd HH:mm:ss'),
+      targetInColombia: format(targetInColombia, 'yyyy-MM-dd HH:mm:ss'),
+      targetWithBuffer: format(targetWithBuffer, 'yyyy-MM-dd HH:mm:ss'),
+      isPast
     })
     
-    return targetWithBuffer <= nowInColombia
+    return isPast
   }
 
   // Cargar disponibilidad al montar el componente
