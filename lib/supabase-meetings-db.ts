@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { googleCalendarService } from './google-calendar';
-import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime, format } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
 
 // Configuración de Supabase
@@ -347,12 +347,12 @@ export class SupabaseMeetingsDB {
     
     // Obtener la hora actual en la zona horaria de Colombia
     const nowUTC = new Date();
-    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone);
+    const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone);
     
     // Crear la fecha de la reunión en la zona horaria de Colombia
     const meetingDateTimeString = `${date}T${time}:00`;
     const meetingDateTimeParsed = parseISO(meetingDateTimeString);
-    const meetingDateTimeInColombia = utcToZonedTime(meetingDateTimeParsed, colombiaTimeZone);
+    const meetingDateTimeInColombia = toZonedTime(meetingDateTimeParsed, colombiaTimeZone);
     
     // Agregar un margen de 5 minutos para evitar problemas de sincronización
     const fiveMinutesFromNow = new Date(nowInColombia.getTime() + 5 * 60 * 1000);
@@ -433,7 +433,7 @@ export class SupabaseMeetingsDB {
     const colombiaTimeZone = 'America/Bogota';
     const meetingDateString = `${date}T12:00:00`;
     const meetingDateParsed = parseISO(meetingDateString);
-    const meetingDateInColombia = utcToZonedTime(meetingDateParsed, colombiaTimeZone);
+    const meetingDateInColombia = toZonedTime(meetingDateParsed, colombiaTimeZone);
     const dayOfWeek = meetingDateInColombia.getDay();
     
     console.log(`[DEBUG TIMEZONE] Date: ${date}, Day of week in Colombia: ${dayOfWeek} (${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][dayOfWeek]})`);
@@ -451,7 +451,7 @@ export class SupabaseMeetingsDB {
     
     // Verificar si la fecha ya pasó completamente usando zona horaria de Colombia
     const nowUTC = new Date();
-    const nowInColombia = utcToZonedTime(nowUTC, colombiaTimeZone);
+    const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone);
     const todayInColombia = format(nowInColombia, 'yyyy-MM-dd', { timeZone: colombiaTimeZone });
     
     console.log(`[DEBUG TIMEZONE] Checking available slots for date: ${date}, today in Colombia: ${todayInColombia}`);

@@ -23,26 +23,83 @@ export async function GET(request: Request) {
       // Consulta en lote para múltiples fechas
       const dates = searchParams.get('dates')
       if (dates) {
+        // Debug logs para ver exactamente qué se está recibiendo
+        console.log('🔍 [DEBUG] Raw dates parameter:', dates)
+        console.log('🔍 [DEBUG] dates type:', typeof dates)
+        console.log('🔍 [DEBUG] dates length:', dates.length)
+        console.log('🔍 [DEBUG] First 100 chars:', dates.substring(0, 100))
+        
         try {
-          const dateList = JSON.parse(dates) as string[]
+          // Intentar decodificar URL si es necesario
+          let decodedDates = dates
+          try {
+            decodedDates = decodeURIComponent(dates)
+            console.log('🔍 [DEBUG] Decoded dates:', decodedDates)
+          } catch (decodeError) {
+            console.log('🔍 [DEBUG] No need to decode or decode failed:', decodeError)
+          }
+          
+          const dateList = JSON.parse(decodedDates) as string[]
+          console.log('🔍 [DEBUG] Parsed dateList:', dateList)
+          console.log('🔍 [DEBUG] dateList type:', typeof dateList)
+          console.log('🔍 [DEBUG] dateList is array:', Array.isArray(dateList))
+          
+          if (!Array.isArray(dateList)) {
+            throw new Error('Parsed dates is not an array')
+          }
+          
           const batchResults: Record<string, string[]> = {}
           
           // Procesar todas las fechas en paralelo
           const promises = dateList.map(async (dateStr) => {
-            const slots = await supabaseMeetingsDB.getAvailableTimeSlots(dateStr)
-            return { date: dateStr, slots }
+            console.log('🔍 [DEBUG] Processing date:', dateStr)
+            try {
+              const slots = await supabaseMeetingsDB.getAvailableTimeSlots(dateStr)
+              console.log('🔍 [DEBUG] Slots for', dateStr, ':', slots.length, 'slots')
+              return { date: dateStr, slots, success: true }
+            } catch (error) {
+              console.error('❌ [ERROR] Error processing date', dateStr, ':', error)
+              return { date: dateStr, slots: [], success: false, error: error.message }
+            }
           })
           
+          console.log('🔍 [DEBUG] Waiting for all promises to resolve...')
           const results = await Promise.all(promises)
-          results.forEach(({ date: dateStr, slots }) => {
-            batchResults[dateStr] = slots
+          console.log('🔍 [DEBUG] All promises resolved, processing results...')
+          
+          let hasErrors = false
+          results.forEach(({ date: dateStr, slots, success, error }) => {
+            if (success) {
+              batchResults[dateStr] = slots
+              console.log('🔍 [DEBUG] Added slots for', dateStr, ':', slots.length)
+            } else {
+              console.error('❌ [ERROR] Failed to process date', dateStr, ':', error)
+              hasErrors = true
+            }
           })
           
+          if (hasErrors) {
+            throw new Error('One or more dates failed to process')
+          }
+          
+          console.log('🔍 [DEBUG] Final batchResults:', Object.keys(batchResults))
           return NextResponse.json({ success: true, batchResults })
         } catch (error) {
-          console.error('Error parsing dates:', error)
+          console.error('❌ [ERROR] Error parsing dates:', error)
+          console.error('❌ [ERROR] Original dates parameter:', dates)
+          console.error('❌ [ERROR] Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
+          })
           return NextResponse.json(
-            { success: false, error: 'Invalid dates format' },
+            { 
+              success: false, 
+              error: 'Invalid dates format',
+              debug: {
+                receivedDates: dates,
+                errorMessage: error instanceof Error ? error.message : 'Unknown error'
+              }
+            },
             { status: 400 }
           )
         }
