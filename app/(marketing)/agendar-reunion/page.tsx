@@ -7,6 +7,7 @@ import Link from 'next/link'
 import BackgroundAnimation from '@/components/home/BackgroundAnimation'
 import { fromZonedTime, toZonedTime, format } from 'date-fns-tz'
 import { parseISO, addDays, isWeekend } from 'date-fns'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface TimeSlot {
   time: string
@@ -300,6 +301,21 @@ export default function AgendarReunionPage() {
       setIsSuccess(true)
       setShowModal(false)
       
+      // Mostrar notificación de éxito
+      toast.success('¡Reunión agendada exitosamente! Recibirás un correo de confirmación en breve.', {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#10b981',
+          color: '#ffffff',
+          borderRadius: '12px',
+          padding: '16px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        icon: '✅'
+      })
+      
       // Recargar disponibilidad después de agendar
       setTimeout(() => {
         loadAvailability()
@@ -307,7 +323,19 @@ export default function AgendarReunionPage() {
       
     } catch (error) {
       console.error('Error al agendar reunión:', error)
-      alert(`Error al agendar la reunión: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+      toast.error(`Error al agendar la reunión: ${error instanceof Error ? error.message : 'Error desconocido'}`, {
+        duration: 5000,
+        position: 'top-center',
+        style: {
+          background: '#ef4444',
+          color: '#ffffff',
+          borderRadius: '12px',
+          padding: '16px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        icon: '❌'
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -656,6 +684,9 @@ export default function AgendarReunionPage() {
           </AnimatePresence>
         </div>
       </div>
+      
+      {/* Toaster para notificaciones */}
+      <Toaster />
     </div>
   )
 }

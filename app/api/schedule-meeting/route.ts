@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
 import nodemailer from 'nodemailer'
-import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
+import { fromZonedTime, toZonedTime, format } from 'date-fns-tz'
 import { parseISO } from 'date-fns'
 import { withValidToken } from '@/lib/google-auth'
 import { SupabaseMeetingsDB } from '@/lib/supabase-meetings-db'
@@ -27,22 +27,31 @@ async function checkTimeSlotConflicts(date: string, time: string) {
     const [year, month, day] = date.split('-')
     const [hour, minute] = time.split(':')
     
-    // Crear fecha en zona horaria de Colombia/Bogotá
+    // Crear fecha en zona horaria de Colombia/Bogotá usando date-fns-tz
+    const colombiaTimeZone = 'America/Bogota'
     const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`
-    const slotStart = new Date(dateTimeString)
-    const slotEnd = new Date(slotStart.getTime() + 30 * 60000) // 30 minutos después
+    
+    console.log(`🔍 [CONFLICT CHECK] Checking conflicts for ${date} ${time} in Colombia timezone`)
+    
+    // Parsear la fecha y convertir correctamente a UTC para Google Calendar
+    const zonedDate = parseISO(dateTimeString)
+    const slotStartUTC = fromZonedTime(zonedDate, colombiaTimeZone)
+    const slotEndUTC = new Date(slotStartUTC.getTime() + 30 * 60000) // 30 minutos después
+    
+    console.log(`🔍 [CONFLICT CHECK] Slot UTC: ${slotStartUTC.toISOString()} - ${slotEndUTC.toISOString()}`)
 
     // Buscar eventos existentes en ese rango de tiempo
     const response = await calendar.events.list({
       auth: oauth2Client,
       calendarId: 'vtr.techh@gmail.com',
-      timeMin: slotStart.toISOString(),
-      timeMax: slotEnd.toISOString(),
+      timeMin: slotStartUTC.toISOString(),
+      timeMax: slotEndUTC.toISOString(),
       singleEvents: true,
       orderBy: 'startTime',
     })
 
     const existingEvents = response.data.items || []
+    console.log(`🔍 [CONFLICT CHECK] Found ${existingEvents.length} existing events in time range`)
     
     // Verificar si hay conflictos
     const hasConflicts = existingEvents.some(event => {
@@ -51,12 +60,20 @@ async function checkTimeSlotConflicts(date: string, time: string) {
       const eventStart = new Date(event.start.dateTime)
       const eventEnd = new Date(event.end.dateTime)
       
+      console.log(`🔍 [CONFLICT CHECK] Checking event: ${event.summary} (${eventStart.toISOString()} - ${eventEnd.toISOString()})`)
+      
       // Verificar solapamiento
-      return (
-        (slotStart >= eventStart && slotStart < eventEnd) ||
-        (slotEnd > eventStart && slotEnd <= eventEnd) ||
-        (slotStart <= eventStart && slotEnd >= eventEnd)
+      const hasOverlap = (
+        (slotStartUTC >= eventStart && slotStartUTC < eventEnd) ||
+        (slotEndUTC > eventStart && slotEndUTC <= eventEnd) ||
+        (slotStartUTC <= eventStart && slotEndUTC >= eventEnd)
       )
+      
+      if (hasOverlap) {
+        console.log(`⚠️ [CONFLICT CHECK] CONFLICT DETECTED with event: ${event.summary}`)
+      }
+      
+      return hasOverlap
     })
 
     return {
@@ -108,12 +125,12 @@ async function createCalendarEvent(date: string, time: string, email: string, na
     
     // Usar date-fns-tz para manejar correctamente la zona horaria
     const zonedDate = parseISO(dateTimeString)
-    const startDateTimeUTC = zonedTimeToUtc(zonedDate, colombiaTimeZone)
+    const startDateTimeUTC = fromZonedTime(zonedDate, colombiaTimeZone)
     const endDateTimeUTC = new Date(startDateTimeUTC.getTime() + 30 * 60000) // 30 minutos después
     
     // Verificar las fechas en zona horaria Colombia
-    const startInColombia = utcToZonedTime(startDateTimeUTC, colombiaTimeZone)
-    const endInColombia = utcToZonedTime(endDateTimeUTC, colombiaTimeZone)
+    const startInColombia = toZonedTime(startDateTimeUTC, colombiaTimeZone)
+    const endInColombia = toZonedTime(endDateTimeUTC, colombiaTimeZone)
     
     console.log('🕐 Timezone conversion details:', {
       original: dateTimeString,
@@ -213,13 +230,23 @@ async function sendConfirmationEmails(date: string, time: string, email: string,
   
   const formatDate = (dateStr: string) => {
     const [year, month, day] = dateStr.split('-')
-    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-    return date.toLocaleDateString('es-ES', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    })
+    const colombiaTimeZone = 'America/Bogota'
+    
+    // Crear fecha en zona horaria de Colombia usando date-fns-tz
+    const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T12:00:00`
+    const zonedDate = parseISO(dateTimeString)
+    const dateInColombia = toZonedTime(fromZonedTime(zonedDate, colombiaTimeZone), colombiaTimeZone)
+    
+    // Formatear fecha manualmente en español
+    const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+    const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+    
+    const dayName = dayNames[dateInColombia.getDay()]
+    const dayNumber = dateInColombia.getDate()
+    const monthName = monthNames[dateInColombia.getMonth()]
+    const yearNumber = dateInColombia.getFullYear()
+    
+    return `${dayName}, ${dayNumber} de ${monthName} de ${yearNumber}`
   }
 
   // Correo para el cliente
@@ -341,10 +368,14 @@ async function sendConfirmationEmails(date: string, time: string, email: string,
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🚀 [SCHEDULE] Iniciando proceso de agendamiento')
     const { date, time, email, name, phone } = await request.json()
+    
+    console.log('📝 [SCHEDULE] Datos recibidos:', { date, time, email, name: name?.substring(0, 10) + '...', phone: phone?.substring(0, 5) + '...' })
 
     // Validar datos requeridos
     if (!date || !time || !email || !name || !phone) {
+      console.log('❌ [SCHEDULE] Faltan datos requeridos')
       return NextResponse.json(
         { error: 'Faltan datos requeridos: fecha, hora, email, nombre y teléfono son obligatorios' },
         { status: 400 }
@@ -352,8 +383,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar formato de email
+    console.log('✉️ [SCHEDULE] Validando formato de email')
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
+      console.log('❌ [SCHEDULE] Formato de email inválido:', email)
       return NextResponse.json(
         { error: 'Formato de email inválido' },
         { status: 400 }
@@ -361,7 +394,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar que el nombre no esté vacío
+    console.log('👤 [SCHEDULE] Validando nombre')
     if (name.trim().length < 2) {
+      console.log('❌ [SCHEDULE] Nombre muy corto:', name)
       return NextResponse.json(
         { error: 'El nombre debe tener al menos 2 caracteres' },
         { status: 400 }
@@ -369,8 +404,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar formato básico de teléfono
+    console.log('📞 [SCHEDULE] Validando teléfono')
     const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,}$/
     if (!phoneRegex.test(phone.trim())) {
+      console.log('❌ [SCHEDULE] Formato de teléfono inválido:', phone)
       return NextResponse.json(
         { error: 'Formato de teléfono inválido' },
         { status: 400 }
@@ -378,8 +415,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar conflictos antes de crear la reunión
+    console.log('🔍 [SCHEDULE] Verificando conflictos de horario')
     const conflictCheck = await checkTimeSlotConflicts(date, time)
+    console.log('🔍 [SCHEDULE] Resultado de verificación de conflictos:', { hasConflicts: conflictCheck.hasConflicts, eventsCount: conflictCheck.conflictingEvents?.length || 0 })
+    
     if (conflictCheck.hasConflicts) {
+      console.log('⚠️ [SCHEDULE] Conflicto detectado - horario ocupado')
       return NextResponse.json(
         { 
           error: 'El horario seleccionado ya está ocupado. Por favor, selecciona otro horario disponible.',
@@ -390,9 +431,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Crear evento en Google Calendar con integración dual
+    console.log('📅 [SCHEDULE] Creando evento en Google Calendar')
     const calendarEvent = await createCalendarEvent(date, time, email, name.trim(), phone.trim())
+    console.log('✅ [SCHEDULE] Evento creado en Google Calendar:', { eventId: calendarEvent.id })
 
     // Guardar en Supabase
+    console.log('💾 [SCHEDULE] Guardando reunión en Supabase')
     const supabaseDB = new SupabaseMeetingsDB()
     
     // Buscar o crear cliente
@@ -415,10 +459,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (!meeting) {
+      console.error('❌ [SCHEDULE] Error guardando en Supabase')
       throw new Error('Error al guardar la reunión en la base de datos')
     }
+    console.log('✅ [SCHEDULE] Reunión guardada en Supabase:', { meetingId: meeting.id })
 
     // Enviar correos de confirmación con enlaces de Meet
+    console.log('📧 [SCHEDULE] Enviando correos de confirmación')
     await sendConfirmationEmails(
       date, 
       time, 
@@ -428,7 +475,9 @@ export async function POST(request: NextRequest) {
       calendarEvent.meetLink, 
       calendarEvent.htmlLink
     )
+    console.log('✅ [SCHEDULE] Correos de confirmación enviados')
 
+    console.log('🎉 [SCHEDULE] Proceso de agendamiento completado exitosamente')
     return NextResponse.json({
       success: true,
       message: 'Reunión agendada exitosamente en Google Calendar y Supabase',
@@ -439,10 +488,41 @@ export async function POST(request: NextRequest) {
       meetLink: calendarEvent.meetLink,
       calendarLink: calendarEvent.htmlLink
     })
-  } catch (error) {
-    console.error('Error en schedule-meeting:', error)
+  } catch (error: any) {
+    console.error('💥 [SCHEDULE] Error en proceso de agendamiento:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      cause: error.cause
+    })
     
     // Manejar errores específicos de Google Calendar
+    if (error.message?.includes('Google Calendar')) {
+      console.error('📅 [SCHEDULE] Error específico de Google Calendar:', error.message)
+      return NextResponse.json(
+        { error: 'Error al crear el evento en Google Calendar. Intente nuevamente.' },
+        { status: 503 }
+      )
+    }
+    
+    // Manejar errores de Supabase
+    if (error.message?.includes('Supabase') || error.message?.includes('base de datos')) {
+      console.error('💾 [SCHEDULE] Error específico de Supabase:', error.message)
+      return NextResponse.json(
+        { error: 'Error al guardar la reunión. Intente nuevamente.' },
+        { status: 503 }
+      )
+    }
+    
+    // Manejar errores de conflictos de horario
+    if (error.message?.includes('ocupado') || error.message?.includes('conflict')) {
+      console.error('⚠️ [SCHEDULE] Error de conflicto de horario:', error.message)
+      return NextResponse.json(
+        { error: 'El horario seleccionado ya está ocupado. Por favor, selecciona otro horario disponible.' },
+        { status: 409 }
+      )
+    }
+    
     if (error.message?.includes('insufficient authentication scopes')) {
       return NextResponse.json(
         { error: 'Error de autenticación con Google Calendar. Contacte al administrador.' },
@@ -457,6 +537,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Error genérico
+    console.error('❌ [SCHEDULE] Error interno no categorizado')
     return NextResponse.json(
       { error: 'Error interno del servidor. Intente nuevamente.' },
       { status: 500 }
