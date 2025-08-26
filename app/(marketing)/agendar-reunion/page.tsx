@@ -152,10 +152,11 @@ export default function AgendarReunionPage() {
   // Función auxiliar para generar días laborales
   const generateBusinessDays = (count: number) => {
     const days = []
-    const today = new Date()
+    // Obtener fecha actual en zona horaria de Colombia/Bogotá
+    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }))
     let currentDate = new Date(today)
     
-    console.log('🔍 DEBUG: Generando días laborales desde:', today.toDateString())
+    console.log('🔍 DEBUG: Generando días laborales desde (Colombia/Bogotá):', today.toDateString())
     
     while (days.length < count) {
       const dayOfWeek = currentDate.getDay()
@@ -194,10 +195,15 @@ export default function AgendarReunionPage() {
   
   // Función auxiliar para verificar si un horario ya pasó
   const isPastTime = (date: string, time: string): boolean => {
-    const now = new Date()
+    // Obtener hora actual en zona horaria de Colombia/Bogotá
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }))
+    
+    // Crear fecha objetivo en zona horaria de Colombia/Bogotá
     const targetDateTime = new Date(`${date}T${time}:00`)
+    
     // Buffer de 30 minutos
     targetDateTime.setMinutes(targetDateTime.getMinutes() - 30)
+    
     return targetDateTime <= now
   }
 
@@ -513,7 +519,8 @@ export default function AgendarReunionPage() {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
+                        timeZone: 'America/Bogota'
                       })}
                     </p>
                     <p className="text-[#26FFDF] text-sm">
@@ -525,7 +532,8 @@ export default function AgendarReunionPage() {
                         return date.toLocaleTimeString('es-ES', {
                           hour: 'numeric',
                           minute: '2-digit',
-                          hour12: true
+                          hour12: true,
+                          timeZone: 'America/Bogota'
                         });
                       })()}
                     </p>
