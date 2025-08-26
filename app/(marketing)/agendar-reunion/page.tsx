@@ -517,7 +517,17 @@ export default function AgendarReunionPage() {
                       })}
                     </p>
                     <p className="text-[#26FFDF] text-sm">
-                      <strong>Hora:</strong> {selectedTime}
+                      <strong>Hora:</strong> {selectedTime && (() => {
+                        console.log('selectedTime value:', selectedTime);
+                        const [hours, minutes] = selectedTime.split(':');
+                        const date = new Date();
+                        date.setHours(parseInt(hours), parseInt(minutes));
+                        return date.toLocaleTimeString('es-ES', {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true
+                        });
+                      })()}
                     </p>
                   </div>
 
