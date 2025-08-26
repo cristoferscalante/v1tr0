@@ -200,24 +200,46 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                 {index === 0 && <BackgroundAnimation />}
                 <div className="slide__container max-w-4xl mx-auto px-8 text-center">
                   {slide.video ? (
-                    <video src={slide.video} autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                    <>
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        disablePictureInPicture
+                        webkit-playsinline="true"
+                        className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none"
+                      >
+                        <source src={slide.video} type="video/mp4" />
+                      </video>
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80"></div>
+                    </>
                   ) : slide.img && (
-                    <img src={slide.img} alt={slide.title} className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                    <>
+                      <img src={slide.img} alt={slide.title} className="absolute inset-0 w-full h-full object-cover opacity-40" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40"></div>
+                    </>
                   )}
                   <h2 
-                    className="slide__heading text-6xl md:text-8xl font-bold text-white mb-8"
+                    className="slide__heading text-6xl md:text-8xl font-bold text-white mb-8 relative z-10"
                     style={{ '--width': '200px' } as any}
                   >
                     {slide.title}
                   </h2>
                   {slide.url && (
-                    <a 
-                      href={slide.url}
-                      className="absolute bottom-8 right-8 bg-white/30 backdrop-blur-sm border border-white/40 text-white px-6 py-3 rounded-full font-bold transition-all duration-300 hover:bg-white/50 hover:scale-105 flex items-center space-x-2"
-                    >
-                      <span>Conócelo</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-                    </a>
+                    <div className="absolute bottom-6 right-6 z-10">
+                      <a
+                        href={slide.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#26FFDF]/20 transition-all duration-300 hover:border-[#26FFDF] hover:bg-[#02505950] inline-flex items-center px-6 py-3 text-base font-semibold hover:scale-105 shadow-[0_0_20px_rgba(38,255,223,0.2)]"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#26FFDF]/10 to-[#08A696]/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <span className="relative z-10 text-white">Conócelo</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10 ml-2 text-[#26FFDF]"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+                      </a>
+                    </div>
                   )}
  
                   </div>
