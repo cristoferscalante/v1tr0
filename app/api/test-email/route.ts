@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
             
             <p><strong>Detalles de la prueba:</strong></p>
             <ul>
-              <li><strong>Fecha:</strong> ${new Date().toLocaleString('es-ES')}</li>
+              <li><strong>Fecha:</strong> ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}</li>
               <li><strong>Sistema:</strong> V1tr0 Contact System</li>
               <li><strong>Método:</strong> SMTP via Nodemailer</li>
               <li><strong>Estado:</strong> Operativo</li>
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
           
           <div class="footer">
             <p>Este es un correo automático generado por el sistema V1tr0</p>
-            <p>© 2024 V1tr0 - Todos los derechos reservados</p>
+            <p>© 2025 V1tr0 - Todos los derechos reservados</p>
           </div>
         </body>
         </html>
@@ -133,14 +133,14 @@ export async function POST(request: NextRequest) {
         - Plantillas HTML funcionando
         
         Detalles de la prueba:
-        - Fecha: ${new Date().toLocaleString('es-ES')}
+        - Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
         - Sistema: V1tr0 Contact System
         - Método: SMTP via Nodemailer
         - Estado: Operativo
         
         El sistema de contacto está listo para recibir y procesar formularios de los usuarios.
         
-        © 2024 V1tr0 - Todos los derechos reservados
+        © 2025 V1tr0 - Todos los derechos reservados
       `
     }
 

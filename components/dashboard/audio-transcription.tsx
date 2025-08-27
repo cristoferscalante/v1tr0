@@ -174,7 +174,7 @@ export function AudioTranscription({
 
   const downloadTranscription = (transcription: Transcription) => {
     const content = `Transcripción de la reunión
-Fecha: ${new Date(transcription.created_at).toLocaleString()}
+Fecha: ${new Date(transcription.created_at).toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
 Confianza: ${transcription.confidence_score ? Math.round(transcription.confidence_score * 100) : 'N/A'}%
 
 TRANSCRIPCIÓN:

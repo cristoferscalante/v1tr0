@@ -34,7 +34,7 @@ export default function NewPage() {
       <InformationSystems />
       <GsapSlider title="Sistemas de Información" examples={informationSystemsExamples} />
       <footer className="bg-gray-800 text-white p-4 text-center">
-        <p>© 2024 V1TR0. Todos los derechos reservados.</p>
+        <p>© 2025 V1TR0. Todos los derechos reservados.</p>
       </footer>
     </main>
   )

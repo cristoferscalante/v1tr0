@@ -85,7 +85,7 @@ const generateEmailHTML = (data: ContactFormData) => {
           </div>
           <div class="field">
             <div class="label">🕒 Fecha:</div>
-            <div class="value">${new Date().toLocaleString('es-ES')}</div>
+            <div class="value">${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}</div>
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
         Email: ${formData.email}
         Área de Servicio: ${formData.serviceArea}
         Mensaje: ${formData.message}
-        Fecha: ${new Date().toLocaleString('es-ES')}
+        Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
       `
     }
 

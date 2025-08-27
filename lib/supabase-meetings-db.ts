@@ -217,11 +217,11 @@ export class SupabaseMeetingsDB {
           description: `Reunión ${data.meeting_type || 'de consulta'} con ${data.client.name}\n\nContacto: ${data.client.email}${data.client.phone ? `\nTeléfono: ${data.client.phone}` : ''}${data.description ? `\n\nNotas: ${data.description}` : ''}`,
           start: {
             dateTime: startDateTime,
-            timeZone: 'America/Mexico_City'
+            timeZone: 'America/Bogota'
           },
           end: {
             dateTime: endDateTime,
-            timeZone: 'America/Mexico_City'
+            timeZone: 'America/Bogota'
           },
           attendees: [
             {
@@ -288,11 +288,11 @@ export class SupabaseMeetingsDB {
           description: `Reunión ${data.meeting_type || 'de consulta'} con ${data.client?.name}\n\nContacto: ${data.client?.email}${data.client?.phone ? `\nTeléfono: ${data.client.phone}` : ''}${data.description ? `\n\nNotas: ${data.description}` : ''}`,
           start: {
             dateTime: startDateTime,
-            timeZone: 'America/Mexico_City'
+            timeZone: 'America/Bogota'
           },
           end: {
             dateTime: endDateTime,
-            timeZone: 'America/Mexico_City'
+            timeZone: 'America/Bogota'
           },
           attendees: data.client ? [
             {

@@ -141,7 +141,7 @@ const createEmailTemplate = (data: ContactFormData, isClientEmail: boolean = fal
             <div style="background: rgba(2, 80, 89, 0.5); padding: 30px; text-align: center; border-top: 1px solid rgba(38, 255, 223, 0.2);">
                 <p style="margin: 0 0 10px; color: #26FFDF; font-weight: bold; font-size: 18px;">V1tr0 - Sistema de Gestión de Consultas</p>
                 <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 14px;">
-                    Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}
+                    Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
                 </p>
             </div>
         </div>

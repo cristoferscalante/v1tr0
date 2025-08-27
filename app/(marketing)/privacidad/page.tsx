@@ -83,7 +83,7 @@ export default function PrivacidadPage() {
         <div className="mt-10 pt-6 border-t border-custom-2/20">
           <p className="text-sm text-textMuted">
             Última actualización:{" "}
-            {new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" })}
+            {new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric", timeZone: "America/Bogota" })}
           </p>
         </div>
       </div>

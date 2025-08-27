@@ -294,7 +294,7 @@ async function sendConfirmationEmails(date: string, time: string, email: string,
         <!-- Footer -->
         <div style="background: rgba(8, 166, 150, 0.1); padding: 20px 30px; text-align: center; border-top: 1px solid rgba(8, 166, 150, 0.2);">
           <p style="margin: 0; color: rgba(38, 255, 223, 0.6); font-size: 14px;">
-            © 2024 V1tr0. Todos los derechos reservados.
+            © 2025 V1tr0. Todos los derechos reservados.
           </p>
         </div>
       </div>

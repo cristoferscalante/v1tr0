@@ -60,11 +60,11 @@ export class GoogleCalendarService {
           description: event.description,
           start: {
             dateTime: event.start.dateTime,
-            timeZone: event.start.timeZone || 'America/Mexico_City',
+            timeZone: event.start.timeZone || 'America/Bogota',
           },
           end: {
             dateTime: event.end.dateTime,
-            timeZone: event.end.timeZone || 'America/Mexico_City',
+            timeZone: event.end.timeZone || 'America/Bogota',
           },
           attendees: event.attendees,
           reminders: {
@@ -99,11 +99,11 @@ export class GoogleCalendarService {
           description: event.description,
           start: event.start ? {
             dateTime: event.start.dateTime,
-            timeZone: event.start.timeZone || 'America/Mexico_City',
+            timeZone: event.start.timeZone || 'America/Bogota',
           } : undefined,
           end: event.end ? {
             dateTime: event.end.dateTime,
-            timeZone: event.end.timeZone || 'America/Mexico_City',
+            timeZone: event.end.timeZone || 'America/Bogota',
           } : undefined,
           attendees: event.attendees,
         },

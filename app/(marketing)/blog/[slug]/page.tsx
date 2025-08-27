@@ -15,7 +15,7 @@ import { MDXContent } from "@/components/blog/MDXContent"
 
 // Usamos los mismos tipos que usa Next.js internamente
 export async function generateMetadata(props: any): Promise<Metadata> {
-  const { slug } = props.params
+  const { slug } = await props.params
 
   try {
     const post = await getPostBySlug(slug)
@@ -136,7 +136,7 @@ function PostLoading() {
 
 // Usamos el mismo enfoque para el componente de página
 export default async function PostPage(props: any) {
-  const { slug } = props.params
+  const { slug } = await props.params
 
   return (
     <>

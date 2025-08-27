@@ -40,11 +40,17 @@ export default function BlogCard({ post }: BlogCardProps) {
     timeZone: "UTC",
   })
 
-  // Usar imagen de placeholder para la portada del post
-  const coverImage = `/placeholder.svg?height=300&width=500&query=${encodeURIComponent(post.meta.title)}`
-
-  // Usar imagen de placeholder para el autor
-  const authorImage = `/placeholder.svg?height=40&width=40&query=profile`
+  // Usar imágenes reales como fallback
+  let coverImage = post.meta.coverImage;
+  let authorImage = post.meta.authorImage;
+  
+  if (!coverImage) {
+    coverImage = `/post/post.png`;
+  }
+  
+  if (!authorImage) {
+    authorImage = `/placeholder-user.jpg`;
+  }
 
   return (
     <Link

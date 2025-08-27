@@ -37,7 +37,7 @@ export default function InformationSystems() {
       title: "Sistema de Gestión Hospitalaria",
       description: "Plataforma integral para la gestión de pacientes, citas médicas, historiales clínicos y administración hospitalaria con dashboards en tiempo real.",
       tech: ["React", "Node.js", "PostgreSQL", "WebSocket"],
-      year: "2024",
+      year: "2025",
       status: "Activo",
       image: "/service/clinica.png"
     },
@@ -46,7 +46,7 @@ export default function InformationSystems() {
       title: "Dashboard Financiero Corporativo",
       description: "Sistema de análisis financiero con visualización de KPIs, reportes automatizados y predicciones basadas en IA para empresas.",
       tech: ["Vue.js", "Python", "MongoDB", "TensorFlow"],
-      year: "2024",
+      year: "2025",
       status: "En desarrollo",
       image: "/placeholder.svg"
     },
@@ -73,7 +73,7 @@ export default function InformationSystems() {
       title: "Portal de Gestión Municipal",
       description: "Plataforma ciudadana para trámites en línea, seguimiento de solicitudes y comunicación directa con autoridades municipales.",
       tech: ["React", "Laravel", "MySQL", "Redis"],
-      year: "2024",
+      year: "2025",
       status: "En desarrollo",
       image: "/placeholder.svg"
     },
