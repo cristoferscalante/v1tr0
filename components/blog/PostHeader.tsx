@@ -25,8 +25,8 @@ export default function PostHeader({ title, date, author, coverImage, readingTim
     timeZone: "UTC", // Add timezone to ensure consistency
   })
 
-  // Usar imagen de placeholder para la portada del post
-  const placeholderImage = `/placeholder.svg?height=630&width=1200&query=${encodeURIComponent(title)}`
+  // Usar la imagen de portada real o fallback a placeholder
+  const imageToUse = coverImage || `/placeholder.svg?height=630&width=1200&query=${encodeURIComponent(title)}`
 
   return (
     <header className="mb-12">
@@ -73,7 +73,7 @@ export default function PostHeader({ title, date, author, coverImage, readingTim
         
         {/* Imagen con glassmorphism */}
         <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100">
-          <Image src={placeholderImage || "/placeholder.svg"} alt={title} fill priority className="object-cover" />
+          <Image src={imageToUse} alt={title} fill priority className="object-cover" />
           <div 
             className="absolute inset-0 transition-opacity duration-500"
             style={{

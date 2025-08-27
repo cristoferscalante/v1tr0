@@ -6,7 +6,7 @@ import matter from "gray-matter"
 import { slugify, calculateReadingTime } from "./utils"
 
 // Directorio donde se almacenarán los archivos MDX
-const postsDirectory = path.join(process.cwd(), "src", "content", "blog")
+const postsDirectory = path.join(process.cwd(), "content", "blog")
 
 // Tipo para los metadatos del post
 export interface PostMetadata {

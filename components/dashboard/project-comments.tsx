@@ -142,7 +142,7 @@ export function ProjectComments({ projectId }: ProjectCommentsProps) {
       date: new Date()
         .toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })
         .replace(".", ""),
-      time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
+      time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", timeZone: "America/Bogota" }),
       likes: 0,
       replies: [],
     }

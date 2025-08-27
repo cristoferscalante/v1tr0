@@ -201,19 +201,8 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                 <div className="slide__container max-w-4xl mx-auto px-8 text-center">
                   {slide.video ? (
                     <>
-                      <video
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="auto"
-                        disablePictureInPicture
-                        webkit-playsinline="true"
-                        className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none"
-                      >
-                        <source src={slide.video} type="video/mp4" />
-                      </video>
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80"></div>
+                      <video src={slide.video} autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-40" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/90"></div>
                     </>
                   ) : slide.img && (
                     <>
@@ -228,18 +217,14 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                     {slide.title}
                   </h2>
                   {slide.url && (
-                    <div className="absolute bottom-6 right-6 z-10">
-                      <a
-                        href={slide.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#26FFDF]/20 transition-all duration-300 hover:border-[#26FFDF] hover:bg-[#02505950] inline-flex items-center px-6 py-3 text-base font-semibold hover:scale-105 shadow-[0_0_20px_rgba(38,255,223,0.2)]"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#26FFDF]/10 to-[#08A696]/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <span className="relative z-10 text-white">Conócelo</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10 ml-2 text-[#26FFDF]"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-                      </a>
-                    </div>
+                    <a 
+                      href={slide.url}
+                      className="group relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#26FFDF]/20 transition-all duration-300 hover:border-[#26FFDF] hover:bg-[#02505950] inline-flex items-center px-6 py-3 text-base font-semibold hover:scale-105 shadow-[0_0_20px_rgba(38,255,223,0.2)] fixed bottom-6 right-6 z-50"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#26FFDF]/10 to-[#08A696]/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <span className="relative z-10 text-white">Conócelo</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10 ml-2 text-[#26FFDF]"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+                    </a>
                   )}
  
                   </div>

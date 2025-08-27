@@ -354,7 +354,7 @@ export default function MeetingPage() {
                   <label className="text-sm font-medium text-muted-foreground">
                     Fecha de inicio
                   </label>
-                  <p>{new Date(meeting.start_time).toLocaleString()}</p>
+                  <p>{new Date(meeting.start_time).toLocaleString('es-ES', { timeZone: 'America/Bogota' })}</p>
                 </div>
                 
                 {meeting.end_time && (
@@ -362,7 +362,7 @@ export default function MeetingPage() {
                     <label className="text-sm font-medium text-muted-foreground">
                       Fecha de fin
                     </label>
-                    <p>{new Date(meeting.end_time).toLocaleString()}</p>
+                    <p>{new Date(meeting.end_time).toLocaleString('es-ES', { timeZone: 'America/Bogota' })}</p>
                   </div>
                 )}
                 

@@ -330,7 +330,7 @@ export default function Footer() {
         </div>
         
         <div className="text-center text-sm text-gray-400 mt-8">
-          <p>&copy; 2024 Tu Empresa. Todos los derechos reservados.</p>
+          <p>&copy; 2025 Tu Empresa. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
