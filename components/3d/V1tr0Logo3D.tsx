@@ -405,7 +405,7 @@ export default function V1tr0Logo3D() {
               <pointLight position={[-5, 8, 5]} intensity={0.3} color="#0d1a18f5" />
             </>
           )}
-          <Environment preset="studio" />
+          {/* Environment preset removed to avoid HDR loading errors */}
           <CameraController 
             currentView={currentView} 
             modelCenter={modelCenter} 

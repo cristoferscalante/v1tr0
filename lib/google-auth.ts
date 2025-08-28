@@ -1,13 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-interface GoogleTokens {
-  access_token: string;
-  refresh_token: string;
-  expires_in?: number;
-  token_type?: string;
-}
-
 interface RefreshTokenResponse {
   access_token: string;
   expires_in: number;
@@ -99,8 +92,8 @@ async function updateEnvFile(key: string, value: string): Promise<void> {
 
     // Escribir el archivo actualizado
     fs.writeFileSync(envPath, lines.join('\n'));
-  } catch (error) {
-    console.error('Error updating .env.local:', error);
+  } catch (err) {
+    console.error('Error updating .env.local:', err);
     // No lanzar error para no interrumpir el flujo principal
   }
 }
@@ -143,7 +136,7 @@ export async function getValidAccessToken(): Promise<string> {
     }
 
     throw new Error(`Calendar API error: ${testResponse.status}`);
-  } catch (error) {
+  } catch {
     // En caso de error, intentar renovar el token
     try {
       return await refreshGoogleToken();

@@ -3,7 +3,9 @@
  * Maneja correctamente caracteres especiales y acentos del español
  */
 export function slugify(text: string): string {
-  if (!text) return ""
+  if (!text) {
+    return ""
+  }
 
   return (
     text
@@ -42,7 +44,9 @@ export function slugify(text: string): string {
 export function findElementByIdOrText(searchId: string, searchText: string): HTMLElement | null {
   // Intento 1: buscar por ID directamente
   const element = document.getElementById(searchId)
-  if (element) return element
+  if (element) {
+    return element
+  }
 
   // Intento 2: buscar todos los encabezados
   const headings = document.querySelectorAll<HTMLElement>("h1, h2, h3, h4, h5, h6")

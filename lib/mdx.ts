@@ -107,7 +107,9 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
 
 // Función para extraer encabezados del contenido
 function extractHeadings(content: string) {
-  if (!content) return []
+  if (!content) {
+    return []
+  }
 
   // Dividir el contenido en líneas para procesarlo
   const lines = content.split("\n")
@@ -127,7 +129,9 @@ function extractHeadings(content: string) {
     }
 
     // Ignorar líneas dentro de bloques de código
-    if (inCodeBlock) continue
+    if (inCodeBlock) {
+      continue
+    }
 
     // Expresión regular para detectar encabezados - solo al inicio de línea
     const headingMatch = line.match(/^(#{1,6})\s+(.+?)(?:\s*#*\s*)?$/)
