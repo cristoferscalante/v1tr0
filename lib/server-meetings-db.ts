@@ -91,7 +91,9 @@ class ServerMeetingsDB {
     const meetings = this.getMeetings();
     const index = meetings.findIndex(m => m.id === id);
     
-    if (index === -1) return null;
+    if (index === -1) {
+      return null;
+    }
     
     meetings[index] = {
       ...meetings[index],
@@ -107,7 +109,9 @@ class ServerMeetingsDB {
     const meetings = this.getMeetings();
     const filteredMeetings = meetings.filter(m => m.id !== id);
     
-    if (filteredMeetings.length === meetings.length) return false;
+    if (filteredMeetings.length === meetings.length) {
+      return false;
+    }
     
     this.writeJsonFile(this.MEETINGS_FILE, filteredMeetings);
     return true;
@@ -214,7 +218,9 @@ class ServerMeetingsDB {
     const clients = this.getClients();
     const filteredClients = clients.filter(c => c.email !== email);
     
-    if (filteredClients.length === clients.length) return false;
+    if (filteredClients.length === clients.length) {
+      return false;
+    }
     
     this.writeJsonFile(this.CLIENTS_FILE, filteredClients);
     return true;

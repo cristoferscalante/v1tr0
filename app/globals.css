@@ -62,6 +62,16 @@ body {
   .dark .toc-scroll::-webkit-scrollbar-thumb:hover {
     background: #26FFDF;
   }
+
+  /* Animación para el efecto holográfico */
+  @keyframes moveGradient {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
 }
 
 @layer base {

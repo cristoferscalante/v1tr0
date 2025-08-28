@@ -34,7 +34,9 @@ class LocalMeetingsDB {
 
   // Métodos para reuniones
   getMeetings(): MeetingData[] {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === 'undefined') {
+      return [];
+    }
     try {
       const data = localStorage.getItem(this.MEETINGS_KEY);
       return data ? JSON.parse(data) : [];
@@ -45,7 +47,9 @@ class LocalMeetingsDB {
   }
 
   saveMeeting(meeting: Omit<MeetingData, 'id' | 'createdAt' | 'updatedAt'>): MeetingData {
-    if (typeof window === 'undefined') throw new Error('localStorage no disponible');
+    if (typeof window === 'undefined') {
+      throw new Error('localStorage no disponible');
+    }
     
     const meetings = this.getMeetings();
     const now = new Date().toISOString();
@@ -66,12 +70,16 @@ class LocalMeetingsDB {
   }
 
   updateMeeting(id: string, updates: Partial<MeetingData>): MeetingData | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === 'undefined') {
+      return null;
+    }
     
     const meetings = this.getMeetings();
     const index = meetings.findIndex(m => m.id === id);
     
-    if (index === -1) return null;
+    if (index === -1) {
+      return null;
+    }
     
     meetings[index] = {
       ...meetings[index],
@@ -84,12 +92,16 @@ class LocalMeetingsDB {
   }
 
   deleteMeeting(id: string): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === 'undefined') {
+      return false;
+    }
     
     const meetings = this.getMeetings();
     const filteredMeetings = meetings.filter(m => m.id !== id);
     
-    if (filteredMeetings.length === meetings.length) return false;
+    if (filteredMeetings.length === meetings.length) {
+      return false;
+    }
     
     localStorage.setItem(this.MEETINGS_KEY, JSON.stringify(filteredMeetings));
     return true;
@@ -143,7 +155,9 @@ class LocalMeetingsDB {
 
   // Métodos para clientes
   getClients(): ClientData[] {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === 'undefined') {
+      return [];
+    }
     try {
       const data = localStorage.getItem(this.CLIENTS_KEY);
       return data ? JSON.parse(data) : [];
@@ -154,7 +168,9 @@ class LocalMeetingsDB {
   }
 
   saveClient(client: Omit<ClientData, 'id' | 'meetings' | 'createdAt' | 'updatedAt'>): ClientData {
-    if (typeof window === 'undefined') throw new Error('localStorage no disponible');
+    if (typeof window === 'undefined') {
+      throw new Error('localStorage no disponible');
+    }
     
     const clients = this.getClients();
     const existingClientIndex = clients.findIndex(c => c.email === client.email);
@@ -191,7 +207,9 @@ class LocalMeetingsDB {
   }
 
   updateClientMeetings(clientEmail: string, meetingId: string): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     
     const clients = this.getClients();
     const clientIndex = clients.findIndex(c => c.email === clientEmail);
@@ -204,12 +222,16 @@ class LocalMeetingsDB {
   }
 
   deleteClient(email: string): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === 'undefined') {
+      return false;
+    }
     
     const clients = this.getClients();
     const filteredClients = clients.filter(c => c.email !== email);
     
-    if (filteredClients.length === clients.length) return false;
+    if (filteredClients.length === clients.length) {
+      return false;
+    }
     
     localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(filteredClients));
     return true;
@@ -233,7 +255,9 @@ class LocalMeetingsDB {
 
   // Limpiar datos (para desarrollo/testing)
   clearAllData(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     localStorage.removeItem(this.MEETINGS_KEY);
     localStorage.removeItem(this.CLIENTS_KEY);
   }
@@ -248,7 +272,9 @@ class LocalMeetingsDB {
 
   // Importar datos desde backup
   importData(data: { meetings: MeetingData[], clients: ClientData[] }): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     localStorage.setItem(this.MEETINGS_KEY, JSON.stringify(data.meetings));
     localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(data.clients));
   }
@@ -283,13 +309,19 @@ export const timeValidation = {
     
     return workingHours.filter(time => {
       // Filtrar horarios ya ocupados por reuniones confirmadas
-      if (bookedTimes.includes(time)) return false;
+      if (bookedTimes.includes(time)) {
+        return false;
+      }
       
       // Para el día actual, filtrar horarios pasados con buffer de 30 minutos
-      if (isToday && this.isTimePast(date, time, 30)) return false;
+      if (isToday && this.isTimePast(date, time, 30)) {
+        return false;
+      }
       
       // No permitir agendar en días pasados
-      if (date < today) return false;
+      if (date < today) {
+        return false;
+      }
       
       return true;
     });
@@ -343,7 +375,9 @@ export const timeValidation = {
       
       // Saltar fines de semana
       const dayOfWeek = checkDate.getDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        continue;
+      }
       
       const availableSlots = this.getAvailableTimeSlots(dateStr);
       if (availableSlots.length > 0) {

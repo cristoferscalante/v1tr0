@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { googleCalendarService } from './google-calendar';
-import { fromZonedTime, toZonedTime, format } from 'date-fns-tz';
+import { toZonedTime, format } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
 
 // Configuración de Supabase

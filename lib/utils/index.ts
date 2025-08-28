@@ -7,7 +7,9 @@
  * Maneja correctamente caracteres especiales y acentos del español
  */
 export function slugify(text: string): string {
-  if (!text) return ""
+  if (!text) {
+    return ""
+  }
 
   return (
     text
@@ -44,11 +46,15 @@ export function slugify(text: string): string {
  * @returns El elemento encontrado o null
  */
 export function findElementByIdOrText(searchId: string, searchText: string): HTMLElement | null {
-  if (typeof document === "undefined") return null
+  if (typeof document === "undefined") {
+    return null
+  }
 
   // Intento 1: buscar por ID directamente
   const element = document.getElementById(searchId)
-  if (element) return element
+  if (element) {
+    return element
+  }
 
   // Intento 2: buscar todos los encabezados
   const headings = document.querySelectorAll<HTMLElement>("h1, h2, h3, h4, h5, h6")
@@ -101,9 +107,10 @@ export function findElementByIdOrText(searchId: string, searchText: string): HTM
  * Función de utilidad para registrar todos los encabezados para depuración
  */
 export function logAllHeadings() {
-  if (typeof document === "undefined") return
+  if (typeof document === "undefined") {
+    return
+  }
 
-  const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6")
   // Debug logs removed for production
 }
 
@@ -113,7 +120,9 @@ export function logAllHeadings() {
  * @returns Tiempo de lectura formateado
  */
 export function calculateReadingTime(text: string): string {
-  if (!text) return "1 min read"
+  if (!text) {
+    return "1 min read"
+  }
 
   const wordsPerMinute = 200
   const wordCount = text.split(/\s+/).length

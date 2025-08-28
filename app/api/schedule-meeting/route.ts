@@ -488,59 +488,109 @@ export async function POST(request: NextRequest) {
       meetLink: calendarEvent.meetLink,
       calendarLink: calendarEvent.htmlLink
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // Asegurar que error es un objeto Error válido
+    const errorObj = error instanceof Error ? error : new Error(String(error))
+    
     console.error('💥 [SCHEDULE] Error en proceso de agendamiento:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name,
-      cause: error.cause
+      message: errorObj.message,
+      stack: errorObj.stack,
+      name: errorObj.name,
+      timestamp: new Date().toISOString(),
+      ...(errorObj.cause && { cause: errorObj.cause })
     })
     
     // Manejar errores específicos de Google Calendar
-    if (error.message?.includes('Google Calendar')) {
-      console.error('📅 [SCHEDULE] Error específico de Google Calendar:', error.message)
+    if (errorObj.message?.includes('Google Calendar') || errorObj.message?.includes('calendar')) {
+      console.error('📅 [SCHEDULE] Error específico de Google Calendar:', errorObj.message)
       return NextResponse.json(
-        { error: 'Error al crear el evento en Google Calendar. Intente nuevamente.' },
+        { 
+          error: 'Error al crear el evento en Google Calendar. Intente nuevamente.',
+          code: 'CALENDAR_ERROR',
+          timestamp: new Date().toISOString()
+        },
         { status: 503 }
       )
     }
     
     // Manejar errores de Supabase
-    if (error.message?.includes('Supabase') || error.message?.includes('base de datos')) {
-      console.error('💾 [SCHEDULE] Error específico de Supabase:', error.message)
+    if (errorObj.message?.includes('Supabase') || errorObj.message?.includes('base de datos') || errorObj.message?.includes('database')) {
+      console.error('💾 [SCHEDULE] Error específico de Supabase:', errorObj.message)
       return NextResponse.json(
-        { error: 'Error al guardar la reunión. Intente nuevamente.' },
+        { 
+          error: 'Error al guardar la reunión. Intente nuevamente.',
+          code: 'DATABASE_ERROR',
+          timestamp: new Date().toISOString()
+        },
         { status: 503 }
       )
     }
     
     // Manejar errores de conflictos de horario
-    if (error.message?.includes('ocupado') || error.message?.includes('conflict')) {
-      console.error('⚠️ [SCHEDULE] Error de conflicto de horario:', error.message)
+    if (errorObj.message?.includes('ocupado') || errorObj.message?.includes('conflict')) {
+      console.error('⚠️ [SCHEDULE] Error de conflicto de horario:', errorObj.message)
       return NextResponse.json(
-        { error: 'El horario seleccionado ya está ocupado. Por favor, selecciona otro horario disponible.' },
+        { 
+          error: 'El horario seleccionado ya está ocupado. Por favor, selecciona otro horario disponible.',
+          code: 'TIME_CONFLICT',
+          timestamp: new Date().toISOString()
+        },
         { status: 409 }
       )
     }
     
-    if (error.message?.includes('insufficient authentication scopes')) {
+    // Manejar errores de autenticación
+    if (errorObj.message?.includes('insufficient authentication scopes') || errorObj.message?.includes('authentication')) {
+      console.error('🔐 [SCHEDULE] Error de autenticación:', errorObj.message)
       return NextResponse.json(
-        { error: 'Error de autenticación con Google Calendar. Contacte al administrador.' },
+        { 
+          error: 'Error de autenticación con Google Calendar. Contacte al administrador.',
+          code: 'AUTH_ERROR',
+          timestamp: new Date().toISOString()
+        },
         { status: 503 }
       )
     }
     
-    if (error.message?.includes('quota')) {
+    // Manejar errores de cuota/límite de API
+    if (errorObj.message?.includes('quota') || errorObj.message?.includes('rate limit')) {
+      console.error('⏱️ [SCHEDULE] Error de límite de API:', errorObj.message)
       return NextResponse.json(
-        { error: 'Límite de API alcanzado. Intente nuevamente en unos minutos.' },
+        { 
+          error: 'Límite de API alcanzado. Intente nuevamente en unos minutos.',
+          code: 'RATE_LIMIT_ERROR',
+          timestamp: new Date().toISOString()
+        },
         { status: 429 }
       )
     }
 
+    // Manejar errores de red
+    if (errorObj.message?.includes('network') || errorObj.message?.includes('timeout') || errorObj.message?.includes('ENOTFOUND')) {
+      console.error('🌐 [SCHEDULE] Error de red:', errorObj.message)
+      return NextResponse.json(
+        { 
+          error: 'Error de conexión. Verifique su conexión a internet e intente nuevamente.',
+          code: 'NETWORK_ERROR',
+          timestamp: new Date().toISOString()
+        },
+        { status: 503 }
+      )
+    }
+
     // Error genérico
-    console.error('❌ [SCHEDULE] Error interno no categorizado')
+    console.error('❌ [SCHEDULE] Error interno no categorizado:', {
+      message: errorObj.message,
+      name: errorObj.name,
+      timestamp: new Date().toISOString()
+    })
+    
     return NextResponse.json(
-      { error: 'Error interno del servidor. Intente nuevamente.' },
+      { 
+        error: 'Error interno del servidor. Intente nuevamente.',
+        code: 'INTERNAL_ERROR',
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     )
   }

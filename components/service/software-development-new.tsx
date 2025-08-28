@@ -169,19 +169,18 @@ export default function SoftwareDevelopment() {
                 <h1 className="text-5xl md:text-7xl font-bold text-textPrimary leading-tight">
                   Soluciones digitales a la medida
                 </h1>
-                <p className="text-xl text-textMuted max-w-2xl mx-auto leading-relaxed">
-                  Transformamos ideas en soluciones tecnológicas innovadoras. Nuestro enfoque combina las últimas tecnologías con metodologías ágiles para crear software que impulsa el crecimiento de tu negocio.
-                </p>
+                <div className="space-y-4">
+                  <p className="text-lg text-textSecondary max-w-3xl mx-auto leading-relaxed font-medium">
+                    Creamos software personalizado que se adapta perfectamente a las necesidades específicas de tu empresa.
+                    Desde aplicaciones web hasta sistemas empresariales complejos, transformamos tus ideas en realidad digital.
+                  </p>
+                  <p className="text-xl text-textMuted max-w-2xl mx-auto leading-relaxed">
+                    Transformamos ideas en soluciones tecnológicas innovadoras. Nuestro enfoque combina las últimas tecnologías con metodologías ágiles para crear software que impulsa el crecimiento de tu negocio.
+                  </p>
+                </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button 
-                  onClick={() => setIsContactPopupOpen(true)}
-                  className="bg-gradient-to-r from-highlight to-accent hover:from-accent hover:to-highlight text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center"
-                >
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Solicitar consulta
-                </button>
+              <div className="flex justify-center items-center">
                 <div className="flex items-center text-textMuted">
                   <Users className="w-5 h-5 mr-2" />
                   <span>+50 proyectos exitosos</span>
@@ -202,9 +201,15 @@ export default function SoftwareDevelopment() {
                 <h2 className="text-4xl md:text-5xl font-bold text-textPrimary mb-4">
                   Desarrollo de Software
                 </h2>
-                <p className="text-xl text-textMuted max-w-2xl mx-auto">
-                  Desarrollamos soluciones personalizadas que se adaptan perfectamente a tus necesidades específicas
-                </p>
+                <div className="space-y-3">
+                  <p className="text-lg text-textSecondary max-w-3xl mx-auto leading-relaxed font-medium">
+                    Especialistas en crear aplicaciones robustas y escalables que impulsan la transformación digital de tu negocio.
+                    Utilizamos las mejores prácticas de desarrollo y tecnologías de vanguardia para garantizar resultados excepcionales.
+                  </p>
+                  <p className="text-xl text-textMuted max-w-2xl mx-auto">
+                    Desarrollamos soluciones personalizadas que se adaptan perfectamente a tus necesidades específicas
+                  </p>
+                </div>
               </div>
 
               <div className="grid lg:grid-cols-5 gap-8">
@@ -311,6 +316,17 @@ export default function SoftwareDevelopment() {
                   className="bg-highlight/20 hover:bg-highlight/30 text-textPrimary p-3 rounded-xl transition-all duration-300 border border-highlight/30 hover:border-highlight/50"
                 >
                   <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+              
+              {/* Botón flotante en la parte inferior derecha */}
+              <div className="absolute bottom-8 right-8">
+                <button 
+                  onClick={() => setIsContactPopupOpen(true)}
+                  className="bg-gradient-to-r from-highlight to-accent hover:from-accent hover:to-highlight text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Solicitar consulta
                 </button>
               </div>
             </div>
