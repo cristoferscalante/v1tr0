@@ -10,8 +10,6 @@ import {
   Video, 
   MessageSquare, 
   FileAudio, 
-  Users, 
-  Calendar,
   ArrowLeft,
   Settings
 } from 'lucide-react';
