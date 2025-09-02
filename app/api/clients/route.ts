@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { localMeetingsDB, ClientData } from '@/lib/local-meetings-db';
+import { localMeetingsDB } from '@/lib/local-meetings-db';
 
 // GET - Obtener clientes
 export async function GET(request: NextRequest) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       count: allClients.length 
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error en GET /api/clients:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const clientData: ClientData = {
+    const clientData = {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       phone: phone?.trim(),
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       message: 'Cliente guardado exitosamente'
     }, { status: 201 });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error en POST /api/clients:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
@@ -137,7 +137,7 @@ export async function PUT(request: NextRequest) {
       message: 'Cliente actualizado exitosamente'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error en PUT /api/clients:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
@@ -189,7 +189,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Cliente eliminado exitosamente'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error en DELETE /api/clients:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },

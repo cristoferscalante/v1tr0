@@ -6,14 +6,16 @@ import React, {
   useState,
   createContext,
   useContext,
+  useCallback,
 } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
-import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from "@/lib/icons";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface CarouselProps {
-  items: JSX.Element[];
+  items: React.ReactElement[];
   initialScroll?: number;
 }
 
@@ -30,7 +32,9 @@ export const CarouselContext = createContext<{
   onCardClose: (index: number) => void;
   currentIndex: number;
 }>({
-  onCardClose: () => {},
+  onCardClose: () => {
+    // Default empty implementation
+  },
   currentIndex: 0,
 });
 
@@ -134,14 +138,14 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
             onClick={scrollLeft}
             disabled={!canScrollLeft}
           >
-            <ArrowLeftIcon className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
+            <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
           </button>
           <button
             className="relative z-40 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-custom-1 hover:bg-custom-2 transition-colors disabled:opacity-50 dark:bg-custom-2 dark:hover:bg-custom-3 shadow-lg"
             onClick={scrollRight}
             disabled={!canScrollRight}
           >
-            <ArrowRightIcon className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
+            <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
           </button>
         </div>
       </div>
@@ -160,7 +164,12 @@ export const Card = ({
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose, currentIndex } = useContext(CarouselContext);
+  const { onCardClose } = useContext(CarouselContext);
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    onCardClose(index);
+  }, [index, onCardClose]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -177,17 +186,12 @@ export const Card = ({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+  }, [open, handleClose]);
 
   useOutsideClick(containerRef, () => handleClose());
 
   const handleOpen = () => {
     setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    onCardClose(index);
   };
 
   return (
@@ -206,23 +210,23 @@ export const Card = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               ref={containerRef}
-              layoutId={layout ? `card-${card.title}` : undefined}
+              {...(layout && { layoutId: `card-${card.title}` })}
               className="relative z-[60] mx-auto my-4 sm:my-6 md:my-10 h-fit max-w-5xl rounded-2xl sm:rounded-3xl bg-background p-3 sm:p-4 md:p-6 lg:p-10 font-sans shadow-2xl max-h-[90vh] overflow-y-auto"
             >
               <button
                 className="sticky top-2 sm:top-4 right-0 ml-auto flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-primary hover:bg-accent transition-colors z-[70]"
                 onClick={handleClose}
               >
-                <CloseIcon className="h-3 w-3 sm:h-4 sm:w-4 md:h-6 md:w-6 text-white" />
+                <X className="h-3 w-3 sm:h-4 sm:w-4 md:h-6 md:w-6 text-white" />
               </button>
               <motion.p
-                layoutId={layout ? `category-${card.title}` : undefined}
+                {...(layout && { layoutId: `category-${card.title}` })}
                 className="text-base font-medium text-primary"
               >
                 {card.category}
               </motion.p>
               <motion.p
-                layoutId={layout ? `title-${card.title}` : undefined}
+                {...(layout && { layoutId: `title-${card.title}` })}
                 className="mt-2 sm:mt-4 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold text-text-primary"
               >
                 {card.title}
@@ -253,20 +257,20 @@ export const Card = ({
         )}
       </AnimatePresence>
       <motion.button
-        layoutId={layout ? `card-${card.title}` : undefined}
+        {...(layout && { layoutId: `card-${card.title}` })}
         onClick={handleOpen}
         className="relative z-10 flex h-64 w-48 sm:h-72 sm:w-52 md:h-80 md:w-56 lg:h-[30rem] lg:w-80 xl:h-[40rem] xl:w-96 flex-col items-start justify-start overflow-hidden rounded-2xl sm:rounded-3xl bg-background-secondary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-custom-2"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
         <div className="relative z-40 p-4 sm:p-6 md:p-8">
           <motion.p
-            layoutId={layout ? `category-${card.category}` : undefined}
+            {...(layout && { layoutId: `category-${card.category}` })}
             className="text-left font-sans text-xs sm:text-sm md:text-base font-medium text-white"
           >
             {card.category}
           </motion.p>
           <motion.p
-            layoutId={layout ? `title-${card.title}` : undefined}
+            {...(layout && { layoutId: `title-${card.title}` })}
             className="mt-1 sm:mt-2 max-w-xs text-left font-sans text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold [text-wrap:balance] text-white leading-tight"
           >
             {card.title}
@@ -296,7 +300,7 @@ export const BlurImage = ({
   const [error, setError] = useState(false);
 
   return (
-    <img
+    <Image
       className={cn(
         "h-full w-full transition duration-300",
         isLoading ? "blur-sm" : "blur-0",
@@ -309,8 +313,7 @@ export const BlurImage = ({
         setError(true);
       }}
       src={src}
-      loading="lazy"
-      decoding="async"
+      fill
       alt={alt ? alt : "Imagen del proyecto"}
       {...rest}
     />

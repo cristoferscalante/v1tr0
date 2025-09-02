@@ -41,6 +41,47 @@ export interface CalendarEvent {
   }>;
 }
 
+interface GoogleCalendarEventRequest {
+  summary: string;
+  description?: string;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  attendees?: Array<{
+    email: string;
+    displayName?: string;
+  }>;
+  reminders: {
+    useDefault: boolean;
+    overrides: Array<{
+      method: string;
+      minutes: number;
+    }>;
+  };
+}
+
+interface GoogleCalendarUpdateRequest {
+  summary?: string;
+  description?: string;
+  start?: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end?: {
+    dateTime: string;
+    timeZone: string;
+  };
+  attendees?: Array<{
+    email: string;
+    displayName?: string;
+  }>;
+}
+
 export class GoogleCalendarService {
   private isConfigured(): boolean {
     return !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && process.env.GOOGLE_ACCESS_TOKEN);
@@ -53,28 +94,33 @@ export class GoogleCalendarService {
     }
 
     try {
+      const requestBody: GoogleCalendarEventRequest = {
+        summary: event.summary,
+        ...(event.description && { description: event.description }),
+        start: {
+          dateTime: event.start.dateTime,
+          timeZone: event.start.timeZone || 'America/Bogota',
+        },
+        end: {
+          dateTime: event.end.dateTime,
+          timeZone: event.end.timeZone || 'America/Bogota',
+        },
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: 'email', minutes: 24 * 60 }, // 1 día antes
+            { method: 'popup', minutes: 30 }, // 30 minutos antes
+          ],
+        },
+      };
+
+      if (event.attendees) {
+        requestBody.attendees = event.attendees;
+      }
+
       const response = await calendar.events.insert({
         calendarId: GOOGLE_CALENDAR_ID,
-        requestBody: {
-          summary: event.summary,
-          description: event.description,
-          start: {
-            dateTime: event.start.dateTime,
-            timeZone: event.start.timeZone || 'America/Bogota',
-          },
-          end: {
-            dateTime: event.end.dateTime,
-            timeZone: event.end.timeZone || 'America/Bogota',
-          },
-          attendees: event.attendees,
-          reminders: {
-            useDefault: false,
-            overrides: [
-              { method: 'email', minutes: 24 * 60 }, // 1 día antes
-              { method: 'popup', minutes: 30 }, // 30 minutos antes
-            ],
-          },
-        },
+        requestBody,
       });
 
       return response.data.id || null;
@@ -91,22 +137,31 @@ export class GoogleCalendarService {
     }
 
     try {
+      const requestBody: GoogleCalendarUpdateRequest = {
+        ...(event.summary && { summary: event.summary }),
+        ...(event.description && { description: event.description }),
+        ...(event.start && {
+          start: {
+            dateTime: event.start.dateTime,
+            timeZone: event.start.timeZone || 'America/Bogota',
+          }
+        }),
+        ...(event.end && {
+          end: {
+            dateTime: event.end.dateTime,
+            timeZone: event.end.timeZone || 'America/Bogota',
+          }
+        }),
+      };
+
+      if (event.attendees) {
+        requestBody.attendees = event.attendees;
+      }
+
       await calendar.events.update({
         calendarId: GOOGLE_CALENDAR_ID,
         eventId: eventId,
-        requestBody: {
-          summary: event.summary,
-          description: event.description,
-          start: event.start ? {
-            dateTime: event.start.dateTime,
-            timeZone: event.start.timeZone || 'America/Bogota',
-          } : undefined,
-          end: event.end ? {
-            dateTime: event.end.dateTime,
-            timeZone: event.end.timeZone || 'America/Bogota',
-          } : undefined,
-          attendees: event.attendees,
-        },
+        requestBody,
       });
 
       return true;
@@ -150,23 +205,41 @@ export class GoogleCalendarService {
         orderBy: 'startTime',
       });
 
-      return response.data.items?.map(item => ({
-        id: item.id,
-        summary: item.summary || '',
-        description: item.description,
-        start: {
-          dateTime: item.start?.dateTime || '',
-          timeZone: item.start?.timeZone,
-        },
-        end: {
-          dateTime: item.end?.dateTime || '',
-          timeZone: item.end?.timeZone,
-        },
-        attendees: item.attendees?.map(attendee => ({
-          email: attendee.email || '',
-          displayName: attendee.displayName,
-        })),
-      })) || [];
+      return response.data.items?.map(item => {
+        const event: CalendarEvent = {
+          summary: item.summary || '',
+          start: {
+            dateTime: item.start?.dateTime || '',
+            ...(item.start?.timeZone && { timeZone: item.start.timeZone }),
+          },
+          end: {
+            dateTime: item.end?.dateTime || '',
+            ...(item.end?.timeZone && { timeZone: item.end.timeZone }),
+          },
+        };
+
+        if (item.id) {
+          event.id = item.id;
+        }
+
+        if (item.description) {
+          event.description = item.description;
+        }
+
+        if (item.attendees && item.attendees.length > 0) {
+          event.attendees = item.attendees.map(attendee => {
+            const att: { email: string; displayName?: string } = {
+              email: attendee.email || '',
+            };
+            if (attendee.displayName) {
+              att.displayName = attendee.displayName;
+            }
+            return att;
+          });
+        }
+
+        return event;
+      }) || [];
     } catch (error) {
       console.error('Error obteniendo eventos de Google Calendar:', error);
       return [];

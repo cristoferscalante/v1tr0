@@ -41,16 +41,8 @@ export default function BlogCard({ post }: BlogCardProps) {
   })
 
   // Usar imágenes reales como fallback
-  let coverImage = post.meta.coverImage;
-  let authorImage = post.meta.authorImage;
-  
-  if (!coverImage) {
-    coverImage = `/post/post.png`;
-  }
-  
-  if (!authorImage) {
-    authorImage = `/placeholder-user.jpg`;
-  }
+  const coverImage = post.meta.coverImage || `/post/post.png`;
+  const authorImage = post.meta.authorImage || `/placeholder-user.jpg`;
 
   return (
     <Link

@@ -120,7 +120,11 @@ function extractHeadings(content: string) {
 
   // Procesamos línea por línea
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim()
+    const currentLine = lines[i]
+    if (!currentLine) {
+      continue
+    }
+    const line = currentLine.trim()
 
     // Detectar inicio/fin de bloques de código
     if (line.startsWith("```")) {
@@ -135,7 +139,7 @@ function extractHeadings(content: string) {
 
     // Expresión regular para detectar encabezados - solo al inicio de línea
     const headingMatch = line.match(/^(#{1,6})\s+(.+?)(?:\s*#*\s*)?$/)
-    if (headingMatch) {
+    if (headingMatch && headingMatch[1] && headingMatch[2]) {
       const level = headingMatch[1].length
       const text = headingMatch[2].trim()
       // Generar ID usando la función unificada slugify

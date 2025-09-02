@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -42,7 +42,7 @@ export function GsapProvider({
   const [error, setError] = useState<Error | null>(null)
   const [retryCount, setRetryCount] = useState(0)
 
-  const initializeGsap = async () => {
+  const initializeGsap = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
@@ -98,7 +98,7 @@ export function GsapProvider({
         }, 1000 * (retryCount + 1)) // Delay incremental
       }
     }
-  }
+  }, [initialDelay, retryCount, maxRetries])
 
   const retry = () => {
     setRetryCount(0)
@@ -107,7 +107,7 @@ export function GsapProvider({
 
   useEffect(() => {
     initializeGsap()
-  }, [])
+  }, [initializeGsap])
 
   const contextValue: GsapContextType = {
     isReady,

@@ -240,5 +240,40 @@ export default function DashboardPage() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-40 text-center">
                     <ClipboardList className="h-10 w-10 text-textMuted opacity-50 mb-2" />
-
-\
+                    <p className="text-textMuted">No hay tareas recientes</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="projects" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Todos los Proyectos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <p className="text-textMuted">Vista de proyectos en desarrollo</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="tasks" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Todas las Tareas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <p className="text-textMuted">Vista de tareas en desarrollo</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}

@@ -108,7 +108,7 @@ const config: Config = {
         slideInRight: 'slideInRight 0.8s ease-out',
         slideInLeft: 'slideInLeft 0.8s ease-out 0.2s both',
       },
-      typography: (theme: any) => ({
+      typography: () => ({
         DEFAULT: {
           css: {
             color: "var(--text-primary)",

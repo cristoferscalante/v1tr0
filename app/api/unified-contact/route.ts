@@ -153,31 +153,18 @@ const createEmailTemplate = (data: ContactFormData, isClientEmail: boolean = fal
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🚀 Iniciando procesamiento de consulta unificada...')
-    
     const body: ContactFormData = await request.json()
     const { name, email, message, serviceArea } = body
-    
-    console.log('📝 Datos recibidos:', { name, email, serviceArea, messageLength: message?.length })
 
     // Validar datos requeridos
     if (!name || !email || !message || !serviceArea) {
-      console.log('❌ Validación fallida: campos faltantes')
       return NextResponse.json(
         { error: 'Todos los campos son requeridos' },
         { status: 400 }
       )
     }
-
-    // Verificar variables de entorno
-    console.log('🔧 Verificando configuración SMTP...')
-    console.log('SMTP_HOST:', process.env.SMTP_HOST)
-    console.log('SMTP_PORT:', process.env.SMTP_PORT)
-    console.log('SMTP_USER:', process.env.SMTP_USER)
-    console.log('SMTP_TLS:', process.env.SMTP_TLS)
     
     if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.log('❌ Variables SMTP faltantes')
       return NextResponse.json(
         { error: 'Configuración SMTP incompleta' },
         { status: 500 }
@@ -185,7 +172,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Configurar transporter de nodemailer
-    console.log('📧 Configurando transporter...')
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT || '465'),
@@ -193,18 +179,13 @@ export async function POST(request: NextRequest) {
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
-      },
-      debug: true, // Habilitar debug
-      logger: true // Habilitar logging
+      }
     })
     
     // Verificar conexión SMTP
-    console.log('🔍 Verificando conexión SMTP...')
     try {
       await transporter.verify()
-      console.log('✅ Conexión SMTP verificada exitosamente')
     } catch (verifyError) {
-      console.error('❌ Error de verificación SMTP:', verifyError)
       return NextResponse.json(
         { error: 'Error de conexión SMTP: ' + (verifyError as Error).message },
         { status: 500 }
@@ -212,47 +193,35 @@ export async function POST(request: NextRequest) {
     }
 
     const serviceName = serviceAreaNames[serviceArea] || serviceArea
-    console.log('🎯 Servicio identificado:', serviceName)
 
     // Enviar notificación interna
-    console.log('📤 Enviando notificación interna a:', process.env.SMTP_USER)
     try {
-      const internalMailResult = await transporter.sendMail({
+      await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: 'buzon@v1tr0.com', // Enviar específicamente a buzon@v1tr0.com
         subject: `🚨 Nueva Consulta: ${serviceName} - ${name}`,
         html: createEmailTemplate(body, false),
       })
-      console.log('✅ Notificación interna enviada:', internalMailResult.messageId)
     } catch (internalError) {
-      console.error('❌ Error enviando notificación interna:', internalError)
       throw internalError
     }
 
     // Enviar respuesta automática al cliente
-    console.log('📤 Enviando confirmación al cliente:', email)
     try {
-      const clientMailResult = await transporter.sendMail({
+      await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: email,
         subject: '✅ Consulta Recibida - V1tr0 | Nos pondremos en contacto contigo pronto',
         html: createEmailTemplate(body, true),
       })
-      console.log('✅ Confirmación al cliente enviada:', clientMailResult.messageId)
     } catch (clientError) {
-      console.error('❌ Error enviando confirmación al cliente:', clientError)
       throw clientError
     }
-
-    console.log('🎉 Ambos correos enviados exitosamente')
     return NextResponse.json(
       { message: 'Consulta enviada exitosamente' },
       { status: 200 }
     )
   } catch (error) {
-    console.error('💥 Error crítico al procesar la consulta:', error)
-    console.error('Stack trace:', (error as Error).stack)
-    
     // Proporcionar más detalles del error
     let errorMessage = 'Error interno del servidor'
     if (error instanceof Error) {

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { googleCalendarService } from './google-calendar';
+import { googleCalendarService, CalendarEvent } from './google-calendar';
 import { toZonedTime, format } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
 
@@ -10,13 +10,20 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export interface Client {
-  id?: string;
+  id: string;
   name: string;
   email: string;
   phone?: string;
   company?: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface ClientInput {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
 }
 
 export interface Meeting {
@@ -51,14 +58,13 @@ export class SupabaseMeetingsDB {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error obteniendo clientes:', error);
       return [];
     }
     
     return data || [];
   }
 
-  async saveClient(client: Omit<Client, 'id' | 'created_at' | 'updated_at'>): Promise<Client | null> {
+  async saveClient(client: ClientInput): Promise<Client | null> {
     const { data, error } = await supabase
       .from('clients')
       .insert([client])
@@ -66,7 +72,6 @@ export class SupabaseMeetingsDB {
       .single();
     
     if (error) {
-      console.error('Error guardando cliente:', error);
       return null;
     }
     
@@ -82,7 +87,6 @@ export class SupabaseMeetingsDB {
       .single();
     
     if (error) {
-      console.error('Error actualizando cliente:', error);
       return null;
     }
     
@@ -96,14 +100,13 @@ export class SupabaseMeetingsDB {
       .eq('id', id);
     
     if (error) {
-      console.error('Error eliminando cliente:', error);
       return false;
     }
     
     return true;
   }
 
-  async findOrCreateClient(clientData: { name: string; email: string; phone?: string; company?: string }): Promise<Client | null> {
+  async findOrCreateClient(clientData: ClientInput): Promise<Client | null> {
     try {
       // Primero buscar si el cliente ya existe por email
       const { data: existingClient, error: searchError } = await supabase
@@ -113,23 +116,19 @@ export class SupabaseMeetingsDB {
         .single();
       
       if (searchError && searchError.code !== 'PGRST116') {
-        console.error('Error buscando cliente:', searchError);
         return null;
       }
       
       // Si el cliente existe, devolverlo
       if (existingClient) {
-        console.log('Cliente existente encontrado:', existingClient.email);
         return existingClient;
       }
       
       // Si no existe, crear uno nuevo
-      console.log('Creando nuevo cliente:', clientData.email);
       const newClient = await this.saveClient(clientData);
       return newClient;
       
-    } catch (error) {
-      console.error('Error en findOrCreateClient:', error);
+    } catch {
       return null;
     }
   }
@@ -146,7 +145,6 @@ export class SupabaseMeetingsDB {
       .order('time', { ascending: true });
     
     if (error) {
-      console.error('Error obteniendo reuniones:', error);
       return [];
     }
     
@@ -164,7 +162,6 @@ export class SupabaseMeetingsDB {
       .order('time', { ascending: true });
     
     if (error) {
-      console.error('Error obteniendo reuniones por fecha:', error);
       return [];
     }
     
@@ -184,7 +181,6 @@ export class SupabaseMeetingsDB {
       .order('time', { ascending: true });
     
     if (error) {
-      console.error('Error obteniendo reuniones por rango de fechas:', error);
       return [];
     }
     
@@ -202,7 +198,6 @@ export class SupabaseMeetingsDB {
       .single();
     
     if (error) {
-      console.error('Error guardando reunión:', error);
       return null;
     }
 
@@ -242,8 +237,7 @@ export class SupabaseMeetingsDB {
           
           data.google_calendar_event_id = googleEventId;
         }
-      } catch (calendarError) {
-        console.warn('Error sincronizando con Google Calendar:', calendarError);
+      } catch {
         // No fallar la creación de la reunión si Google Calendar falla
       }
     }
@@ -273,7 +267,6 @@ export class SupabaseMeetingsDB {
       .single();
     
     if (error) {
-      console.error('Error actualizando reunión:', error);
       return null;
     }
 
@@ -283,7 +276,7 @@ export class SupabaseMeetingsDB {
         const startDateTime = googleCalendarService.createDateTime(data.date, data.time);
         const endDateTime = googleCalendarService.addMinutes(startDateTime, data.duration || 60);
         
-        const calendarEvent = {
+        const calendarEvent: CalendarEvent = {
           summary: data.title || `Reunión con ${data.client?.name}`,
           description: `Reunión ${data.meeting_type || 'de consulta'} con ${data.client?.name}\n\nContacto: ${data.client?.email}${data.client?.phone ? `\nTeléfono: ${data.client.phone}` : ''}${data.description ? `\n\nNotas: ${data.description}` : ''}`,
           start: {
@@ -293,18 +286,21 @@ export class SupabaseMeetingsDB {
           end: {
             dateTime: endDateTime,
             timeZone: 'America/Bogota'
-          },
-          attendees: data.client ? [
+          }
+        };
+        
+        if (data.client) {
+          calendarEvent.attendees = [
             {
               email: data.client.email,
               displayName: data.client.name
             }
-          ] : undefined
-        };
+          ];
+        }
 
         await googleCalendarService.updateEvent(currentMeeting.google_calendar_event_id, calendarEvent);
-      } catch (calendarError) {
-        console.warn('Error actualizando evento en Google Calendar:', calendarError);
+      } catch {
+        // Error actualizando evento en Google Calendar
       }
     }
     
@@ -325,7 +321,6 @@ export class SupabaseMeetingsDB {
       .eq('id', id);
     
     if (error) {
-      console.error('Error eliminando reunión:', error);
       return false;
     }
 
@@ -333,8 +328,8 @@ export class SupabaseMeetingsDB {
     if (meetingToDelete?.google_calendar_event_id) {
       try {
         await googleCalendarService.deleteEvent(meetingToDelete.google_calendar_event_id);
-      } catch (calendarError) {
-        console.warn('Error eliminando evento de Google Calendar:', calendarError);
+      } catch {
+        // Error eliminando evento de Google Calendar
       }
     }
     
@@ -357,16 +352,16 @@ export class SupabaseMeetingsDB {
     // Agregar un margen de 5 minutos para evitar problemas de sincronización
     const fiveMinutesFromNow = new Date(nowInColombia.getTime() + 5 * 60 * 1000);
     
-    console.log(`[DEBUG TIMEZONE] Now UTC: ${nowUTC.toISOString()}`);
-    console.log(`[DEBUG TIMEZONE] Now in Colombia: ${format(nowInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone })}`);
-    console.log(`[DEBUG TIMEZONE] Meeting in Colombia: ${format(meetingDateTimeInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone })}`);
-    console.log(`[DEBUG TIMEZONE] Is past: ${meetingDateTimeInColombia < fiveMinutesFromNow}`);
+
     
     return meetingDateTimeInColombia < fiveMinutesFromNow;
   }
 
   timeToMinutes(time: string): number {
     const [hours, minutes] = time.split(':').map(Number);
+    if (hours === undefined || minutes === undefined || isNaN(hours) || isNaN(minutes)) {
+      throw new Error(`Formato de tiempo inválido: ${time}`);
+    }
     return hours * 60 + minutes;
   }
 
@@ -389,30 +384,24 @@ export class SupabaseMeetingsDB {
         .in('status', ['confirmed', 'scheduled']);
 
       if (error) {
-        console.error('Error checking time slot:', error);
         return false;
       }
       
       return data && data.length > 0;
-    } catch (error) {
-      console.error('Error in isTimeSlotOccupied:', error);
+    } catch {
       return false;
     }
   }
 
   async canScheduleAt(date: string, time: string): Promise<{ canSchedule: boolean; reason?: string }> {
-    console.log(`[DEBUG] Checking canScheduleAt for date: ${date}, time: ${time}`);
-    
     // Verificar si la fecha/hora ya pasó
     const isPast = this.isTimePast(date, time);
-    console.log(`[DEBUG] Is past: ${isPast}`);
     if (isPast) {
       return { canSchedule: false, reason: 'No se puede agendar en el pasado' };
     }
 
     // Verificar si el horario está ocupado
     const isOccupied = await this.isTimeSlotOccupied(date, time);
-    console.log(`[DEBUG] Is occupied: ${isOccupied}`);
     if (isOccupied) {
       return { canSchedule: false, reason: 'El horario seleccionado no está disponible' };
     }
@@ -424,7 +413,6 @@ export class SupabaseMeetingsDB {
 
     const isInWorkingHours = timeMinutes >= afternoonStart && timeMinutes < afternoonEnd;
 
-    console.log(`[DEBUG] Time minutes: ${timeMinutes}, In working hours: ${isInWorkingHours}`);
     if (!isInWorkingHours) {
       return { canSchedule: false, reason: 'Horario fuera del horario de trabajo (14:00-18:00)' };
     }
@@ -436,12 +424,9 @@ export class SupabaseMeetingsDB {
     const meetingDateInColombia = toZonedTime(meetingDateParsed, colombiaTimeZone);
     const dayOfWeek = meetingDateInColombia.getDay();
     
-    console.log(`[DEBUG TIMEZONE] Date: ${date}, Day of week in Colombia: ${dayOfWeek} (${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][dayOfWeek]})`);
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       return { canSchedule: false, reason: 'No se pueden agendar reuniones los fines de semana' };
     }
-
-    console.log(`[DEBUG] All validations passed, can schedule: true`);
     return { canSchedule: true };
   }
 
@@ -454,7 +439,7 @@ export class SupabaseMeetingsDB {
     const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone);
     const todayInColombia = format(nowInColombia, 'yyyy-MM-dd', { timeZone: colombiaTimeZone });
     
-    console.log(`[DEBUG TIMEZONE] Checking available slots for date: ${date}, today in Colombia: ${todayInColombia}`);
+
     
     if (date < todayInColombia) {
       return slots; // Fecha pasada, no hay horarios disponibles
@@ -506,12 +491,15 @@ export class SupabaseMeetingsDB {
       }
       
       const dateStr = checkDate.toISOString().split('T')[0];
+      if (!dateStr) {
+        continue;
+      }
       const availableSlots = await this.getAvailableTimeSlots(dateStr);
       
       if (availableSlots.length > 0) {
         return {
           date: dateStr,
-          time: availableSlots[0]
+          time: availableSlots[0]!
         };
       }
     }

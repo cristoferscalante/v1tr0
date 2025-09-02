@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
 import nodemailer from 'nodemailer'
-import { fromZonedTime, toZonedTime, format } from 'date-fns-tz'
+import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { parseISO } from 'date-fns'
 import { withValidToken } from '@/lib/google-auth'
-import { SupabaseMeetingsDB } from '@/lib/supabase-meetings-db'
+import { SupabaseMeetingsDB, Meeting } from '@/lib/supabase-meetings-db'
 
 // Configuración de Google Calendar
 const calendar = google.calendar('v3')
@@ -20,25 +20,25 @@ async function checkTimeSlotConflicts(date: string, time: string) {
     
     oauth2Client.setCredentials({
       access_token: accessToken,
-      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+      refresh_token: process.env.GOOGLE_REFRESH_TOKEN || null,
     })
 
     // Crear fecha y hora del slot solicitado usando zona horaria de Colombia/Bogotá
-    const [year, month, day] = date.split('-')
-    const [hour, minute] = time.split(':')
+    const [year, month = '', day = ''] = date.split('-')
+    const [hour = '', minute = ''] = time.split(':')
     
     // Crear fecha en zona horaria de Colombia/Bogotá usando date-fns-tz
     const colombiaTimeZone = 'America/Bogota'
     const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`
     
-    console.log(`🔍 [CONFLICT CHECK] Checking conflicts for ${date} ${time} in Colombia timezone`)
+    // Verificando conflictos para la fecha y hora en zona horaria de Colombia
     
     // Parsear la fecha y convertir correctamente a UTC para Google Calendar
     const zonedDate = parseISO(dateTimeString)
     const slotStartUTC = fromZonedTime(zonedDate, colombiaTimeZone)
     const slotEndUTC = new Date(slotStartUTC.getTime() + 30 * 60000) // 30 minutos después
     
-    console.log(`🔍 [CONFLICT CHECK] Slot UTC: ${slotStartUTC.toISOString()} - ${slotEndUTC.toISOString()}`)
+    // Slot convertido a UTC para verificación
 
     // Buscar eventos existentes en ese rango de tiempo
     const response = await calendar.events.list({
@@ -51,16 +51,15 @@ async function checkTimeSlotConflicts(date: string, time: string) {
     })
 
     const existingEvents = response.data.items || []
-    console.log(`🔍 [CONFLICT CHECK] Found ${existingEvents.length} existing events in time range`)
+    // Eventos existentes encontrados en el rango de tiempo
     
     // Verificar si hay conflictos
     const hasConflicts = existingEvents.some(event => {
-      if (!event.start?.dateTime || !event.end?.dateTime) return false
-      
+      if (!event.start?.dateTime || !event.end?.dateTime) { return false }
       const eventStart = new Date(event.start.dateTime)
       const eventEnd = new Date(event.end.dateTime)
       
-      console.log(`🔍 [CONFLICT CHECK] Checking event: ${event.summary} (${eventStart.toISOString()} - ${eventEnd.toISOString()})`)
+      // Verificando evento existente para conflictos
       
       // Verificar solapamiento
       const hasOverlap = (
@@ -70,7 +69,7 @@ async function checkTimeSlotConflicts(date: string, time: string) {
       )
       
       if (hasOverlap) {
-        console.log(`⚠️ [CONFLICT CHECK] CONFLICT DETECTED with event: ${event.summary}`)
+        // Conflicto detectado con evento existente
       }
       
       return hasOverlap
@@ -112,12 +111,12 @@ async function createCalendarEvent(date: string, time: string, email: string, na
     
     oauth2Client.setCredentials({
       access_token: accessToken,
-      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+      refresh_token: process.env.GOOGLE_REFRESH_TOKEN || null,
     })
 
     // Crear fecha y hora del evento usando zona horaria de Colombia/Bogotá
-    const [year, month, day] = date.split('-')
-    const [hour, minute] = time.split(':')
+    const [year, month = '', day = ''] = date.split('-')
+    const [hour = '', minute = ''] = time.split(':')
     
     // Crear fecha en zona horaria de Colombia/Bogotá
     const colombiaTimeZone = 'America/Bogota'
@@ -128,18 +127,7 @@ async function createCalendarEvent(date: string, time: string, email: string, na
     const startDateTimeUTC = fromZonedTime(zonedDate, colombiaTimeZone)
     const endDateTimeUTC = new Date(startDateTimeUTC.getTime() + 30 * 60000) // 30 minutos después
     
-    // Verificar las fechas en zona horaria Colombia
-    const startInColombia = toZonedTime(startDateTimeUTC, colombiaTimeZone)
-    const endInColombia = toZonedTime(endDateTimeUTC, colombiaTimeZone)
-    
-    console.log('🕐 Timezone conversion details:', {
-      original: dateTimeString,
-      startUTC: startDateTimeUTC.toISOString(),
-      endUTC: endDateTimeUTC.toISOString(),
-      startInColombia: format(startInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-      endInColombia: format(endInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-      timeZone: colombiaTimeZone
-    })
+    // Conversión de zona horaria completada correctamente
     
     // Convertir a ISO string
     const startDateTimeISO = startDateTimeUTC.toISOString()
@@ -180,11 +168,11 @@ async function createCalendarEvent(date: string, time: string, email: string, na
 
     // Crear evento en el calendario principal (vtr.techh@gmail.com)
     const primaryEvent = await calendar.events.insert({
-      auth: oauth2Client,
       calendarId: 'vtr.techh@gmail.com',
-      resource: eventData,
+      requestBody: eventData,
       conferenceDataVersion: 1,
-      sendUpdates: 'all'
+      sendUpdates: 'all',
+      auth: oauth2Client
     })
 
     // Crear evento en el calendario del usuario (si es diferente)
@@ -192,18 +180,19 @@ async function createCalendarEvent(date: string, time: string, email: string, na
     if (email !== 'vtr.techh@gmail.com') {
       try {
         userEvent = await calendar.events.insert({
-          auth: oauth2Client,
           calendarId: email,
-          resource: {
+          requestBody: {
             ...eventData,
             summary: `Reunión con V1tr0 - ${name}`,
             description: `Reunión agendada con V1tr0.\n\nConsulta sobre desarrollo web y servicios digitales.\n\nContacto V1tr0: vtr.techh@gmail.com`
           },
           conferenceDataVersion: 1,
-          sendUpdates: 'all'
+          sendUpdates: 'all',
+          auth: oauth2Client
         })
-      } catch (userError) {
-        console.warn('No se pudo crear evento en calendario del usuario:', userError.message)
+      } catch (userError: unknown) {
+        const errorMessage = userError instanceof Error ? userError.message : 'Error desconocido'
+        console.warn('No se pudo crear evento en calendario del usuario:', errorMessage)
         // Continuar sin fallar si no se puede acceder al calendario del usuario
       }
     }
@@ -229,7 +218,7 @@ async function sendConfirmationEmails(date: string, time: string, email: string,
   const transporter = createTransport()
   
   const formatDate = (dateStr: string) => {
-    const [year, month, day] = dateStr.split('-')
+    const [year, month = '', day = ''] = dateStr.split('-')
     const colombiaTimeZone = 'America/Bogota'
     
     // Crear fecha en zona horaria de Colombia usando date-fns-tz
@@ -359,8 +348,8 @@ async function sendConfirmationEmails(date: string, time: string, email: string,
       html: internalEmailHtml,
     })
 
-    console.log('Correos de confirmación enviados exitosamente')
-  } catch (error) {
+    // Correos de confirmación enviados exitosamente
+  } catch (error: unknown) {
     console.error('Error enviando correos:', error)
     throw error
   }
@@ -368,14 +357,14 @@ async function sendConfirmationEmails(date: string, time: string, email: string,
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🚀 [SCHEDULE] Iniciando proceso de agendamiento')
+    // Iniciando proceso de agendamiento
     const { date, time, email, name, phone } = await request.json()
     
-    console.log('📝 [SCHEDULE] Datos recibidos:', { date, time, email, name: name?.substring(0, 10) + '...', phone: phone?.substring(0, 5) + '...' })
+    // Datos recibidos y validados
 
     // Validar datos requeridos
     if (!date || !time || !email || !name || !phone) {
-      console.log('❌ [SCHEDULE] Faltan datos requeridos')
+      // Faltan datos requeridos
       return NextResponse.json(
         { error: 'Faltan datos requeridos: fecha, hora, email, nombre y teléfono son obligatorios' },
         { status: 400 }
@@ -383,10 +372,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar formato de email
-    console.log('✉️ [SCHEDULE] Validando formato de email')
+    // Validando formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      console.log('❌ [SCHEDULE] Formato de email inválido:', email)
+      // Formato de email inválido
       return NextResponse.json(
         { error: 'Formato de email inválido' },
         { status: 400 }
@@ -394,9 +383,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar que el nombre no esté vacío
-    console.log('👤 [SCHEDULE] Validando nombre')
+    // Validando nombre
     if (name.trim().length < 2) {
-      console.log('❌ [SCHEDULE] Nombre muy corto:', name)
+      // Nombre muy corto
       return NextResponse.json(
         { error: 'El nombre debe tener al menos 2 caracteres' },
         { status: 400 }
@@ -404,10 +393,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar formato básico de teléfono
-    console.log('📞 [SCHEDULE] Validando teléfono')
+    // Validando teléfono
     const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,}$/
     if (!phoneRegex.test(phone.trim())) {
-      console.log('❌ [SCHEDULE] Formato de teléfono inválido:', phone)
+      // Formato de teléfono inválido
       return NextResponse.json(
         { error: 'Formato de teléfono inválido' },
         { status: 400 }
@@ -415,12 +404,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar conflictos antes de crear la reunión
-    console.log('🔍 [SCHEDULE] Verificando conflictos de horario')
+
     const conflictCheck = await checkTimeSlotConflicts(date, time)
-    console.log('🔍 [SCHEDULE] Resultado de verificación de conflictos:', { hasConflicts: conflictCheck.hasConflicts, eventsCount: conflictCheck.conflictingEvents?.length || 0 })
+
     
     if (conflictCheck.hasConflicts) {
-      console.log('⚠️ [SCHEDULE] Conflicto detectado - horario ocupado')
+
       return NextResponse.json(
         { 
           error: 'El horario seleccionado ya está ocupado. Por favor, selecciona otro horario disponible.',
@@ -431,12 +420,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Crear evento en Google Calendar con integración dual
-    console.log('📅 [SCHEDULE] Creando evento en Google Calendar')
+
     const calendarEvent = await createCalendarEvent(date, time, email, name.trim(), phone.trim())
-    console.log('✅ [SCHEDULE] Evento creado en Google Calendar:', { eventId: calendarEvent.id })
+
 
     // Guardar en Supabase
-    console.log('💾 [SCHEDULE] Guardando reunión en Supabase')
+
     const supabaseDB = new SupabaseMeetingsDB()
     
     // Buscar o crear cliente
@@ -446,26 +435,34 @@ export async function POST(request: NextRequest) {
       phone: phone.trim()
     })
 
+    if (!client) {
+      throw new Error('Error al crear o encontrar el cliente en la base de datos')
+    }
+
     // Guardar reunión (sin meet_link por ahora hasta que se agregue la columna)
-    const meeting = await supabaseDB.saveMeeting({
+    const meetingData: Omit<Meeting, 'id' | 'created_at' | 'updated_at'> = {
       client_id: client.id,
       date: date,
       time: time,
       duration: 30,
       title: `Reunión con ${name.trim()}`,
       description: `Reunión de consultoría con ${name.trim()}`,
-      status: 'confirmed',
-      google_calendar_event_id: calendarEvent.id
-    })
+      status: 'confirmed'
+    };
+    
+    if (calendarEvent.id) {
+      (meetingData as Omit<Meeting, 'id' | 'created_at' | 'updated_at'> & { google_calendar_event_id?: string }).google_calendar_event_id = calendarEvent.id;
+    }
+    
+    const meeting = await supabaseDB.saveMeeting(meetingData)
 
     if (!meeting) {
-      console.error('❌ [SCHEDULE] Error guardando en Supabase')
       throw new Error('Error al guardar la reunión en la base de datos')
     }
-    console.log('✅ [SCHEDULE] Reunión guardada en Supabase:', { meetingId: meeting.id })
+
 
     // Enviar correos de confirmación con enlaces de Meet
-    console.log('📧 [SCHEDULE] Enviando correos de confirmación')
+
     await sendConfirmationEmails(
       date, 
       time, 
@@ -473,11 +470,11 @@ export async function POST(request: NextRequest) {
       name.trim(), 
       phone.trim(), 
       calendarEvent.meetLink, 
-      calendarEvent.htmlLink
+      calendarEvent.htmlLink || null
     )
-    console.log('✅ [SCHEDULE] Correos de confirmación enviados')
 
-    console.log('🎉 [SCHEDULE] Proceso de agendamiento completado exitosamente')
+
+
     return NextResponse.json({
       success: true,
       message: 'Reunión agendada exitosamente en Google Calendar y Supabase',
@@ -492,17 +489,10 @@ export async function POST(request: NextRequest) {
     // Asegurar que error es un objeto Error válido
     const errorObj = error instanceof Error ? error : new Error(String(error))
     
-    console.error('💥 [SCHEDULE] Error en proceso de agendamiento:', {
-      message: errorObj.message,
-      stack: errorObj.stack,
-      name: errorObj.name,
-      timestamp: new Date().toISOString(),
-      ...(errorObj.cause && { cause: errorObj.cause })
-    })
+
     
     // Manejar errores específicos de Google Calendar
     if (errorObj.message?.includes('Google Calendar') || errorObj.message?.includes('calendar')) {
-      console.error('📅 [SCHEDULE] Error específico de Google Calendar:', errorObj.message)
       return NextResponse.json(
         { 
           error: 'Error al crear el evento en Google Calendar. Intente nuevamente.',
@@ -515,7 +505,6 @@ export async function POST(request: NextRequest) {
     
     // Manejar errores de Supabase
     if (errorObj.message?.includes('Supabase') || errorObj.message?.includes('base de datos') || errorObj.message?.includes('database')) {
-      console.error('💾 [SCHEDULE] Error específico de Supabase:', errorObj.message)
       return NextResponse.json(
         { 
           error: 'Error al guardar la reunión. Intente nuevamente.',
@@ -528,7 +517,6 @@ export async function POST(request: NextRequest) {
     
     // Manejar errores de conflictos de horario
     if (errorObj.message?.includes('ocupado') || errorObj.message?.includes('conflict')) {
-      console.error('⚠️ [SCHEDULE] Error de conflicto de horario:', errorObj.message)
       return NextResponse.json(
         { 
           error: 'El horario seleccionado ya está ocupado. Por favor, selecciona otro horario disponible.',
@@ -541,7 +529,6 @@ export async function POST(request: NextRequest) {
     
     // Manejar errores de autenticación
     if (errorObj.message?.includes('insufficient authentication scopes') || errorObj.message?.includes('authentication')) {
-      console.error('🔐 [SCHEDULE] Error de autenticación:', errorObj.message)
       return NextResponse.json(
         { 
           error: 'Error de autenticación con Google Calendar. Contacte al administrador.',
@@ -554,7 +541,6 @@ export async function POST(request: NextRequest) {
     
     // Manejar errores de cuota/límite de API
     if (errorObj.message?.includes('quota') || errorObj.message?.includes('rate limit')) {
-      console.error('⏱️ [SCHEDULE] Error de límite de API:', errorObj.message)
       return NextResponse.json(
         { 
           error: 'Límite de API alcanzado. Intente nuevamente en unos minutos.',
@@ -567,7 +553,6 @@ export async function POST(request: NextRequest) {
 
     // Manejar errores de red
     if (errorObj.message?.includes('network') || errorObj.message?.includes('timeout') || errorObj.message?.includes('ENOTFOUND')) {
-      console.error('🌐 [SCHEDULE] Error de red:', errorObj.message)
       return NextResponse.json(
         { 
           error: 'Error de conexión. Verifique su conexión a internet e intente nuevamente.',
@@ -579,11 +564,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Error genérico
-    console.error('❌ [SCHEDULE] Error interno no categorizado:', {
-      message: errorObj.message,
-      name: errorObj.name,
-      timestamp: new Date().toISOString()
-    })
+
     
     return NextResponse.json(
       { 

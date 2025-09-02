@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 export default function AppleCardsCarouselDemo() {
@@ -35,11 +36,11 @@ const DummyContent = () => {
               automatizando tareas críticas y mejorando la eficiencia operativa. 
               Los resultados superaron las expectativas iniciales.
             </p>
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=500&auto=format&fit=crop"
               alt="Sistema de gestión empresarial"
-              height="500"
-              width="500"
+              height={500}
+              width={500}
               className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain rounded-xl mt-6"
             />
           </div>

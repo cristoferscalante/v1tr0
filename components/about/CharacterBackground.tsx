@@ -8,17 +8,17 @@ interface CharacterBackgroundProps {
   style?: React.CSSProperties
 }
 
-const CharacterBackground = ({ style = {} }: CharacterBackgroundProps) => {
+const CharacterBackground = ({ style = undefined }: CharacterBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas) { return }
 
     const ctx = canvas.getContext("2d")
-    if (!ctx) return
+    if (!ctx) { return }
 
     // Set canvas size
     const resizeCanvas = () => {

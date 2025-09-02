@@ -28,9 +28,16 @@ export default function PinnedScrollSection({
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
+  // Actualizar horizontalScrollPosition cuando cambie currentSection
+  useEffect(() => {
+    setHorizontalScrollPosition(currentSection)
+  }, [currentSection, setHorizontalScrollPosition])
+
   // Implementar carrusel automático
   useEffect(() => {
-    if (!isVisible) return
+    if (!isVisible) {
+      return
+    }
 
     // Iniciar carrusel automático
     const startAutoScroll = () => {
@@ -54,7 +61,9 @@ export default function PinnedScrollSection({
 
   // ScrollTrigger para detectar visibilidad
   useEffect(() => {
-    if (!containerRef.current || typeof window === "undefined") return
+    if (!containerRef.current || typeof window === "undefined") {
+      return
+    }
 
     const container = containerRef.current
 
@@ -83,12 +92,13 @@ export default function PinnedScrollSection({
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill())
     }
-  }, [])
+  }, [setHorizontalScrollActive])
 
   // Función para navegar a una sección específica
   const navigateToSection = (index: number) => {
     if (index >= 0 && index < sectionsCount) {
       setCurrentSection(index)
+      setHorizontalScrollPosition(index)
       
       // Reiniciar el carrusel automático
       if (autoScrollIntervalRef.current) {

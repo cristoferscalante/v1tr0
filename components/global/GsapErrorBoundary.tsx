@@ -11,7 +11,7 @@ interface Props {
 
 interface State {
   hasError: boolean
-  error?: Error
+  error?: Error | undefined
 }
 
 /**
@@ -34,14 +34,14 @@ export class GsapErrorBoundary extends Component<Props, State> {
       error.name === 'NotFoundError'
 
     if (isGsapError) {
-      console.warn('GSAP Error detected, attempting recovery:', error.message)
+
       
       // Cleanup inmediato de ScrollTrigger
       try {
         ScrollTrigger.getAll().forEach(trigger => trigger.kill(true))
         ScrollTrigger.refresh()
-      } catch (cleanupError) {
-        console.warn('Error during GSAP cleanup:', cleanupError)
+      } catch {
+        // Error durante cleanup
       }
 
       return { hasError: true, error }
@@ -51,24 +51,24 @@ export class GsapErrorBoundary extends Component<Props, State> {
     throw error
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
-    console.error('GsapErrorBoundary caught an error:', error, errorInfo)
+  componentDidCatch() {
+    // Error handling without console logging
   }
 
   componentDidMount() {
     // Auto-recovery después de 100ms
     if (this.state.hasError) {
       setTimeout(() => {
-        this.setState({ hasError: false, error: undefined })
+        this.setState({ hasError: false })
       }, 100)
     }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(_: Props, prevState: State) {
     // Auto-recovery cuando se detecta un error
     if (this.state.hasError && !prevState.hasError) {
       setTimeout(() => {
-        this.setState({ hasError: false, error: undefined })
+        this.setState({ hasError: false })
       }, 100)
     }
   }

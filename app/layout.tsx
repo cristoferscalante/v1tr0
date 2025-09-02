@@ -5,7 +5,6 @@ import type { Metadata } from "next"
 import { Providers } from "./providers"
 import { GsapErrorBoundary } from "../components/global/GsapErrorBoundary"
 import { GsapProvider } from "../components/global/GsapProvider"
-import { GlobalErrorHandler } from "../components/global/GlobalErrorHandler"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],

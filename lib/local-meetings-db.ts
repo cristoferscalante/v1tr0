@@ -81,11 +81,43 @@ class LocalMeetingsDB {
       return null;
     }
     
-    meetings[index] = {
-      ...meetings[index],
-      ...updates,
+    const originalMeeting = meetings[index];
+    if (!originalMeeting) {
+      return null;
+    }
+    const updatedMeeting: MeetingData = {
+      id: originalMeeting.id,
+      date: updates.date ?? originalMeeting.date,
+      time: updates.time ?? originalMeeting.time,
+      duration: updates.duration ?? originalMeeting.duration,
+      clientName: updates.clientName ?? originalMeeting.clientName,
+      clientEmail: updates.clientEmail ?? originalMeeting.clientEmail,
+      meetingType: updates.meetingType ?? originalMeeting.meetingType,
+      status: updates.status ?? originalMeeting.status,
+      createdAt: originalMeeting.createdAt,
       updatedAt: new Date().toISOString()
     };
+    
+    // Manejar propiedades opcionales explícitamente
+    if (updates.clientPhone !== undefined) {
+      updatedMeeting.clientPhone = updates.clientPhone;
+    } else if (originalMeeting.clientPhone !== undefined) {
+      updatedMeeting.clientPhone = originalMeeting.clientPhone;
+    }
+    
+    if (updates.clientCompany !== undefined) {
+      updatedMeeting.clientCompany = updates.clientCompany;
+    } else if (originalMeeting.clientCompany !== undefined) {
+      updatedMeeting.clientCompany = originalMeeting.clientCompany;
+    }
+    
+    if (updates.notes !== undefined) {
+      updatedMeeting.notes = updates.notes;
+    } else if (originalMeeting.notes !== undefined) {
+      updatedMeeting.notes = originalMeeting.notes;
+    }
+    
+    meetings[index] = updatedMeeting;
     
     localStorage.setItem(this.MEETINGS_KEY, JSON.stringify(meetings));
     return meetings[index];
@@ -177,9 +209,16 @@ class LocalMeetingsDB {
     
     if (existingClientIndex !== -1) {
       // Actualizar cliente existente
+      const existingClient = clients[existingClientIndex];
+      if (!existingClient) {
+        throw new Error('Cliente no encontrado');
+      }
       clients[existingClientIndex] = {
-        ...clients[existingClientIndex],
+        ...existingClient,
         ...client,
+        id: existingClient.id,
+        meetings: existingClient.meetings,
+        createdAt: existingClient.createdAt,
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(clients));
@@ -215,8 +254,12 @@ class LocalMeetingsDB {
     const clientIndex = clients.findIndex(c => c.email === clientEmail);
     
     if (clientIndex !== -1) {
-      clients[clientIndex].meetings.push(meetingId);
-      clients[clientIndex].updatedAt = new Date().toISOString();
+      const client = clients[clientIndex];
+      if (!client) {
+        return;
+      }
+      client.meetings.push(meetingId);
+      client.updatedAt = new Date().toISOString();
       localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(clients));
     }
   }
@@ -243,7 +286,14 @@ class LocalMeetingsDB {
   }
 
   private timeToMinutes(time: string): number {
-    const [hours, minutes] = time.split(':').map(Number);
+    const [hoursStr, minutesStr] = time.split(':');
+    const hours = Number(hoursStr);
+    const minutes = Number(minutesStr);
+    
+    if (isNaN(hours) || isNaN(minutes)) {
+      throw new Error(`Formato de tiempo inválido: ${time}`);
+    }
+    
     return hours * 60 + minutes;
   }
 
@@ -304,7 +354,7 @@ export const timeValidation = {
       .filter(meeting => meeting.status === 'scheduled')
       .map(meeting => meeting.time);
     
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0]!;
     const isToday = date === today;
     
     return workingHours.filter(time => {
@@ -329,7 +379,7 @@ export const timeValidation = {
 
   // Validar si se puede agendar en un horario específico
   canScheduleAt(date: string, time: string): { canSchedule: boolean, reason?: string } {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0]!;
     
     // No permitir agendar en días pasados
     if (date < today) {
@@ -365,13 +415,13 @@ export const timeValidation = {
   
   // Obtener el próximo horario disponible
   getNextAvailableSlot(date?: string): { date: string; time: string } | null {
-    const startDate = date || new Date().toISOString().split('T')[0];
+    const startDate = date || new Date().toISOString().split('T')[0]!;
     const maxDays = 30; // Buscar hasta 30 días adelante
     
     for (let i = 0; i < maxDays; i++) {
       const checkDate = new Date(startDate);
       checkDate.setDate(checkDate.getDate() + i);
-      const dateStr = checkDate.toISOString().split('T')[0];
+      const dateStr = checkDate.toISOString().split('T')[0]!;
       
       // Saltar fines de semana
       const dayOfWeek = checkDate.getDay();
@@ -381,7 +431,7 @@ export const timeValidation = {
       
       const availableSlots = this.getAvailableTimeSlots(dateStr);
       if (availableSlots.length > 0) {
-        return { date: dateStr, time: availableSlots[0] };
+        return { date: dateStr, time: availableSlots[0]! };
       }
     }
     

@@ -9,22 +9,29 @@ interface BokehBackgroundProps {
   style?: React.CSSProperties
 }
 
-const BokehBackground = ({ style = {} }: BokehBackgroundProps) => {
+interface Particle {
+  x: number
+  y: number
+  radius: number
+  color: string
+  vx: number
+  vy: number
+  opacity: number
+}
+
+const BokehBackground = ({ style = undefined }: BokehBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
-
-    // Obtener el contexto 2D con alpha para permitir transparencia
+    if (!canvas) { return }
     const ctx = canvas.getContext("2d")
-    if (!ctx) return
+    if (!ctx) { return }
 
-    // Función para ajustar el tamaño del canvas
     const resizeCanvas = () => {
-      const { innerWidth, innerHeight } = window
+      if (!ctx) { return }
       canvas.width = innerWidth
       canvas.height = innerHeight
     }
@@ -34,7 +41,7 @@ const BokehBackground = ({ style = {} }: BokehBackgroundProps) => {
     window.addEventListener("resize", resizeCanvas)
 
     // Configuración de partículas
-    const particles = []
+    const particles: Particle[] = []
     const particleCount = 70 // Aumentar la cantidad de partículas
 
     // Colores según el tema
@@ -48,7 +55,7 @@ const BokehBackground = ({ style = {} }: BokehBackgroundProps) => {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         radius: 2 + Math.random() * 3, // Aumentar el tamaño para mayor visibilidad
-        color: particleColors[Math.floor(Math.random() * particleColors.length)],
+        color: particleColors[Math.floor(Math.random() * particleColors.length)] || "rgba(38, 255, 223, 0.6)",
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
         opacity: 0.3 + Math.random() * 0.5, // Aumentar la opacidad base
@@ -56,7 +63,7 @@ const BokehBackground = ({ style = {} }: BokehBackgroundProps) => {
     }
 
     // Función de animación
-    let animationFrameId
+    let animationFrameId: number
     const animate = () => {
       // Limpiar el canvas con un fondo semi-transparente para crear efecto de desvanecimiento
       ctx.clearRect(0, 0, canvas.width, canvas.height) // Limpiar completamente el canvas

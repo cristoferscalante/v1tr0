@@ -1,180 +1,313 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, FileText, ImageIcon, FileArchive, Download, Eye, MoreHorizontal, Upload, Plus } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  FileText, 
+  Image, 
+  Video, 
+  Archive,
+  Download,
+  Eye,
+  Upload,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Folder,
+  File
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-interface ProjectFilesProps {
-  projectId?: string
+interface ProjectFile {
+  id: string;
+  name: string;
+  type: 'document' | 'image' | 'video' | 'archive' | 'other';
+  size: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  category: string;
+  url?: string;
 }
 
-export function ProjectFiles({ projectId }: ProjectFilesProps) {
-  const [searchTerm, setSearchTerm] = useState("")
+interface ProjectFilesProps {
+  projectId?: string;
+}
 
-  // Datos de ejemplo para los archivos
-  const files = [
+export function ProjectFiles({}: ProjectFilesProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  
+  // En un entorno real, estos datos vendrían de una API
+  const [files] = useState<ProjectFile[]>([
     {
-      id: "1",
-      name: "Propuesta_Proyecto.pdf",
-      type: "pdf",
-      size: "2.4 MB",
-      uploadedBy: "María González",
-      uploadedDate: "15 Mar 2023",
-      category: "Documentación",
-      icon: <FileText className="h-10 w-10 text-red-500" />,
+      id: '1',
+      name: 'Especificaciones_Tecnicas.pdf',
+      type: 'document',
+      size: '2.4 MB',
+      uploadedBy: 'Ana García',
+      uploadedAt: '2024-01-15',
+      category: 'Documentación'
     },
     {
-      id: "2",
-      name: "Wireframes_UI.png",
-      type: "image",
-      size: "4.8 MB",
-      uploadedBy: "Ana López",
-      uploadedDate: "12 Abr 2023",
-      category: "Diseño",
-      icon: <ImageIcon className="h-10 w-10 text-blue-500" />,
+      id: '2',
+      name: 'Mockups_UI_Desktop.fig',
+      type: 'other',
+      size: '15.7 MB',
+      uploadedBy: 'Carlos López',
+      uploadedAt: '2024-02-01',
+      category: 'Diseño'
     },
     {
-      id: "3",
-      name: "Diagrama_BD.pdf",
-      type: "pdf",
-      size: "1.2 MB",
-      uploadedBy: "Pedro Sánchez",
-      uploadedDate: "28 Abr 2023",
-      category: "Desarrollo",
-      icon: <FileText className="h-10 w-10 text-red-500" />,
+      id: '3',
+      name: 'Logo_Empresa.png',
+      type: 'image',
+      size: '245 KB',
+      uploadedBy: 'Carlos López',
+      uploadedAt: '2024-02-05',
+      category: 'Recursos'
     },
     {
-      id: "4",
-      name: "Mockups_App.zip",
-      type: "archive",
-      size: "15.7 MB",
-      uploadedBy: "Ana López",
-      uploadedDate: "05 May 2023",
-      category: "Diseño",
-      icon: <FileArchive className="h-10 w-10 text-yellow-500" />,
+      id: '4',
+      name: 'Demo_Funcionalidad.mp4',
+      type: 'video',
+      size: '45.2 MB',
+      uploadedBy: 'Juan Pérez',
+      uploadedAt: '2024-03-10',
+      category: 'Demos'
     },
     {
-      id: "5",
-      name: "Acta_Reunion_Inicial.pdf",
-      type: "pdf",
-      size: "0.8 MB",
-      uploadedBy: "María González",
-      uploadedDate: "15 Mar 2023",
-      category: "Documentación",
-      icon: <FileText className="h-10 w-10 text-red-500" />,
+      id: '5',
+      name: 'Codigo_Fuente_v1.zip',
+      type: 'archive',
+      size: '12.8 MB',
+      uploadedBy: 'María Rodríguez',
+      uploadedAt: '2024-03-15',
+      category: 'Código'
     },
     {
-      id: "6",
-      name: "Cronograma_Proyecto.pdf",
-      type: "pdf",
-      size: "1.5 MB",
-      uploadedBy: "María González",
-      uploadedDate: "20 Mar 2023",
-      category: "Planificación",
-      icon: <FileText className="h-10 w-10 text-red-500" />,
+      id: '6',
+      name: 'Manual_Usuario.pdf',
+      type: 'document',
+      size: '3.1 MB',
+      uploadedBy: 'Elena Sánchez',
+      uploadedAt: '2024-04-01',
+      category: 'Documentación'
     },
     {
-      id: "7",
-      name: "Logos_Cliente.zip",
-      type: "archive",
-      size: "8.2 MB",
-      uploadedBy: "Ana López",
-      uploadedDate: "15 Abr 2023",
-      category: "Diseño",
-      icon: <FileArchive className="h-10 w-10 text-yellow-500" />,
+      id: '7',
+      name: 'Wireframes_Mobile.sketch',
+      type: 'other',
+      size: '8.9 MB',
+      uploadedBy: 'Carlos López',
+      uploadedAt: '2024-02-10',
+      category: 'Diseño'
     },
     {
-      id: "8",
-      name: "Manual_Usuario_v1.pdf",
-      type: "pdf",
-      size: "3.6 MB",
-      uploadedBy: "Laura Martínez",
-      uploadedDate: "10 Jun 2023",
-      category: "Documentación",
-      icon: <FileText className="h-10 w-10 text-red-500" />,
-    },
-  ]
+      id: '8',
+      name: 'Iconos_Aplicacion.zip',
+      type: 'archive',
+      size: '1.2 MB',
+      uploadedBy: 'Carlos López',
+      uploadedAt: '2024-02-20',
+      category: 'Recursos'
+    }
+  ]);
 
-  // Filtrar archivos según el término de búsqueda
-  const filteredFiles = files.filter(
-    (file) =>
-      file.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.uploadedBy.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const categories = ['all', 'Documentación', 'Diseño', 'Recursos', 'Demos', 'Código'];
+
+  const getFileIcon = (type: ProjectFile['type']) => {
+    switch (type) {
+      case 'document':
+        return <FileText className="h-5 w-5 text-red-500" />;
+      case 'image':
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return <Image className="h-5 w-5 text-green-500" />;
+      case 'video':
+        return <Video className="h-5 w-5 text-purple-500" />;
+      case 'archive':
+        return <Archive className="h-5 w-5 text-orange-500" />;
+      default:
+        return <File className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  const filteredFiles = files.filter(file => {
+    const matchesSearch = file.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || file.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const handleDownload = () => {
+    // TODO: Implementar lógica de descarga de archivos
+    // En un entorno real, aquí se manejaría la descarga del archivo
+  };
+
+  const handlePreview = () => {
+    // TODO: Implementar vista previa de archivos
+    // En un entorno real, aquí se abriría una vista previa del archivo
+  };
+
+  const handleUpload = () => {
+    // TODO: Implementar diálogo de carga de archivos
+    // En un entorno real, aquí se abriría un diálogo de carga de archivos
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-textMuted" />
-          <Input
-            type="search"
-            placeholder="Buscar archivos..."
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Upload className="h-4 w-4 mr-2" />
-            Subir Archivo
-          </Button>
-          <Button size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Nuevo Archivo
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredFiles.map((file) => (
-          <div
-            key={file.id}
-            className="flex flex-col p-4 rounded-lg border border-custom-2/20 bg-custom-1/10 hover:bg-custom-1/30 transition-colors"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                {file.icon}
-                <div>
-                  <h4 className="font-medium">{file.name}</h4>
-                  <p className="text-sm text-textMuted">{file.size}</p>
-                </div>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <Eye className="h-4 w-4 mr-2" />
-                    <span>Ver</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Download className="h-4 w-4 mr-2" />
-                    <span>Descargar</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <div className="mt-auto pt-4 border-t border-custom-2/10">
-              <div className="flex justify-between text-xs text-textMuted">
-                <span>Categoría: {file.category}</span>
-                <span>{file.uploadedDate}</span>
-              </div>
-              <div className="text-xs text-textMuted mt-1">
-                <span>Subido por: {file.uploadedBy}</span>
-              </div>
-            </div>
+    <div className="space-y-6">
+      {/* Controles superiores */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-4 flex-1">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Buscar archivos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-        ))}
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="min-w-[120px]">
+                <Filter className="h-4 w-4 mr-2" />
+                {selectedCategory === 'all' ? 'Todas' : selectedCategory}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {categories.map((category) => (
+                <DropdownMenuItem
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category === 'all' ? 'Todas las categorías' : category}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
+        <Button onClick={handleUpload}>
+          <Upload className="h-4 w-4 mr-2" />
+          Subir Archivo
+        </Button>
       </div>
+
+      {/* Estadísticas */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-blue-600">{files.length}</p>
+            <p className="text-sm text-gray-600">Total Archivos</p>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-green-600">
+              {files.filter(f => f.type === 'document').length}
+            </p>
+            <p className="text-sm text-gray-600">Documentos</p>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-purple-600">
+              {files.filter(f => f.type === 'image').length}
+            </p>
+            <p className="text-sm text-gray-600">Imágenes</p>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-orange-600">
+              {files.filter(f => f.type === 'video').length}
+            </p>
+            <p className="text-sm text-gray-600">Videos</p>
+          </div>
+        </Card>
+      </div>
+
+      {/* Lista de archivos */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Archivos del Proyecto ({filteredFiles.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {filteredFiles.length === 0 ? (
+            <div className="text-center py-8">
+              <Folder className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No se encontraron archivos</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredFiles.map((file) => (
+                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center gap-4 flex-1">
+                    {getFileIcon(file.type)}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium truncate">{file.name}</h4>
+                      <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                        <span>{file.size}</span>
+                        <span>•</span>
+                        <span>Subido por {file.uploadedBy}</span>
+                        <span>•</span>
+                        <span>{formatDate(file.uploadedAt)}</span>
+                      </div>
+                    </div>
+                    <Badge variant="outline">{file.category}</Badge>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handlePreview()}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDownload()}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="sm" variant="ghost">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>Renombrar</DropdownMenuItem>
+                        <DropdownMenuItem>Mover</DropdownMenuItem>
+                        <DropdownMenuItem>Compartir</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600">Eliminar</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }

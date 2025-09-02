@@ -45,7 +45,11 @@ const footerSections = [
   },
 ]
 
-const FooterSection = forwardRef<HTMLDivElement, {}>((props, ref) => {
+interface FooterSectionProps {
+  className?: string;
+}
+
+const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, ref) => {
   const { theme } = useTheme()
   const isDark = theme === "dark"
 

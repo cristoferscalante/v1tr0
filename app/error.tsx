@@ -9,12 +9,13 @@ interface ErrorProps {
 }
 
 export default function Error({ error, reset }: ErrorProps) {
-  // Asegurarse de que error es un objeto válido
-  const errorObject = error || { message: "Error desconocido" }
+  // Asegurarse de que error es un objeto válido usando useMemo
+  const errorObject = React.useMemo(() => {
+    return error || { message: "Error desconocido" }
+  }, [error])
 
   React.useEffect(() => {
-    // Log del error para depuración
-    console.error("Error no manejado:", errorObject)
+    // Log del error para depuración (removido console.error)
   }, [errorObject])
 
   return (

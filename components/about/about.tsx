@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
@@ -55,6 +55,10 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
   }
 
   const member = teamMembers[currentMember]
+
+  if (!member) {
+    return null
+  }
 
   return (
     <div className="relative">
@@ -126,7 +130,7 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
                   ? 'bg-highlight shadow-lg shadow-highlight/30' 
                   : 'bg-[#08A696]/30 hover:bg-[#08A696]/50'
               }`}
-              aria-label={`Ir a ${teamMembers[index].name}`}
+              aria-label={`Ir a ${teamMembers[index]?.name || 'miembro'}`}
             />
           ))}
         </div>
@@ -166,10 +170,8 @@ const About = () => {
 
   // Initialize GSAP ScrollTrigger and snap functionality (only for desktop)
   useEffect(() => {
-    if (!containerRef.current || typeof window === "undefined" || isMobile) return
-
-    const sections = sectionsRef.current
-    const totalSections = sections.length
+    if (!containerRef.current || typeof window === "undefined" || isMobile) { return }
+    const totalSections = sectionsRef.current.length
 
     // Set up scroll snap with GSAP (desktop only)
     const setupScrollSnap = () => {
@@ -178,7 +180,7 @@ const About = () => {
       document.documentElement.style.overflow = "hidden"
 
       // Create ScrollTrigger for each section
-      sections.forEach((section, index) => {
+      sectionsRef.current.forEach((section, index) => {
         ScrollTrigger.create({
           trigger: section,
           start: "top center",
@@ -194,11 +196,9 @@ const About = () => {
 
       // Snap navigation function
       const goToSection = (index: number) => {
-        if (isAnimatingRef.current || index < 0 || index >= totalSections) return
+        if (isAnimatingRef.current || index < 0 || index >= totalSections) { return }
         
         isAnimatingRef.current = true
-        currentSectionRef.current = index
-        
         gsap.to(window, {
           duration: 0.8,
           scrollTo: {
@@ -215,23 +215,25 @@ const About = () => {
       // Wheel event handler
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault()
-        if (isAnimatingRef.current) return
+        if (isAnimatingRef.current) { return }
 
         const direction = e.deltaY > 0 ? 1 : -1
         const nextSection = currentSectionRef.current + direction
         goToSection(nextSection)
       }
-
+      
       // Touch event handlers
       let touchStartY = 0
       const handleTouchStart = (e: TouchEvent) => {
-        touchStartY = e.touches[0].clientY
+        if (e.touches.length > 0) {
+          touchStartY = e.touches[0]?.clientY || 0
+        }
       }
 
       const handleTouchEnd = (e: TouchEvent) => {
-        if (isAnimatingRef.current) return
+        if (isAnimatingRef.current || e.changedTouches.length === 0) { return }
         
-        const touchEndY = e.changedTouches[0].clientY
+        const touchEndY = e.changedTouches[0]?.clientY || 0
         const deltaY = touchStartY - touchEndY
         
         if (Math.abs(deltaY) > 50) {
@@ -243,7 +245,7 @@ const About = () => {
 
       // Keyboard navigation
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (isAnimatingRef.current) return
+        if (isAnimatingRef.current) { return }
         
         switch (e.key) {
           case "ArrowDown":
@@ -279,8 +281,8 @@ const About = () => {
 
     const cleanup = setupScrollSnap()
     
-    return cleanup
-  }, [isMobile])
+    return cleanup;
+  }, [isMobile]);
 
   // Add section to refs
   const addToRefs = (el: HTMLElement | null) => {
@@ -301,7 +303,7 @@ const About = () => {
         className={`relative flex items-end justify-center overflow-hidden ${
           isMobile ? 'min-h-screen py-12 px-4' : 'h-screen w-screen pb-20'
         }`}
-        style={!isMobile ? { height: "100svh" } : {}}
+        style={!isMobile ? { height: "100svh" } : undefined}
       >
         {!isMobile ? (
           <div className="absolute inset-0 w-full h-full mt-16">
@@ -335,7 +337,7 @@ const About = () => {
         className={`relative flex items-center justify-center overflow-hidden ${
           isMobile ? 'py-12 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
         }`}
-        style={!isMobile ? { height: "100svh" } : {}}
+        style={!isMobile ? { height: "100svh" } : undefined}
       >
         {/* Floating "Nuestro Equipo" badge - aligned with card top */}
         <div className="absolute top-24 right-24 z-10">
@@ -356,7 +358,7 @@ const About = () => {
         className={`relative flex items-center justify-center overflow-hidden ${
           isMobile ? 'py-16 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
         }`}
-        style={!isMobile ? { height: "100svh" } : {}}
+        style={!isMobile ? { height: "100svh" } : undefined}
       >
         <div className="max-w-5xl mx-auto w-full">
           <div className={`text-center ${
@@ -510,7 +512,7 @@ const About = () => {
         className={`relative flex items-center justify-center overflow-hidden ${
           isMobile ? 'py-16 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
         }`}
-        style={!isMobile ? { height: "100svh" } : {}}
+        style={!isMobile ? { height: "100svh" } : undefined}
       >
         <div className="max-w-5xl mx-auto w-full">
           <div className={`gap-6 md:gap-10 items-center ${
@@ -566,7 +568,7 @@ const About = () => {
         className={`relative flex items-center justify-center overflow-hidden ${
           isMobile ? 'py-0' : 'h-screen w-screen'
         }`}
-        style={!isMobile ? { height: "100svh" } : {}}
+        style={!isMobile ? { height: "100svh" } : undefined}
       >
         <div className="w-full">
           <FooterSection />

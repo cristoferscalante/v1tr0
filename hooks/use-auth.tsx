@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
 import { User as SupabaseUser, Session } from '@supabase/supabase-js'
-import { supabase, AuthUser, getSupabaseClient } from '@/lib/supabase/client'
+import { supabase, AuthUser } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 interface AuthContextType {
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getInitialSession()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
       setSession(session)
       
       if (session?.user) {
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [router])
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
@@ -83,12 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return
       }
 
+      const profile = data as any || {}
       const userProfile: AuthUser = {
         id: supabaseUser.id,
         email: supabaseUser.email!,
-        name: data?.name || supabaseUser.user_metadata?.name || '',
-        avatar: data?.avatar || supabaseUser.user_metadata?.avatar_url || '',
-        role: (data?.role as 'admin' | 'user') || 'user'
+        name: profile.name || supabaseUser.user_metadata?.name || '',
+        avatar: profile.avatar || supabaseUser.user_metadata?.avatar_url || '',
+        role: (profile.role as 'admin' | 'user') || 'user'
       }
 
       setUser(userProfile)
@@ -100,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       setIsLoading(true)
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data: _, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
@@ -120,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (email: string, password: string, name?: string) => {
     try {
       setIsLoading(true)
-      const { data, error } = await supabase.auth.signUp({
+      const { data: _, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -159,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithProvider = async (provider: 'google') => {
     try {
       setIsLoading(true)
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data: _, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`

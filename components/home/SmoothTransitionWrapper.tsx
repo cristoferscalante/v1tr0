@@ -15,12 +15,14 @@ export default function SmoothTransitionWrapper({
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    if (!wrapperRef.current) return
+    if (!wrapperRef.current) {
+      return
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         // Activar cuando esté cerca del viewport
-        if (entry.intersectionRatio > 0.1) {
+        if (entry && entry.intersectionRatio > 0.1) {
           setIsVisible(true)
         }
       },
@@ -35,7 +37,7 @@ export default function SmoothTransitionWrapper({
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [wrapperRef])
 
   return (
     <div 

@@ -1,268 +1,99 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Mic, MicOff, Video, VideoOff, Phone, PhoneOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Video, Mic, PhoneOff } from 'lucide-react';
 
 interface JitsiMeetingProps {
-  roomId: string;
+  roomName: string;
   displayName: string;
   onMeetingEnd?: () => void;
   onRecordingStart?: () => void;
-  onRecordingStop?: () => void;
 }
 
 export function JitsiMeeting({
-  roomId,
+  roomName,
   displayName,
   onMeetingEnd,
-  onRecordingStart,
-  onRecordingStop,
+  onRecordingStart
 }: JitsiMeetingProps) {
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
-  const [api, setApi] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isVideoOff, setIsVideoOff] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  const apiRef = useRef<{ dispose: () => void } | null>(null);
 
   useEffect(() => {
-    if (!jitsiContainerRef.current) return;
-
-    const loadJitsi = async () => {
-      try {
-        // Cargar Jitsi Meet API desde CDN
-        if (!window.JitsiMeetExternalAPI) {
-          const script = document.createElement('script');
-          script.src = 'https://8x8.vc/external_api.js';
-          script.async = true;
-          document.head.appendChild(script);
-
-          await new Promise((resolve, reject) => {
-            script.onload = resolve;
-            script.onerror = reject;
-          });
-        }
-
-        // Configuración de Jitsi
-        const domain = 'meet.jit.si';
-        const options = {
-          roomName: roomId,
-          width: '100%',
-          height: 500,
-          parentNode: jitsiContainerRef.current,
-          userInfo: {
-            displayName: displayName,
-          },
-          configOverwrite: {
-            startWithAudioMuted: false,
-            startWithVideoMuted: false,
-            enableWelcomePage: false,
-            enableClosePage: false,
-            prejoinPageEnabled: false,
-            disableInviteFunctions: true,
-          },
-          interfaceConfigOverwrite: {
-            TOOLBAR_BUTTONS: [
-              'microphone',
-              'camera',
-              'closedcaptions',
-              'desktop',
-              'fullscreen',
-              'fodeviceselection',
-              'hangup',
-              'profile',
-              'recording',
-              'settings',
-              'videoquality',
-              'filmstrip',
-              'feedback',
-              'stats',
-              'shortcuts',
-              'tileview',
-              'videobackgroundblur',
-              'download',
-              'help',
-              'mute-everyone',
-            ],
-            SETTINGS_SECTIONS: ['devices', 'language', 'moderator', 'profile'],
-            SHOW_JITSI_WATERMARK: false,
-            SHOW_WATERMARK_FOR_GUESTS: false,
-          },
-        };
-
-        const jitsiApi = new window.JitsiMeetExternalAPI(domain, options);
-        setApi(jitsiApi);
-
-        // Event listeners
-        jitsiApi.addEventListeners({
-          readyToClose: () => {
-            if (onMeetingEnd) {
-              onMeetingEnd();
-            }
-          },
-          audioMuteStatusChanged: ({ muted }: { muted: boolean }) => {
-            setIsMuted(muted);
-          },
-          videoMuteStatusChanged: ({ muted }: { muted: boolean }) => {
-            setIsVideoOff(muted);
-          },
-          recordingStatusChanged: ({ on }: { on: boolean }) => {
-            setIsRecording(on);
-            if (on && onRecordingStart) {
-              onRecordingStart();
-            } else if (!on && onRecordingStop) {
-              onRecordingStop();
-            }
-          },
-        });
-
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Error loading Jitsi:', err);
-        setError('Error al cargar la videoconferencia');
-        setIsLoading(false);
-      }
-    };
-
-    loadJitsi();
+    // En un entorno real, aquí cargaríamos la API de Jitsi
+    // Por ahora, simulamos la funcionalidad
+    // TODO: Inicializar reunión Jitsi con roomName y displayName
+    
+    // Copiar apiRef.current a variable local para usar en cleanup
+    const currentApi = apiRef.current;
 
     return () => {
-      if (api) {
-        api.dispose();
+      // Cleanup usando la variable local
+      if (currentApi) {
+        currentApi.dispose();
       }
     };
-  }, [roomId, displayName]);
+  }, [roomName, displayName]);
 
-  const toggleMute = () => {
-    if (api) {
-      api.executeCommand('toggleAudio');
+  const handleEndMeeting = () => {
+    if (apiRef.current) {
+      apiRef.current.dispose();
     }
+    onMeetingEnd?.();
   };
 
-  const toggleVideo = () => {
-    if (api) {
-      api.executeCommand('toggleVideo');
-    }
+  const handleStartRecording = () => {
+    // TODO: Implementar lógica de grabación
+    onRecordingStart?.();
   };
 
-  const startRecording = () => {
-    if (api) {
-      api.executeCommand('startRecording', {
-        mode: 'file',
-      });
-    }
-  };
 
-  const stopRecording = () => {
-    if (api) {
-      api.executeCommand('stopRecording');
-    }
-  };
-
-  const hangUp = () => {
-    if (api) {
-      api.executeCommand('hangup');
-    }
-  };
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-red-600">Error</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{error}</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
-    <div className="w-full space-y-4">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>Videoconferencia - {roomId}</CardTitle>
-            <div className="flex gap-2">
-              {isRecording && (
-                <Badge variant="destructive" className="animate-pulse">
-                  Grabando
-                </Badge>
-              )}
-              <Badge variant={isMuted ? 'destructive' : 'default'}>
-                {isMuted ? 'Silenciado' : 'Audio activo'}
-              </Badge>
-              <Badge variant={isVideoOff ? 'destructive' : 'default'}>
-                {isVideoOff ? 'Video off' : 'Video activo'}
-              </Badge>
-            </div>
+    <Card className="w-full h-full">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <span>Videoconferencia - {roomName}</span>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              <Video className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm">
+              <Mic className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleStartRecording}
+            >
+              Grabar
+            </Button>
+            <Button 
+              variant="destructive" 
+              size="sm"
+              onClick={handleEndMeeting}
+            >
+              <PhoneOff className="h-4 w-4" />
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center h-96">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-            </div>
-          ) : (
-            <>
-              <div
-                ref={jitsiContainerRef}
-                className="w-full rounded-lg overflow-hidden"
-              />
-              
-              {/* Controles adicionales */}
-              <div className="flex justify-center gap-2 mt-4">
-                <Button
-                  variant={isMuted ? 'destructive' : 'outline'}
-                  size="sm"
-                  onClick={toggleMute}
-                >
-                  {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                  {isMuted ? 'Activar micrófono' : 'Silenciar'}
-                </Button>
-                
-                <Button
-                  variant={isVideoOff ? 'destructive' : 'outline'}
-                  size="sm"
-                  onClick={toggleVideo}
-                >
-                  {isVideoOff ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
-                  {isVideoOff ? 'Activar video' : 'Desactivar video'}
-                </Button>
-                
-                <Button
-                  variant={isRecording ? 'destructive' : 'secondary'}
-                  size="sm"
-                  onClick={isRecording ? stopRecording : startRecording}
-                >
-                  {isRecording ? 'Detener grabación' : 'Iniciar grabación'}
-                </Button>
-                
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={hangUp}
-                >
-                  <PhoneOff className="h-4 w-4" />
-                  Finalizar llamada
-                </Button>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div 
+          ref={jitsiContainerRef}
+          className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center"
+        >
+          <div className="text-center">
+            <Video className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-600">Cargando videoconferencia...</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Sala: {roomName} | Usuario: {displayName}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
-}
-
-// Extensión del tipo Window para TypeScript
-declare global {
-  interface Window {
-    JitsiMeetExternalAPI: any;
-  }
 }

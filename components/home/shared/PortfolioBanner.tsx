@@ -30,10 +30,10 @@ interface PortfolioBannerProps {
 export default function PortfolioBanner({
   title,
   projects,
-  portfolioLink = "/portafolio",
-  gradientStyle = "from-custom-3/30 via-custom-2/20 to-custom-4/30",
+  // portfolioLink = "/portafolio",
+  // gradientStyle = "from-custom-3/30 via-custom-2/20 to-custom-4/30",
 }: PortfolioBannerProps) {
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  // const [hoveredProject, setHoveredProject] = useState<number | null>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
@@ -49,30 +49,30 @@ export default function PortfolioBanner({
   }
 
   // Mapeo de estilos de gradiente a colores hexadecimales para modo oscuro
-  const darkGradientMap: Record<string, string> = {
-    "from-custom-3/30 via-custom-2/20 to-custom-4/30": "linear-gradient(135deg, #08a69680, #025159, #1e7d7d80)", // Software
-    "from-custom-2/30 via-custom-4/20 to-custom-3/30": "linear-gradient(135deg, #025159, #1e7d7d, #08a69680)", // PM
-    "from-custom-4/30 via-custom-3/20 to-custom-2/30": "linear-gradient(135deg, #1e7d7d, #08a696, #02515980)", // Data
-    // Gradiente por defecto
-    default: "linear-gradient(135deg, #08a696, #025159, #1e7d7d)",
-  }
+  // const darkGradientMap: Record<string, string> = {
+  //   "from-custom-3/30 via-custom-2/20 to-custom-4/30": "linear-gradient(135deg, #08a69680, #025159, #1e7d7d80)", // Software
+  //   "from-custom-2/30 via-custom-4/20 to-custom-3/30": "linear-gradient(135deg, #025159, #1e7d7d, #08a69680)", // PM
+  //   "from-custom-4/30 via-custom-3/20 to-custom-2/30": "linear-gradient(135deg, #1e7d7d, #08a696, #02515980)", // Data
+  //   // Gradiente por defecto
+  //   default: "linear-gradient(135deg, #08a696, #025159, #1e7d7d)",
+  // }
 
   // Mapeo de estilos de gradiente a colores hexadecimales para modo claro (grises)
-  const lightGradientMap: Record<string, string> = {
-    "from-custom-3/30 via-custom-2/20 to-custom-4/30": "linear-gradient(135deg, #e0e0e080, #f0f0f0, #d0d0d080)", // Software
-    "from-custom-2/30 via-custom-4/20 to-custom-3/30": "linear-gradient(135deg, #d8d8d8, #e8e8e8, #c8c8c880)", // PM
-    "from-custom-4/30 via-custom-3/20 to-custom-2/30": "linear-gradient(135deg, #d0d0d0, #e0e0e0, #c0c0c080)", // Data
-    // Gradiente por defecto
-    default: "linear-gradient(135deg, #d8d8d8, #e8e8e8, #f0f0f0)",
-  }
+  // const lightGradientMap: Record<string, string> = {
+  //   "from-custom-3/30 via-custom-2/20 to-custom-4/30": "linear-gradient(135deg, #e0e0e080, #f0f0f0, #d0d0d080)", // Software
+  //   "from-custom-2/30 via-custom-4/20 to-custom-3/30": "linear-gradient(135deg, #d8d8d8, #e8e8e8, #c8c8c880)", // PM
+  //   "from-custom-4/30 via-custom-3/20 to-custom-2/30": "linear-gradient(135deg, #d0d0d0, #e0e0e0, #c0c0c080)", // Data
+  //   // Gradiente por defecto
+  //   default: "linear-gradient(135deg, #d8d8d8, #e8e8e8, #f0f0f0)",
+  // }
 
   // Obtener el gradiente correspondiente según el tema
-  const backgroundGradient = isDark
-    ? darkGradientMap[gradientStyle] || darkGradientMap["default"]
-    : lightGradientMap[gradientStyle] || lightGradientMap["default"]
+  // const backgroundGradient = isDark
+  //   ? darkGradientMap[gradientStyle] || darkGradientMap["default"]
+  //   : lightGradientMap[gradientStyle] || lightGradientMap["default"]
 
   // Colores base según el tema
-  const baseBackground = isDark ? "#050505" : "#f5f5f5" // Gris muy claro para modo claro
+  // const baseBackground = isDark ? "#050505" : "#f5f5f5" // Gris muy claro para modo claro
   const textColor = isDark ? "#ffffff" : "#333333" // Texto más oscuro para modo claro
   const mutedTextColor = isDark ? "#a0a0a0" : "#666666" // Texto secundario para modo claro
   const highlightColor = isDark ? "#26ffdf" : "#08a696" // Mantener el color de acento
@@ -134,8 +134,8 @@ export default function PortfolioBanner({
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              onHoverStart={() => setHoveredProject(project.id)}
-              onHoverEnd={() => setHoveredProject(null)}
+              // onHoverStart={() => setHoveredProject(project.id)}
+              // onHoverEnd={() => setHoveredProject(null)}
             >
               {/* Card con efecto glassmorphism */}
               <div

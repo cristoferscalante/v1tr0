@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Code2, X, Send, ChevronLeft, ChevronRight, ExternalLink, Calendar, Users, Code } from "lucide-react"
+import { X, Send } from 'lucide-react'
 import { useEffect } from "react"
 import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
@@ -18,9 +18,7 @@ if (typeof window !== 'undefined') {
 export default function InformationSystems() {
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionsRef = useRef<HTMLDivElement[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
   const [isContactPopupOpen, setIsContactPopupOpen] = useState(false)
-  const [selectedProject, setSelectedProject] = useState(0)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,7 +28,8 @@ export default function InformationSystems() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  // Datos de proyectos de V1TR0
+  // Datos de proyectos de V1TR0 (comentados para evitar warning)
+  /*
   const projects = [
     {
       id: 1,
@@ -87,19 +86,9 @@ export default function InformationSystems() {
       image: "/placeholder.svg"
     }
   ]
+  */
 
-  // Funciones para navegación de proyectos
-  const nextProject = () => {
-    setSelectedProject((prev) => (prev + 1) % projects.length)
-  }
 
-  const prevProject = () => {
-    setSelectedProject((prev) => (prev - 1 + projects.length) % projects.length)
-  }
-
-  const selectProject = (index: number) => {
-    setSelectedProject(index)
-  }
 
   // Función para manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,7 +123,9 @@ export default function InformationSystems() {
   }
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') {
+      return
+    }
 
     const isMobile = window.innerWidth <= 768
     

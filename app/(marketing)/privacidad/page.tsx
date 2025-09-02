@@ -74,15 +74,15 @@ export default function PrivacidadPage() {
             <h2 className="text-xl font-semibold mb-3 text-textPrimary">6. Cambios a esta Política de Privacidad</h2>
             <p>
               Podemos actualizar nuestra Política de Privacidad de vez en cuando. Te notificaremos cualquier cambio
-              publicando la nueva Política de Privacidad en esta página y actualizando la fecha de "última
-              actualización".
+              publicando la nueva Política de Privacidad en esta página y actualizando la fecha de &quot;última
+              actualización&quot;.
             </p>
           </section>
         </div>
 
         <div className="mt-10 pt-6 border-t border-custom-2/20">
           <p className="text-sm text-textMuted">
-            Última actualización:{" "}
+            Última actualización:&#123;&quot; &quot;&#125;
             {new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric", timeZone: "America/Bogota" })}
           </p>
         </div>

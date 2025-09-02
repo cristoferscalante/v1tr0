@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import V1tr0Logo3D from "../3d/V1tr0Logo3D"
 
 export default function ImageSection() {

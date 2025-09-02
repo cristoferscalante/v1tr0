@@ -1,126 +1,207 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar, Clock, Edit, MoreHorizontal, Share, Star, Users } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { 
+  ArrowLeft, 
+  Settings, 
+  Share2, 
+  Star, 
+  Calendar,
+  DollarSign,
+  Users,
+  Clock
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface ProjectHeaderProps {
-  projectId: string
+  projectId: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  status: 'planning' | 'in_progress' | 'review' | 'completed' | 'on_hold';
+  progress: number;
+  client: string;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  teamSize: number;
+  priority: 'low' | 'medium' | 'high';
+  isFavorite: boolean;
 }
 
 export function ProjectHeader({ projectId }: ProjectHeaderProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
-
-  // En un caso real, estos datos vendrían de una API o base de datos
-  const project = {
+  const router = useRouter();
+  
+  // En un entorno real, estos datos vendrían de una API
+  const [project] = useState<Project>({
     id: projectId,
-    name: "Plataforma E-commerce",
-    client: "Comercio Electrónico S.A.",
-    status: "En Progreso",
-    startDate: "15 Mar 2023",
-    endDate: "30 Sep 2023",
-    progress: 65,
-    manager: {
-      name: "María González",
-      avatar: "/team/maria.jpg",
-      initials: "MG",
-    },
-    team: [
-      {
-        name: "Carlos Rodríguez",
-        avatar: "/team/carlos.jpg",
-        initials: "CR",
-      },
-      {
-        name: "Ana López",
-        avatar: "/team/ana.jpg",
-        initials: "AL",
-      },
-      {
-        name: "Juan Pérez",
-        avatar: "/team/juan.jpg",
-        initials: "JP",
-      },
-      {
-        name: "Pedro Sánchez",
-        avatar: "/team/pedro.jpg",
-        initials: "PS",
-      },
-    ],
-  }
+    name: 'Plataforma de E-commerce',
+    description: 'Desarrollo de una plataforma completa de comercio electrónico con gestión de inventario, pagos y análisis.',
+    status: 'in_progress',
+    progress: 68,
+    client: 'Comercio Digital S.A.',
+    startDate: '2024-01-15',
+    endDate: '2024-06-30',
+    budget: 45000,
+    teamSize: 6,
+    priority: 'high',
+    isFavorite: false
+  });
+
+  const [isFavorite, setIsFavorite] = useState(project.isFavorite);
+
+  const getStatusColor = (status: Project['status']) => {
+    switch (status) {
+      case 'planning': return 'bg-gray-500';
+      case 'in_progress': return 'bg-blue-500';
+      case 'review': return 'bg-yellow-500';
+      case 'completed': return 'bg-green-500';
+      case 'on_hold': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getStatusText = (status: Project['status']) => {
+    switch (status) {
+      case 'planning': return 'Planificación';
+      case 'in_progress': return 'En Progreso';
+      case 'review': return 'En Revisión';
+      case 'completed': return 'Completado';
+      case 'on_hold': return 'En Pausa';
+      default: return 'Desconocido';
+    }
+  };
+
+  const getPriorityColor = (priority: Project['priority']) => {
+    switch (priority) {
+      case 'low': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'high': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    // En un entorno real, aquí haríamos una llamada a la API
+  };
+
+  const calculateDaysRemaining = () => {
+    const endDate = new Date(project.endDate);
+    const today = new Date();
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const daysRemaining = calculateDaysRemaining();
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-      <div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold">{project.name}</h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`h-8 w-8 ${isFavorite ? "text-yellow-400" : "text-textMuted"}`}
-            onClick={() => setIsFavorite(!isFavorite)}
-          >
-            <Star className="h-5 w-5 fill-current" />
-          </Button>
-        </div>
-        <div className="flex flex-wrap items-center gap-4 mt-2">
-          <Badge className="bg-highlight text-white">{project.status}</Badge>
-          <div className="flex items-center text-sm text-textMuted">
-            <Calendar className="h-4 w-4 mr-1" />
-            <span>
-              {project.startDate} - {project.endDate}
-            </span>
-          </div>
-          <div className="flex items-center text-sm text-textMuted">
-            <Clock className="h-4 w-4 mr-1" />
-            <span>Progreso: {project.progress}%</span>
-          </div>
-        </div>
+    <div className="space-y-4">
+      {/* Navegación */}
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Volver
+        </Button>
+        <div className="flex-1" />
+        <Button variant="outline" size="sm">
+          <Share2 className="h-4 w-4 mr-2" />
+          Compartir
+        </Button>
+        <Button variant="outline" size="sm">
+          <Settings className="h-4 w-4 mr-2" />
+          Configurar
+        </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-textMuted">Equipo:</span>
-          <div className="flex -space-x-2">
-            {project.team.map((member, index) => (
-              <Avatar key={index} className="h-8 w-8 border-2 border-backgroundSecondary">
-                <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
-                <AvatarFallback>{member.initials}</AvatarFallback>
-              </Avatar>
-            ))}
+      {/* Header principal */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <CardTitle className="text-2xl">{project.name}</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleFavorite}
+                  className="p-1"
+                >
+                  <Star 
+                    className={`h-5 w-5 ${
+                      isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+                    }`} 
+                  />
+                </Button>
+              </div>
+              <p className="text-gray-600 mb-4">{project.description}</p>
+              
+              <div className="flex flex-wrap gap-2">
+                <Badge className={getStatusColor(project.status)}>
+                  {getStatusText(project.status)}
+                </Badge>
+                <Badge variant="outline" className={getPriorityColor(project.priority)}>
+                  Prioridad {project.priority === 'high' ? 'Alta' : project.priority === 'medium' ? 'Media' : 'Baja'}
+                </Badge>
+              </div>
+            </div>
           </div>
-        </div>
+        </CardHeader>
+        <CardContent>
+          {/* Métricas del proyecto */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <Calendar className="h-6 w-6 mx-auto mb-2 text-blue-600" />
+              <p className="text-sm text-gray-600">Días restantes</p>
+              <p className="text-xl font-bold">
+                {daysRemaining > 0 ? daysRemaining : 'Vencido'}
+              </p>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <DollarSign className="h-6 w-6 mx-auto mb-2 text-green-600" />
+              <p className="text-sm text-gray-600">Presupuesto</p>
+              <p className="text-xl font-bold">${project.budget.toLocaleString()}</p>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <Users className="h-6 w-6 mx-auto mb-2 text-purple-600" />
+              <p className="text-sm text-gray-600">Equipo</p>
+              <p className="text-xl font-bold">{project.teamSize} miembros</p>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <Clock className="h-6 w-6 mx-auto mb-2 text-orange-600" />
+              <p className="text-sm text-gray-600">Cliente</p>
+              <p className="text-lg font-bold text-sm">{project.client}</p>
+            </div>
+          </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Users className="h-4 w-4 mr-2" />
-            Gestionar Equipo
-          </Button>
-          <Button variant="outline" size="sm">
-            <Share className="h-4 w-4 mr-2" />
-            Compartir
-          </Button>
-          <Button size="sm">
-            <Edit className="h-4 w-4 mr-2" />
-            Editar
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Duplicar Proyecto</DropdownMenuItem>
-              <DropdownMenuItem>Exportar Datos</DropdownMenuItem>
-              <DropdownMenuItem>Archivar Proyecto</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+          {/* Progreso del proyecto */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Progreso del Proyecto</span>
+              <span className="text-sm text-gray-600">{project.progress}%</span>
+            </div>
+            <Progress value={project.progress} className="h-2" />
+          </div>
+
+          {/* Fechas */}
+          <div className="flex justify-between text-sm text-gray-600 mt-4">
+            <span>Inicio: {new Date(project.startDate).toLocaleDateString()}</span>
+            <span>Fin: {new Date(project.endDate).toLocaleDateString()}</span>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }

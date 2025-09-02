@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,14 +10,12 @@ import {
   Video, 
   MessageSquare, 
   FileAudio, 
-  Users, 
-  Calendar,
   ArrowLeft,
   Settings
 } from 'lucide-react';
 import { JitsiMeeting } from '@/components/dashboard/jitsi-meeting';
 import { AIChat } from '@/components/dashboard/ai-chat';
-import { AudioTranscription } from '@/components/dashboard/audio-transcription';
+import AudioTranscription from '@/components/dashboard/audio-transcription';
 import { meetingsApi, transcriptionsApi, Meeting, Transcription } from '@/lib/api';
 import { useAuth } from '@/hooks/use-auth';
 import { useWebSocket } from '@/hooks/use-websocket';
@@ -32,7 +30,7 @@ export default function MeetingPage() {
   const { socket, joinRoom, leaveRoom } = useWebSocket();
   const { toast } = useToast();
   
-  const meetingId = parseInt(params.id as string);
+  const meetingId = parseInt(params?.id as string);
   
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
@@ -40,9 +38,40 @@ export default function MeetingPage() {
   const [activeTab, setActiveTab] = useState('meeting');
   const [inMeeting, setInMeeting] = useState(false);
 
+  const loadMeetingData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [meetingResponse, transcriptionsResponse] = await Promise.all([
+        meetingsApi.getById(meetingId),
+        transcriptionsApi.getByMeeting(meetingId),
+      ]);
+      
+      setMeeting(meetingResponse.data);
+      setTranscriptions(transcriptionsResponse.data);
+    } catch (error) {
+      console.error('Error loading meeting data:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo cargar la información de la reunión',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [meetingId, toast]);
+
   useEffect(() => {
     if (meetingId) {
       loadMeetingData();
+    }
+  }, [meetingId, loadMeetingData, toast]);
+
+  const loadTranscriptions = useCallback(async () => {
+    try {
+      const response = await transcriptionsApi.getByMeeting(meetingId);
+      setTranscriptions(response.data);
+    } catch (error) {
+      console.error('Error loading transcriptions:', error);
     }
   }, [meetingId]);
 
@@ -66,7 +95,7 @@ export default function MeetingPage() {
         });
       });
 
-      socket.on('transcription_ready', (data) => {
+      socket.on('transcription_ready', () => {
         toast({
           title: 'Transcripción lista',
           description: 'La transcripción ha sido procesada exitosamente',
@@ -81,41 +110,13 @@ export default function MeetingPage() {
         socket.off('transcription_ready');
       };
     }
-  }, [meeting, socket]);
-
-  const loadMeetingData = async () => {
-    try {
-      setLoading(true);
-      const [meetingResponse, transcriptionsResponse] = await Promise.all([
-        meetingsApi.getById(meetingId),
-        transcriptionsApi.getByMeeting(meetingId),
-      ]);
-      
-      setMeeting(meetingResponse.data);
-      setTranscriptions(transcriptionsResponse.data);
-    } catch (error) {
-      console.error('Error loading meeting data:', error);
-      toast({
-        title: 'Error',
-        description: 'No se pudo cargar la información de la reunión',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadTranscriptions = async () => {
-    try {
-      const response = await transcriptionsApi.getByMeeting(meetingId);
-      setTranscriptions(response.data);
-    } catch (error) {
-      console.error('Error loading transcriptions:', error);
-    }
-  };
+    return undefined;
+  }, [meeting, socket, joinRoom, leaveRoom, loadTranscriptions, toast]);
 
   const joinMeeting = async () => {
-    if (!meeting) return;
+    if (!meeting) {
+      return;
+    }
 
     try {
       await meetingsApi.join(meeting.id);
@@ -137,7 +138,9 @@ export default function MeetingPage() {
   };
 
   const leaveMeeting = async () => {
-    if (!meeting) return;
+    if (!meeting) {
+      return;
+    }
 
     try {
       await meetingsApi.leave(meeting.id);
@@ -164,15 +167,7 @@ export default function MeetingPage() {
     });
   };
 
-  const handleRecordingStop = () => {
-    toast({
-      title: 'Grabación finalizada',
-      description: 'La grabación se ha detenido. La transcripción estará disponible pronto.',
-    });
-    
-    // Recargar transcripciones después de un momento
-    setTimeout(loadTranscriptions, 5000);
-  };
+
 
   if (loading) {
     return (
@@ -286,11 +281,10 @@ export default function MeetingPage() {
         <TabsContent value="meeting" className="space-y-4">
           {inMeeting && user ? (
             <JitsiMeeting
-              roomId={meeting.room_id}
-              displayName={user.full_name}
+              roomName={meeting.room_id}
+              displayName={user.name || user.email}
               onMeetingEnd={handleMeetingEnd}
               onRecordingStart={handleRecordingStart}
-              onRecordingStop={handleRecordingStop}
             />
           ) : (
             <Card>
@@ -319,14 +313,12 @@ export default function MeetingPage() {
 
         <TabsContent value="transcriptions">
           <AudioTranscription
-            meetingId={meeting.id}
             transcriptions={transcriptions}
-            onTranscriptionUpdate={loadTranscriptions}
           />
         </TabsContent>
 
         <TabsContent value="chat">
-          <AIChat projectId={meeting.project_id} />
+          <AIChat meetingId={meeting.id} />
         </TabsContent>
 
         <TabsContent value="info" className="space-y-4">

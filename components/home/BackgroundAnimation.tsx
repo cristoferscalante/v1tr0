@@ -11,10 +11,14 @@ const BackgroundAnimation: React.FC = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas) {
+      return
+    }
 
     const ctx = canvas.getContext("2d")
-    if (!ctx) return
+    if (!ctx) {
+      return
+    }
 
     let animationFrameId: number
     let lastTime = 0
@@ -96,21 +100,24 @@ const BackgroundAnimation: React.FC = () => {
           // Ajustar brillo según el tema
           const brightness = Math.max(1 - distanceToLight / 300, 0) * (isDarkMode ? 0.1 : 0.2)
 
-          if (Math.random() < 0.01) {
-            if (background[x][y] !== " ") {
-              background[x][y] = " "
+          if (Math.random() < 0.01 && background[x]) {
+            const row = background[x]!;
+            if (row[y] !== " ") {
+              row[y] = " "
             } else {
-              background[x][y] = Math.random() > 0.5 ? "1" : "0"
+              row[y] = Math.random() > 0.5 ? "1" : "0"
             }
           }
 
-          if (background[x][y] !== " ") {
+          if (background[x] && background[x]![y] !== " ") {
             filledCells++
           }
 
           // Usar el color del tema con el brillo calculado
           ctx.fillStyle = colors.text.replace("${brightness}", brightness.toString())
-          ctx.fillText(background[x][y], x * fontSize + fontSize / 2, (y + 1) * fontSize)
+          if (background[x]) {
+            ctx.fillText(background[x]![y] || " ", x * fontSize + fontSize / 2, (y + 1) * fontSize)
+          }
         }
       }
 
@@ -119,11 +126,12 @@ const BackgroundAnimation: React.FC = () => {
       if (Math.abs(currentFillRatio - targetFillRatio) > 0.05) {
         for (let x = 0; x < columns; x++) {
           for (let y = 0; y < rows; y++) {
-            if (Math.random() < 0.1) {
-              if (currentFillRatio < targetFillRatio && background[x][y] === " ") {
-                background[x][y] = Math.random() > 0.5 ? "1" : "0"
-              } else if (currentFillRatio > targetFillRatio && background[x][y] !== " ") {
-                background[x][y] = " "
+            if (Math.random() < 0.1 && background[x]) {
+              const row = background[x]!;
+              if (currentFillRatio < targetFillRatio && row[y] === " ") {
+                row[y] = Math.random() > 0.5 ? "1" : "0"
+              } else if (currentFillRatio > targetFillRatio && row[y] !== " ") {
+                row[y] = " "
               }
             }
           }

@@ -7,30 +7,30 @@ import { useAuth } from './use-auth';
 const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export function useWebSocket() {
-  const { user, token } = useAuth();
+  const { user, session } = useAuth();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if (user && token && !socketRef.current) {
+    if (user && session?.access_token && !socketRef.current) {
       // Crear conexión WebSocket
       const newSocket = io(SOCKET_URL, {
         query: {
           userId: user.id.toString(),
         },
         auth: {
-          token: token,
+          token: session.access_token,
         },
       });
 
       newSocket.on('connect', () => {
-        console.log('WebSocket connected');
+        // WebSocket conectado exitosamente
         setConnected(true);
       });
 
       newSocket.on('disconnect', () => {
-        console.log('WebSocket disconnected');
+        // WebSocket desconectado
         setConnected(false);
       });
 
@@ -44,7 +44,7 @@ export function useWebSocket() {
         socketRef.current = null;
       }
     };
-  }, [user, token]);
+  }, [user, session]);
 
   const joinRoom = (roomId: string) => {
     if (socket) {
@@ -58,7 +58,7 @@ export function useWebSocket() {
     }
   };
 
-  const sendToRoom = (roomId: string, event: string, data: any) => {
+  const sendToRoom = (roomId: string, event: string, data: unknown) => {
     if (socket) {
       socket.emit('send_to_room', {
         room: roomId,

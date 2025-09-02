@@ -1,16 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    // Debug: Mostrar configuración (sin contraseña)
-    console.log('Configuración SMTP:', {
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE,
-      user: process.env.SMTP_USER,
-      from: process.env.SMTP_FROM
-    })
+    // Configuración SMTP cargada desde variables de entorno
 
     // Configurar el transportador SMTP
     const transporter = nodemailer.createTransport({
@@ -29,9 +22,8 @@ export async function POST(request: NextRequest) {
     })
 
     // Verificar la conexión SMTP
-    console.log('Verificando conexión SMTP...')
     await transporter.verify()
-    console.log('Conexión SMTP verificada exitosamente')
+    // Conexión SMTP verificada exitosamente
 
     // Configurar el correo de prueba
     const mailOptions = {
@@ -174,5 +166,5 @@ export async function POST(request: NextRequest) {
 
 // También permitir GET para pruebas rápidas desde el navegador
 export async function GET() {
-  return POST(new NextRequest('http://localhost:3000/api/test-email', { method: 'POST' }))
+  return POST()
 }

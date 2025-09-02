@@ -1,4 +1,4 @@
-import type { LightbulbIcon as LucideProps } from "lucide-react"
+import type { LucideProps } from "lucide-react"
 
 export function TikTokIcon(props: LucideProps) {
   return (

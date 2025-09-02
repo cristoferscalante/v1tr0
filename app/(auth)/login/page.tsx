@@ -26,7 +26,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    const urlMessage = searchParams.get('message')
+    const urlMessage = searchParams?.get('message')
     if (urlMessage === 'check_email') {
       setMessage('Revisa tu correo electrónico para verificar tu cuenta antes de iniciar sesión.')
     }
