@@ -116,9 +116,6 @@ export default function HomeScrollSnap({
             // console.log('[DEBUG] Animation interrupted')
             resetAnimationFlag()
           }
-        }).catch((error) => {
-          // console.error('[DEBUG] GSAP animation error:', error)
-          resetAnimationFlag()
         })
       }
 

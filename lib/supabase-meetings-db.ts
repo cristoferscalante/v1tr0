@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { googleCalendarService } from './google-calendar';
+import { googleCalendarService, CalendarEvent } from './google-calendar';
 import { toZonedTime, format } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
 
@@ -276,7 +276,7 @@ export class SupabaseMeetingsDB {
         const startDateTime = googleCalendarService.createDateTime(data.date, data.time);
         const endDateTime = googleCalendarService.addMinutes(startDateTime, data.duration || 60);
         
-        const calendarEvent: any = {
+        const calendarEvent: CalendarEvent = {
           summary: data.title || `Reunión con ${data.client?.name}`,
           description: `Reunión ${data.meeting_type || 'de consulta'} con ${data.client?.name}\n\nContacto: ${data.client?.email}${data.client?.phone ? `\nTeléfono: ${data.client.phone}` : ''}${data.description ? `\n\nNotas: ${data.description}` : ''}`,
           start: {

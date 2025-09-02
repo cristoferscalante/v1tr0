@@ -32,8 +32,8 @@ interface ServiceBannerProps {
   features?: Feature[]
   imageSrc: StaticImageData | string
   imageAlt: string
-  ctaLink: string
-  ctaText: string
+  ctaLink?: string
+  ctaText?: string
   imageSize?: 'sm' | 'md' | 'lg'
 }
 
@@ -43,7 +43,6 @@ export default function ServiceBanner({
   features = [],
   imageSrc,
   imageAlt,
-
   ctaText,
   imageSize = 'md',
 }: ServiceBannerProps) {

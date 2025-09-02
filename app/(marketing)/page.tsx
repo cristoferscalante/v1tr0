@@ -14,9 +14,7 @@ import PinnedScrollSection from "@/components/home/PinnedScrollSection"
 import HomeScrollSnap from "@/components/home/HomeScrollSnap"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
 import UnifiedContactModal from "@/components/home/UnifiedContactModal"
-import { ArrowRightIcon } from "@heroicons/react/24/outline"
 import { useState } from "react"
-import { motion } from "framer-motion"
 
 export default function Home() {
   const [isUnifiedModalOpen, setIsUnifiedModalOpen] = useState(false)

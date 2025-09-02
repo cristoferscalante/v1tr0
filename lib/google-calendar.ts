@@ -41,6 +41,47 @@ export interface CalendarEvent {
   }>;
 }
 
+interface GoogleCalendarEventRequest {
+  summary: string;
+  description?: string;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  attendees?: Array<{
+    email: string;
+    displayName?: string;
+  }>;
+  reminders: {
+    useDefault: boolean;
+    overrides: Array<{
+      method: string;
+      minutes: number;
+    }>;
+  };
+}
+
+interface GoogleCalendarUpdateRequest {
+  summary?: string;
+  description?: string;
+  start?: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end?: {
+    dateTime: string;
+    timeZone: string;
+  };
+  attendees?: Array<{
+    email: string;
+    displayName?: string;
+  }>;
+}
+
 export class GoogleCalendarService {
   private isConfigured(): boolean {
     return !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && process.env.GOOGLE_ACCESS_TOKEN);
@@ -53,9 +94,9 @@ export class GoogleCalendarService {
     }
 
     try {
-      const requestBody: any = {
+      const requestBody: GoogleCalendarEventRequest = {
         summary: event.summary,
-        description: event.description,
+        ...(event.description && { description: event.description }),
         start: {
           dateTime: event.start.dateTime,
           timeZone: event.start.timeZone || 'America/Bogota',
@@ -96,17 +137,21 @@ export class GoogleCalendarService {
     }
 
     try {
-      const requestBody: any = {
-        summary: event.summary,
-        description: event.description,
-        start: event.start ? {
-          dateTime: event.start.dateTime,
-          timeZone: event.start.timeZone || 'America/Bogota',
-        } : undefined,
-        end: event.end ? {
-          dateTime: event.end.dateTime,
-          timeZone: event.end.timeZone || 'America/Bogota',
-        } : undefined,
+      const requestBody: GoogleCalendarUpdateRequest = {
+        ...(event.summary && { summary: event.summary }),
+        ...(event.description && { description: event.description }),
+        ...(event.start && {
+          start: {
+            dateTime: event.start.dateTime,
+            timeZone: event.start.timeZone || 'America/Bogota',
+          }
+        }),
+        ...(event.end && {
+          end: {
+            dateTime: event.end.dateTime,
+            timeZone: event.end.timeZone || 'America/Bogota',
+          }
+        }),
       };
 
       if (event.attendees) {
