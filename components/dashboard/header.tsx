@@ -1,10 +1,8 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Bell, Search, LogOut, User, Settings, HelpCircle, Menu } from "lucide-react"
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,74 +10,139 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import Image from "next/image"
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import {
+  Bell,
+  Search,
+  Settings,
+  User,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Calendar,
+  HelpCircle
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function DashboardHeader() {
-  const [isMobile, setIsMobile] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [notifications] = useState([
+    { id: 1, title: 'Nueva reunión programada', time: '5 min', unread: true },
+    { id: 2, title: 'Proyecto actualizado', time: '1 h', unread: true },
+    { id: 3, title: 'Comentario en tarea', time: '2 h', unread: false },
+  ]);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+  const unreadCount = notifications.filter(n => n.unread).length;
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // En un entorno real, aquí se implementaría la búsqueda
+      // TODO: Implementar lógica de búsqueda
     }
+  };
 
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-
-    return () => {
-      window.removeEventListener("resize", checkMobile)
-    }
-  }, [])
+  const handleLogout = () => {
+    // En un entorno real, aquí se implementaría el logout
+    router.push('/login');
+  };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm">
-      <div className="container flex h-16 items-center justify-between py-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between px-4">
+        {/* Logo y navegación móvil */}
         <div className="flex items-center gap-4">
-          {isMobile && (
-            <Button className="md:hidden bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-2 h-8 w-8 rounded" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle Menu</span>
-            </Button>
-          )}
-
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <Image src="/v1tr0-logo.svg" alt="V1TR0 Logo" width={32} height={32} />
-            <span className="hidden font-bold sm:inline-block text-[#26FFDF]">V1TR0</span>
-          </Link>
+          <Button variant="ghost" size="sm" className="md:hidden">
+            <Menu className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">V1</span>
+            </div>
+            <span className="font-bold text-lg hidden sm:block">V1TR0 Dashboard</span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="relative hidden md:flex items-center">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-textMuted" />
-            <input
+        {/* Barra de búsqueda */}
+        <div className="flex-1 max-w-md mx-4">
+          <form onSubmit={handleSearch} className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
               type="search"
-              placeholder="Buscar..."
-              className="pl-10 h-9 w-64 rounded-2xl border border-[#08A696]/30 bg-[#02505931] backdrop-blur-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#08A696]/20 focus:border-[#08A696] text-[#26FFDF]"
+              placeholder="Buscar proyectos, tareas, miembros..."
+              className="pl-10 pr-4"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </div>
+          </form>
+        </div>
 
-          <Button className="relative bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-2 h-9 w-9 rounded-xl">
-            <Bell className="h-5 w-5" />
-            <span className="sr-only">Notifications</span>
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#08A696]"></span>
-          </Button>
-
-          <ThemeToggle />
-
+        {/* Acciones del usuario */}
+        <div className="flex items-center gap-2">
+          {/* Notificaciones */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="relative h-9 w-9 rounded-full bg-[#08A696]/10 hover:bg-[#08A696]/20 border border-[#08A696]/30 p-0">
-                <Image
-                  src="/diverse-professional-profiles.png"
-                  alt="Avatar"
-                  className="rounded-full object-cover"
-                  fill
-                />
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                  >
+                    {unreadCount}
+                  </Badge>
+                )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuLabel>Notificaciones</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {notifications.map((notification) => (
+                <DropdownMenuItem key={notification.id} className="flex items-start gap-3 p-3">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-blue-600' : 'bg-gray-300'}`} />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{notification.title}</p>
+                    <p className="text-xs text-muted-foreground">{notification.time}</p>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-center text-sm text-blue-600">
+                Ver todas las notificaciones
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Accesos rápidos */}
+          <Button variant="ghost" size="sm">
+            <MessageSquare className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="sm">
+            <Calendar className="h-5 w-5" />
+          </Button>
+
+          {/* Menú de usuario */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src="/avatars/user.jpg" alt="Usuario" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">Juan Desarrollador</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    juan@v1tr0.com
+                  </p>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
@@ -94,16 +157,14 @@ export function DashboardHeader() {
                 <span>Ayuda</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/login" className="flex items-center cursor-pointer">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar Sesión</span>
-                </Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Cerrar sesión</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </header>
-  )
+  );
 }

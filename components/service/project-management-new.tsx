@@ -4,7 +4,7 @@ import type React from "react"
 import { useState, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Settings, Target, Lightbulb, TrendingUp, Users, Zap, ChevronLeft, ChevronRight, ExternalLink, CheckCircle, BarChart3 } from "lucide-react"
+import { Settings, Lightbulb, TrendingUp, Zap, ChevronLeft, ChevronRight, CheckCircle, BarChart3 } from "lucide-react"
 import { useEffect } from "react"
 import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
@@ -95,7 +95,7 @@ export default function ProjectManagement() {
       })
 
       // Animate sections on scroll
-      sectionsRef.current.forEach((section, index) => {
+      sectionsRef.current.forEach((section) => {
         if (section) {
           gsap.fromTo(
             section.children,
@@ -187,12 +187,12 @@ export default function ProjectManagement() {
               <div className="grid lg:grid-cols-5 gap-8">
                 {/* Panel izquierdo - Lista de servicios */}
                 <div className="space-y-4 lg:col-span-2">
-                  {projects.map((project, index) => (
+                  {projects.map((project, projectIndex) => (
                     <div
                       key={project.id}
-                      onClick={() => selectProject(index)}
+                      onClick={() => selectProject(projectIndex)}
                       className={`p-6 rounded-2xl border cursor-pointer transition-all duration-300 hover:scale-105 ${
-                        selectedProject === index
+                        selectedProject === projectIndex
                           ? 'bg-gradient-to-r from-highlight/20 to-accent/20 border-highlight/50 shadow-lg'
                           : 'bg-custom-2/20 border-custom-2/30 hover:bg-custom-2/30'
                       }`}
@@ -200,7 +200,7 @@ export default function ProjectManagement() {
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="text-lg font-bold text-textPrimary">{project.title}</h3>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          selectedProject === index ? 'bg-highlight/30 text-highlight' : 'bg-custom-3/30 text-custom-3'
+                          selectedProject === projectIndex ? 'bg-highlight/30 text-highlight' : 'bg-custom-3/30 text-custom-3'
                         }`}>
                           {project.category}
                         </span>
@@ -226,7 +226,7 @@ export default function ProjectManagement() {
                       Herramientas
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {projects[selectedProject].tech.map((tech, index) => (
+                      {projects[selectedProject]?.tech.map((tech, index) => (
                         <span key={index} className="bg-highlight/20 text-highlight px-3 py-1 rounded-full text-sm border border-highlight/30">
                           {tech}
                         </span>
@@ -251,7 +251,7 @@ export default function ProjectManagement() {
                           {selectedProject === 3 && <TrendingUp className="w-10 h-10 text-white" />}
                         </div>
                         <p className="text-textMuted mb-3">Metodología especializada</p>
-                        <p className="text-textPrimary font-medium text-lg">{projects[selectedProject].title}</p>
+                        <p className="text-textPrimary font-medium text-lg">{projects[selectedProject]?.title}</p>
                       </div>
                     </div>
                   </div>

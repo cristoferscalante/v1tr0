@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useState, useCallback, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, Environment } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -38,7 +38,7 @@ function Logo3DModel({
   currentView: ViewKey
 }) {
   const { scene } = useGLTF('/3d/v1tr0_logo_3d.glb')
-  const meshRef = useRef<THREE.Group>()
+  const meshRef = useRef<THREE.Group>(null)
   const targetPosition = useRef(new THREE.Vector3())
   const currentPosition = useRef(new THREE.Vector3())
   
@@ -185,11 +185,13 @@ function CameraController({ currentView, modelCenter, onPositionComplete }: {
         easeProgress * 0.1
       )
       
-      // Animate FOV transition
-      const currentFov = camera.fov
-      const newFov = currentFov + (targetFov.current - currentFov) * easeProgress * 0.1
-      camera.fov = newFov
-      camera.updateProjectionMatrix()
+      // Animate FOV transition (only for PerspectiveCamera)
+      if ('fov' in camera) {
+        const currentFov = camera.fov
+        const newFov = currentFov + (targetFov.current - currentFov) * easeProgress * 0.1
+        camera.fov = newFov
+        camera.updateProjectionMatrix()
+      }
       
       camera.position.copy(currentPosition.current)
       camera.lookAt(modelCenter)

@@ -6,8 +6,8 @@ import type { StaticImageData } from "next/image"
 import type { ReactNode } from "react"
 import Image from "next/image"
 import { ArrowRightIcon } from "@/lib/icons"
-import { useTheme } from "@/components/theme-provider"
-import { useState, useContext, createContext, useEffect, useRef } from "react"
+
+import { useState, useContext, createContext, useRef } from "react"
 import { X, Send } from "lucide-react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
@@ -43,12 +43,11 @@ export default function ServiceBanner({
   features = [],
   imageSrc,
   imageAlt,
-  ctaLink,
+
   ctaText,
   imageSize = 'md',
 }: ServiceBannerProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
+
   
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [formData, setFormData] = useState({
@@ -119,7 +118,9 @@ export default function ServiceBanner({
   
   // Animación del modal
   useGSAP(() => {
-    if (!isPopupOpen || !modalRef.current || isInsidePinnedScroll) return
+    if (!isPopupOpen || !modalRef.current || isInsidePinnedScroll) {
+      return
+    }
     
     gsap.fromTo(modalRef.current, 
       { opacity: 0, scale: 0.9 },
@@ -131,7 +132,9 @@ export default function ServiceBanner({
   const { contextSafe } = useGSAP(() => {}, { dependencies: [] })
 
   const handleImageClick = contextSafe(() => {
-    if (isInsidePinnedScroll) return // Deshabilitar en PinnedScrollSection
+    if (isInsidePinnedScroll) {
+      return // Deshabilitar en PinnedScrollSection
+    }
     
     setIsGlowing(true)
     setIsShaking(true)
@@ -158,7 +161,9 @@ export default function ServiceBanner({
   
   // Animaciones de hover para el botón CTA
   const handleCtaHover = contextSafe((isHovering: boolean) => {
-    if (!ctaRef.current || isInsidePinnedScroll) return // Deshabilitar en PinnedScrollSection
+    if (!ctaRef.current || isInsidePinnedScroll) {
+      return // Deshabilitar en PinnedScrollSection
+    }
     
     gsap.to(ctaRef.current, {
       scale: isHovering ? 1.02 : 1,

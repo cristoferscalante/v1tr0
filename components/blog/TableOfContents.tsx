@@ -23,7 +23,7 @@ export default function TableOfContents({ headings, children }: TableOfContentsP
 
   // Función para inicializar los IDs de encabezados
   const initializeHeadingIds = React.useCallback(() => {
-    if (typeof document === "undefined") return
+    if (typeof document === "undefined") { return }
 
     // Recorrer todos los encabezados del documento
     const documentHeadings = document.querySelectorAll("h1, h2, h3, h4, h5, h6")

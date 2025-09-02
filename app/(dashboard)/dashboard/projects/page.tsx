@@ -44,7 +44,7 @@ export default function ProjectsPage() {
     description: "",
     clientId: "",
     status: "planned",
-    startDate: "",
+    startDate: new Date().toISOString().split("T")[0] || "",
     endDate: "",
   })
 
@@ -98,17 +98,7 @@ export default function ProjectsPage() {
     loadData()
   }, [])
 
-  // Inicializar fecha de inicio al montar el componente
-  useEffect(() => {
-    try {
-      setNewProject((prev) => ({
-        ...prev,
-        startDate: new Date().toISOString().split("T")[0],
-      }))
-    } catch (e) {
-      console.error("Error al inicializar fecha:", e)
-    }
-  }, [])
+
 
   // Si hay un error, mostrar mensaje de error
   if (error) {
@@ -223,7 +213,7 @@ export default function ProjectsPage() {
         description: "",
         clientId: "",
         status: "planned",
-        startDate: new Date().toISOString().split("T")[0],
+        startDate: new Date().toISOString().split("T")[0] || "",
         endDate: "",
       })
       setEditingProjectId(null)

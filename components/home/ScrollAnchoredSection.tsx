@@ -23,7 +23,9 @@ export default function ScrollAnchoredSection({
   const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
-    if (!containerRef.current || !contentRef.current || isInitialized) return
+    if (!containerRef.current || !contentRef.current || isInitialized) {
+      return
+    }
 
     const container = containerRef.current
     const content = contentRef.current
@@ -44,7 +46,7 @@ export default function ScrollAnchoredSection({
         anticipatePin: 1,
         onUpdate: (self) => {
           const progress = self.progress
-          const currentSection = Math.floor(progress * sections.length)
+          // const currentSection = Math.floor(progress * sections.length)
           
           // Animar cada sección basada en el progreso
           Array.from(sections).forEach((section, index) => {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseMeetingsDB } from '@/lib/supabase-meetings-db'
-import type { Client, Meeting } from '@/lib/supabase-meetings-db'
+import type { ClientInput, Meeting } from '@/lib/supabase-meetings-db'
 
 // GET - Obtener reuniones
 export async function GET(request: Request) {
@@ -23,26 +23,18 @@ export async function GET(request: Request) {
       // Consulta en lote para múltiples fechas
       const dates = searchParams.get('dates')
       if (dates) {
-        // Debug logs para ver exactamente qué se está recibiendo
-        console.log('🔍 [DEBUG] Raw dates parameter:', dates)
-        console.log('🔍 [DEBUG] dates type:', typeof dates)
-        console.log('🔍 [DEBUG] dates length:', dates.length)
-        console.log('🔍 [DEBUG] First 100 chars:', dates.substring(0, 100))
+        // Procesar múltiples fechas para obtener slots disponibles
         
         try {
           // Intentar decodificar URL si es necesario
           let decodedDates = dates
           try {
             decodedDates = decodeURIComponent(dates)
-            console.log('🔍 [DEBUG] Decoded dates:', decodedDates)
-          } catch (decodeError) {
-            console.log('🔍 [DEBUG] No need to decode or decode failed:', decodeError)
+          } catch {
+            // Decode failed, use original
           }
           
           const dateList = JSON.parse(decodedDates) as string[]
-          console.log('🔍 [DEBUG] Parsed dateList:', dateList)
-          console.log('🔍 [DEBUG] dateList type:', typeof dateList)
-          console.log('🔍 [DEBUG] dateList is array:', Array.isArray(dateList))
           
           if (!Array.isArray(dateList)) {
             throw new Error('Parsed dates is not an array')
@@ -52,28 +44,22 @@ export async function GET(request: Request) {
           
           // Procesar todas las fechas en paralelo
           const promises = dateList.map(async (dateStr) => {
-            console.log('🔍 [DEBUG] Processing date:', dateStr)
             try {
               const slots = await supabaseMeetingsDB.getAvailableTimeSlots(dateStr)
-              console.log('🔍 [DEBUG] Slots for', dateStr, ':', slots.length, 'slots')
               return { date: dateStr, slots, success: true }
-            } catch (error) {
-              console.error('❌ [ERROR] Error processing date', dateStr, ':', error)
-              return { date: dateStr, slots: [], success: false, error: error.message }
+            } catch (err: unknown) {
+              const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+              return { date: dateStr, slots: [], success: false, error: errorMessage }
             }
           })
           
-          console.log('🔍 [DEBUG] Waiting for all promises to resolve...')
           const results = await Promise.all(promises)
-          console.log('🔍 [DEBUG] All promises resolved, processing results...')
           
           let hasErrors = false
-          results.forEach(({ date: dateStr, slots, success, error }) => {
+          results.forEach(({ date: dateStr, slots, success }) => {
             if (success) {
               batchResults[dateStr] = slots
-              console.log('🔍 [DEBUG] Added slots for', dateStr, ':', slots.length)
             } else {
-              console.error('❌ [ERROR] Failed to process date', dateStr, ':', error)
               hasErrors = true
             }
           })
@@ -82,15 +68,8 @@ export async function GET(request: Request) {
             throw new Error('One or more dates failed to process')
           }
           
-          console.log('🔍 [DEBUG] Final batchResults:', Object.keys(batchResults))
           return NextResponse.json({ success: true, batchResults })
         } catch (error) {
-          console.error('❌ [ERROR] Error parsing dates:', error)
-          console.error('❌ [ERROR] Original dates parameter:', dates)
-          console.error('❌ [ERROR] Error details:', {
-            message: error instanceof Error ? error.message : 'Unknown error',
-            stack: error instanceof Error ? error.stack : undefined
-          })
           return NextResponse.json(
             { 
               success: false, 
@@ -134,8 +113,8 @@ export async function GET(request: Request) {
     const meetings = await supabaseMeetingsDB.getMeetings()
     return NextResponse.json({ success: true, meetings })
     
-  } catch (error) {
-    console.error('Error al obtener reuniones:', error)
+  } catch (error: unknown) {
+    console.error('Error en GET /api/meetings:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 }
@@ -179,12 +158,13 @@ export async function POST(request: NextRequest) {
     const clients = await supabaseMeetingsDB.getClients();
     let client = clients.find(c => c.email === clientEmail);
     if (!client) {
-      const newClient: Omit<Client, 'id' | 'created_at' | 'updated_at'> = {
+      const newClient: ClientInput = {
         name: clientName,
         email: clientEmail,
         phone: clientPhone || ''
       };
-      client = await supabaseMeetingsDB.saveClient(newClient);
+      const savedClient = await supabaseMeetingsDB.saveClient(newClient);
+      client = savedClient || undefined;
       if (!client) {
         return NextResponse.json(
           { success: false, error: 'Error al crear el cliente' },
@@ -211,7 +191,7 @@ export async function POST(request: NextRequest) {
       message: 'Reunión agendada exitosamente'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error en POST /api/meetings:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },

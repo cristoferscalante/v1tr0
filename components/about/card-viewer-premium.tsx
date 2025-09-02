@@ -29,31 +29,34 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
   }, [rotation])
 
   // Manejar el inicio del arrastre (mouse)
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (autoRotate) return
-    setIsDragging(true)
-    setStartPosition({ x: e.clientX, y: e.clientY })
+  const handleMouseDown = () => {
+    if (autoRotate) {
+      return
+    }
   }
 
   // Manejar el inicio del arrastre (touch)
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (autoRotate) return
+    if (autoRotate || e.touches.length === 0) {
+      return
+    }
     setIsDragging(true)
     setStartPosition({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
+      x: e.touches[0]?.clientX || 0,
+      y: e.touches[0]?.clientY || 0,
     })
   }
 
   // Manejar el movimiento del mouse durante el arrastre
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || autoRotate) return
+    if (!isDragging || autoRotate) {
+      return
+    }
 
     // Calcular la diferencia de posición
     const deltaX = e.clientX - startPosition.x
     const deltaY = e.clientY - startPosition.y
-
-    // Actualizar la rotación
+    
     setRotation((prev) => ({
       y: prev.y + deltaX * 0.5,
       x: prev.x - deltaY * 0.5,
@@ -66,14 +69,15 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
 
   // Manejar el movimiento táctil durante el arrastre
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || autoRotate) return
+    if (!isDragging || autoRotate || e.touches.length === 0) {
+      return
+    }
     e.preventDefault() // Prevenir scroll
 
     // Calcular la diferencia de posición
-    const deltaX = e.touches[0].clientX - startPosition.x
-    const deltaY = e.touches[0].clientY - startPosition.y
-
-    // Actualizar la rotación
+    const deltaX = (e.touches[0]?.clientX || 0) - startPosition.x
+    const deltaY = (e.touches[0]?.clientY || 0) - startPosition.y
+    
     setRotation((prev) => ({
       y: prev.y + deltaX * 0.5,
       x: prev.x - deltaY * 0.5,
@@ -82,8 +86,8 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
 
     // Actualizar la posición inicial para el próximo movimiento
     setStartPosition({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
+      x: e.touches[0]?.clientX || 0,
+      y: e.touches[0]?.clientY || 0,
     })
   }
 
@@ -126,22 +130,24 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
 
   // Efecto de iluminación dinámica basado en la posición del mouse
   useEffect(() => {
-    if (!containerRef.current || autoRotate) return
+    if (!containerRef.current || autoRotate) {
+      return
+    }
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging || !isHovering) return
+      if (isDragging || !isHovering) {
+        return
+      }
 
       const rect = containerRef.current!.getBoundingClientRect()
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
-
-      // Normalizar coordenadas (0-1)
+      
       const normalizedX = x / rect.width
       const normalizedY = y / rect.height
-
-      // Convertir a ángulos (-15 a 15 grados)
-      const rotX = 15 - normalizedY * 30
-      const rotY = -15 + normalizedX * 30
+      
+      const rotX = (normalizedY - 0.5) * -20
+      const rotY = (normalizedX - 0.5) * 20
 
       setRotation((prev) => ({
         x: rotX,
@@ -159,7 +165,9 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
 
   // Animación de rotación automática
   useEffect(() => {
-    if (!cardRef.current) return
+    if (!autoRotate || !cardRef.current) {
+      return
+    }
 
     let animationId: number
     const startTime = Date.now()
@@ -169,19 +177,14 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
       const floatY = Math.sin(elapsed / 1000) * 5 // Movimiento suave arriba y abajo
 
       if (cardRef.current) {
-        let currentRotation = { ...rotationRef.current }
-
-        // Si está en modo de rotación automática, incrementar la rotación Y suavemente
-        if (autoRotate) {
-          currentRotation = {
-            ...currentRotation,
-            y: currentRotation.y + 0.2, // Rotación más suave
-            x: 5 + Math.sin(elapsed / 3000) * 3, // Leve inclinación
-          }
-
-          // Actualizar la referencia sin causar re-renderizados
-          rotationRef.current = currentRotation
+        const currentRotation = {
+          ...rotationRef.current,
+          y: rotationRef.current.y + 0.2, // Rotación más suave
+          x: 5 + Math.sin(elapsed / 3000) * 3, // Leve inclinación
         }
+
+        // Actualizar la referencia sin causar re-renderizados
+        rotationRef.current = currentRotation
 
         // Aplicar transformaciones directamente al DOM
         cardRef.current.style.transform = `

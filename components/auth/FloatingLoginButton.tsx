@@ -46,7 +46,7 @@ export function FloatingLoginButton() {
                 : "0 6px 15px rgba(8, 166, 150, 0.05), 0 3px 8px rgba(38, 255, 223, 0.05)",
             }}
 
-            whileHoverScale={1.05}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

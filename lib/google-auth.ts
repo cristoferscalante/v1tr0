@@ -57,7 +57,7 @@ export async function refreshGoogleToken(): Promise<string> {
   // Actualizar el archivo .env.local con el nuevo token
   await updateEnvFile('GOOGLE_ACCESS_TOKEN', data.access_token);
   
-  console.log('✅ Token de Google renovado exitosamente');
+
   return data.access_token;
 }
 
@@ -78,7 +78,8 @@ async function updateEnvFile(key: string, value: string): Promise<void> {
 
     // Buscar y actualizar la línea existente
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith(`${key}=`)) {
+      const line = lines[i];
+      if (line && line.startsWith(`${key}=`)) {
         lines[i] = `${key}=${value}`;
         found = true;
         break;
@@ -92,8 +93,7 @@ async function updateEnvFile(key: string, value: string): Promise<void> {
 
     // Escribir el archivo actualizado
     fs.writeFileSync(envPath, lines.join('\n'));
-  } catch (err) {
-    console.error('Error updating .env.local:', err);
+  } catch {
     // No lanzar error para no interrumpir el flujo principal
   }
 }

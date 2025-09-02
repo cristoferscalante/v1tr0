@@ -1,17 +1,8 @@
 "use client"
 
 import ServicesBanner from "@/components/home/shared/PortfolioBanner"
-import { useState } from "react"
-import Image from "next/image"
 
 export default function ProjectManagementPortfolio() {
-  const [glowingProjectId, setGlowingProjectId] = useState<number | null>(null)
-
-  const handleProjectImageClick = (id: number) => {
-    setGlowingProjectId(id)
-    // Desactivar el efecto después de la duración de la animación
-    setTimeout(() => setGlowingProjectId(null), 500)
-  }
 
   const projects = [
     {
@@ -49,17 +40,6 @@ export default function ProjectManagementPortfolio() {
       projects={projects}
       portfolioLink="/portafolio/gestion-proyectos"
       gradientStyle={pmGradient}
-      renderProjectImage={(project) => (
-        <Image
-          key={project.id}
-          src={project.image || `/placeholder.svg?height=300&width=500&query=${encodeURIComponent(project.title)}`}
-          alt={project.title}
-          width={500}
-          height={300}
-          onClick={() => handleProjectImageClick(project.id)}
-          className={`w-full h-auto object-cover transition-all duration-700 ease-in-out hover:scale-105 animate-gentle-balance interactive-image ${glowingProjectId === project.id ? "animate-glow-pulse" : ""}`}
-        />
-      )}
     />
   )
 }

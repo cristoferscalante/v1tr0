@@ -11,15 +11,15 @@ import { ProjectPayments } from "@/components/dashboard/project-payments"
 import { ProjectLegal } from "@/components/dashboard/project-legal"
 
 interface ProjectPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function ProjectPage({ params }: ProjectPageProps) {
+export default async function ProjectPage({ params }: ProjectPageProps) {
   // En un caso real, aquí cargaríamos los datos del proyecto desde una API o base de datos
   // Para este ejemplo, usaremos datos de muestra
-  const projectId = params.id
+  const { id: projectId } = await params
 
   // Simulamos que no se encuentra el proyecto si el ID no es válido
   if (projectId === "invalid") {

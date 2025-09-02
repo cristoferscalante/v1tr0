@@ -32,12 +32,16 @@ export default function HomeScrollSnap({
   const sectionsRef = useRef<HTMLElement[]>([])
   const currentSectionRef = useRef(0)
   const isAnimatingRef = useRef(false)
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 768
-  const { isHorizontalScrollActive, horizontalScrollPosition, canScrollVertically } = useScrollContext()
+  const { canScrollVertically } = useScrollContext()
+  // const { isHorizontalScrollActive, horizontalScrollPosition } = useScrollContext() // No utilizadas
 
   // Implementar scroll snap limpio como en /about (solo desktop)
   useEffect(() => {
-    if (!containerRef.current || typeof window === "undefined") return
+    if (!containerRef.current || typeof window === "undefined") {
+      return
+    }
 
     // En móviles, permitir scroll normal sin GSAP
     if (isMobile) {
@@ -70,12 +74,32 @@ export default function HomeScrollSnap({
         })
       })
 
-      // Función de navegación snap
+      // Función para resetear el flag de animación de forma segura
+      const resetAnimationFlag = () => {
+        // console.log('[DEBUG] Resetting animation flag')
+        isAnimatingRef.current = false
+        if (animationTimeoutRef.current) {
+          clearTimeout(animationTimeoutRef.current)
+          animationTimeoutRef.current = null
+        }
+      }
+
+      // Función de navegación snap con manejo de errores robusto - igual que /about
       const goToSection = (index: number) => {
-        if (isAnimatingRef.current || index < 0 || index >= totalSections) return
+        if (isAnimatingRef.current || index < 0 || index >= totalSections) {
+          // console.log('[DEBUG] Navigation blocked:', { isAnimating: isAnimatingRef.current, index, totalSections })
+          return
+        }
         
+        // console.log('[DEBUG] Starting navigation:', { from: currentSectionRef.current, to: index })
         isAnimatingRef.current = true
         currentSectionRef.current = index
+        
+        // Timeout de seguridad para evitar congelamientos
+        animationTimeoutRef.current = setTimeout(() => {
+          // console.log('[DEBUG] Animation timeout triggered - force reset')
+          resetAnimationFlag()
+        }, 1500)
         
         gsap.to(window, {
           duration: 0.8,
@@ -85,43 +109,64 @@ export default function HomeScrollSnap({
           },
           ease: "power2.out",
           onComplete: () => {
-            isAnimatingRef.current = false
+            // console.log('[DEBUG] Animation completed successfully')
+            resetAnimationFlag()
+          },
+          onInterrupt: () => {
+            // console.log('[DEBUG] Animation interrupted')
+            resetAnimationFlag()
           }
+        }).catch((error) => {
+          // console.error('[DEBUG] GSAP animation error:', error)
+          resetAnimationFlag()
         })
       }
 
-      // Control de wheel events
+      // Control de wheel events - lógica simple como en /about
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault()
-        if (isAnimatingRef.current || !canScrollVertically) return
+        if (isAnimatingRef.current) {
+          // console.log('[DEBUG] Wheel blocked - animation in progress')
+          return
+        }
 
         const direction = e.deltaY > 0 ? 1 : -1
         const nextSection = currentSectionRef.current + direction
+        
+        // console.log('[DEBUG] Wheel event:', { current: currentSectionRef.current, direction, next: nextSection })
         goToSection(nextSection)
       }
 
       // Control de eventos táctiles
       let touchStartY = 0
       const handleTouchStart = (e: TouchEvent) => {
-        touchStartY = e.touches[0].clientY
+        if (e.touches[0]) {
+          touchStartY = e.touches[0].clientY
+        }
       }
 
       const handleTouchEnd = (e: TouchEvent) => {
-        if (isAnimatingRef.current || !canScrollVertically) return
+        if (isAnimatingRef.current) {
+          return
+        }
         
-        const touchEndY = e.changedTouches[0].clientY
-        const deltaY = touchStartY - touchEndY
-        
-        if (Math.abs(deltaY) > 50) {
-          const direction = deltaY > 0 ? 1 : -1
-          const nextSection = currentSectionRef.current + direction
-          goToSection(nextSection)
+        if (e.changedTouches[0]) {
+          const touchEndY = e.changedTouches[0].clientY
+          const deltaY = touchStartY - touchEndY
+          
+          if (Math.abs(deltaY) > 50) {
+            const direction = deltaY > 0 ? 1 : -1
+            const nextSection = currentSectionRef.current + direction
+            goToSection(nextSection)
+          }
         }
       }
 
       // Control de teclado
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (isAnimatingRef.current || !canScrollVertically) return
+        if (isAnimatingRef.current) {
+          return
+        }
         
         switch (e.key) {
           case "ArrowDown":
@@ -152,13 +197,19 @@ export default function HomeScrollSnap({
         document.body.style.overflow = ""
         document.documentElement.style.overflow = ""
         ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+        // Limpiar timeout de seguridad
+        if (animationTimeoutRef.current) {
+          clearTimeout(animationTimeoutRef.current)
+          animationTimeoutRef.current = null
+        }
+        resetAnimationFlag()
       }
     }
 
     const cleanup = setupScrollSnap()
     
     return cleanup
-  }, [])
+  }, [canScrollVertically, isMobile])
 
   // Agregar sección a refs
   const addToRefs = (el: HTMLElement | null) => {

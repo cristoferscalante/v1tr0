@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import Image from "next/image"
 import { gsap } from "gsap"
 import { BarChartIcon, PieChartIcon, TrendingUpIcon } from "@/lib/icons"
 
@@ -107,12 +108,10 @@ export default function DataAnalysisPage() {
             
             <div className="lg:w-1/2 mt-12 lg:mt-0 flex flex-col items-center">
               <div ref={imageRef} className="flex items-center justify-center mb-8">
-                <img
+                <Image
                   alt={serviceData.imageAlt}
-                  loading="lazy"
-                  width="300"
-                  height="300"
-                  decoding="async"
+                  width={300}
+                  height={300}
                   className="w-full h-auto max-w-sm object-cover transition-all duration-700 ease-in-out hover:scale-105"
                   src={serviceData.imageSrc}
                   style={{ color: "transparent", cursor: "pointer" }}

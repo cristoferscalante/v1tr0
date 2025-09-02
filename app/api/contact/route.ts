@@ -26,12 +26,17 @@ const createTransporter = () => {
 }
 
 // Función para validar los datos del formulario
-const validateFormData = (data: any): data is ContactFormData => {
+const validateFormData = (data: unknown): data is ContactFormData => {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+  
+  const obj = data as Record<string, unknown>;
   return (
-    typeof data.name === 'string' && data.name.trim().length > 0 &&
-    typeof data.email === 'string' && data.email.includes('@') &&
-    typeof data.serviceArea === 'string' && data.serviceArea.trim().length > 0 &&
-    typeof data.message === 'string' && data.message.trim().length > 0
+    typeof obj.name === 'string' && obj.name.trim().length > 0 &&
+    typeof obj.email === 'string' && obj.email.includes('@') &&
+    typeof obj.serviceArea === 'string' && obj.serviceArea.trim().length > 0 &&
+    typeof obj.message === 'string' && obj.message.trim().length > 0
   )
 }
 
@@ -163,7 +168,6 @@ export async function POST(request: NextRequest) {
 
     // Verificar variables de entorno
     if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.error('Variables de entorno SMTP no configuradas')
       return NextResponse.json(
         { error: 'Configuración del servidor de correo no disponible' },
         { status: 500 }
@@ -228,8 +232,6 @@ export async function POST(request: NextRequest) {
     )
 
   } catch (error) {
-    console.error('Error al enviar el email:', error)
-    
     return NextResponse.json(
       { 
         error: 'Error interno del servidor al enviar el mensaje',

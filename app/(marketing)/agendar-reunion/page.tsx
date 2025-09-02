@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, CheckIcon, XMarkIcon, UserIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
@@ -25,15 +25,7 @@ interface DaySchedule {
   hasAvailableSlots: boolean
 }
 
-interface AvailabilityResponse {
-  success: boolean
-  availability: DaySchedule[]
-  totalDays: number
-  busyEventsCount: number
-  lastUpdated: string
-  error?: string
-  fallback?: boolean
-}
+
 
 export default function AgendarReunionPage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -53,17 +45,17 @@ export default function AgendarReunionPage() {
   const [scheduleCache, setScheduleCache] = useState<{[key: string]: {data: DaySchedule[], timestamp: number}}>({})
 
   // Función para cargar la disponibilidad desde la API local
-  const loadAvailability = async () => {
+  const loadAvailability = useCallback(async () => {
     try {
       setIsLoadingSchedule(true)
       setScheduleError(null)
-      console.log('🚀 DEBUG: Iniciando carga optimizada de disponibilidad...')
+
       
       // Generar 10 días laborales desde hoy
       const businessDays = generateBusinessDays(10)
       const scheduleData: DaySchedule[] = []
       
-      console.log('📊 DEBUG: Días laborales a consultar:', businessDays.length)
+
       
       // Verificar caché (válido por 2 minutos)
       const dates = businessDays.map(day => day.date)
@@ -72,7 +64,6 @@ export default function AgendarReunionPage() {
       const cacheValidTime = 2 * 60 * 1000 // 2 minutos
       
       if (scheduleCache[cacheKey] && (now - scheduleCache[cacheKey].timestamp) < cacheValidTime) {
-        console.log('📦 Usando datos del caché')
         setSchedule(scheduleCache[cacheKey].data)
         setLastUpdated(new Date(scheduleCache[cacheKey].timestamp).toISOString())
         return
@@ -81,26 +72,16 @@ export default function AgendarReunionPage() {
       // Obtener todas las fechas en una sola llamada a la API
       const apiUrl = `/api/meetings?action=available-slots&dates=${encodeURIComponent(JSON.stringify(dates))}`
       
-      console.log('📡 API URL optimizada:', apiUrl)
-      console.log('📅 Fechas a consultar:', dates)
-      
       const response = await fetch(apiUrl)
       const data = await response.json()
-      
-      console.log('✅ Respuesta en lote:', data)
+
       
       if (data.success && data.batchResults) {
         // Procesar cada día con sus horarios disponibles
         for (const day of businessDays) {
           const availableSlots = data.batchResults[day.date] || []
           
-          if (day.dayName === 'lunes') {
-            console.log('🎯 RESPUESTA PARA LUNES:', {
-              fecha: day.date,
-              slotsDisponibles: availableSlots.length,
-              slots: availableSlots
-            })
-          }
+
           
           // Solo horarios de tarde (2 PM a 6 PM)
           const allWorkingHours = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
@@ -125,12 +106,9 @@ export default function AgendarReunionPage() {
           })
         }
       } else {
-        console.error('❌ Error en respuesta en lote:', data.error)
         setScheduleError('Error al cargar disponibilidad. Intenta recargar la página.')
       }
-      
-      console.log('📋 Datos de horarios finales generados:', scheduleData.length)
-      console.log('🎯 Lunes en horarios:', scheduleData.filter(day => day.dayName === 'lunes'))
+
       
       // Guardar en caché
       setScheduleCache(prev => ({
@@ -144,13 +122,12 @@ export default function AgendarReunionPage() {
       setSchedule(scheduleData)
       setLastUpdated(new Date().toISOString())
       
-    } catch (error) {
-      console.error('❌ Error cargando disponibilidad:', error)
+    } catch {
       setScheduleError('Error al cargar disponibilidad. Intenta recargar la página.')
     } finally {
       setIsLoadingSchedule(false)
     }
-  }
+  }, [scheduleCache])
   
   // Función auxiliar para generar días laborales
   const generateBusinessDays = (count: number) => {
@@ -161,10 +138,7 @@ export default function AgendarReunionPage() {
     const nowUTC = new Date()
     const nowInColombia = toZonedTime(nowUTC, colombiaTimeZone)
     
-    console.log('🗓️ Generating business days:', {
-      nowUTC: nowUTC.toISOString(),
-      nowInColombia: format(nowInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone })
-    })
+
     
     // Empezar desde mañana en zona horaria de Colombia
     let currentDate = addDays(nowInColombia, 1)
@@ -180,22 +154,18 @@ export default function AgendarReunionPage() {
         
         days.push({
           date: dateString,
-          dayName: dayNames[dayOfWeek],
+          dayName: dayNames[dayOfWeek] || 'lunes',
           dayNumber: currentDate.getDate(),
-          month: monthNames[currentDate.getMonth()]
+          month: monthNames[currentDate.getMonth()] || 'enero'
         })
         
-        console.log(`✅ DÍA INCLUIDO: ${dayNames[dayOfWeek]} - ${currentDate.toDateString()}`)
-        
-        if (dayOfWeek === 1) {
-          console.log('🎯 LUNES DETECTADO Y AGREGADO CORRECTAMENTE!')
-        }
+
       }
       
       currentDate = addDays(currentDate, 1)
     }
     
-    console.log('📋 Días laborales generados:', days.map(d => `${d.date} (${d.dayName})`));
+
     
     return days
   }
@@ -219,14 +189,7 @@ export default function AgendarReunionPage() {
     
     const isPast = targetWithBuffer <= nowInColombia
     
-    console.log('⏰ [FRONTEND] isPastTime check:', {
-      date,
-      time,
-      nowInColombia: format(nowInColombia, 'yyyy-MM-dd HH:mm:ss'),
-      targetInColombia: format(targetInColombia, 'yyyy-MM-dd HH:mm:ss'),
-      targetWithBuffer: format(targetWithBuffer, 'yyyy-MM-dd HH:mm:ss'),
-      isPast
-    })
+
     
     return isPast
   }
@@ -234,7 +197,7 @@ export default function AgendarReunionPage() {
   // Cargar disponibilidad al montar el componente
   useEffect(() => {
     loadAvailability()
-  }, [])
+  }, [loadAvailability])
 
   // Recargar disponibilidad cada 2 minutos para mantener sincronización
   useEffect(() => {
@@ -243,17 +206,31 @@ export default function AgendarReunionPage() {
     }, 120000) // 2 minutos
 
     return () => clearInterval(interval)
-  }, [])
+  }, [loadAvailability])
 
   // Función para manejar la selección de horario
   const handleTimeSelection = (date: string, time: string) => {
     // Verificar que el horario esté disponible
     const daySchedule = schedule.find(day => day.date === date)
-    if (!daySchedule) return
+    if (!daySchedule) {
+      return
+    }
     
     const slot = daySchedule.slots.find(s => s.time === time)
     if (!slot || !slot.available) {
-      console.log('Horario no disponible:', { date, time, slot })
+      toast.error('Este horario no está disponible. Por favor selecciona otro horario.', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#ef4444',
+          color: '#ffffff',
+          borderRadius: '12px',
+          padding: '16px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        icon: '⚠️'
+      })
       return
     }
     
@@ -272,7 +249,9 @@ export default function AgendarReunionPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!selectedDate || !selectedTime || !email || !name) return
+    if (!selectedDate || !selectedTime || !email || !name) {
+      return
+    }
 
     setIsSubmitting(true)
     
@@ -322,7 +301,6 @@ export default function AgendarReunionPage() {
       }, 1000)
       
     } catch (error) {
-      console.error('Error al agendar reunión:', error)
       toast.error(`Error al agendar la reunión: ${error instanceof Error ? error.message : 'Error desconocido'}`, {
         duration: 5000,
         position: 'top-center',
@@ -580,31 +558,16 @@ export default function AgendarReunionPage() {
                         const monthName = monthNames[dateInColombia.getMonth()]
                         const year = dateInColombia.getFullYear()
                         
-                        console.log('📅 Date formatting:', {
-                          selectedDate,
-                          dateInColombia: format(dateInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-                          formatted: `${dayName}, ${day} de ${monthName} de ${year}`
-                        })
-                        
                         return `${dayName}, ${day} de ${monthName} de ${year}`
                       })()}
                     </p>
                     <p className="text-[#26FFDF] text-sm">
                       <strong>Hora:</strong> {selectedTime && (() => {
-                        console.log('🕐 Formatting selectedTime:', selectedTime)
                         const colombiaTimeZone = 'America/Bogota'
-                        const [hours, minutes] = selectedTime.split(':')
                         const timeString = `${selectedDate}T${selectedTime}:00`
                         const timeObj = parseISO(timeString)
                         const timeInColombia = toZonedTime(fromZonedTime(timeObj, colombiaTimeZone), colombiaTimeZone)
                         const formattedTime = format(timeInColombia, 'h:mm a', { timeZone: colombiaTimeZone })
-                        
-                        console.log('🕐 Time formatting:', {
-                          selectedTime,
-                          timeString,
-                          timeInColombia: format(timeInColombia, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: colombiaTimeZone }),
-                          formattedTime
-                        })
                         
                         return formattedTime
                       })()}

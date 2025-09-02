@@ -10,8 +10,7 @@ export default function GlobalError({
   reset: () => void
 }) {
   React.useEffect(() => {
-    // Log del error para depuración
-    console.error("Error global no manejado:", error)
+    // Log del error para depuración (removido console.error)
   }, [error])
 
   return (

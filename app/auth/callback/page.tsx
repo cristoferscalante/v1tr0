@@ -13,7 +13,7 @@ export default function AuthCallback() {
         const { data, error } = await supabase.auth.getSession()
         
         if (error) {
-          console.error('Error in auth callback:', error)
+          // Error in auth callback (removido console.error)
           router.push('/login?error=callback_error')
           return
         }
@@ -26,8 +26,8 @@ export default function AuthCallback() {
           // No hay sesión
           router.push('/login')
         }
-      } catch (error) {
-        console.error('Unexpected error in auth callback:', error)
+      } catch {
+        // Unexpected error in auth callback (removido console.error)
         router.push('/login?error=unexpected_error')
       }
     }

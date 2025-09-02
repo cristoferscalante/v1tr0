@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import Image from "next/image"
 import { gsap } from "gsap"
 import { Observer } from "gsap/Observer"
 import BackgroundAnimation from "@/components/home/BackgroundAnimation"
@@ -97,7 +98,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
   // Función central que maneja la lógica de la animación de transición entre diapositivas
   const gotoSection = useCallback(
     (index: number, direction: number) => {
-      if (animating.current) return
+      if (animating.current) { return }
       animating.current = true
 
       const sections = sectionsRef.current
@@ -122,35 +123,53 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
       // Configuración inicial de visibilidad y z-index para la transición
       gsap.set(sections, { zIndex: 0, autoAlpha: 0 }) // Oculta todo
-      gsap.set(sections[currentIndex], { zIndex: 1, autoAlpha: 1 }) // Muestra la actual
-      gsap.set(sections[index], { zIndex: 2, autoAlpha: 1 }) // Pone la siguiente en primer plano
+      if (sections[currentIndex]) {
+        gsap.set(sections[currentIndex]!, { zIndex: 1, autoAlpha: 1 }) // Muestra la actual
+      }
+      if (sections[index]) {
+        gsap.set(sections[index]!, { zIndex: 2, autoAlpha: 1 }) // Pone la siguiente en primer plano
+      }
 
-      tl.set(count, { text: index + 1 }, 0.32) // Actualiza el contador de diapositivas
-        .fromTo(
-          outerWrappers[index],
-          { xPercent: 100 * direction },
-          { xPercent: 0 },
-          0,
-        ) // Desplaza el contenedor exterior de la siguiente diapositiva
-        .fromTo(
-          innerWrappers[index],
-          { xPercent: -100 * direction },
-          { xPercent: 0 },
-          0,
-        ) // Desplaza el contenedor interior de la siguiente diapositiva
-        .to(
-          heading,
-          { "--width": 800, xPercent: 30 * direction },
-          0,
-        ) // Anima el título de la diapositiva actual
-        .fromTo(
-          nextHeading,
-          { "--width": 800, xPercent: -30 * direction },
-          { "--width": 200, xPercent: 0 },
-          0,
-        ) // Anima el título de la siguiente diapositiva
+      if (count) {
+        tl.set(count, { textContent: index + 1 }, 0.32) // Actualiza el contador de diapositivas
+      }
+      
+      if (outerWrappers[index]) {
+        tl.fromTo(
+            outerWrappers[index]!,
+            { xPercent: 100 * direction },
+            { xPercent: 0 },
+            0,
+          ) // Desplaza el contenedor exterior de la siguiente diapositiva
+      }
+      
+      if (innerWrappers[index]) {
+        tl.fromTo(
+            innerWrappers[index]!,
+            { xPercent: -100 * direction },
+            { xPercent: 0 },
+            0,
+          ) // Desplaza el contenedor interior de la siguiente diapositiva
+      }
+      
+      if (heading) {
+        tl.to(
+            heading,
+            { "--width": 800, xPercent: 30 * direction },
+            0,
+          ) // Anima el título de la diapositiva actual
+      }
+      
+      if (nextHeading) {
+        tl.fromTo(
+            nextHeading,
+            { "--width": 800, xPercent: -30 * direction },
+            { "--width": 200, xPercent: 0 },
+            0,
+          ) // Anima el título de la siguiente diapositiva
+      }
 
-        .timeScale(0.8) // Ajusta la velocidad de la línea de tiempo
+      tl.timeScale(0.8) // Ajusta la velocidad de la línea de tiempo
 
       setCurrentIndex(index)
       // Actualizar la carga de videos después de la transición
@@ -161,7 +180,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
   // Configuración del Observer para la navegación
   useEffect(() => {
-    let observer: any
+    let observer: Observer | null = null
 
     const initObserver = () => {
       observer = Observer.create({
@@ -179,7 +198,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
     return () => {
       clearTimeout(timer)
-      if (observer) observer.kill()
+      if (observer) { observer.kill() }
     }
   }, [currentIndex, gotoSection])
 
@@ -261,7 +280,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                         <div className="text-center mb-16">
                           <h2 
                             className="slide__heading text-5xl md:text-7xl font-bold text-white relative z-10"
-                            style={{ '--width': '200px' } as any}
+                            style={{ '--width': '200px' } as React.CSSProperties}
                           >
                             {slide.title}
                           </h2>
@@ -274,14 +293,14 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                     </>
                   ) : slide.img && (
                     <>
-                      <img src={slide.img} alt={slide.title} className="absolute inset-0 w-full h-full object-cover opacity-40" />
+                      <Image src={slide.img} alt={slide.title} fill className="object-cover opacity-40" />
                       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40"></div>
                     </>
                   )}
                   {!slide.video && (
                     <h2 
                       className="slide__heading text-6xl md:text-8xl font-bold text-white mb-8 relative z-10"
-                      style={{ '--width': '200px' } as any}
+                      style={{ '--width': '200px' } as React.CSSProperties}
                     >
                       {slide.title}
                     </h2>

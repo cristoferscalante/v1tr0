@@ -9,12 +9,11 @@ import Link from "next/link"
 import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 import { MDXContent } from "@/components/blog/MDXContent"
 
-// Ajustamos para deshabilitar la regla eslint sobre 'any' solo en este caso específico
-// donde necesitamos cumplir con los tipos internos de Next.js
-/* eslint-disable @typescript-eslint/no-explicit-any */
+interface PageProps {
+  params: Promise<{ slug: string }>
+}
 
-// Usamos los mismos tipos que usa Next.js internamente
-export async function generateMetadata(props: any): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const { slug } = await props.params
 
   try {
@@ -74,16 +73,18 @@ async function PostContent({ slug }: { slug: string }) {
     notFound()
   }
 
+  const headerProps = {
+    title: post.meta.title,
+    date: post.meta.date,
+    author: post.meta.author,
+    coverImage: post.meta.coverImage,
+    readingTime: post.meta.readingTime || "",
+    ...(post.meta.tags && { tags: post.meta.tags })
+  }
+
   return (
     <article className="max-w-4xl mx-auto">
-      <PostHeader
-        title={post.meta.title}
-        date={post.meta.date}
-        author={post.meta.author}
-        coverImage={post.meta.coverImage}
-        readingTime={post.meta.readingTime || ""}
-        tags={post.meta.tags}
-      />
+      <PostHeader {...headerProps} />
 
       <div className="flex flex-col md:flex-row gap-8 mt-8">
         <aside className="md:w-72 md:sticky md:top-24 h-fit order-2 md:order-1">
@@ -134,8 +135,7 @@ function PostLoading() {
   )
 }
 
-// Usamos el mismo enfoque para el componente de página
-export default async function PostPage(props: any) {
+export default async function PostPage(props: PageProps) {
   const { slug } = await props.params
 
   return (
@@ -156,4 +156,3 @@ export default async function PostPage(props: any) {
     </>
   )
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */

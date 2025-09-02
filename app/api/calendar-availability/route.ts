@@ -17,7 +17,7 @@ async function getBusyTimes(startDate: string, endDate: string) {
     
     oauth2Client.setCredentials({
       access_token: accessToken,
-      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+      refresh_token: process.env.GOOGLE_REFRESH_TOKEN || null,
     })
 
     const response = await calendar.events.list({
@@ -43,7 +43,7 @@ async function getBusyTimes(startDate: string, endDate: string) {
 }
 
 // Función para generar horarios disponibles
-function generateAvailableSlots(date: string, busyTimes: any[]) {
+function generateAvailableSlots(date: string, busyTimes: { start: string; end: string; summary: string }[]) {
   const slots = []
   // Horarios de trabajo: 2:00 PM - 6:00 PM únicamente
   const workingHours = [
@@ -57,7 +57,7 @@ function generateAvailableSlots(date: string, busyTimes: any[]) {
   for (const time of workingHours) {
     const [hour, minute] = time.split(':')
     const slotStart = new Date(date)
-    slotStart.setHours(parseInt(hour), parseInt(minute), 0, 0)
+    slotStart.setHours(parseInt(hour || '0'), parseInt(minute || '0'), 0, 0)
     const slotEnd = new Date(slotStart.getTime() + 30 * 60000) // 30 minutos
 
     // Verificar si el slot está ocupado por eventos existentes
@@ -91,7 +91,7 @@ function generateAvailableSlots(date: string, busyTimes: any[]) {
 // Función para generar días laborales (excluyendo fines de semana)
 function getWorkingDays(startDate: Date, numberOfDays: number) {
   const workingDays = []
-  let currentDate = new Date(startDate)
+  const currentDate = new Date(startDate)
   
   while (workingDays.length < numberOfDays) {
     const dayOfWeek = currentDate.getDay()
@@ -122,7 +122,14 @@ export async function GET(request: NextRequest) {
     
     // Calcular rango de fechas para consultar eventos
     const startDate = workingDays[0]
-    const endDate = new Date(workingDays[workingDays.length - 1])
+    if (!startDate) {
+      throw new Error('No working days found')
+    }
+    const lastWorkingDay = workingDays[workingDays.length - 1]
+    if (!lastWorkingDay) {
+      throw new Error('No working days found')
+    }
+    const endDate = new Date(lastWorkingDay)
     endDate.setHours(23, 59, 59, 999)
     
     // Obtener eventos ocupados del calendario
@@ -133,9 +140,9 @@ export async function GET(request: NextRequest) {
     
     // Generar disponibilidad para cada día
     const availability = workingDays.map(date => {
-      const dateStr = date.toISOString().split('T')[0]
+      const dateStr = date.toISOString().split('T')[0] || ''
       const dayBusyTimes = busyTimes.filter(busy => {
-        const busyDate = new Date(busy.start).toISOString().split('T')[0]
+        const busyDate = new Date(busy.start).toISOString().split('T')[0] || ''
         return busyDate === dateStr
       })
       
@@ -157,18 +164,17 @@ export async function GET(request: NextRequest) {
       lastUpdated: new Date().toISOString()
     })
     
-  } catch (error) {
-    console.error('Error en calendar-availability:', error)
-    
+  } catch (error: unknown) {
     // Manejar errores específicos de Google Calendar
-    if (error.message?.includes('insufficient authentication scopes')) {
+    const errorMessage = error instanceof Error ? error.message : ''
+    if (errorMessage.includes('insufficient authentication scopes')) {
       return NextResponse.json(
         { error: 'Error de autenticación con Google Calendar' },
         { status: 503 }
       )
     }
     
-    if (error.message?.includes('quota')) {
+    if (errorMessage.includes('quota')) {
       return NextResponse.json(
         { error: 'Límite de API alcanzado. Intente nuevamente en unos minutos.' },
         { status: 429 }
@@ -180,7 +186,7 @@ export async function GET(request: NextRequest) {
     const workingDays = getWorkingDays(today, 10)
     
     const fallbackAvailability = workingDays.map(date => {
-      const dateStr = date.toISOString().split('T')[0]
+      const dateStr = date.toISOString().split('T')[0] || ''
       return {
         date: dateStr,
         dayName: date.toLocaleDateString('es-ES', { weekday: 'long' }),

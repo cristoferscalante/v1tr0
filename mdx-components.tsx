@@ -30,7 +30,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     code: ({ children, className }) => {
       // Para bloques de código con sintaxis resaltada
-      const language = className ? className.replace("language-", "") : ""
       if (className) {
         return (
           <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto my-4">

@@ -46,18 +46,17 @@ function CopyButton({ text }: { text: string }) {
 
 // Actualizamos MDXImageProps para aceptar width y height como string o number
 type MDXImageProps = {
-  src?: string
-  alt?: string
-  width?: string | number
-  height?: string | number
+  src?: string | Blob | undefined
+  alt?: string | undefined
+  width?: string | number | undefined
+  height?: string | number | undefined
 } & Omit<ImageProps, "src" | "alt" | "width" | "height">
 
-// Define un tipo para las props del bloque de código, incluyendo 'node' opcional:
+// Define un tipo para las props del bloque de código:
 interface CodeBlockProps extends HTMLAttributes<HTMLElement> {
-  node?: unknown
   inline?: boolean
-  className?: string
-  children?: ReactNode // Cambiado de required a optional
+  className?: string | undefined
+  children?: ReactNode
 }
 
 const CodeBlock: FC<CodeBlockProps> = ({ inline, className, children, ...props }) => {
@@ -180,6 +179,8 @@ export function MDXContent({ content }: MDXContentProps) {
           if (hasOnlyImage && React.isValidElement(childrenArray[0])) {
             const imgElement = childrenArray[0] as React.ReactElement<MDXImageProps>
             const { src, alt } = imgElement.props
+            // Convertir src a string si es un Blob
+            const srcString = src instanceof Blob ? URL.createObjectURL(src) : (src || "/placeholder.svg")
 
             return (
               <figure className="my-8 relative group">
@@ -190,7 +191,7 @@ export function MDXContent({ content }: MDXContentProps) {
                 
                 <div className="relative overflow-hidden rounded-2xl shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100">
                   <Image
-                    src={src || "/placeholder.svg"}
+                    src={srcString}
                     alt={alt || ""}
                     width={1200}
                     height={630}
@@ -208,13 +209,19 @@ export function MDXContent({ content }: MDXContentProps) {
             </p>
           )
         },
-        a: ({ href, ...props }) => (
-          <Link
-            href={href || "#"}
-            className={`font-medium transition-all duration-300 hover:underline decoration-2 underline-offset-2 ${isDark ? "text-[#26FFDF] hover:text-[#08A696]" : "text-[#08A696] hover:text-[#025159]"}`}
-            {...props}
-          />
-        ),
+        a: ({ href, ...props }) => {
+          // Filtrar props undefined para evitar errores de tipo
+          const filteredProps = Object.fromEntries(
+            Object.entries(props).filter(([, value]) => value !== undefined)
+          )
+          return (
+            <Link
+              href={href || "#"}
+              className={`font-medium transition-all duration-300 hover:underline decoration-2 underline-offset-2 ${isDark ? "text-[#26FFDF] hover:text-[#08A696]" : "text-[#08A696] hover:text-[#025159]"}`}
+              {...filteredProps}
+            />
+          )
+        },
         ul: ({ ...props }) => <ul className={`mb-6 ml-6 list-disc space-y-2 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`} {...props} />,
         ol: ({ ...props }) => <ol className={`mb-6 ml-6 list-decimal space-y-2 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`} {...props} />,
         li: ({ ...props }) => <li className="mb-1" {...props} />,
@@ -229,10 +236,16 @@ export function MDXContent({ content }: MDXContentProps) {
           // Convertir width y height a números, usando valores por defecto si no se proveen
           const numericWidth = props.width ? Number(props.width) : 1200
           const numericHeight = props.height ? Number(props.height) : 630
+          // Convertir src a string si es un Blob
+          const srcString = src instanceof Blob ? URL.createObjectURL(src) : (src || "/placeholder.svg")
+          // Filtrar props undefined
+          const filteredProps = Object.fromEntries(
+            Object.entries(props).filter(([, value]) => value !== undefined)
+          )
           return (
             <Image
-              {...props}
-              src={src || "/placeholder.svg"}
+              {...filteredProps}
+              src={srcString}
               alt={alt || ""}
               width={numericWidth}
               height={numericHeight}
@@ -240,7 +253,7 @@ export function MDXContent({ content }: MDXContentProps) {
             />
           )
         },
-        code: CodeBlock as any, // Cast temporal para evitar error de tipado
+        code: CodeBlock,
       }}
     >
       {content}

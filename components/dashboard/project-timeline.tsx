@@ -1,285 +1,288 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { CalendarDays, CheckCircle, Clock, FileText, Users } from "lucide-react"
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { 
+  CheckCircle, 
+  Circle, 
+  Clock, 
+  AlertCircle,
+  Calendar,
+  User,
+  Plus
+} from 'lucide-react';
 
-interface ProjectTimelineProps {
-  projectId?: string
+interface TimelineItem {
+  id: string;
+  title: string;
+  description: string;
+  status: 'completed' | 'in_progress' | 'pending' | 'overdue';
+  startDate: string;
+  endDate: string;
+  assignee: string;
+  progress: number;
+  dependencies?: string[];
 }
 
-export function ProjectTimeline({ projectId }: ProjectTimelineProps) {
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+interface ProjectTimelineProps {
+  projectId?: string;
+}
 
-  const toggleItem = (id: string) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }))
-  }
+export function ProjectTimeline({}: ProjectTimelineProps) {
+  // En un entorno real, estos datos vendrían de una API
+  const [timelineItems] = useState<TimelineItem[]>([
+    {
+      id: '1',
+      title: 'Análisis y Planificación',
+      description: 'Definición de requisitos, análisis de mercado y planificación del proyecto',
+      status: 'completed',
+      startDate: '2024-01-15',
+      endDate: '2024-02-01',
+      assignee: 'Ana García',
+      progress: 100
+    },
+    {
+      id: '2',
+      title: 'Diseño de UI/UX',
+      description: 'Creación de wireframes, mockups y prototipo interactivo',
+      status: 'completed',
+      startDate: '2024-02-01',
+      endDate: '2024-02-20',
+      assignee: 'Carlos López',
+      progress: 100
+    },
+    {
+      id: '3',
+      title: 'Desarrollo del Backend',
+      description: 'API REST, base de datos y lógica de negocio',
+      status: 'in_progress',
+      startDate: '2024-02-15',
+      endDate: '2024-04-15',
+      assignee: 'María Rodríguez',
+      progress: 75
+    },
+    {
+      id: '4',
+      title: 'Desarrollo del Frontend',
+      description: 'Interfaz de usuario, integración con API y responsive design',
+      status: 'in_progress',
+      startDate: '2024-03-01',
+      endDate: '2024-05-01',
+      assignee: 'Juan Pérez',
+      progress: 60,
+      dependencies: ['2']
+    },
+    {
+      id: '5',
+      title: 'Integración de Pagos',
+      description: 'Implementación de pasarelas de pago y procesamiento de transacciones',
+      status: 'pending',
+      startDate: '2024-04-01',
+      endDate: '2024-04-20',
+      assignee: 'Luis Martín',
+      progress: 0,
+      dependencies: ['3']
+    },
+    {
+      id: '6',
+      title: 'Pruebas y QA',
+      description: 'Testing funcional, pruebas de rendimiento y corrección de bugs',
+      status: 'pending',
+      startDate: '2024-05-01',
+      endDate: '2024-05-20',
+      assignee: 'Elena Sánchez',
+      progress: 0,
+      dependencies: ['4', '5']
+    },
+    {
+      id: '7',
+      title: 'Despliegue y Lanzamiento',
+      description: 'Configuración de servidores, despliegue y puesta en producción',
+      status: 'pending',
+      startDate: '2024-05-20',
+      endDate: '2024-06-01',
+      assignee: 'Roberto Silva',
+      progress: 0,
+      dependencies: ['6']
+    }
+  ]);
 
-  // Datos de ejemplo para la línea de tiempo
-  const timelineItems = [
-    {
-      id: "1",
-      date: "15 Mar 2023",
-      title: "Inicio del Proyecto",
-      description: "Reunión inicial con el cliente para definir los objetivos y alcance del proyecto.",
-      type: "milestone",
-      status: "completed",
-      assignee: {
-        name: "María González",
-        avatar: "/team/maria.jpg",
-        initials: "MG",
-      },
-      icon: <FileText className="h-5 w-5" />,
-    },
-    {
-      id: "2",
-      date: "22 Mar 2023",
-      title: "Análisis de Requisitos",
-      description:
-        "Recopilación y análisis de los requisitos funcionales y no funcionales del sistema. Definición de historias de usuario y casos de uso.",
-      type: "phase",
-      status: "completed",
-      assignee: {
-        name: "Carlos Rodríguez",
-        avatar: "/team/carlos.jpg",
-        initials: "CR",
-      },
-      icon: <FileText className="h-5 w-5" />,
-    },
-    {
-      id: "3",
-      date: "10 Abr 2023",
-      title: "Diseño de UI/UX",
-      description:
-        "Creación de wireframes, mockups y prototipos interactivos. Validación del diseño con el cliente y ajustes según feedback.",
-      type: "phase",
-      status: "completed",
-      assignee: {
-        name: "Ana López",
-        avatar: "/team/ana.jpg",
-        initials: "AL",
-      },
-      icon: <FileText className="h-5 w-5" />,
-    },
-    {
-      id: "4",
-      date: "05 May 2023",
-      title: "Desarrollo Frontend",
-      description:
-        "Implementación de la interfaz de usuario utilizando React y Next.js. Desarrollo de componentes reutilizables y responsive.",
-      type: "phase",
-      status: "in-progress",
-      assignee: {
-        name: "Juan Pérez",
-        avatar: "/team/juan.jpg",
-        initials: "JP",
-      },
-      icon: <Clock className="h-5 w-5" />,
-    },
-    {
-      id: "5",
-      date: "20 May 2023",
-      title: "Desarrollo Backend",
-      description:
-        "Implementación de la API REST, modelos de datos y lógica de negocio. Integración con bases de datos y servicios externos.",
-      type: "phase",
-      status: "in-progress",
-      assignee: {
-        name: "Pedro Sánchez",
-        avatar: "/team/pedro.jpg",
-        initials: "PS",
-      },
-      icon: <Clock className="h-5 w-5" />,
-    },
-    {
-      id: "6",
-      date: "15 Jun 2023",
-      title: "Reunión de Seguimiento",
-      description: "Presentación del avance del proyecto al cliente. Revisión de objetivos y ajustes de planificación.",
-      type: "meeting",
-      status: "scheduled",
-      assignee: {
-        name: "María González",
-        avatar: "/team/maria.jpg",
-        initials: "MG",
-      },
-      icon: <CalendarDays className="h-5 w-5" />,
-    },
-    {
-      id: "7",
-      date: "10 Jul 2023",
-      title: "Pruebas de Integración",
-      description:
-        "Realización de pruebas de integración entre los diferentes módulos del sistema. Identificación y corrección de errores.",
-      type: "phase",
-      status: "pending",
-      assignee: {
-        name: "Laura Martínez",
-        avatar: "/team/laura.jpg",
-        initials: "LM",
-      },
-      icon: <Clock className="h-5 w-5" />,
-    },
-    {
-      id: "8",
-      date: "25 Jul 2023",
-      title: "Pruebas de Usuario",
-      description:
-        "Realización de pruebas con usuarios finales para validar la usabilidad y funcionalidad del sistema. Recopilación de feedback.",
-      type: "phase",
-      status: "pending",
-      assignee: {
-        name: "Ana López",
-        avatar: "/team/ana.jpg",
-        initials: "AL",
-      },
-      icon: <Users className="h-5 w-5" />,
-    },
-    {
-      id: "9",
-      date: "15 Ago 2023",
-      title: "Implementación",
-      description:
-        "Despliegue del sistema en el entorno de producción. Configuración de servidores, bases de datos y servicios.",
-      type: "phase",
-      status: "pending",
-      assignee: {
-        name: "Pedro Sánchez",
-        avatar: "/team/pedro.jpg",
-        initials: "PS",
-      },
-      icon: <Clock className="h-5 w-5" />,
-    },
-    {
-      id: "10",
-      date: "30 Ago 2023",
-      title: "Capacitación",
-      description:
-        "Capacitación a los usuarios finales sobre el uso del sistema. Elaboración de manuales y documentación técnica.",
-      type: "phase",
-      status: "pending",
-      assignee: {
-        name: "Laura Martínez",
-        avatar: "/team/laura.jpg",
-        initials: "LM",
-      },
-      icon: <Users className="h-5 w-5" />,
-    },
-    {
-      id: "11",
-      date: "15 Sep 2023",
-      title: "Entrega Final",
-      description: "Entrega final del proyecto al cliente. Firma de acta de aceptación y cierre del proyecto.",
-      type: "milestone",
-      status: "pending",
-      assignee: {
-        name: "María González",
-        avatar: "/team/maria.jpg",
-        initials: "MG",
-      },
-      icon: <CheckCircle className="h-5 w-5" />,
-    },
-  ]
-
-  const getStatusColor = (status: string) => {
+  const getStatusIcon = (status: TimelineItem['status']) => {
     switch (status) {
-      case "completed":
-        return "bg-green-500 text-white"
-      case "in-progress":
-        return "bg-highlight text-white"
-      case "scheduled":
-        return "bg-amber-500 text-white"
-      case "pending":
-        return "bg-gray-400 text-white"
+      case 'completed':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'in_progress':
+        return <Clock className="h-5 w-5 text-blue-500" />;
+      case 'overdue':
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
-        return "bg-gray-400 text-white"
+        return <Circle className="h-5 w-5 text-gray-400" />;
     }
-  }
+  };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "milestone":
-        return <div className="h-3 w-3 rounded-full bg-red-500"></div>
-      case "phase":
-        return <div className="h-3 w-3 rounded-full bg-highlight"></div>
-      case "meeting":
-        return <div className="h-3 w-3 rounded-full bg-amber-500"></div>
-      default:
-        return <div className="h-3 w-3 rounded-full bg-gray-400"></div>
+  const getStatusColor = (status: TimelineItem['status']) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'in_progress': return 'bg-blue-100 text-blue-800';
+      case 'overdue': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
+
+  const getStatusText = (status: TimelineItem['status']) => {
+    switch (status) {
+      case 'completed': return 'Completado';
+      case 'in_progress': return 'En Progreso';
+      case 'overdue': return 'Atrasado';
+      default: return 'Pendiente';
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const calculateDuration = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
 
   return (
-    <div className="space-y-6 p-4">
-      {timelineItems.map((item, index) => (
-        <div key={item.id} className="relative">
-          {/* Línea vertical conectora */}
-          {index < timelineItems.length - 1 && (
-            <div className="absolute left-6 top-10 bottom-0 w-0.5 bg-custom-2/30"></div>
-          )}
-
-          <div className="flex gap-4">
-            {/* Icono y línea */}
-            <div className="flex flex-col items-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-custom-1/50 text-highlight">
-                {item.icon}
+    <Card className="h-full">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Línea de Tiempo del Proyecto</CardTitle>
+          <Button size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Agregar Fase
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {timelineItems.map((item, index) => (
+            <div key={item.id} className="relative">
+              {/* Línea conectora */}
+              {index < timelineItems.length - 1 && (
+                <div className="absolute left-6 top-12 w-0.5 h-16 bg-gray-200" />
+              )}
+              
+              <div className="flex gap-4">
+                {/* Icono de estado */}
+                <div className="flex-shrink-0 mt-1">
+                  {getStatusIcon(item.status)}
+                </div>
+                
+                {/* Contenido */}
+                <div className="flex-1 min-w-0">
+                  <Card className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mt-1">{item.description}</p>
+                      </div>
+                      <Badge className={getStatusColor(item.status)}>
+                        {getStatusText(item.status)}
+                      </Badge>
+                    </div>
+                    
+                    {/* Progreso */}
+                    {item.status === 'in_progress' && (
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">Progreso</span>
+                          <span className="text-sm text-gray-600">{item.progress}%</span>
+                        </div>
+                        <Progress value={item.progress} className="h-2" />
+                      </div>
+                    )}
+                    
+                    {/* Información adicional */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">
+                          {formatDate(item.startDate)} - {formatDate(item.endDate)}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">{item.assignee}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">
+                          {calculateDuration(item.startDate, item.endDate)} días
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Dependencias */}
+                    {item.dependencies && item.dependencies.length > 0 && (
+                      <div className="mt-3 pt-3 border-t">
+                        <span className="text-sm text-gray-600">Depende de: </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {item.dependencies.map((depId) => {
+                            const depItem = timelineItems.find(t => t.id === depId);
+                            return depItem ? (
+                              <Badge key={depId} variant="outline" className="text-xs">
+                                {depItem.title}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                </div>
               </div>
             </div>
-
-            {/* Contenido */}
-            <Card className="flex-1 border border-custom-2/20">
-              <CardContent className="p-4">
-                <div className="flex flex-col space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {getTypeIcon(item.type)}
-                      <span className="font-medium">{item.title}</span>
-                    </div>
-                    <Badge className={getStatusColor(item.status)}>
-                      {item.status === "completed"
-                        ? "Completado"
-                        : item.status === "in-progress"
-                          ? "En Progreso"
-                          : item.status === "scheduled"
-                            ? "Programado"
-                            : "Pendiente"}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm text-textMuted">
-                    <span>{item.date}</span>
-                    <div className="flex items-center gap-2">
-                      <span>Responsable:</span>
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src={item.assignee.avatar || "/placeholder.svg"} alt={item.assignee.name} />
-                        <AvatarFallback>{item.assignee.initials}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => toggleItem(item.id)}
-                    className="text-left text-sm text-highlight hover:underline focus:outline-none"
-                  >
-                    {expandedItems[item.id] ? "Ver menos" : "Ver detalles"}
-                  </button>
-
-                  {expandedItems[item.id] && (
-                    <div className="mt-2 text-sm text-textMuted">
-                      <p>{item.description}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+          ))}
+        </div>
+        
+        {/* Resumen del progreso */}
+        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+          <h4 className="font-semibold mb-3">Resumen del Progreso</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div>
+              <p className="text-2xl font-bold text-green-600">
+                {timelineItems.filter(item => item.status === 'completed').length}
+              </p>
+              <p className="text-sm text-gray-600">Completadas</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-blue-600">
+                {timelineItems.filter(item => item.status === 'in_progress').length}
+              </p>
+              <p className="text-sm text-gray-600">En Progreso</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-600">
+                {timelineItems.filter(item => item.status === 'pending').length}
+              </p>
+              <p className="text-sm text-gray-600">Pendientes</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-red-600">
+                {timelineItems.filter(item => item.status === 'overdue').length}
+              </p>
+              <p className="text-sm text-gray-600">Atrasadas</p>
+            </div>
           </div>
         </div>
-      ))}
-    </div>
-  )
+      </CardContent>
+    </Card>
+  );
 }

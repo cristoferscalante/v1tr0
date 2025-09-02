@@ -2,7 +2,7 @@
 
 import { type ReactNode, type FC, useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, LogIn } from "lucide-react"
+import { X, LogIn } from "lucide-react"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "@/components/theme-provider"
@@ -204,7 +204,7 @@ const MobileNavLink: FC<{ href: string; children: ReactNode; indent?: boolean; o
     <Link
       href={href}
       className={`block w-full text-center px-4 py-3 text-lg font-medium transition-all duration-300 rounded-xl ${isService ? "text-white hover:text-white/90 hover:bg-[#08A696]/10" : (isDark ? "text-[#26FFDF] hover:text-[#26FFDF]/90 hover:bg-[#08A696]/10" : "text-[#08A696] hover:text-[#08A696]/90 hover:bg-[#08A696]/10")} ${indent ? "ml-4" : ""}`}
-      onClick={onClick}
+      {...(onClick && { onClick })}
     >
       {children}
     </Link>

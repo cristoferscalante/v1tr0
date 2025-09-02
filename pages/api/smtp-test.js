@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import { promisify } from 'util';
 import net from 'net';
 
 export default async function handler(req, res) {
@@ -20,12 +19,11 @@ export default async function handler(req, res) {
     tests: []
   };
 
-  console.log('🔍 Iniciando diagnóstico SMTP...');
-  console.log('📋 Variables de entorno:', diagnostics.environment);
+
 
   // Test 1: Verificar conectividad básica al servidor
   try {
-    console.log('\n🌐 Test 1: Conectividad básica al servidor');
+
     const isConnectable = await testServerConnectivity(
       process.env.SMTP_HOST, 
       parseInt(process.env.SMTP_PORT)
@@ -37,9 +35,9 @@ export default async function handler(req, res) {
       details: isConnectable ? 'Servidor accesible' : 'No se puede conectar al servidor'
     });
     
-    console.log(`✅ Resultado: ${isConnectable ? 'CONECTADO' : 'FALLO DE CONEXIÓN'}`);
+
   } catch (error) {
-    console.log('❌ Error en conectividad:', error.message);
+
     diagnostics.tests.push({
       name: 'Conectividad del servidor',
       status: 'ERROR',
@@ -49,7 +47,7 @@ export default async function handler(req, res) {
 
   // Test 2: Configuración SSL/TLS para puerto 465
   try {
-    console.log('\n🔒 Test 2: Configuración SSL/TLS (Puerto 465)');
+
     const config465 = {
       host: process.env.SMTP_HOST,
       port: 465,
@@ -71,9 +69,9 @@ export default async function handler(req, res) {
       details: 'Autenticación SSL exitosa en puerto 465'
     });
     
-    console.log('✅ Puerto 465 SSL: EXITOSO');
+
   } catch (error) {
-    console.log('❌ Error puerto 465 SSL:', error.message);
+
     diagnostics.tests.push({
       name: 'Configuración SSL Puerto 465',
       status: 'FAIL',
@@ -83,7 +81,7 @@ export default async function handler(req, res) {
 
   // Test 3: Configuración STARTTLS para puerto 587
   try {
-    console.log('\n🔐 Test 3: Configuración STARTTLS (Puerto 587)');
+
     const config587 = {
       host: process.env.SMTP_HOST,
       port: 587,
@@ -106,9 +104,9 @@ export default async function handler(req, res) {
       details: 'Autenticación STARTTLS exitosa en puerto 587'
     });
     
-    console.log('✅ Puerto 587 STARTTLS: EXITOSO');
+
   } catch (error) {
-    console.log('❌ Error puerto 587 STARTTLS:', error.message);
+
     diagnostics.tests.push({
       name: 'Configuración STARTTLS Puerto 587',
       status: 'FAIL',
@@ -118,7 +116,7 @@ export default async function handler(req, res) {
 
   // Test 4: Configuración actual del proyecto
   try {
-    console.log('\n⚙️ Test 4: Configuración actual del proyecto');
+
     const currentConfig = {
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT),
@@ -132,7 +130,7 @@ export default async function handler(req, res) {
       logger: true
     };
 
-    console.log('📝 Configuración actual:', JSON.stringify(currentConfig, null, 2));
+
     
     const currentTransporter = nodemailer.createTransport(currentConfig);
     const verifyCurrent = await currentTransporter.verify();
@@ -144,9 +142,9 @@ export default async function handler(req, res) {
       config: currentConfig
     });
     
-    console.log('✅ Configuración actual: EXITOSA');
+
   } catch (error) {
-    console.log('❌ Error configuración actual:', error.message);
+
     diagnostics.tests.push({
       name: 'Configuración actual del proyecto',
       status: 'FAIL',
@@ -161,7 +159,7 @@ export default async function handler(req, res) {
   
   if (successfulTest) {
     try {
-      console.log('\n📧 Test 5: Envío de correo de prueba');
+
       
       let testConfig;
       if (successfulTest.name.includes('465')) {
@@ -225,9 +223,9 @@ export default async function handler(req, res) {
         configUsed: testConfig
       });
       
-      console.log('✅ Correo de prueba enviado:', result.messageId);
+
     } catch (error) {
-      console.log('❌ Error enviando correo de prueba:', error.message);
+
       diagnostics.tests.push({
         name: 'Envío de correo de prueba',
         status: 'FAIL',
@@ -246,7 +244,7 @@ export default async function handler(req, res) {
   const passedTests = diagnostics.tests.filter(test => test.status === 'PASS').length;
   const totalTests = diagnostics.tests.length;
   
-  console.log(`\n📊 Resumen: ${passedTests}/${totalTests} pruebas exitosas`);
+
   
   diagnostics.summary = {
     totalTests,

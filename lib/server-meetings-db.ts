@@ -9,7 +9,8 @@ export interface MeetingData {
   clientName: string;
   clientEmail: string;
   clientPhone?: string;
-  meetingType: 'consultation' | 'follow-up' | 'presentation';
+  clientCompany?: string;
+  meetingType: 'consultation' | 'follow-up' | 'presentation' | 'other';
   status: 'scheduled' | 'completed' | 'cancelled';
   notes?: string;
   createdAt: string;
@@ -95,11 +96,44 @@ class ServerMeetingsDB {
       return null;
     }
     
-    meetings[index] = {
-      ...meetings[index],
-      ...updates,
+    const originalMeeting = meetings[index];
+    if (!originalMeeting) {
+      return null;
+    }
+    
+    const updatedMeeting: MeetingData = {
+      id: originalMeeting.id,
+      date: updates.date ?? originalMeeting.date,
+      time: updates.time ?? originalMeeting.time,
+      duration: updates.duration ?? originalMeeting.duration,
+      clientName: updates.clientName ?? originalMeeting.clientName,
+      clientEmail: updates.clientEmail ?? originalMeeting.clientEmail,
+      meetingType: updates.meetingType ?? originalMeeting.meetingType,
+      status: updates.status ?? originalMeeting.status,
+      createdAt: originalMeeting.createdAt,
       updatedAt: new Date().toISOString()
     };
+    
+    // Manejar propiedades opcionales explícitamente
+    if (updates.clientPhone !== undefined) {
+      updatedMeeting.clientPhone = updates.clientPhone;
+    } else if (originalMeeting.clientPhone !== undefined) {
+      updatedMeeting.clientPhone = originalMeeting.clientPhone;
+    }
+    
+    if (updates.clientCompany !== undefined) {
+      updatedMeeting.clientCompany = updates.clientCompany;
+    } else if (originalMeeting.clientCompany !== undefined) {
+      updatedMeeting.clientCompany = originalMeeting.clientCompany;
+    }
+    
+    if (updates.notes !== undefined) {
+      updatedMeeting.notes = updates.notes;
+    } else if (originalMeeting.notes !== undefined) {
+      updatedMeeting.notes = originalMeeting.notes;
+    }
+    
+    meetings[index] = updatedMeeting;
     
     this.writeJsonFile(this.MEETINGS_FILE, meetings);
     return meetings[index];
@@ -174,11 +208,26 @@ class ServerMeetingsDB {
     
     if (existingClientIndex !== -1) {
       // Actualizar cliente existente
-      clients[existingClientIndex] = {
-        ...clients[existingClientIndex],
-        ...client,
+      const existingClient = clients[existingClientIndex];
+      if (!existingClient) {
+        throw new Error('Cliente no encontrado');
+      }
+      
+      const updatedClient: ClientData = {
+        id: existingClient.id,
+        email: client.email,
+        name: client.name,
+        meetings: existingClient.meetings,
+        createdAt: existingClient.createdAt,
         updatedAt: new Date().toISOString()
       };
+      
+      // Manejar propiedad opcional phone
+      if (client.phone !== undefined) {
+        updatedClient.phone = client.phone;
+      }
+      
+      clients[existingClientIndex] = updatedClient;
       this.writeJsonFile(this.CLIENTS_FILE, clients);
       return clients[existingClientIndex];
     }
@@ -208,9 +257,12 @@ class ServerMeetingsDB {
     const clientIndex = clients.findIndex(c => c.email === clientEmail);
     
     if (clientIndex !== -1) {
-      clients[clientIndex].meetings.push(meetingId);
-      clients[clientIndex].updatedAt = new Date().toISOString();
-      this.writeJsonFile(this.CLIENTS_FILE, clients);
+      const client = clients[clientIndex];
+      if (client) {
+        client.meetings.push(meetingId);
+        client.updatedAt = new Date().toISOString();
+        this.writeJsonFile(this.CLIENTS_FILE, clients);
+      }
     }
   }
 
@@ -233,6 +285,9 @@ class ServerMeetingsDB {
 
   private timeToMinutes(time: string): number {
     const [hours, minutes] = time.split(':').map(Number);
+    if (hours === undefined || minutes === undefined || isNaN(hours) || isNaN(minutes)) {
+      throw new Error(`Formato de tiempo inválido: ${time}`);
+    }
     return hours * 60 + minutes;
   }
 
@@ -305,11 +360,14 @@ export const timeValidation = {
 
   getNextAvailableSlot(date: string): string | null {
     const availableSlots = this.getAvailableTimeSlots(date);
-    return availableSlots.length > 0 ? availableSlots[0] : null;
+    return availableSlots.length > 0 ? availableSlots[0]! : null;
   },
 
   timeToMinutes(time: string): number {
     const [hours, minutes] = time.split(':').map(Number);
+    if (hours === undefined || minutes === undefined || isNaN(hours) || isNaN(minutes)) {
+      throw new Error(`Formato de tiempo inválido: ${time}`);
+    }
     return hours * 60 + minutes;
   },
 
