@@ -16,11 +16,11 @@ import Image from "next/image"
 
 export default function ClientSidebar() {
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4">
+    <Sidebar className="bg-[#e6f7f6]/80 backdrop-blur-md border-r border-[#08A696]/30">
+      <SidebarHeader className="p-4 bg-[#c5ebe7]/50 rounded-t-2xl">
         <div className="flex items-center gap-2">
-          <Image src="/abstract-geometric-logo.png" alt="V1tr0 Logo" width={40} height={40} className="rounded-md" />
-          <span className="font-bold text-lg">V1tr0 Panel</span>
+          <Image src="/abstract-geometric-logo.png" alt="V1tr0 Logo" width={40} height={40} className="rounded-xl" />
+          <span className="font-bold text-lg text-[#08A696]">V1tr0 Panel</span>
         </div>
       </SidebarHeader>
 
@@ -64,7 +64,7 @@ export default function ClientSidebar() {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 bg-[#c5ebe7]/50 rounded-b-2xl">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
