@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Almacenamiento del Navegador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .success {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+            display: none;
+        }
+        button {
+            background: #f44336;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #d32f2f;
+        }
+        .storage-info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ff9800;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpiar Almacenamiento del Navegador</h1>
+        
+        <div class="info">
+            <strong>📋 Propósito:</strong> Esta herramienta limpiará todos los tokens de autenticación corruptos que puedan estar causando problemas de login en Supabase.
+        </div>
+
+        <div class="storage-info">
+            <h3>📊 Estado Actual del Almacenamiento:</h3>
+            <div id="storageStatus">Cargando...</div>
+        </div>
+
+        <button onclick="clearAllStorage()">🗑️ Limpiar Todo el Almacenamiento</button>
+        <button onclick="clearSupabaseOnly()">🎯 Limpiar Solo Datos de Supabase</button>
+        
+        <div class="success" id="successMessage">
+            <strong>✅ ¡Limpieza Completada!</strong><br>
+            El almacenamiento ha sido limpiado exitosamente. Ahora puedes cerrar esta ventana y probar el login nuevamente.
+        </div>
+    </div>
+
+    <script>
+        function displayStorageInfo() {
+            const statusDiv = document.getElementById('storageStatus');
+            let info = '';
+            
+            // Mostrar localStorage
+            info += '<strong>🗄️ localStorage:</strong><br>';
+            if (localStorage.length === 0) {
+                info += 'Vacío<br><br>';
+            } else {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    info += `${key}: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}<br>`;
+                }
+                info += '<br>';
+            }
+            
+            // Mostrar sessionStorage
+            info += '<strong>📝 sessionStorage:</strong><br>';
+            if (sessionStorage.length === 0) {
+                info += 'Vacío<br><br>';
+            } else {
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    const value = sessionStorage.getItem(key);
+                    info += `${key}: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}<br>`;
+                }
+                info += '<br>';
+            }
+            
+            info += `<strong>📈 Total de elementos:</strong> localStorage: ${localStorage.length}, sessionStorage: ${sessionStorage.length}`;
+            
+            statusDiv.innerHTML = info;
+        }
+        
+        function clearAllStorage() {
+            console.log('🧹 Limpiando todo el almacenamiento...');
+            
+            // Limpiar localStorage
+            const localStorageCount = localStorage.length;
+            localStorage.clear();
+            
+            // Limpiar sessionStorage
+            const sessionStorageCount = sessionStorage.length;
+            sessionStorage.clear();
+            
+            console.log(`✅ Limpieza completada: ${localStorageCount} elementos de localStorage y ${sessionStorageCount} elementos de sessionStorage eliminados`);
+            
+            // Mostrar mensaje de éxito
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Actualizar información
+            displayStorageInfo();
+        }
+        
+        function clearSupabaseOnly() {
+            console.log('🎯 Limpiando solo datos de Supabase...');
+            
+            let removedCount = 0;
+            
+            // Limpiar localStorage - buscar claves relacionadas con Supabase
+            const localKeys = Object.keys(localStorage);
+            localKeys.forEach(key => {
+                if (key.includes('supabase') || key.includes('auth') || key.includes('session') || key.includes('token')) {
+                    localStorage.removeItem(key);
+                    removedCount++;
+                    console.log(`🗑️ Eliminado de localStorage: ${key}`);
+                }
+            });
+            
+            // Limpiar sessionStorage - buscar claves relacionadas con Supabase
+            const sessionKeys = Object.keys(sessionStorage);
+            sessionKeys.forEach(key => {
+                if (key.includes('supabase') || key.includes('auth') || key.includes('session') || key.includes('token')) {
+                    sessionStorage.removeItem(key);
+                    removedCount++;
+                    console.log(`🗑️ Eliminado de sessionStorage: ${key}`);
+                }
+            });
+            
+            console.log(`✅ Limpieza de Supabase completada: ${removedCount} elementos eliminados`);
+            
+            // Mostrar mensaje de éxito
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Actualizar información
+            displayStorageInfo();
+        }
+        
+        // Mostrar información inicial
+        displayStorageInfo();
+        
+        // Actualizar cada 2 segundos
+        setInterval(displayStorageInfo, 2000);
+    </script>
+</body>
+</html>

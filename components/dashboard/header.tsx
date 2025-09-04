@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -24,11 +24,12 @@ import {
   Calendar,
   HelpCircle
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 export function DashboardHeader() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [notifications] = useState([
     { id: 1, title: 'Nueva reunión programada', time: '5 min', unread: true },
     { id: 2, title: 'Proyecto actualizado', time: '1 h', unread: true },
@@ -37,33 +38,93 @@ export function DashboardHeader() {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  // Obtener información del usuario actual
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session:', error);
+          return;
+        }
+        
+        if (session?.user) {
+          setUser(session.user);
+          console.warn('[HEADER] Usuario cargado:', {
+            email: session.user.email,
+            id: session.user.id
+          });
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // En un entorno real, aquí se implementaría la búsqueda
       // TODO: Implementar lógica de búsqueda
     }
   };
 
-  const handleLogout = () => {
-    // En un entorno real, aquí se implementaría el logout
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      console.warn('[HEADER] Iniciando logout...');
+      
+      // Cerrar sesión en Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error during logout:', error);
+        return;
+      }
+      
+      console.warn('[HEADER] Logout exitoso, redirigiendo...');
+      
+      // Limpiar localStorage
+      localStorage.clear();
+      
+      // Redirigir al login
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Unexpected error during logout:', error);
+    }
+  };
+
+  // Función para obtener las iniciales del usuario
+  const getUserInitials = (email: string | undefined) => {
+    if (!email) {
+      return 'U';
+    }
+    return email.charAt(0).toUpperCase();
+  };
+
+  // Función para obtener el nombre para mostrar
+  const getDisplayName = (user: SupabaseUser | null) => {
+    if (!user) {
+      return 'Usuario';
+    }
+    if (user.user_metadata?.full_name) {
+      return user.user_metadata.full_name;
+    }
+    if (user.email) {
+      return user.email.split('@')[0];
+    }
+    return 'Usuario';
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo y navegación móvil */}
-        <div className="flex items-center gap-4">
+        {/* Logo y menú móvil */}
+        <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" className="md:hidden">
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">V1</span>
-            </div>
-            <span className="font-bold text-lg hidden sm:block">V1TR0 Dashboard</span>
-          </div>
+          <h1 className="text-xl font-semibold">Dashboard</h1>
         </div>
 
         {/* Barra de búsqueda */}
@@ -129,17 +190,21 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src="/avatars/user.jpg" alt="Usuario" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarImage src={user?.user_metadata?.avatar_url || "/avatars/user.jpg"} alt="Usuario" />
+                  <AvatarFallback>
+                    {getUserInitials(user?.email)}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Juan Desarrollador</p>
+                  <p className="text-sm font-medium leading-none">
+                    {getDisplayName(user)}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    juan@v1tr0.com
+                    {user?.email || 'Cargando...'}
                   </p>
                 </div>
               </DropdownMenuLabel>

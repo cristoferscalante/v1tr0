@@ -282,7 +282,7 @@ export default function MeetingPage() {
           {inMeeting && user ? (
             <JitsiMeeting
               roomName={meeting.room_id}
-              displayName={user.name || user.email}
+              displayName={user.user_metadata?.name || user.email}
               onMeetingEnd={handleMeetingEnd}
               onRecordingStart={handleRecordingStart}
             />

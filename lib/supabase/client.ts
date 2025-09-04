@@ -3,29 +3,23 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Only create client if we have the environment variables
-// This prevents build errors when variables are not available
-let supabaseClient: ReturnType<typeof createClient> | null = null
-
-if (supabaseUrl && supabaseAnonKey) {
-  supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true
-    }
-  })
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables')
 }
 
-// Export the client, throw error if not initialized when used
-export const supabase = supabaseClient!
+// Create standard Supabase client for better session persistence
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined
+  }
+})
 
 // Utility function to get client safely
 export const getSupabaseClient = () => {
-  if (!supabaseClient) {
-    throw new Error('Supabase client not initialized. Make sure environment variables are set.')
-  }
-  return supabaseClient
+  return supabase
 }
 
 // Types for authentication
