@@ -118,7 +118,7 @@ export function DashboardHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-[#02505931] backdrop-blur-md border-[#08A696]/30 rounded-b-2xl">
+    <header className="sticky top-0 z-40 w-full border-b bg-[#02505931] backdrop-blur-md border-[#08A696]/30">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo y menú móvil */}
         <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export function DashboardHeader() {
           {/* Menú de usuario */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-[#02505950]">
+              <Button variant="ghost" className="relative h-9 w-9 hover:bg-[#02505950]">
                 <Avatar className="h-9 w-9 border border-[#08A696]/30">
                   <AvatarImage src={user?.user_metadata?.avatar_url || "/avatars/user.jpg"} alt="Usuario" />
                   <AvatarFallback className="bg-[#08A696]/20 text-[#26FFDF]">
