@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/theme-toggle';
 import {
   Bell,
   Search,
@@ -24,11 +25,12 @@ import {
   Calendar,
   HelpCircle
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 export function DashboardHeader() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [notifications] = useState([
     { id: 1, title: 'Nueva reunión programada', time: '5 min', unread: true },
     { id: 2, title: 'Proyecto actualizado', time: '1 h', unread: true },
@@ -37,43 +39,103 @@ export function DashboardHeader() {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  // Obtener información del usuario actual
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session:', error);
+          return;
+        }
+        
+        if (session?.user) {
+          setUser(session.user);
+          console.warn('[HEADER] Usuario cargado:', {
+            email: session.user.email,
+            id: session.user.id
+          });
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // En un entorno real, aquí se implementaría la búsqueda
       // TODO: Implementar lógica de búsqueda
     }
   };
 
-  const handleLogout = () => {
-    // En un entorno real, aquí se implementaría el logout
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      console.warn('[HEADER] Iniciando logout...');
+      
+      // Cerrar sesión en Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error during logout:', error);
+        return;
+      }
+      
+      console.warn('[HEADER] Logout exitoso, redirigiendo...');
+      
+      // Limpiar localStorage
+      localStorage.clear();
+      
+      // Redirigir al login
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Unexpected error during logout:', error);
+    }
+  };
+
+  // Función para obtener las iniciales del usuario
+  const getUserInitials = (email: string | undefined) => {
+    if (!email) {
+      return 'U';
+    }
+    return email.charAt(0).toUpperCase();
+  };
+
+  // Función para obtener el nombre para mostrar
+  const getDisplayName = (user: SupabaseUser | null) => {
+    if (!user) {
+      return 'Usuario';
+    }
+    if (user.user_metadata?.full_name) {
+      return user.user_metadata.full_name;
+    }
+    if (user.email) {
+      return user.email.split('@')[0];
+    }
+    return 'Usuario';
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b bg-[#02505931] backdrop-blur-md border-[#08A696]/30">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo y navegación móvil */}
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="md:hidden">
+        {/* Logo y menú móvil */}
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="md:hidden text-[#08A696] hover:bg-[#02505950] rounded-2xl">
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">V1</span>
-            </div>
-            <span className="font-bold text-lg hidden sm:block">V1TR0 Dashboard</span>
-          </div>
+          <h1 className="text-xl font-semibold text-[#26FFDF]">Dashboard</h1>
         </div>
 
         {/* Barra de búsqueda */}
         <div className="flex-1 max-w-md mx-4">
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#26FFDF]/60" />
             <Input
               type="search"
               placeholder="Buscar proyectos, tareas, miembros..."
-              className="pl-10 pr-4"
+              className="pl-10 pr-4 bg-[#02505931] border-[#08A696]/30 text-[#08A696] placeholder:text-[#08A696]/60 focus:border-[#08A696] rounded-2xl"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -85,79 +147,86 @@ export function DashboardHeader() {
           {/* Notificaciones */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="relative">
+              <Button variant="ghost" size="sm" className="relative text-[#08A696] hover:bg-[#02505950] rounded-2xl">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <Badge 
                     variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-[#08A696] text-white border border-[#08A696]"
                   >
                     {unreadCount}
                   </Badge>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Notificaciones</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+            <DropdownMenuContent align="end" className="w-80 bg-[#02505931] backdrop-blur-md border-[#08A696]/30 rounded-2xl">
+              <DropdownMenuLabel className="text-[#26FFDF]">Notificaciones</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-[#08A696]/20" />
               {notifications.map((notification) => (
-                <DropdownMenuItem key={notification.id} className="flex items-start gap-3 p-3">
-                  <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-blue-600' : 'bg-gray-300'}`} />
+                <DropdownMenuItem key={notification.id} className="flex items-start gap-3 p-3 text-[#08A696] hover:bg-[#02505950] rounded-xl">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-[#08A696]' : 'bg-gray-300'}`} />
                   <div className="flex-1">
                     <p className="text-sm font-medium">{notification.title}</p>
-                    <p className="text-xs text-muted-foreground">{notification.time}</p>
+                    <p className="text-xs text-[#26FFDF]/60">{notification.time}</p>
                   </div>
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-center text-sm text-blue-600">
+              <DropdownMenuSeparator className="bg-[#08A696]/20" />
+              <DropdownMenuItem className="text-center text-sm text-[#08A696] hover:bg-[#02505950] rounded-xl">
                 Ver todas las notificaciones
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Accesos rápidos */}
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" className="text-[#08A696] hover:bg-[#02505950] rounded-2xl">
             <MessageSquare className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" className="text-[#08A696] hover:bg-[#02505950] rounded-2xl">
             <Calendar className="h-5 w-5" />
           </Button>
+
+          {/* Toggle de tema */}
+          <ThemeToggle />
 
           {/* Menú de usuario */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="/avatars/user.jpg" alt="Usuario" />
-                  <AvatarFallback>JD</AvatarFallback>
+              <Button variant="ghost" className="relative h-9 w-9 hover:bg-[#02505950]">
+                <Avatar className="h-9 w-9 border border-[#08A696]/30">
+                  <AvatarImage src={user?.user_metadata?.avatar_url || "/avatars/user.jpg"} alt="Usuario" />
+                  <AvatarFallback className="bg-[#08A696]/20 text-[#26FFDF]">
+                    {getUserInitials(user?.email)}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuContent className="w-56 bg-[#02505931] backdrop-blur-sm border-[#08A696]/30 rounded-2xl" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Juan Desarrollador</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    juan@v1tr0.com
+                  <p className="text-sm font-medium leading-none text-[#26FFDF]">
+                    {getDisplayName(user)}
+                  </p>
+                  <p className="text-xs leading-none text-[#26FFDF]/60">
+                    {user?.email || 'Cargando...'}
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-[#08A696]/20" />
+              <DropdownMenuItem className="text-[#26FFDF] hover:bg-[#02505950] rounded-xl">
                 <User className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="text-[#26FFDF] hover:bg-[#02505950] rounded-xl">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Configuración</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="text-[#26FFDF] hover:bg-[#02505950] rounded-xl">
                 <HelpCircle className="mr-2 h-4 w-4" />
                 <span>Ayuda</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
+              <DropdownMenuSeparator className="bg-[#08A696]/20" />
+              <DropdownMenuItem onClick={handleLogout} className="text-[#26FFDF] hover:bg-[#02505950] rounded-xl">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Cerrar sesión</span>
               </DropdownMenuItem>

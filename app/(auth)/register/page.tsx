@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckCircle2, AlertCircle, Eye, EyeOff, Mail, Lock, User } from "lucide-react"
-import { useAuth } from "@/hooks/use-auth"
+import { supabase } from "@/lib/supabase/client"
 import BackgroundAnimation from "@/components/home/BackgroundAnimation"
 import Image from "next/image"
 
@@ -24,7 +24,7 @@ interface ValidationState {
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { signUp, signInWithProvider, isLoading } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -129,8 +129,56 @@ export default function RegisterPage() {
     )
   }
 
+  // Función para manejar el registro
+  const signUp = async (email: string, password: string, name: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+          }
+        }
+      })
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      if (data.user) {
+        return { success: true, data: data.user }
+      }
+
+      return { success: false, error: 'No se pudo crear el usuario' }
+    } catch {
+      return { success: false, error: 'Error inesperado durante el registro' }
+    }
+  }
+
+  // Función para manejar el registro con proveedores
+  const signInWithProvider = async (provider: 'google') => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch {
+      return { success: false, error: `Error al registrarse con ${provider}` }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
 
     // Reset errors
     setFormErrors({
@@ -146,10 +194,12 @@ export default function RegisterPage() {
         ...prev,
         terms: "Debes aceptar los términos y condiciones",
       }))
+      setIsLoading(false)
       return
     }
 
     if (!isFormValid()) {
+      setIsLoading(false)
       return
     }
 
@@ -174,6 +224,8 @@ export default function RegisterPage() {
         ...prev,
         general: "Error inesperado durante el registro",
       }))
+    } finally {
+      setIsLoading(false)
     }
   }
 
