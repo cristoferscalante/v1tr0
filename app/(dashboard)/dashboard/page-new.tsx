@@ -208,7 +208,7 @@ export default function DashboardPage() {
             icon: TrendingUpIcon,
             subtitle: "eficiencia general"
           }
-        ].map((metric, index) => (
+        ].map((metric) => (
           <motion.div
             key={metric.title}
             variants={itemVariants}

@@ -20,7 +20,7 @@ export default function TestDashboard() {
       console.warn('[DASHBOARD] No session, redirecting to login')
       router.push('/login')
     }
-  }, [session, isLoading, router])
+  }, [session, isLoading, router, user])
 
   if (isLoading) {
     return (

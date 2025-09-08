@@ -12,14 +12,7 @@ import {
   CheckCircleIcon,
   TrendingUpIcon,
   Eye,
-  MoreHorizontal,
-  Briefcase,
-  Users,
-  Calendar,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  ClipboardList
+  MoreHorizontal
 } from "lucide-react"
 import Link from "next/link"
 
