@@ -131,15 +131,15 @@ export function DashboardSidebar() {
             <Button
               variant="ghost"
               className={cn(
-                'w-full justify-start gap-2 h-9',
+                'w-full justify-start gap-2 h-9 text-[#26FFDF]',
                 level > 0 && 'ml-4 w-[calc(100%-1rem)]',
-                'hover:bg-accent hover:text-accent-foreground'
+                'hover:bg-[#02505950] hover:text-[#26FFDF]'
               )}
             >
               <item.icon className="h-4 w-4" />
               <span className="flex-1 text-left">{item.title}</span>
               {item.badge && (
-                <Badge variant="secondary" className="ml-auto h-5 px-1.5 text-xs">
+                <Badge variant="secondary" className="ml-auto h-5 px-1.5 text-xs bg-[#08A696]/20 text-[#08A696] border border-[#08A696]/30">
                   {item.badge}
                 </Badge>
               )}
@@ -162,10 +162,10 @@ export function DashboardSidebar() {
         key={item.title}
         variant={isActive ? 'secondary' : 'ghost'}
         className={cn(
-          'w-full justify-start gap-2 h-9',
+          'w-full justify-start gap-2 h-9 text-[#26FFDF]',
           level > 0 && 'ml-4 w-[calc(100%-1rem)]',
-          isActive && 'bg-accent text-accent-foreground',
-          'hover:bg-accent hover:text-accent-foreground'
+          isActive && 'bg-[#02505950] text-[#26FFDF] border border-[#08A696]/30',
+          'hover:bg-[#02505950] hover:text-[#26FFDF]'
         )}
         asChild
       >
@@ -173,7 +173,7 @@ export function DashboardSidebar() {
           <item.icon className="h-4 w-4" />
           <span className="flex-1 text-left">{item.title}</span>
           {item.badge && (
-            <Badge variant="secondary" className="ml-auto h-5 px-1.5 text-xs">
+            <Badge variant="secondary" className="ml-auto h-5 px-1.5 text-xs bg-[#08A696]/20 text-[#08A696] border border-[#08A696]/30">
               {item.badge}
             </Badge>
           )}
@@ -183,18 +183,18 @@ export function DashboardSidebar() {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-background">
+    <div className="flex h-full w-64 flex-col border-r bg-[#02505931] border-[#08A696]/30 backdrop-blur-md">
       {/* Acciones rápidas */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-b border-[#08A696]/30">
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground mb-2">Acciones Rápidas</h4>
+          <h4 className="text-sm font-medium text-[#26FFDF] mb-2">Acciones Rápidas</h4>
           <div className="grid grid-cols-3 gap-1">
             {quickActions.map((action) => (
               <Button
                 key={action.title}
                 variant="outline"
                 size="sm"
-                className="h-8 px-2"
+                className="h-8 px-2 bg-[#02505931] border-[#08A696]/30 text-[#26FFDF] hover:bg-[#02505950] hover:border-[#08A696]/50"
                 asChild
               >
                 <Link href={action.href}>
@@ -209,16 +209,16 @@ export function DashboardSidebar() {
       {/* Navegación principal */}
       <ScrollArea className="flex-1 px-3">
         <div className="space-y-1 py-4">
-          <h4 className="text-sm font-medium text-muted-foreground mb-2 px-2">Navegación</h4>
+          <h4 className="text-sm font-medium text-[#26FFDF] mb-2 px-2">Navegación</h4>
           {navigation.map(item => renderNavItem(item))}
         </div>
       </ScrollArea>
 
       {/* Configuración */}
-      <div className="p-3 border-t">
+      <div className="p-3 border-t border-[#08A696]/30">
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 h-9"
+          className="w-full justify-start gap-2 h-9 text-[#26FFDF] hover:bg-[#02505950] hover:text-[#26FFDF]"
           asChild
         >
           <Link href="/dashboard/settings">

@@ -1,154 +1,67 @@
 "use client"
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
-import { User as SupabaseUser, Session } from '@supabase/supabase-js'
-import { supabase, AuthUser } from '@/lib/supabase/client'
+import { Session, User } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 interface AuthContextType {
-  user: AuthUser | null
   session: Session | null
+  user: User | null
   isLoading: boolean
-  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  signUp: (email: string, password: string, name?: string) => Promise<{ success: boolean; error?: string }>
   signOut: () => Promise<void>
-  signInWithProvider: (provider: 'google') => Promise<{ success: boolean; error?: string }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null)
   const [session, setSession] = useState<Session | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    // Check if Supabase client is available
-    if (!supabase) {
-      console.warn('Supabase client not available, skipping auth initialization')
-      setIsLoading(false)
-      return
-    }
-
-    // Get initial session
-    const getInitialSession = async () => {
+    const getSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error('Error getting session:', error)
-        }
-        
+        console.warn('[AUTH_HOOK] Obteniendo sesión inicial...')
+        const { data: { session } } = await supabase.auth.getSession()
+        console.warn('[AUTH_HOOK] Sesión inicial:', !!session)
         setSession(session)
-        if (session?.user) {
-          await fetchUserProfile(session.user)
-        }
-        setIsLoading(false)
+        setUser(session?.user ?? null)
       } catch (error) {
-        console.error('Error in getInitialSession:', error)
+        console.error('Error getting session:', error)
+      } finally {
         setIsLoading(false)
       }
     }
 
-    getInitialSession()
+    getSession()
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      setSession(session)
-      
-      if (session?.user) {
-        await fetchUserProfile(session.user)
-      } else {
-        setUser(null)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.warn('[AUTH_HOOK] Auth state change:', { event, hasSession: !!session })
+        setSession(session)
+        setUser(session?.user ?? null)
+        setIsLoading(false)
+        
+        // Guardar sesión en localStorage cuando cambie
+        if (session && typeof window !== 'undefined') {
+          localStorage.setItem('supabase.auth.token', JSON.stringify(session))
+        } else if (typeof window !== 'undefined') {
+          localStorage.removeItem('supabase.auth.token')
+        }
       }
-      
-      setIsLoading(false)
-    })
+    )
 
     return () => subscription.unsubscribe()
-  }, [router])
-
-  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
-    try {
-      // Fetch user profile from profiles table
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', supabaseUser.id)
-        .single()
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching user profile:', error)
-        return
-      }
-
-      const profile = data as any || {}
-      const userProfile: AuthUser = {
-        id: supabaseUser.id,
-        email: supabaseUser.email!,
-        name: profile.name || supabaseUser.user_metadata?.name || '',
-        avatar: profile.avatar || supabaseUser.user_metadata?.avatar_url || '',
-        role: (profile.role as 'admin' | 'user') || 'user'
-      }
-
-      setUser(userProfile)
-    } catch (error) {
-      console.error('Error fetching user profile:', error)
-    }
-  }
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      setIsLoading(true)
-      const { data: _, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: 'Error inesperado al iniciar sesión' }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const signUp = async (email: string, password: string, name?: string) => {
-    try {
-      setIsLoading(true)
-      const { data: _, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name || ''
-          }
-        }
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: 'Error inesperado al registrarse' }
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [])
 
   const signOut = async () => {
     try {
       setIsLoading(true)
       await supabase.auth.signOut()
-      setUser(null)
       setSession(null)
+      setUser(null)
       router.push('/')
     } catch (error) {
       console.error('Error signing out:', error)
@@ -157,40 +70,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const signInWithProvider = async (provider: 'google') => {
-    try {
-      setIsLoading(true)
-      const { data: _, error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: 'Error inesperado al iniciar sesión con proveedor' }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const value = {
-    user,
     session,
+    user,
     isLoading,
-    signIn,
-    signUp,
-    signOut,
-    signInWithProvider
+    signOut
   }
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={value as AuthContextType}>
       {children}
     </AuthContext.Provider>
   )

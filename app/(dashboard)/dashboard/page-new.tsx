@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   Plus, 
+  ArrowUpRight, 
   FolderIcon,
   ClockIcon,
   CheckCircleIcon,
@@ -14,7 +15,6 @@ import {
   Eye,
   MoreHorizontal
 } from "lucide-react"
-import Link from "next/link"
 
 // Tipos para los datos
 interface Project {
@@ -121,14 +121,40 @@ export default function DashboardPage() {
     }
   }
 
+  // Variantes de animación
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 20
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4
+      }
+    }
+  }
+
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 min-h-screen bg-transparent">
+    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 min-h-screen bg-gradient-to-br from-background to-background/95">
       {/* Header mejorado con estilo del home */}
       <motion.div 
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        variants={itemVariants}
+        initial="hidden"
+        animate="visible"
       >
         <div>
           <h1 className={`text-3xl md:text-4xl font-bold tracking-tight mb-2 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
@@ -141,20 +167,21 @@ export default function DashboardPage() {
         
         {/* Botón con estilo del home */}
         <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-          <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]">
+          <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`} />
+          <Button className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"} rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950] text-[#26FFDF]" : "hover:bg-[#c5ebe7] text-[#08A696]"} inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]`}>
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Proyecto
+            <ArrowUpRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-[-1px]" />
           </Button>
         </div>
       </motion.div>
 
-      {/* Grid de métricas con estilo glassmorphic */}
+      {/* Grid de métricas con estilo glassmorphic del home */}
       <motion.div 
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
       >
         {[
           {
@@ -184,24 +211,23 @@ export default function DashboardPage() {
         ].map((metric) => (
           <motion.div
             key={metric.title}
+            variants={itemVariants}
             className="relative group"
-            whileHover={{ y: -2 }}
-            transition={{ duration: 0.2 }}
           >
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
+            <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`} />
             
-            <Card className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10">
+            <Card className={`relative ${isDark ? "bg-[#02505931]" : "bg-white/80"} backdrop-blur-md border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/20"} rounded-3xl transition-all duration-300 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950]" : "hover:bg-white/90"} shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-[#26FFDF]">
+                <CardTitle className={`text-sm font-semibold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                   {metric.title}
                 </CardTitle>
-                <metric.icon className="h-5 w-5 text-[#26FFDF]/60 transition-colors duration-300 group-hover:text-[#08A696]" />
+                <metric.icon className={`h-5 w-5 ${isDark ? "text-[#26FFDF]/60" : "text-[#08A696]/60"} transition-colors duration-300 group-hover:text-[#08A696]`} />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold mb-1 text-[#26FFDF]">
+                <div className={`text-3xl font-bold mb-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                   {metric.value}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className={`text-xs ${isDark ? "text-textMuted" : "text-muted-foreground"}`}>
                   {metric.subtitle}
                 </p>
               </CardContent>
@@ -209,35 +235,32 @@ export default function DashboardPage() {
           </motion.div>
         ))}
       </motion.div>
-
-      {/* Sección de proyectos y actividad con estilo glassmorphic */}
+      
+      {/* Sección principal de proyectos y actividad con estilo glassmorphic */}
       <motion.div 
         className="grid gap-6 md:grid-cols-2 lg:grid-cols-7"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
       >
         {/* Proyectos Recientes */}
         <motion.div
+          variants={itemVariants}
           className="lg:col-span-5 relative group"
-          whileHover={{ y: -2 }}
-          transition={{ duration: 0.2 }}
         >
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
+          <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`} />
           
-          <Card className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10">
+          <Card className={`relative ${isDark ? "bg-[#02505931]" : "bg-white/80"} backdrop-blur-md border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/20"} rounded-3xl transition-all duration-300 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950]" : "hover:bg-white/90"} shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]`}>
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-[#26FFDF]">
+                <CardTitle className={`text-xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                   Proyectos Recientes
                 </CardTitle>
                 <div className="relative group/btn">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-xl blur opacity-40 group-hover/btn:opacity-60 transition-all duration-300" />
-                  <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] px-4 py-2 text-sm font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover/btn:translate-y-[-1px]" asChild>
-                    <Link href="/dashboard/projects">
-                      Ver todos
-                      <Eye className="ml-2 h-4 w-4" />
-                    </Link>
+                  <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-xl blur opacity-40 group-hover/btn:opacity-60 transition-all duration-300`} />
+                  <Button className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"} rounded-xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950] text-[#26FFDF]" : "hover:bg-[#c5ebe7] text-[#08A696]"} px-4 py-2 text-sm font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover/btn:translate-y-[-1px]`}>
+                    Ver todos
+                    <Eye className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -249,40 +272,40 @@ export default function DashboardPage() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`flex items-center space-x-4 p-4 rounded-2xl border border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm hover:shadow-md hover:border-[#08A696] hover:bg-[#02505950] transition-all duration-300 group/item`}
+                  className={`flex items-center space-x-4 p-4 rounded-2xl border ${isDark ? "border-[#08A696]/20 bg-[#02505931]" : "border-[#08A696]/15 bg-white/50"} backdrop-blur-sm hover:shadow-md ${isDark ? "hover:border-[#08A696] hover:bg-[#02505950]" : "hover:border-[#08A696] hover:bg-white/70"} transition-all duration-300 group/item`}
                 >
                   <div className={`w-2 h-12 rounded-full ${getStatusColor(project.status)} transition-all duration-300 group-hover/item:scale-110`} />
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-[#26FFDF]">
+                      <h4 className={`font-semibold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                         {project.name}
                       </h4>
                       <span className={getPriorityBadge(project.priority)}>
                         {project.priority}
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className={`text-sm ${isDark ? "text-textMuted" : "text-muted-foreground"}`}>
                       {project.client}
                     </p>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">
+                        <span className={`${isDark ? "text-textMuted" : "text-muted-foreground"}`}>
                           Progreso
                         </span>
-                        <span className="font-semibold text-[#26FFDF]">
+                        <span className={`font-semibold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                           {project.progress}%
                         </span>
                       </div>
-                      <div className="w-full rounded-full h-2 bg-[#08A696]/20">
+                      <div className={`w-full rounded-full h-2 ${isDark ? "bg-gray-700" : "bg-gray-200"}`}>
                         <div 
                           className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] h-2 rounded-full transition-all duration-500"
                           style={{ width: `${project.progress}%` }}
                         />
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className={`flex items-center justify-between text-xs ${isDark ? "text-textMuted" : "text-muted-foreground"}`}>
                       <span>Vence: {new Date(project.dueDate).toLocaleDateString()}</span>
-                      <Button className="bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-1 h-6 w-6 rounded-xl transition-all duration-300 hover:scale-110" variant="ghost" size="sm">
+                      <Button className={`${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} border-none p-1 h-6 w-6 rounded transition-all duration-300 hover:scale-110`}>
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </div>
@@ -295,15 +318,14 @@ export default function DashboardPage() {
 
         {/* Actividad Reciente */}
         <motion.div
+          variants={itemVariants}
           className="lg:col-span-2 relative group"
-          whileHover={{ y: -2 }}
-          transition={{ duration: 0.2 }}
         >
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
+          <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`} />
           
-          <Card className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 h-full">
+          <Card className={`relative ${isDark ? "bg-[#02505931]" : "bg-white/80"} backdrop-blur-md border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/20"} rounded-3xl transition-all duration-300 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950]" : "hover:bg-white/90"} shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px] h-full`}>
             <CardHeader className="pb-4">
-              <CardTitle className="text-xl font-bold text-[#26FFDF]">
+              <CardTitle className={`text-xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                 Actividad Reciente
               </CardTitle>
             </CardHeader>
@@ -314,18 +336,18 @@ export default function DashboardPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex items-start space-x-3 p-3 rounded-xl bg-[#08A696]/5 hover:bg-[#08A696]/10 transition-all duration-300 group/activity"
+                  className={`flex items-start space-x-3 p-3 rounded-xl ${isDark ? "bg-[#08A696]/5 hover:bg-[#08A696]/10" : "bg-[#08A696]/5 hover:bg-[#08A696]/10"} transition-all duration-300 group/activity`}
                 >
-                  <div className="w-2 h-2 rounded-full bg-[#26FFDF] mt-2 transition-all duration-300 group-hover/activity:scale-125" />
+                  <div className={`w-2 h-2 rounded-full ${isDark ? "bg-[#26FFDF]" : "bg-[#08A696]"} mt-2 transition-all duration-300 group-hover/activity:scale-125`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#26FFDF]">
+                    <p className={`text-sm ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                       <span className="font-semibold">{activity.user}</span>{" "}
-                      <span className="text-muted-foreground">
+                      <span className={`${isDark ? "text-textMuted" : "text-muted-foreground"}`}>
                         {activity.action}
                       </span>{" "}
                       <span className="font-medium">{activity.project}</span>
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className={`text-xs ${isDark ? "text-textMuted" : "text-muted-foreground"} mt-1`}>
                       {activity.time}
                     </p>
                   </div>
