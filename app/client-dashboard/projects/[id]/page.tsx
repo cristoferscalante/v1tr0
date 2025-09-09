@@ -339,7 +339,7 @@ export default function ProjectTimelinePage() {
 
   const getStageProgress = (stage: string) => {
     const stageTasks = getTasksByStage(stage)
-    if (stageTasks.length === 0) {
+    if (!stageTasks || stageTasks.length === 0) {
       return 0
     }
     const completedTasks = stageTasks.filter(task => task.status === 'completed')
@@ -409,7 +409,7 @@ export default function ProjectTimelinePage() {
           const stageTasks = getTasksByStage(stageKey)
           const stageProgress = getStageProgress(stageKey)
           const isCompleted = stageProgress === 100
-          const hasStarted = stageTasks.some(task => task.status !== 'pending')
+          const hasStarted = stageTasks && stageTasks.some(task => task.status !== 'pending')
           
           return (
             <div key={stageKey} className="relative">
@@ -442,16 +442,16 @@ export default function ProjectTimelinePage() {
                         </div>
                         <div className="flex items-center justify-between sm:flex-col sm:text-right space-x-4 sm:space-x-0">
                           <div className="text-sm font-medium text-[#26FFDF]">{stageProgress}%</div>
-                          <div className="text-xs text-textSecondary">{stageTasks.length} tareas</div>
+                          <div className="text-xs text-textSecondary">{stageTasks?.length || 0} tareas</div>
                         </div>
                       </div>
-                      {stageTasks.length > 0 && (
+                      {stageTasks && stageTasks.length > 0 && (
                         <Progress value={stageProgress} className="h-2 mt-3" />
                       )}
                     </CardHeader>
                     
                     {/* Tasks */}
-                    {stageTasks.length > 0 && (
+                    {stageTasks && stageTasks.length > 0 && (
                       <CardContent className="space-y-3 sm:space-y-4">
                         <div className="grid gap-3 sm:gap-4">
                           {stageTasks.map((task) => (
