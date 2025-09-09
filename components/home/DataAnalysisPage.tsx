@@ -31,7 +31,7 @@ export default function DataAnalysisPage() {
         text: "Diseño de dashboards e informes interactivos para la toma de decisiones.",
       },
     ],
-    imageSrc: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2.%20%C2%A1Potencia%20tu%20estrategia%2C%20automatiza%20tu%20informaci%C3%B3n%21-9D5wtuARJ7clWe9uK7UWmXN6Sd1HLj.png",
+    imageSrc: "/home/images/carrusel/sistemas_de_informacion.png",
     imageAlt: "Analista de datos entusiasta con visualizaciones, gráficos y elementos de IA en estilo digital neón",
 
   }

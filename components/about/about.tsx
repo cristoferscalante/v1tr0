@@ -72,7 +72,7 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
           isMobile ? 'w-full max-w-[300px]' : 'w-[420px]'
         }`}>
           <div className={`w-full mx-auto ${
-            isMobile ? 'h-[320px]' : 'h-[520px]'
+            isMobile ? 'h-[400px]' : 'h-[480px]'
           }`}>
             <CardViewerPremium 
               frontImage={member.image} 
@@ -339,10 +339,7 @@ const About = () => {
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
-        {/* Floating "Nuestro Equipo" badge - aligned with card top */}
-        <div className="absolute top-24 right-24 z-10">
-          <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium">Nuestro Equipo</div>
-        </div>
+        {/* Badge eliminado */}
 
         <div className="max-w-6xl mx-auto w-full">
           {/* Team Member Display */}
