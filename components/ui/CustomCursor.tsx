@@ -18,7 +18,7 @@ export default function CustomCursor() {
   useEffect(() => {
     const cursor = cursorRef.current
     
-    if (!cursor) return
+    if (!cursor) { return; }
     
     // Función para actualizar la posición del cursor
     const updateCursorPosition = (e: MouseEvent) => {
