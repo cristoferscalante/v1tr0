@@ -209,13 +209,13 @@ export function ProjectComments({}: ProjectCommentsProps) {
 
   const getCategoryColor = (category: Comment['category']) => {
     switch (category) {
-      case 'general': return 'bg-gray-100 text-gray-800';
-      case 'bug': return 'bg-red-100 text-red-800';
-      case 'feature': return 'bg-blue-100 text-blue-800';
-      case 'design': return 'bg-purple-100 text-purple-800';
-      case 'technical': return 'bg-green-100 text-green-800';
-      case 'feedback': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'general': return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
+      case 'bug': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      case 'feature': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'design': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
+      case 'technical': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'feedback': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -233,11 +233,11 @@ export function ProjectComments({}: ProjectCommentsProps) {
 
   const getPriorityColor = (priority: Comment['priority']) => {
     switch (priority) {
-      case 'low': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'urgent': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'low': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'high': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
+      case 'urgent': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -253,11 +253,11 @@ export function ProjectComments({}: ProjectCommentsProps) {
 
   const getStatusColor = (status: Comment['status']) => {
     switch (status) {
-      case 'open': return 'bg-blue-100 text-blue-800';
-      case 'in_progress': return 'bg-yellow-100 text-yellow-800';
-      case 'resolved': return 'bg-green-100 text-green-800';
-      case 'closed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'open': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'in_progress': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'resolved': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'closed': return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -406,28 +406,28 @@ export function ProjectComments({}: ProjectCommentsProps) {
     <div className="space-y-6">
       {/* Estadísticas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <MessageSquare className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-blue-600">{totalComments}</p>
             <p className="text-sm text-gray-600">Comentarios</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Reply className="h-8 w-8 text-green-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-green-600">{totalReplies}</p>
             <p className="text-sm text-gray-600">Respuestas</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Flag className="h-8 w-8 text-orange-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-orange-600">{openComments}</p>
             <p className="text-sm text-gray-600">Abiertos</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Heart className="h-8 w-8 text-red-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-red-600">{resolvedComments}</p>
@@ -437,7 +437,7 @@ export function ProjectComments({}: ProjectCommentsProps) {
       </div>
 
       {/* Nuevo comentario */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardHeader>
           <CardTitle>Agregar Comentario</CardTitle>
         </CardHeader>
@@ -504,7 +504,7 @@ export function ProjectComments({}: ProjectCommentsProps) {
       </Card>
 
       {/* Filtros y búsqueda */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
@@ -556,7 +556,7 @@ export function ProjectComments({}: ProjectCommentsProps) {
       {/* Lista de comentarios */}
       <div className="space-y-4">
         {sortedComments.map((comment) => (
-          <Card key={comment.id} className={`${comment.isPinned ? 'border-l-4 border-l-yellow-500' : ''}`}>
+          <Card key={comment.id} className={`bg-white/80 dark:bg-background/10 rounded-2xl ${comment.isPinned ? 'border-l-4 border-l-yellow-500' : ''}`}>
             <CardContent className="pt-6">
               <div className="space-y-4">
                 {/* Header del comentario */}
@@ -651,7 +651,7 @@ export function ProjectComments({}: ProjectCommentsProps) {
                   
                   {/* Formulario de respuesta */}
                   {replyingTo === comment.id && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="mt-4 p-4 bg-gray-50 dark:bg-background/20 rounded-lg">
                       <Textarea
                         placeholder="Escribe tu respuesta..."
                         value={replyContent}
@@ -683,7 +683,7 @@ export function ProjectComments({}: ProjectCommentsProps) {
                   {comment.replies.length > 0 && (
                     <div className="mt-4 space-y-3">
                       {comment.replies.map((reply) => (
-                        <div key={reply.id} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div key={reply.id} className="flex gap-3 p-3 bg-gray-50 dark:bg-background/20 rounded-lg">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={reply.author.avatar} alt={reply.author.name} />
                             <AvatarFallback className="text-xs">
@@ -718,7 +718,7 @@ export function ProjectComments({}: ProjectCommentsProps) {
         ))}
         
         {sortedComments.length === 0 && (
-          <Card>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
             <CardContent className="pt-6">
               <div className="text-center py-8">
                 <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />

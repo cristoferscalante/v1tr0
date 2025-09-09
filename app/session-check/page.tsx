@@ -56,7 +56,7 @@ export default function SessionVerification() {
         <h2 className="text-xl font-semibold text-gray-800 mb-2">Verificando Sesión</h2>
         <p className="text-gray-600">{status}</p>
         
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-lg max-w-md">
+        <div className="mt-8 p-4 bg-white/80 dark:bg-background/10 rounded-lg shadow-lg max-w-md">
           <h3 className="text-lg font-medium text-gray-800 mb-2">Estado del Sistema</h3>
           <p className="text-sm text-gray-600">
             Verificando que la sesión de autenticación se haya establecido correctamente

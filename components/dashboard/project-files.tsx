@@ -211,13 +211,13 @@ export function ProjectFiles({}: ProjectFilesProps) {
 
       {/* Estadísticas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <p className="text-2xl font-bold text-blue-600">{files.length}</p>
             <p className="text-sm text-gray-600">Total Archivos</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <p className="text-2xl font-bold text-green-600">
               {files.filter(f => f.type === 'document').length}
@@ -225,7 +225,7 @@ export function ProjectFiles({}: ProjectFilesProps) {
             <p className="text-sm text-gray-600">Documentos</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <p className="text-2xl font-bold text-purple-600">
               {files.filter(f => f.type === 'image').length}
@@ -233,7 +233,7 @@ export function ProjectFiles({}: ProjectFilesProps) {
             <p className="text-sm text-gray-600">Imágenes</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <p className="text-2xl font-bold text-orange-600">
               {files.filter(f => f.type === 'video').length}
@@ -244,7 +244,7 @@ export function ProjectFiles({}: ProjectFilesProps) {
       </div>
 
       {/* Lista de archivos */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardHeader>
           <CardTitle>Archivos del Proyecto ({filteredFiles.length})</CardTitle>
         </CardHeader>
@@ -257,7 +257,7 @@ export function ProjectFiles({}: ProjectFilesProps) {
           ) : (
             <div className="space-y-4">
               {filteredFiles.map((file) => (
-                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-background/20">
                   <div className="flex items-center gap-4 flex-1">
                     {getFileIcon(file.type)}
                     <div className="flex-1 min-w-0">

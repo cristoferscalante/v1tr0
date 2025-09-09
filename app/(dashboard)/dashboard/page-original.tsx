@@ -103,7 +103,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Proyectos Activos</CardTitle>
             <Briefcase className="h-4 w-4 text-highlight" />
@@ -116,7 +116,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Tareas Pendientes</CardTitle>
             <ClipboardList className="h-4 w-4 text-highlight" />
@@ -129,7 +129,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Clientes</CardTitle>
             <Users className="h-4 w-4 text-highlight" />
@@ -142,7 +142,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Próximas Tareas</CardTitle>
             <Calendar className="h-4 w-4 text-highlight" />
@@ -167,7 +167,7 @@ export default function DashboardPage() {
         
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
+            <Card className="col-span-4 bg-white/80 dark:bg-background/10 rounded-2xl">
               <CardHeader>
                 <CardTitle>Proyectos Activos</CardTitle>
               </CardHeader>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="col-span-3">
+            <Card className="col-span-3 bg-white/80 dark:bg-background/10 rounded-2xl">
               <CardHeader>
                 <CardTitle>Tareas Recientes</CardTitle>
               </CardHeader>
@@ -249,7 +249,7 @@ export default function DashboardPage() {
         </TabsContent>
         
         <TabsContent value="projects" className="space-y-4">
-          <Card>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
             <CardHeader>
               <CardTitle>Todos los Proyectos</CardTitle>
             </CardHeader>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
         </TabsContent>
         
         <TabsContent value="tasks" className="space-y-4">
-          <Card>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
             <CardHeader>
               <CardTitle>Todas las Tareas</CardTitle>
             </CardHeader>

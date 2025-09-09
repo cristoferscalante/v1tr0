@@ -28,8 +28,19 @@ export default function AuthCallback() {
         }
 
         if (data.session) {
-          // Usuario autenticado exitosamente
-          router.push('/dashboard')
+          // Obtener el rol del usuario para redirigir correctamente
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.session.user.id)
+            .single()
+
+          const userRole = profileData?.role || 'client'
+          if (userRole === 'admin') {
+            router.push('/dashboard')
+          } else {
+            router.push('/client-dashboard')
+          }
         } else {
           // No hay sesión
           router.push('/login')

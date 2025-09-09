@@ -17,7 +17,7 @@ export default function GlobalError({
     <html lang="es">
       <body>
         <div className="flex h-screen bg-gray-100 items-center justify-center p-4">
-          <div className="bg-white p-8 rounded-lg shadow-md max-w-lg w-full border border-gray-200">
+          <div className="bg-white/80 dark:bg-background/10 p-8 rounded-lg shadow-md max-w-lg w-full border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-center mb-6">
               <div className="p-3 rounded-full bg-red-500/10">
                 <svg

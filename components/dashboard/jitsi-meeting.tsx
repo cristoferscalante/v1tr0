@@ -52,7 +52,7 @@ export function JitsiMeeting({
 
 
   return (
-    <Card className="w-full h-full">
+    <Card className="w-full h-full bg-white/80 dark:bg-background/10 rounded-2xl">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Videoconferencia - {roomName}</span>

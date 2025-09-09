@@ -182,8 +182,8 @@ export default function MeetingPage() {
   if (!meeting) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="text-center py-8">
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+        <CardContent className="text-center py-8">
             <p className="text-lg">Reunión no encontrada</p>
             <Button
               onClick={() => router.back()}
@@ -287,8 +287,8 @@ export default function MeetingPage() {
               onRecordingStart={handleRecordingStart}
             />
           ) : (
-            <Card>
-              <CardContent className="text-center py-12">
+            <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+        <CardContent className="text-center py-12">
                 <Video className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-lg font-medium mb-2">
                   {meeting.status === 'completed'
@@ -322,10 +322,10 @@ export default function MeetingPage() {
         </TabsContent>
 
         <TabsContent value="info" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Información de la reunión</CardTitle>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+        <CardHeader>
+          <CardTitle>Información de la reunión</CardTitle>
+        </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>

@@ -200,12 +200,12 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
 
   const getMeetingTypeColor = (type: Meeting['type']) => {
     switch (type) {
-      case 'planning': return 'bg-blue-100 text-blue-800';
-      case 'review': return 'bg-purple-100 text-purple-800';
-      case 'standup': return 'bg-green-100 text-green-800';
-      case 'demo': return 'bg-orange-100 text-orange-800';
-      case 'retrospective': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'planning': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'review': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
+      case 'standup': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'demo': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
+      case 'retrospective': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -222,11 +222,11 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
 
   const getStatusColor = (status: Meeting['status']) => {
     switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
-      case 'in_progress': return 'bg-green-100 text-green-800';
-      case 'completed': return 'bg-gray-100 text-gray-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'scheduled': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'in_progress': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'completed': return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
+      case 'cancelled': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -276,28 +276,28 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
     <div className="space-y-6">
       {/* Estadísticas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <CalendarDays className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-blue-600">{meetings.length}</p>
             <p className="text-sm text-gray-600">Total Reuniones</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Calendar className="h-8 w-8 text-green-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-green-600">{upcomingMeetings.length}</p>
             <p className="text-sm text-gray-600">Próximas</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Clock className="h-8 w-8 text-purple-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-purple-600">{Math.round(totalDuration / 60)}h</p>
             <p className="text-sm text-gray-600">Tiempo Total</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Video className="h-8 w-8 text-orange-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-orange-600">
@@ -310,7 +310,7 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
 
       {/* Próximas reuniones */}
       {upcomingMeetings.length > 0 && (
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Próximas Reuniones</CardTitle>
@@ -327,7 +327,7 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
                 const endDateTime = formatDateTime(meeting.endTime);
                 
                 return (
-                  <Card key={meeting.id} className="p-4 border-l-4 border-l-blue-500">
+                  <Card key={meeting.id} className="p-4 border-l-4 border-l-blue-500 bg-white/80 dark:bg-background/10 rounded-2xl">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
@@ -439,7 +439,7 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
       )}
 
       {/* Historial de reuniones */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardHeader>
           <CardTitle>Historial de Reuniones</CardTitle>
         </CardHeader>
@@ -449,7 +449,7 @@ export function ProjectMeetings({}: ProjectMeetingsProps) {
               const startDateTime = formatDateTime(meeting.startTime);
               
               return (
-                <Card key={meeting.id} className="p-4">
+                <Card key={meeting.id} className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
