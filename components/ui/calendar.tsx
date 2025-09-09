@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+
 import { DayPicker } from "react-day-picker"
 import { es } from "date-fns/locale"
 
@@ -44,14 +44,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         day_hidden: "invisible",
         ...classNames,
       }}
-      components={{
-        Chevron: (props) => {
-          if (props.orientation === "left") {
-            return <ChevronLeft className="h-4 w-4" />;
-          }
-          return <ChevronRight className="h-4 w-4" />;
-        },
-      }}
+
       {...props}
     />
   )

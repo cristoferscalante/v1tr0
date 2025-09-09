@@ -120,7 +120,7 @@ class LocalMeetingsDB {
     meetings[index] = updatedMeeting;
     
     localStorage.setItem(this.MEETINGS_KEY, JSON.stringify(meetings));
-    return meetings[index];
+    return meetings[index] || null;
   }
 
   deleteMeeting(id: string): boolean {
@@ -222,7 +222,11 @@ class LocalMeetingsDB {
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(clients));
-      return clients[existingClientIndex];
+      const updatedClient = clients[existingClientIndex];
+      if (!updatedClient) {
+        throw new Error('Error al actualizar cliente');
+      }
+      return updatedClient;
     }
     
     // Crear nuevo cliente

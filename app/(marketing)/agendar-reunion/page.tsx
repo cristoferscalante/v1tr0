@@ -63,9 +63,10 @@ export default function AgendarReunionPage() {
       const now = Date.now()
       const cacheValidTime = 2 * 60 * 1000 // 2 minutos
       
-      if (scheduleCache[cacheKey] && (now - scheduleCache[cacheKey].timestamp) < cacheValidTime) {
-        setSchedule(scheduleCache[cacheKey].data)
-        setLastUpdated(new Date(scheduleCache[cacheKey].timestamp).toISOString())
+      const cachedData = scheduleCache[cacheKey]
+      if (cachedData && (now - cachedData.timestamp) < cacheValidTime) {
+        setSchedule(cachedData.data)
+        setLastUpdated(new Date(cachedData.timestamp).toISOString())
         return
       }
       

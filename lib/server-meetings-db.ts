@@ -136,7 +136,7 @@ class ServerMeetingsDB {
     meetings[index] = updatedMeeting;
     
     this.writeJsonFile(this.MEETINGS_FILE, meetings);
-    return meetings[index];
+    return meetings[index] || null;
   }
 
   deleteMeeting(id: string): boolean {
@@ -229,7 +229,11 @@ class ServerMeetingsDB {
       
       clients[existingClientIndex] = updatedClient;
       this.writeJsonFile(this.CLIENTS_FILE, clients);
-      return clients[existingClientIndex];
+      const updatedClientResult = clients[existingClientIndex];
+      if (!updatedClientResult) {
+        throw new Error('Error al actualizar cliente');
+      }
+      return updatedClientResult;
     }
     
     // Crear nuevo cliente

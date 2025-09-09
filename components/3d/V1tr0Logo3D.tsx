@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense, useRef, useState, useCallback, useEffect } from 'react'
+import React, { useRef, useState, useCallback, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, Environment } from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -45,17 +45,17 @@ function Logo3DModel({
     if (child instanceof THREE.Mesh) {
       child.material = new THREE.MeshPhysicalMaterial({
         color: '#26FFDF', // V1TR0 primary turquoise color
-        metalness: 0.2, // Low metalness for glass effect
+        metalness: 0.9, // Low metalness for glass effect
         roughness: 0.02, // Very smooth surface
         transmission: 0.9, // High transmission for glass transparency
         thickness: 0.9, // Glass thickness
         transparent: true,
         opacity: 0.9, // Lower opacity for glass effect
-        clearcoat: 2.0, // Clear coat for glossy finish
+        clearcoat: 0.0, // Clear coat for glossy finish
         clearcoatRoughness: 0.3, // Smooth clear coat
         ior: 0.5, // Index of refraction for glass
         reflectivity: 2.9, // Adjusted for Three.js 0.159.0 (valid range 0-1)
-        envMapIntensity: 1.5, // Enhanced environment reflections
+        envMapIntensity: 0.5, // Enhanced environment reflections
         emissive: '#0b5f53', // Subtle glow
         emissiveIntensity: 0.9, // Low intensity glow
         side: THREE.DoubleSide // Render both sides for better glass effect
@@ -444,7 +444,7 @@ export default function V1tr0Logo3D() {
               </>
             )}
             {/* Environment for better reflections */}
-            <Environment preset="city" intensity={0.3} resolution={256} />
+            <Environment preset="city" resolution={256} />
             <CameraController 
               currentView={currentView} 
               modelCenter={modelCenter} 
