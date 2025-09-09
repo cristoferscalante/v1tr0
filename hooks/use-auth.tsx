@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 interface AuthContextType {
   session: Session | null
   user: User | null
+  userRole: string | null
   isLoading: boolean
   signOut: () => Promise<void>
 }
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [user, setUser] = useState<User | null>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -28,6 +30,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.warn('[AUTH_HOOK] Sesión inicial:', !!session)
         setSession(session)
         setUser(session?.user ?? null)
+        
+        // Obtener el rol del usuario si existe sesión
+        if (session?.user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single()
+          
+          setUserRole(profileData?.role || 'client')
+        } else {
+          setUserRole(null)
+        }
       } catch (error) {
         console.error('Error getting session:', error)
       } finally {
@@ -38,10 +53,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.warn('[AUTH_HOOK] Auth state change:', { event, hasSession: !!session })
         setSession(session)
         setUser(session?.user ?? null)
+        
+        // Obtener el rol del usuario si existe sesión
+        if (session?.user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single()
+          
+          setUserRole(profileData?.role || 'client')
+        } else {
+          setUserRole(null)
+        }
+        
         setIsLoading(false)
         
         // Guardar sesión en localStorage cuando cambie
@@ -62,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut()
       setSession(null)
       setUser(null)
+      setUserRole(null)
       router.push('/')
     } catch (error) {
       console.error('Error signing out:', error)
@@ -73,6 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = {
     session,
     user,
+    userRole,
     isLoading,
     signOut
   }

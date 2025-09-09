@@ -54,7 +54,7 @@ export default function AudioTranscription({
       </div>
 
       {transcriptions.length === 0 ? (
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <FileText className="h-12 w-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No hay transcripciones</h3>
@@ -67,7 +67,7 @@ export default function AudioTranscription({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Lista de transcripciones */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
               <CardHeader>
                 <CardTitle className="text-base">Transcripciones</CardTitle>
               </CardHeader>
@@ -79,8 +79,8 @@ export default function AudioTranscription({
                         key={transcription.id}
                         className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                           selectedTranscription?.id === transcription.id
-                            ? 'bg-blue-50 border-blue-200'
-                            : 'hover:bg-gray-50'
+                            ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                            : 'hover:bg-gray-50 dark:hover:bg-background/20'
                         }`}
                         onClick={() => setSelectedTranscription(transcription)}
                       >
@@ -122,7 +122,7 @@ export default function AudioTranscription({
           {/* Contenido de la transcripción seleccionada */}
           <div className="lg:col-span-2">
             {selectedTranscription ? (
-              <Card>
+              <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
@@ -238,7 +238,7 @@ export default function AudioTranscription({
                 </CardContent>
               </Card>
             ) : (
-              <Card>
+              <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
                 <CardContent className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />

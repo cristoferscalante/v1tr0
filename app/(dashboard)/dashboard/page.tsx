@@ -1,125 +1,116 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React from "react"
 import { motion } from "framer-motion"
-import { useTheme } from "@/components/theme-provider"
+import { useAuth } from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { 
   Plus, 
-  FolderIcon,
-  ClockIcon,
   CheckCircleIcon,
   TrendingUpIcon,
-  Eye,
-  MoreHorizontal
+  Users,
+  FolderOpen,
+  UserCheck,
+  Calendar,
+  MessageSquare,
+  Building2,
+  DollarSign,
+  LogOut
 } from "lucide-react"
 import Link from "next/link"
 
-// Tipos para los datos
-interface Project {
-  id: string
-  name: string
-  client: string
-  progress: number
-  status: "active" | "completed" | "pending"
-  dueDate: string
-  priority: "high" | "medium" | "low"
-}
-
-interface RecentActivity {
-  id: string
-  user: string
-  action: string
-  project: string
-  time: string
-}
-
 export default function DashboardPage() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [activities, setActivities] = useState<RecentActivity[]>([])
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
+  const { signOut } = useAuth()
+  const router = useRouter()
 
-  useEffect(() => {
-    // Datos simulados mejorados
-    setProjects([
-      {
-        id: "1",
-        name: "Rediseño Web Corporativo",
-        client: "TechCorp S.A.",
-        progress: 75,
-        status: "active",
-        dueDate: "2025-07-15",
-        priority: "high"
-      },
-      {
-        id: "2", 
-        name: "App Móvil E-commerce",
-        client: "Retail Plus",
-        progress: 45,
-        status: "active",
-        dueDate: "2025-08-20",
-        priority: "medium"
-      },
-      {
-        id: "3",
-        name: "Sistema CRM",
-        client: "BusinessPro",
-        progress: 100,
-        status: "completed",
-        dueDate: "2025-06-10",
-        priority: "high"
-      }
-    ])
-
-    setActivities([
-      {
-        id: "1",
-        user: "Ana García",
-        action: "completó la tarea",
-        project: "Rediseño Web",
-        time: "hace 2 horas"
-      },
-      {
-        id: "2",
-        user: "Carlos López",
-        action: "actualizó el proyecto",
-        project: "App Móvil",
-        time: "hace 4 horas"
-      },
-      {
-        id: "3",
-        user: "María Silva",
-        action: "añadió comentarios en",
-        project: "Sistema CRM",
-        time: "hace 6 horas"
-      }
-    ])
-  }, [])
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active": return isDark ? "bg-[#08A696]" : "bg-[#08A696]"
-      case "completed": return isDark ? "bg-[#26FFDF]" : "bg-[#26FFDF]"
-      case "pending": return isDark ? "bg-[#08A696]/50" : "bg-[#08A696]/50"
-      default: return "bg-gray-500"
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error)
     }
   }
 
-  const getPriorityBadge = (priority: string) => {
-    const baseClass = `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-all duration-300`
-    switch (priority) {
-      case "high": 
-        return `${baseClass} ${isDark ? "bg-red-500/20 text-red-300 border border-red-500/30" : "bg-red-100 text-red-700 border border-red-200"}`
-      case "medium": 
-        return `${baseClass} ${isDark ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30" : "bg-yellow-100 text-yellow-700 border border-yellow-200"}`
-      case "low": 
-        return `${baseClass} ${isDark ? "bg-green-500/20 text-green-300 border border-green-500/30" : "bg-green-100 text-green-700 border border-green-200"}`
-      default: 
-        return `${baseClass} ${isDark ? "bg-gray-500/20 text-gray-300 border border-gray-500/30" : "bg-gray-100 text-gray-700 border border-gray-200"}`
+  const navigationCards = [
+    {
+      title: 'Clientes',
+      description: '5 activos',
+      icon: Users,
+      href: '/dashboard/clients',
+      gradient: 'from-blue-500/20 to-cyan-500/20',
+      iconColor: 'text-blue-400'
+    },
+    {
+      title: 'Proyectos',
+      description: '8 en curso',
+      icon: FolderOpen,
+      href: '/dashboard/projects',
+      gradient: 'from-green-500/20 to-emerald-500/20',
+      iconColor: 'text-green-400'
+    },
+    {
+      title: 'Equipo',
+      description: '12 miembros',
+      icon: UserCheck,
+      href: '/dashboard/team',
+      gradient: 'from-purple-500/20 to-pink-500/20',
+      iconColor: 'text-purple-400'
+    },
+    {
+      title: 'Reuniones',
+      description: '3 hoy',
+      icon: Calendar,
+      href: '/dashboard/meetings',
+      gradient: 'from-orange-500/20 to-red-500/20',
+      iconColor: 'text-orange-400'
+    },
+    {
+      title: 'Mensajes',
+      description: '15 nuevos',
+      icon: MessageSquare,
+      href: '/dashboard/messages',
+      gradient: 'from-indigo-500/20 to-blue-500/20',
+      iconColor: 'text-indigo-400'
     }
-  }
+  ]
+
+  const quickStats = [
+    {
+      title: 'Total Clientes',
+      value: '25',
+      icon: Building2,
+      change: '+12%',
+      changeType: 'positive' as const
+    },
+    {
+      title: 'Proyectos Activos',
+      value: '8',
+      icon: FolderOpen,
+      change: '+3',
+      changeType: 'positive' as const
+    },
+    {
+      title: 'Ingresos del Mes',
+      value: '$45,000',
+      icon: DollarSign,
+      change: '+18%',
+      changeType: 'positive' as const
+    },
+    {
+      title: 'Tareas Completadas',
+      value: '156',
+      icon: CheckCircleIcon,
+      change: '+24',
+      changeType: 'positive' as const
+    }
+  ]
+
+
+
+
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 min-h-screen bg-transparent">
@@ -130,211 +121,118 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div>
-          <h1 className={`text-3xl md:text-4xl font-bold tracking-tight mb-2 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
-            Dashboard
+        <div className="text-center space-y-4">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-[#08A696] via-[#26FFDF] to-[#08A696] bg-clip-text text-transparent font-bricolage">
+            Panel de Administración
           </h1>
-          <p className={`${isDark ? "text-textMuted" : "text-muted-foreground"} text-lg`}>
-            Gestiona tus proyectos y supervisa el progreso del equipo
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Gestiona clientes, proyectos, equipo y recursos desde un solo lugar
           </p>
         </div>
         
-        {/* Botón con estilo del home */}
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-          <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]">
-            <Plus className="mr-2 h-4 w-4" />
-            Nuevo Proyecto
-          </Button>
+        {/* Botones con estilo del home */}
+        <div className="flex items-center gap-4">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
+            <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]">
+              <Plus className="mr-2 h-4 w-4" />
+              Nuevo Proyecto
+            </Button>
+          </div>
+          
+          {/* Botón de Cerrar Sesión */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
+            <Button 
+              onClick={handleLogout}
+              className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Cerrar Sesión
+            </Button>
+          </div>
         </div>
       </motion.div>
 
-      {/* Grid de métricas con estilo glassmorphic */}
+      {/* Navigation Cards */}
       <motion.div 
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        {[
-          {
-            title: "Total Proyectos",
-            value: projects.length,
-            icon: FolderIcon,
-            subtitle: "proyectos activos"
-          },
-          {
-            title: "En Progreso", 
-            value: projects.filter(p => p.status === "active").length,
-            icon: ClockIcon,
-            subtitle: "en desarrollo"
-          },
-          {
-            title: "Completados",
-            value: projects.filter(p => p.status === "completed").length,
-            icon: CheckCircleIcon,
-            subtitle: "finalizados"
-          },
-          {
-            title: "Productividad",
-            value: "87%",
-            icon: TrendingUpIcon,
-            subtitle: "eficiencia general"
-          }
-        ].map((metric) => (
-          <motion.div
-            key={metric.title}
-            className="relative group"
-            whileHover={{ y: -2 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-            
-            <Card className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-[#26FFDF]">
-                  {metric.title}
-                </CardTitle>
-                <metric.icon className="h-5 w-5 text-[#26FFDF]/60 transition-colors duration-300 group-hover:text-[#08A696]" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold mb-1 text-[#26FFDF]">
-                  {metric.value}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {metric.subtitle}
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
+        {navigationCards.map((card, index) => {
+          const Icon = card.icon
+          return (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Link href={card.href}>
+                <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6 hover:bg-background/20 transition-all duration-300 cursor-pointer group h-full">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className={`bg-gradient-to-br ${card.gradient} p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className={`w-8 h-8 ${card.iconColor}`} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white font-bricolage">
+                        {card.title}
+                      </h3>
+                      <p className="text-slate-400 text-sm mt-1">
+                        {card.description}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            </motion.div>
+          )
+        })}
       </motion.div>
 
-      {/* Sección de proyectos y actividad con estilo glassmorphic */}
+      {/* Quick Stats */}
       <motion.div 
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-7"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
       >
-        {/* Proyectos Recientes */}
-        <motion.div
-          className="lg:col-span-5 relative group"
-          whileHover={{ y: -2 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-          
-          <Card className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-[#26FFDF]">
-                  Proyectos Recientes
-                </CardTitle>
-                <div className="relative group/btn">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-xl blur opacity-40 group-hover/btn:opacity-60 transition-all duration-300" />
-                  <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] px-4 py-2 text-sm font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover/btn:translate-y-[-1px]" asChild>
-                    <Link href="/dashboard/projects">
-                      Ver todos
-                      <Eye className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
+        {quickStats.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <motion.div
+              key={stat.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6 hover:bg-background/20 transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm font-medium">{stat.title}</p>
+                    <p className="text-3xl font-bold text-white mt-1 font-bricolage">{stat.value}</p>
+                    <p className={`text-sm mt-1 flex items-center ${
+                      stat.changeType === 'positive' ? 'text-[#26FFDF]' : 'text-red-400'
+                    }`}>
+                      <TrendingUpIcon className="w-4 h-4 mr-1" />
+                      {stat.change}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-[#08A696]/20 to-[#26FFDF]/20 p-3 rounded-2xl">
+                    <Icon className="w-6 h-6 text-[#26FFDF]" />
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {projects.map((project, index) => (
-                <motion.div 
-                  key={project.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`flex items-center space-x-4 p-4 rounded-2xl border border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm hover:shadow-md hover:border-[#08A696] hover:bg-[#02505950] transition-all duration-300 group/item`}
-                >
-                  <div className={`w-2 h-12 rounded-full ${getStatusColor(project.status)} transition-all duration-300 group-hover/item:scale-110`} />
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-[#26FFDF]">
-                        {project.name}
-                      </h4>
-                      <span className={getPriorityBadge(project.priority)}>
-                        {project.priority}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {project.client}
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">
-                          Progreso
-                        </span>
-                        <span className="font-semibold text-[#26FFDF]">
-                          {project.progress}%
-                        </span>
-                      </div>
-                      <div className="w-full rounded-full h-2 bg-[#08A696]/20">
-                        <div 
-                          className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] h-2 rounded-full transition-all duration-500"
-                          style={{ width: `${project.progress}%` }}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Vence: {new Date(project.dueDate).toLocaleDateString()}</span>
-                      <Button className="bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] border-none p-1 h-6 w-6 rounded-xl transition-all duration-300 hover:scale-110" variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Actividad Reciente */}
-        <motion.div
-          className="lg:col-span-2 relative group"
-          whileHover={{ y: -2 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-3xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-          
-          <Card className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-3xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 h-full">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-xl font-bold text-[#26FFDF]">
-                Actividad Reciente
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {activities.map((activity, index) => (
-                <motion.div 
-                  key={activity.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-start space-x-3 p-3 rounded-xl bg-[#08A696]/5 hover:bg-[#08A696]/10 transition-all duration-300 group/activity"
-                >
-                  <div className="w-2 h-2 rounded-full bg-[#26FFDF] mt-2 transition-all duration-300 group-hover/activity:scale-125" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#26FFDF]">
-                      <span className="font-semibold">{activity.user}</span>{" "}
-                      <span className="text-muted-foreground">
-                        {activity.action}
-                      </span>{" "}
-                      <span className="font-medium">{activity.project}</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {activity.time}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
+              </Card>
+            </motion.div>
+          )
+        })}
       </motion.div>
+
     </div>
   )
 }

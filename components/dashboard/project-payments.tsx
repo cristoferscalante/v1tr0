@@ -281,12 +281,12 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
 
   const getStatusColor = (status: Payment['status']) => {
     switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'overdue': return 'bg-red-100 text-red-800';
-      case 'cancelled': return 'bg-gray-100 text-gray-800';
-      case 'draft': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'paid': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'pending': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'overdue': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      case 'cancelled': return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
+      case 'draft': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -363,7 +363,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
     <div className="space-y-6">
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Ingresos Totales</p>
@@ -377,7 +377,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
           </div>
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Pendientes</p>
@@ -391,7 +391,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
           </div>
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Vencidos</p>
@@ -405,7 +405,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
           </div>
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Tasa de Pago</p>
@@ -424,7 +424,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
       </div>
 
       {/* Filtros y acciones */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col md:flex-row gap-4 flex-1">
@@ -463,7 +463,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
       </Card>
 
       {/* Tabla de pagos */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardHeader>
           <CardTitle>Facturas y Pagos</CardTitle>
         </CardHeader>
@@ -565,7 +565,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
 
       {/* Resumen financiero */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader>
             <CardTitle>Resumen por Estado</CardTitle>
           </CardHeader>
@@ -591,7 +591,7 @@ export function ProjectPayments({}: ProjectPaymentsProps) {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader>
             <CardTitle>Próximos Vencimientos</CardTitle>
           </CardHeader>

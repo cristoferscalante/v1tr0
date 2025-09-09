@@ -134,7 +134,7 @@ export default function DashboardPage() {
 
       {/* Grid de métricas */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Proyectos
@@ -151,7 +151,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               En Progreso
@@ -168,7 +168,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Completados
@@ -185,7 +185,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Productividad
@@ -206,7 +206,7 @@ export default function DashboardPage() {
       {/* Sección de proyectos y actividad */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Proyectos Recientes */}
-        <Card className="col-span-2">
+        <Card className="col-span-2 bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">Proyectos Recientes</CardTitle>
@@ -250,7 +250,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Actividad Reciente */}
-        <Card>
+        <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold">Actividad Reciente</CardTitle>
           </CardHeader>

@@ -44,47 +44,47 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="col-span-2">
-              <CardHeader>
-                <CardTitle>Descripción del Proyecto</CardTitle>
-                <CardDescription>Detalles y objetivos</CardDescription>
-              </CardHeader>
+            <Card className="col-span-2 bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Descripción del Proyecto</CardTitle>
+            <CardDescription>Detalles y objetivos</CardDescription>
+          </CardHeader>
               <CardContent>
                 <p className="text-textMuted">
-                  Este proyecto consiste en el desarrollo de una plataforma web para la gestión de inventarios y ventas
-                  para una empresa de comercio electrónico. La plataforma incluirá módulos de gestión de productos,
-                  clientes, pedidos y reportes.
+                  Desarrollo de una plataforma web completa para V1TR0 con dashboard interactivo, gestión de proyectos
+                  y sistema de autenticación avanzado. La plataforma incluye módulos de gestión de usuarios,
+                  proyectos, tareas y análisis en tiempo real.
                 </p>
 
                 <div className="mt-6">
                   <h4 className="font-semibold mb-2">Objetivos:</h4>
                   <ul className="list-disc pl-5 space-y-1 text-textMuted">
-                    <li>Desarrollar una interfaz intuitiva y fácil de usar</li>
-                    <li>Implementar un sistema de gestión de inventario en tiempo real</li>
-                    <li>Crear un módulo de reportes personalizables</li>
-                    <li>Integrar con sistemas de pago y envío</li>
+                    <li>Desarrollar un dashboard interactivo y responsive</li>
+                    <li>Implementar sistema de autenticación y autorización robusto</li>
+                    <li>Crear módulos de gestión de proyectos y tareas</li>
+                    <li>Integrar análisis y reportes en tiempo real</li>
                   </ul>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Información del Proyecto</CardTitle>
-              </CardHeader>
+            <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Información del Proyecto</CardTitle>
+          </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-sm font-medium text-textMuted">Cliente</h4>
-                    <p className="font-medium">Comercio Electrónico S.A.</p>
+                    <p className="font-medium">V1TR0 Technologies</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-textMuted">Fecha de Inicio</h4>
-                    <p className="font-medium">15 de Marzo, 2023</p>
+                    <p className="font-medium">1 de Diciembre, 2024</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-textMuted">Fecha de Entrega</h4>
-                    <p className="font-medium">30 de Septiembre, 2023</p>
+                    <p className="font-medium">15 de Marzo, 2025</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-textMuted">Estado</h4>
@@ -95,18 +95,18 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-textMuted">Presupuesto</h4>
-                    <p className="font-medium">$45,000 USD</p>
+                    <p className="font-medium">$75,000 USD</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Progreso del Proyecto</CardTitle>
-              <CardDescription>Fases completadas y pendientes</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Progreso del Proyecto</CardTitle>
+            <CardDescription>Fases completadas y pendientes</CardDescription>
+          </CardHeader>
             <CardContent>
               <div className="space-y-8">
                 <div className="space-y-2">
@@ -192,11 +192,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="timeline" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Línea de Tiempo del Proyecto</CardTitle>
-              <CardDescription>Fases, hitos y progreso</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Línea de Tiempo del Proyecto</CardTitle>
+            <CardDescription>Fases, hitos y progreso</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectTimeline projectId={projectId} />
             </CardContent>
@@ -204,11 +204,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="files" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Archivos del Proyecto</CardTitle>
-              <CardDescription>Documentos, diseños y entregables</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Archivos del Proyecto</CardTitle>
+            <CardDescription>Documentos, diseños y entregables</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectFiles projectId={projectId} />
             </CardContent>
@@ -216,11 +216,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="team" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Equipo del Proyecto</CardTitle>
-              <CardDescription>Miembros y roles</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Equipo del Proyecto</CardTitle>
+            <CardDescription>Miembros y roles</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectTeam projectId={projectId} />
             </CardContent>
@@ -228,11 +228,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="meetings" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reuniones</CardTitle>
-              <CardDescription>Historial y próximas reuniones</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Reuniones</CardTitle>
+            <CardDescription>Historial y próximas reuniones</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectMeetings projectId={projectId} />
             </CardContent>
@@ -240,11 +240,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="comments" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Comentarios y Notas</CardTitle>
-              <CardDescription>Comunicación del proyecto</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Comentarios y Notas</CardTitle>
+            <CardDescription>Comunicación del proyecto</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectComments projectId={projectId} />
             </CardContent>
@@ -252,11 +252,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="payments" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pagos</CardTitle>
-              <CardDescription>Historial de pagos y facturas</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Pagos</CardTitle>
+            <CardDescription>Historial de pagos y facturas</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectPayments projectId={projectId} />
             </CardContent>
@@ -264,11 +264,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </TabsContent>
 
         <TabsContent value="legal" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Documentación Legal</CardTitle>
-              <CardDescription>Contratos y documentos legales</CardDescription>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Documentación Legal</CardTitle>
+            <CardDescription>Contratos y documentos legales</CardDescription>
+          </CardHeader>
             <CardContent>
               <ProjectLegal projectId={projectId} />
             </CardContent>

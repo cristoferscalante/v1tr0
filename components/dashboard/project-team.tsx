@@ -133,10 +133,10 @@ export function ProjectTeam({}: ProjectTeamProps) {
 
   const getStatusColor = (status: TeamMember['status']) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'vacation': return 'bg-yellow-100 text-yellow-800';
-      case 'inactive': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'vacation': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'inactive': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -190,28 +190,28 @@ export function ProjectTeam({}: ProjectTeamProps) {
     <div className="space-y-6">
       {/* Estadísticas del equipo */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-blue-600">{teamMembers.length}</p>
             <p className="text-sm text-gray-600">Total Miembros</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <User className="h-8 w-8 text-green-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-green-600">{activeMembers.length}</p>
             <p className="text-sm text-gray-600">Activos</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Clock className="h-8 w-8 text-orange-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-orange-600">{Math.round(averageWorkload)}%</p>
             <p className="text-sm text-gray-600">Carga Promedio</p>
           </div>
         </Card>
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="text-center">
             <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
             <p className="text-2xl font-bold text-yellow-600">{averageRating.toFixed(1)}</p>
@@ -221,7 +221,7 @@ export function ProjectTeam({}: ProjectTeamProps) {
       </div>
 
       {/* Lista de miembros del equipo */}
-      <Card>
+      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Miembros del Equipo</CardTitle>
@@ -234,7 +234,7 @@ export function ProjectTeam({}: ProjectTeamProps) {
         <CardContent>
           <div className="space-y-4">
             {teamMembers.map((member) => (
-              <Card key={member.id} className="p-4">
+              <Card key={member.id} className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
                     <Avatar className="h-12 w-12">

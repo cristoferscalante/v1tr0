@@ -406,20 +406,20 @@ export function ProjectLegal({}: ProjectLegalProps) {
       case 'signed':
       case 'approved':
       case 'compliant':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
       case 'review':
       case 'in_progress':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
       case 'draft':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
       case 'expired':
       case 'rejected':
       case 'non_compliant':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
       case 'not_applicable':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -461,11 +461,11 @@ export function ProjectLegal({}: ProjectLegalProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'critical': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      case 'high': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
+      case 'medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'low': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -604,7 +604,7 @@ export function ProjectLegal({}: ProjectLegalProps) {
 
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Documentos Totales</p>
@@ -616,7 +616,7 @@ export function ProjectLegal({}: ProjectLegalProps) {
           </div>
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Firmados</p>
@@ -628,7 +628,7 @@ export function ProjectLegal({}: ProjectLegalProps) {
           </div>
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Tasa de Cumplimiento</p>
@@ -643,7 +643,7 @@ export function ProjectLegal({}: ProjectLegalProps) {
           </div>
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Por Vencer</p>
@@ -665,8 +665,8 @@ export function ProjectLegal({}: ProjectLegalProps) {
 
         <TabsContent value="documents" className="space-y-6">
           {/* Filtros y acciones para documentos */}
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex flex-col md:flex-row gap-4 flex-1">
                   <div className="relative flex-1">
@@ -726,10 +726,10 @@ export function ProjectLegal({}: ProjectLegalProps) {
           </Card>
 
           {/* Tabla de documentos */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Documentos Legales</CardTitle>
-            </CardHeader>
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Documentos Legales</CardTitle>
+          </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <Table>
@@ -834,8 +834,8 @@ export function ProjectLegal({}: ProjectLegalProps) {
 
         <TabsContent value="compliance" className="space-y-6">
           {/* Filtros para cumplimiento */}
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex flex-col md:flex-row gap-4 flex-1">
                   <div className="relative flex-1">
@@ -889,8 +889,8 @@ export function ProjectLegal({}: ProjectLegalProps) {
           {/* Lista de cumplimiento */}
           <div className="space-y-4">
             {filteredCompliance.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="pt-6">
+              <Card key={item.id} className="bg-white/80 dark:bg-background/10 rounded-2xl">
+          <CardContent className="pt-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">

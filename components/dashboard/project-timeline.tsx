@@ -125,10 +125,10 @@ export function ProjectTimeline({}: ProjectTimelineProps) {
 
   const getStatusColor = (status: TimelineItem['status']) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'overdue': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'in_progress': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'overdue': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -158,7 +158,7 @@ export function ProjectTimeline({}: ProjectTimelineProps) {
   };
 
   return (
-    <Card className="h-full">
+    <Card className="h-full bg-white/80 dark:bg-background/10 rounded-2xl">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Línea de Tiempo del Proyecto</CardTitle>
@@ -185,7 +185,7 @@ export function ProjectTimeline({}: ProjectTimelineProps) {
                 
                 {/* Contenido */}
                 <div className="flex-1 min-w-0">
-                  <Card className="p-4">
+                  <Card className="p-4 bg-white/80 dark:bg-background/10 rounded-2xl">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg">{item.title}</h3>
@@ -253,7 +253,7 @@ export function ProjectTimeline({}: ProjectTimelineProps) {
         </div>
         
         {/* Resumen del progreso */}
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+        <div className="mt-8 p-4 bg-gray-50 dark:bg-background/20 rounded-lg">
           <h4 className="font-semibold mb-3">Resumen del Progreso</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
