@@ -5,6 +5,7 @@ import type { Metadata } from "next"
 import { Providers } from "./providers"
 import { GsapErrorBoundary } from "../components/global/GsapErrorBoundary"
 import { GsapProvider } from "../components/global/GsapProvider"
+import ClientCursorWrapper from "../components/ui/ClientCursorWrapper"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -24,6 +25,8 @@ export const metadata: Metadata = {
   },
 }
 
+// El cursor personalizado ahora se importa desde un Client Component wrapper
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +37,10 @@ export default function RootLayout({
       <body>
         <GsapErrorBoundary>
           <GsapProvider initialDelay={200} maxRetries={5} showProgress={true}>
-            <Providers>{children}</Providers>
+            <Providers>
+              {children}
+              <ClientCursorWrapper />
+            </Providers>
           </GsapProvider>
         </GsapErrorBoundary>
       </body>

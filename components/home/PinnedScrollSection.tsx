@@ -27,6 +27,9 @@ export default function PinnedScrollSection({
   const [currentSection, setCurrentSection] = useState(0)
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+  const [userInteracted, setUserInteracted] = useState(false)
+  const pauseTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Actualizar horizontalScrollPosition cuando cambie currentSection
   useEffect(() => {
@@ -35,7 +38,13 @@ export default function PinnedScrollSection({
 
   // Implementar carrusel automático
   useEffect(() => {
+    // Si no es visible, no hacer nada
     if (!isVisible) {
+      return
+    }
+    
+    // Si el usuario ha interactuado y está pausado, no hacer nada
+    if (userInteracted && isPaused) {
       return
     }
 
@@ -56,8 +65,13 @@ export default function PinnedScrollSection({
       if (autoScrollIntervalRef.current) {
         clearInterval(autoScrollIntervalRef.current)
       }
+      
+      // Limpiar el temporizador de pausa si existe
+      if (pauseTimerRef.current) {
+        clearTimeout(pauseTimerRef.current)
+      }
     }
-  }, [isVisible, sectionsCount])
+  }, [isVisible, sectionsCount, isPaused, userInteracted])
 
   // ScrollTrigger para detectar visibilidad
   useEffect(() => {
@@ -95,17 +109,43 @@ export default function PinnedScrollSection({
   }, [setHorizontalScrollActive])
 
   // Función para navegar a una sección específica
-  const navigateToSection = (index: number) => {
+  const navigateToSection = (index: number, pauseCarousel: boolean = false) => {
     if (index >= 0 && index < sectionsCount) {
       setCurrentSection(index)
       setHorizontalScrollPosition(index)
       
-      // Reiniciar el carrusel automático
+      // Limpiar cualquier intervalo existente
       if (autoScrollIntervalRef.current) {
         clearInterval(autoScrollIntervalRef.current)
       }
       
-      if (isVisible) {
+      // Limpiar cualquier temporizador de pausa existente
+      if (pauseTimerRef.current) {
+        clearTimeout(pauseTimerRef.current)
+      }
+      
+      // Marcar que el usuario ha interactuado con los botones
+      if (!userInteracted) {
+        setUserInteracted(true)
+      }
+      
+      // Si se solicita pausar el carrusel
+      if (pauseCarousel) {
+        setIsPaused(true)
+        
+        // Configurar un temporizador para reanudar después de 15 segundos
+        pauseTimerRef.current = setTimeout(() => {
+          setIsPaused(false)
+          
+          // Reiniciar el carrusel automático después de la pausa
+          if (isVisible && autoScrollIntervalRef.current === null) {
+            autoScrollIntervalRef.current = setInterval(() => {
+              setCurrentSection(prev => (prev + 1) % sectionsCount)
+            }, 2000)
+          }
+        }, 15000) // 15 segundos
+      } else if (isVisible && !isPaused) {
+        // Reiniciar el carrusel automático si no está pausado
         autoScrollIntervalRef.current = setInterval(() => {
           setCurrentSection(prev => (prev + 1) % sectionsCount)
         }, 2000)
@@ -162,9 +202,19 @@ export default function PinnedScrollSection({
         </div>
         
         {/* Navegación con flechas y puntos indicadores */}
-        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-4 z-20">
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center justify-center gap-2 z-20">
+          {/* Indicador de pausa */}
+          {isPaused && (
+            <div className="text-xs text-highlight mb-2 bg-[#02505950] backdrop-blur-sm px-3 py-1 rounded-full border border-[#08A696]/30 animate-pulse">
+              Pausado por 15 segundos
+            </div>
+          )}
+          <div className="flex items-center justify-center gap-4">
           <button
-            onClick={() => navigateToSection(currentSection - 1)}
+            onClick={() => {
+              // Pausar por 15 segundos
+              navigateToSection(currentSection - 1, true)
+            }}
             disabled={currentSection === 0}
             className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             aria-label="Servicio anterior"
@@ -178,7 +228,10 @@ export default function PinnedScrollSection({
             {children.map((_, index) => (
               <button
                 key={index}
-                onClick={() => navigateToSection(index)}
+                onClick={() => {
+                  // Pausar por 15 segundos
+                  navigateToSection(index, true)
+                }}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentSection 
                     ? 'bg-highlight shadow-lg shadow-highlight/30' 
@@ -190,7 +243,10 @@ export default function PinnedScrollSection({
           </div>
           
           <button
-            onClick={() => navigateToSection(currentSection + 1)}
+            onClick={() => {
+              // Pausar por 15 segundos
+              navigateToSection(currentSection + 1, true)
+            }}
             disabled={currentSection === sectionsCount - 1}
             className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             aria-label="Siguiente servicio"
@@ -199,6 +255,7 @@ export default function PinnedScrollSection({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
+          </div>
         </div>
       </div>
     </PinnedScrollContext.Provider>

@@ -22,7 +22,7 @@ export default function SoftwareDevelopmentBanner() {
           text: "Desarrollo ágil para una entrega rápida y flexible",
         },
       ]}
-      imageSrc="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1.%20Desarrollo%20de%20Software%20a%20Medida-rTvAkuBL4PHWAC9k5RdX1P8qRWXHHT.png"
+      imageSrc="/home/images/carrusel/desarrollo_web_end.png"
       imageAlt="Desarrollador con elementos de programación y tecnología"
     />
   )
