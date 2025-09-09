@@ -112,7 +112,7 @@ export default function DataAnalysisPage() {
                   alt={serviceData.imageAlt}
                   width={300}
                   height={300}
-                  className="w-full h-auto max-w-sm object-cover transition-all duration-700 ease-in-out hover:scale-105"
+                  className="w-full h-auto max-w-xs object-cover transition-all duration-700 ease-in-out hover:scale-105"
                   src={serviceData.imageSrc}
                   style={{ color: "transparent", cursor: "pointer" }}
                 />
