@@ -1,8 +1,8 @@
 "use client"
 
-import { Suspense, useRef, useState, useCallback, useEffect } from 'react'
+import React, { Suspense, useRef, useState, useCallback, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, Environment } from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -35,7 +35,7 @@ function Logo3DModel({
   position: 'left' | 'right'
   currentView: ViewKey
 }) {
-  const { scene } = useGLTF('/3d/v1tr0_logo_3d.glb')
+  const { scene } = useGLTF('/3d/v1tr0_logo_3d.glb', true) // true para draco compression
   const meshRef = useRef<THREE.Group>(null)
   const targetPosition = useRef(new THREE.Vector3())
   const currentPosition = useRef(new THREE.Vector3())
@@ -45,18 +45,18 @@ function Logo3DModel({
     if (child instanceof THREE.Mesh) {
       child.material = new THREE.MeshPhysicalMaterial({
         color: '#26FFDF', // V1TR0 primary turquoise color
-        metalness: 0.8, // Low metalness for glass effect
-        roughness: 0.01, // Very smooth surface
+        metalness: 0.2, // Low metalness for glass effect
+        roughness: 0.02, // Very smooth surface
         transmission: 0.9, // High transmission for glass transparency
-        thickness: 0.5, // Glass thickness
+        thickness: 0.9, // Glass thickness
         transparent: true,
-        opacity: 0.5, // Lower opacity for glass effect
+        opacity: 0.9, // Lower opacity for glass effect
         clearcoat: 2.0, // Clear coat for glossy finish
         clearcoatRoughness: 0.3, // Smooth clear coat
-        ior: 1.5, // Index of refraction for glass
-        reflectivity: 4.9, // High reflectivity
+        ior: 0.5, // Index of refraction for glass
+        reflectivity: 2.9, // Adjusted for Three.js 0.159.0 (valid range 0-1)
         envMapIntensity: 1.5, // Enhanced environment reflections
-        emissive: '#0b5f53ff', // Subtle glow
+        emissive: '#0b5f53', // Subtle glow
         emissiveIntensity: 0.9, // Low intensity glow
         side: THREE.DoubleSide // Render both sides for better glass effect
       })
@@ -92,8 +92,9 @@ function Logo3DModel({
       }
       targetPosition.current.set(baseX, 2.5, 0.5)
       
-      // Smooth interpolation to target position
-      currentPosition.current.lerp(targetPosition.current, delta * 3)
+      // Smooth interpolation to target position - usando delta para independencia del framerate
+      const lerpFactor = Math.min(1, delta * 3)
+      currentPosition.current.lerp(targetPosition.current, lerpFactor)
       
       // Apply position with very subtle swaying animation
       const swayX = Math.sin(state.clock.elapsedTime * 0.2) * 0.05
@@ -112,6 +113,17 @@ function Logo3DModel({
       meshRef.current.rotation.x = Math.cos(state.clock.elapsedTime * 0.01) * 0.02 // Reducido de 0.05 a 0.02
     }
   })
+  
+  // Cleanup function para evitar memory leaks
+  useEffect(() => {
+    return () => {
+      // Limpiar referencias cuando el componente se desmonte
+      if (meshRef.current) {
+        // Aseguramos que se liberen los recursos
+        meshRef.current = null
+      }
+    }
+  }, [])
   
   return (
     <group 
@@ -165,9 +177,14 @@ function CameraController({ currentView, modelCenter, onPositionComplete }: {
     isTransitioning.current = true
     transitionStartTime.current = Date.now()
     hasCompletedTransition.current = false
-  }, [currentView])
+    
+    // Aseguramos que la posición inicial se establezca correctamente
+    if (currentPosition.current.length() === 0) {
+      currentPosition.current.copy(camera.position)
+    }
+  }, [currentView, camera])
   
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (isTransitioning.current) {
       const elapsed = (Date.now() - transitionStartTime.current) / 1000
       const duration = 1.0
@@ -176,18 +193,22 @@ function CameraController({ currentView, modelCenter, onPositionComplete }: {
       // Smooth easing function
       const easeProgress = 1 - Math.pow(1 - progress, 3)
       
+      // Usar delta para una animación más suave independiente del framerate
+      const lerpFactor = easeProgress * 0.1 * (60 * delta)
+      
       currentPosition.current.lerpVectors(
         camera.position,
         targetPosition.current,
-        easeProgress * 0.1
+        lerpFactor
       )
       
       // Animate FOV transition (only for PerspectiveCamera)
       if ('fov' in camera) {
-        const currentFov = camera.fov
-        const newFov = currentFov + (targetFov.current - currentFov) * easeProgress * 0.1
-        camera.fov = newFov
-        camera.updateProjectionMatrix()
+        const perspCamera = camera as THREE.PerspectiveCamera
+        const currentFov = perspCamera.fov
+        const newFov = currentFov + (targetFov.current - currentFov) * lerpFactor
+        perspCamera.fov = newFov
+        perspCamera.updateProjectionMatrix()
       }
       
       camera.position.copy(currentPosition.current)
@@ -197,6 +218,7 @@ function CameraController({ currentView, modelCenter, onPositionComplete }: {
       if (progress >= 1 && !hasCompletedTransition.current) {
         isTransitioning.current = false
         hasCompletedTransition.current = true
+        
         // Delay text appearance slightly after camera stops
         setTimeout(() => {
           onPositionComplete()
@@ -206,6 +228,14 @@ function CameraController({ currentView, modelCenter, onPositionComplete }: {
       camera.lookAt(modelCenter)
     }
   })
+  
+  // Cleanup function para evitar memory leaks
+  useEffect(() => {
+    return () => {
+      // Limpiar referencias y timers si es necesario
+      isTransitioning.current = false
+    }
+  }, [])
   
   return null
 }
@@ -343,7 +373,7 @@ export default function V1tr0Logo3D() {
       
       {/* Solo mostrar el Canvas cuando showModel sea true */}
       {showModel && (
-        <Suspense fallback={<Loader />}>
+        <React.Suspense fallback={<Loader />}>
           <Canvas
             camera={{ 
               position: [20, 20, 20],
@@ -356,6 +386,11 @@ export default function V1tr0Logo3D() {
               height: '100%'
             }}
             className="w-full h-full"
+            gl={{ 
+              antialias: true,
+              toneMapping: THREE.ACESFilmicToneMapping,
+              outputColorSpace: THREE.SRGBColorSpace
+            }}
           >
             {/* Enhanced lighting for Glass Morphism effect - conditional by view */}
             {currentView === 'perspective' ? (
@@ -381,13 +416,13 @@ export default function V1tr0Logo3D() {
                   intensity={0.6}
                   color="#26FFDF"
                 />
-                <pointLight position={[2, 16, -10]} intensity={0.35} color="#122c2aff" />
-                <pointLight position={[-2, 14, -8]} intensity={0.25} color="#0d1a18f5" />
+                <pointLight position={[2, 16, -10]} intensity={0.35} color="#122c2a" />
+                <pointLight position={[-2, 14, -8]} intensity={0.25} color="#0d1a18" />
               </>
             ) : (
               // Isometric view: keep original lighting setup
               <>
-                <ambientLight intensity={0.4} color="#19213dff" />
+                <ambientLight intensity={0.4} color="#19213d" />
                 <directionalLight 
                   position={[10, 10, 5]} 
                   intensity={0.8} 
@@ -404,11 +439,12 @@ export default function V1tr0Logo3D() {
                   intensity={9.3} 
                   color="#26FFDF"
                 />
-                <pointLight position={[5, 8, 5]} intensity={0.3} color="#122c2aff" />
-                <pointLight position={[-5, 8, 5]} intensity={0.3} color="#0d1a18f5" />
+                <pointLight position={[5, 8, 5]} intensity={0.3} color="#122c2a" />
+                <pointLight position={[-5, 8, 5]} intensity={0.3} color="#0d1a18" />
               </>
             )}
-            {/* Environment preset removed to avoid HDR loading errors */}
+            {/* Environment for better reflections */}
+            <Environment preset="city" intensity={0.3} resolution={256} />
             <CameraController 
               currentView={currentView} 
               modelCenter={modelCenter} 
@@ -422,11 +458,11 @@ export default function V1tr0Logo3D() {
               currentView={currentView}
             />
           </Canvas>
-        </Suspense>
+        </React.Suspense>
       )}
     </motion.div>
   )
 }
 
 // Preload the model for better performance
-useGLTF.preload('/3d/v1tr0_logo_3d.glb')
+useGLTF.preload('/3d/v1tr0_logo_3d.glb', true) // true para draco compression

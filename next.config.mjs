@@ -16,12 +16,18 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    unoptimized: true,
   },
   experimental: {
-    // Modern experimental features
-  },
-  serverExternalPackages: [],
+    serverActions: {
+      bodySizeLimit: '2mb'
+    },
+    optimizePackageImports: [
+      '@headlessui/react',
+      '@radix-ui/react-icons',
+      'lucide-react',
+      'framer-motion'
+    ]
+  }
 };
 
 export default nextConfig;
