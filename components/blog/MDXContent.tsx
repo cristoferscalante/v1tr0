@@ -180,7 +180,7 @@ export function MDXContent({ content }: MDXContentProps) {
             const imgElement = childrenArray[0] as React.ReactElement<MDXImageProps>
             const { src, alt } = imgElement.props
             // Convertir src a string si es un Blob
-            const srcString = src instanceof Blob ? URL.createObjectURL(src) : (src || "/placeholder.svg")
+            const srcString = src instanceof Blob ? URL.createObjectURL(src) : (src || "/imagenes/icons/svg/placeholder.svg")
 
             return (
               <figure className="my-8 relative group">
@@ -237,7 +237,7 @@ export function MDXContent({ content }: MDXContentProps) {
           const numericWidth = props.width ? Number(props.width) : 1200
           const numericHeight = props.height ? Number(props.height) : 630
           // Convertir src a string si es un Blob
-          const srcString = src instanceof Blob ? URL.createObjectURL(src) : (src || "/placeholder.svg")
+          const srcString = src instanceof Blob ? URL.createObjectURL(src) : (src || "/imagenes/icons/svg/placeholder.svg")
           // Filtrar props undefined
           const filteredProps = Object.fromEntries(
             Object.entries(props).filter(([, value]) => value !== undefined)

@@ -4,7 +4,8 @@ import React, { createContext, useContext, useEffect, useState, useCallback, Rea
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { GsapLoadingFallback } from './GsapLoadingFallback'
+import { GsapMinimalLoader } from '../gsap/GsapMinimalLoader'
+import { GsapErrorBoundary } from './GsapErrorBoundary'
 
 // Registrar plugins
 if (typeof window !== 'undefined') {
@@ -34,9 +35,8 @@ interface GsapProviderProps {
 export function GsapProvider({ 
   children, 
   initialDelay = 100,
-  maxRetries = 3,
-  showProgress = false 
-}: GsapProviderProps) {
+  maxRetries = 3 
+}: Omit<GsapProviderProps, 'showProgress'>) {
   const [isReady, setIsReady] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
@@ -116,38 +116,12 @@ export function GsapProvider({
     retry
   }
 
-  // Mostrar loading mientras se inicializa
-  if (isLoading) {
-    return (
-      <GsapLoadingFallback 
-        message="Inicializando animaciones..."
-        showSpinner={showProgress}
-      />
-    )
-  }
-
-  // Mostrar error si falló la inicialización
-  if (error && retryCount >= maxRetries) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px] w-full">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="text-red-500 text-sm">
-            Error al inicializar GSAP: {error.message}
-          </div>
-          <button 
-            onClick={retry}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Reintentar
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <GsapContext.Provider value={contextValue}>
-      {children}
+      <GsapErrorBoundary>
+        <GsapMinimalLoader isVisible={isLoading} duration={initialDelay} />
+        {children}
+      </GsapErrorBoundary>
     </GsapContext.Provider>
   )
 }

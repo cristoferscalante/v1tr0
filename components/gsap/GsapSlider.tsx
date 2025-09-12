@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
 import { gsap } from "gsap"
 import { Observer } from "gsap/Observer"
-import BackgroundAnimation from "@/components/home/BackgroundAnimation"
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 
 gsap.registerPlugin(Observer)
 
@@ -67,6 +67,8 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
   // Estado para el índice de la sección actual
   const [currentIndex, setCurrentIndex] = useState(0)
+  // Estado para controlar la carga de videos
+  const [videoLoading, setVideoLoading] = useState<{ [key: number]: boolean }>({})
   // Referencia mutable para el estado de la animación (evita re-renders innecesarios)
   const animating = useRef(false)
 
@@ -257,18 +259,42 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                       <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/90"></div>
                       <div className="relative z-20 flex flex-col items-center justify-center h-full px-8 pt-24">
                         {/* Video Container con más espacio y margen superior para evitar navbar */}
-                        <div className="w-full max-w-5xl mx-auto mb-12 mt-8">
+                        <div className="w-full max-w-5xl mx-auto mb-12 mt-8 relative">
+                          {/* Spinner de carga */}
+                          {videoLoading[index] && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl z-10">
+                              <div className="flex flex-col items-center gap-4">
+                                <div className="w-12 h-12 border-4 border-[#26FFDF]/30 border-t-[#26FFDF] rounded-full animate-spin"></div>
+                                <p className="text-white/80 text-sm font-medium">Cargando video...</p>
+                              </div>
+                            </div>
+                          )}
                           <video 
                             ref={(el) => { videoRefs.current[index] = el }}
                             src={slide.video} 
                             controls 
-                            preload={index === currentIndex ? 'auto' : 'metadata'}
+                            preload="none"
                             className="max-w-[80vh] h-auto max-h-[30vh] md:max-h-[35vh] lg:max-h-[45vh] max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] mx-auto rounded-2xl shadow-2xl border-2 border-[#26FFDF]/40 hover:border-[#26FFDF]/60 transition-all duration-300"
                             poster={slide.img}
                             onLoadStart={() => {
+                              // Mostrar spinner cuando inicia la carga
+                              setVideoLoading(prev => ({ ...prev, [index]: true }))
                               // Asegurar que solo el video activo se carga completamente
                               if (index !== currentIndex && videoRefs.current[index]) {
                                 videoRefs.current[index]!.preload = 'metadata'
+                              }
+                            }}
+                            onCanPlay={() => {
+                              // Ocultar spinner cuando el video puede reproducirse
+                              setVideoLoading(prev => ({ ...prev, [index]: false }))
+                            }}
+                            onError={(e) => {
+                              console.error('Error loading video:', slide.video, e)
+                              // Ocultar spinner en caso de error
+                              setVideoLoading(prev => ({ ...prev, [index]: false }))
+                              // Fallback: try without crossOrigin
+                              if (videoRefs.current[index]) {
+                                videoRefs.current[index]!.removeAttribute('crossorigin')
                               }
                             }}
                           >

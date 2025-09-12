@@ -4,10 +4,12 @@ import { useState, useRef, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import NavBar from '@/components/global/NavBar'
 import FooterSection from '@/components/global/FooterSection'
+import { CustomCheckbox } from '@/components/ui/custom-checkbox'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
@@ -146,22 +148,33 @@ export default function LoginPage() {
         <NavBar />
       </div>
       
-      <div className="flex-1 flex items-center justify-center px-4 py-12 pt-24">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 pt-24 relative overflow-hidden min-h-screen">
+        {/* Background Image with Blur - Solo en esta zona */}
+        <div className="absolute inset-0 z-0 min-h-screen">
+          <Image
+            src="/imagenes/login/2.jpeg"
+            alt="Login Background"
+            fill
+            className="object-cover w-full h-full"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#02505931]/80 via-[#08A696]/40 to-[#02505931]/80 backdrop-blur-sm min-h-screen" />
+          {/* Efecto de viñeta elegante */}
+          <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/60 min-h-screen" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 min-h-screen" />
+        </div>
+        <div className="w-full max-w-md relative z-10">
           {/* Título */}
           <div className="text-center mb-8" ref={titleRef}>
             <h1 className="text-3xl font-bold text-[#26FFDF] mb-2">
               Bienvenido a V1TR0
             </h1>
-            <p className="text-[#26FFDF]/70">
-              Inicia sesión para acceder a tu cuenta
-            </p>
           </div>
 
           {/* Formulario */}
           <div 
             ref={formRef}
-            className="bg-[#02505931]/80 backdrop-blur-xl rounded-2xl p-8 border border-[#08A696]/30 shadow-2xl"
+            className="bg-[#02505931]/40 backdrop-blur-xl rounded-2xl p-8 border border-[#08A696]/30 shadow-2xl"
           >
             <form onSubmit={handleLogin}>
             <div className="space-y-5">
@@ -212,15 +225,12 @@ export default function LoginPage() {
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 text-[#26FFDF] bg-[#08A696]/20 border-[#08A696]/50 rounded focus:ring-[#26FFDF] focus:ring-2"
-                  />
-                  <span className="ml-2 text-sm text-[#26FFDF]/80">Recordarme</span>
-                </label>
+                <CustomCheckbox
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                  label="Recordarme"
+                  labelClassName="text-sm text-[#26FFDF]/80"
+                />
                 <Link 
                   href="/forgot-password" 
                   className="text-sm text-[#26FFDF] hover:text-[#26FFDF]/80 transition-colors"

@@ -7,9 +7,10 @@ export default function CustomCursor() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
   const cursorRef = useRef<HTMLDivElement>(null)
+  const centerDotRef = useRef<HTMLDivElement>(null)
   const clickTextRef = useRef<HTMLDivElement>(null)
-  const [isClicked, setIsClicked] = useState(false)
-  const [isHovering, setIsHovering] = useState(false)
+  const [, setIsClicked] = useState(false)
+  const [, setIsHovering] = useState(false)
   const [showClickText, setShowClickText] = useState(false)
   
   // Color principal según el tema
@@ -24,6 +25,12 @@ export default function CustomCursor() {
     const updateCursorPosition = (e: MouseEvent) => {
       cursor.style.left = `${e.clientX}px`
       cursor.style.top = `${e.clientY}px`
+      
+      // Actualizar también el punto central
+      if (centerDotRef.current) {
+        centerDotRef.current.style.left = `${e.clientX}px`
+        centerDotRef.current.style.top = `${e.clientY}px`
+      }
     }
     
     // Función para manejar el clic
@@ -74,11 +81,11 @@ export default function CustomCursor() {
       {/* Estilos para las animaciones */}
       <style jsx global>{`
         body {
-          cursor: none;
+          cursor: auto;
         }
         
         a, button, [role="button"], input, select, textarea, [tabindex]:not([tabindex="-1"]) {
-          cursor: none;
+          cursor: pointer;
         }
         
         @keyframes pulseEffect {
@@ -108,22 +115,7 @@ export default function CustomCursor() {
         }
       `}</style>
       
-      {/* Cursor personalizado */}
-      <div 
-        ref={cursorRef}
-        className="fixed pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
-        style={{
-          width: isClicked ? '15px' : isHovering ? '20px' : '10px',
-          height: isClicked ? '15px' : isHovering ? '20px' : '10px',
-          borderRadius: '50%',
-          backgroundColor: cursorColor,
-          transition: 'width 0.3s, height 0.3s, background-color 0.3s, transform 0.3s',
-          boxShadow: `0 0 10px ${cursorColor}, 0 0 20px ${cursorColor}`,
-          animation: 'pulseEffect 2s infinite',
-          transform: isHovering ? 'scale(1.5)' : 'scale(1)',
-          opacity: isHovering ? '0.5' : '0.7',
-        }}
-      />
+      {/* Cursor nativo del sistema - sin elementos personalizados */}
       
       {/* Texto de clic */}
       <div

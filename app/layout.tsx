@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="es" className={bricolageGrotesque.variable} suppressHydrationWarning>
       <body>
         <GsapErrorBoundary>
-          <GsapProvider initialDelay={200} maxRetries={5} showProgress={true}>
+          <GsapProvider initialDelay={150} maxRetries={5}>
             <Providers>
               {children}
               <ClientCursorWrapper />

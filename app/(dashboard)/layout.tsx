@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import "../../styles/globals.css"
 import { SessionProvider } from "@/components/auth/session-provider"
-import BackgroundAnimation from "@/components/home/BackgroundAnimation"
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 
 export default function DashboardLayout({
   children,

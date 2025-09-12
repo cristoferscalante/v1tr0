@@ -1,19 +1,20 @@
 "use client"
 
 // Corrigiendo las rutas de importación
-import BackgroundAnimation from "../../components/home/BackgroundAnimation"
-import HomeBanner from "@/components/home/HomeBanner"
-import TechnologiesSection from "@/components/home/GridTechnologies"
-import SoftwareDevelopmentBanner from "@/components/home/SoftwareDevelopmentBanner"
-import DataAnalysisPage from "@/components/home/DataAnalysisPage"
-import TaskAutomationPage from "@/components/home/TaskAutomationPage"
-import ConsultationAndDemosSection from "@/components/home/ConsultationAndDemosSection"
-import FooterSection from "@/components/global/FooterSection"
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
+import HomeBanner from "@/components/home/sections/banner/HomeBanner"
+import TechnologiesSection from "@/components/home/layout/GridTechnologies"
+import SoftwareDevelopmentBanner from "@/components/home/sections/services/SoftwareDevelopmentBanner"
+import InformationSystemsPage from "@/components/home/sections/services/InformationSystemsPage"
+import TaskAutomationPage from "@/components/home/sections/services/TaskAutomationPage"
+import ConsultationAndDemosSection from "@/components/home/sections/contact/ConsultationAndDemosSection"
 
-import PinnedScrollSection from "@/components/home/PinnedScrollSection"
-import HomeScrollSnap from "@/components/home/HomeScrollSnap"
+
+import PinnedScrollSection from "@/components/home/layout/PinnedScrollSection"
+import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
-import UnifiedContactModal from "@/components/home/UnifiedContactModal"
+import UnifiedContactModal from "@/components/home/sections/contact/UnifiedContactModal"
+import FooterSection from "@/components/global/FooterSection"
 import { useState } from "react"
 
 export default function Home() {
@@ -30,7 +31,7 @@ export default function Home() {
         {/* Sección 2: Servicios (Scroll Horizontal) */}
         <PinnedScrollSection>
           <SoftwareDevelopmentBanner />
-          <DataAnalysisPage />
+          <InformationSystemsPage />
           <TaskAutomationPage />
         </PinnedScrollSection>
         

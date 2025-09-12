@@ -34,8 +34,6 @@ export class GsapErrorBoundary extends Component<Props, State> {
       error.name === 'NotFoundError'
 
     if (isGsapError) {
-
-      
       // Cleanup inmediato de ScrollTrigger
       try {
         ScrollTrigger.getAll().forEach(trigger => trigger.kill(true))

@@ -47,7 +47,7 @@ export default function InformationSystems() {
       tech: ["Vue.js", "Python", "MongoDB", "TensorFlow"],
       year: "2025",
       status: "En desarrollo",
-      image: "/placeholder.svg"
+      image: "/imagenes/icons/svg/placeholder.svg"
     },
     {
       id: 3,
@@ -56,7 +56,7 @@ export default function InformationSystems() {
       tech: ["Next.js", "Express", "MySQL", "WebRTC"],
       year: "2023",
       status: "Completado",
-      image: "/placeholder.svg"
+      image: "/imagenes/icons/svg/placeholder.svg"
     },
     {
       id: 4,
@@ -65,7 +65,7 @@ export default function InformationSystems() {
       tech: ["Angular", "Java", "Oracle", "Machine Learning"],
       year: "2023",
       status: "Completado",
-      image: "/placeholder.svg"
+      image: "/imagenes/icons/svg/placeholder.svg"
     },
     {
       id: 5,
@@ -74,7 +74,7 @@ export default function InformationSystems() {
       tech: ["React", "Laravel", "MySQL", "Redis"],
       year: "2025",
       status: "En desarrollo",
-      image: "/placeholder.svg"
+      image: "/imagenes/icons/svg/placeholder.svg"
     },
     {
       id: 6,
@@ -83,7 +83,7 @@ export default function InformationSystems() {
       tech: ["Svelte", "Django", "PostgreSQL", "Elasticsearch"],
       year: "2023",
       status: "Activo",
-      image: "/placeholder.svg"
+      image: "/imagenes/icons/svg/placeholder.svg"
     }
   ]
   */

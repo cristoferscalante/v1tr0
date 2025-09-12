@@ -222,8 +222,8 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
   const highlightColor = "rgba(0, 255, 204, 0.3)"
 
   // Eliminar estas líneas:
-  // const frontPlaceholder = `/placeholder.svg?height=480&width=300&query=team member front`
-  // const backPlaceholder = `/placeholder.svg?height=480&width=300&query=team member back`
+  // const frontPlaceholder = `/imagenes/icons/svg/placeholder.svg?height=480&width=300&query=team member front`
+    // const backPlaceholder = `/imagenes/icons/svg/placeholder.svg?height=480&width=300&query=team member back`
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
@@ -288,7 +288,7 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
             <Image
               src={
                 !frontImage || frontImage === ""
-                  ? "/placeholder.svg?height=480&width=300&query=team%20member%20front"
+                  ? "/imagenes/icons/svg/placeholder.svg?height=480&width=300&query=team%20member%20front"
                   : frontImage
               }
               alt="Card front"
@@ -340,7 +340,7 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
             <Image
               src={
                 !backImage || backImage === ""
-                  ? "/placeholder.svg?height=480&width=300&query=team%20member%20back"
+                  ? "/imagenes/icons/svg/placeholder.svg?height=480&width=300&query=team%20member%20back"
                   : backImage
               }
               alt="Card back"

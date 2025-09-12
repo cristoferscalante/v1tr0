@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import BackgroundAnimation from '@/components/home/BackgroundAnimation'
+import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 
 export default function ClientDashboardLayout({
   children,
