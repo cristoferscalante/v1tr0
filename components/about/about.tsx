@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
+import { useScrollSnapEnabled, useDeviceDetection } from "@/hooks/use-device-detection"
 import CardViewerPremium from "./card-viewer-premium"
 import BackgroundAnimation from "../home/animations/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
@@ -72,7 +73,7 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
           isMobile ? 'w-full max-w-[300px]' : 'w-[420px]'
         }`}>
           <div className={`w-full mx-auto ${
-            isMobile ? 'h-[400px]' : 'h-[480px]'
+            isMobile ? 'h-[450px]' : 'h-[480px]'
           }`}>
             <CardViewerPremium 
               frontImage={member.image} 
@@ -154,23 +155,12 @@ const About = () => {
   const sectionsRef = useRef<HTMLElement[]>([])
   const currentSectionRef = useRef(0)
   const isAnimatingRef = useRef(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  // Check if device is mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  const shouldEnableScrollSnap = useScrollSnapEnabled()
+  const { isMobile } = useDeviceDetection()
 
   // Initialize GSAP ScrollTrigger and snap functionality (only for desktop)
   useEffect(() => {
-    if (!containerRef.current || typeof window === "undefined" || isMobile) { return }
+    if (!containerRef.current || typeof window === "undefined" || !shouldEnableScrollSnap) { return }
     const totalSections = sectionsRef.current.length
 
     // Set up scroll snap with GSAP (desktop only)
@@ -282,7 +272,7 @@ const About = () => {
     const cleanup = setupScrollSnap()
     
     return cleanup;
-  }, [isMobile]);
+  }, [isMobile, shouldEnableScrollSnap]);
 
   // Add section to refs
   const addToRefs = (el: HTMLElement | null) => {
@@ -301,7 +291,7 @@ const About = () => {
         role="region"
         aria-label="Presentación 3D de V1TR0"
         className={`relative flex items-end justify-center overflow-hidden ${
-          isMobile ? 'min-h-screen py-12 px-4' : 'h-screen w-screen pb-20'
+          isMobile ? 'min-h-screen py-12 px-4 pt-24' : 'h-screen w-screen pb-20'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
@@ -310,7 +300,7 @@ const About = () => {
             <V1tr0Logo3D />
           </div>
         ) : (
-          <div className="w-full flex items-center justify-center bg-gradient-to-br from-custom-1/20 to-custom-2/20 rounded-2xl mt-16">
+          <div className="w-full flex items-center justify-center bg-gradient-to-br from-custom-1/20 to-custom-2/20 rounded-2xl mt-4">
             <div className="text-center py-16 px-8">
               <h1 className="text-3xl sm:text-4xl font-bold text-highlight mb-6">V1TR0</h1>
               <div className="space-y-4 text-textMuted text-sm sm:text-base leading-relaxed max-w-2xl">

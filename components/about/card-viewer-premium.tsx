@@ -229,7 +229,7 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div
         ref={containerRef}
-        className="relative w-full h-full max-w-[300px] max-h-[580px] mx-auto cursor-grab active:cursor-grabbing touch-manipulation"
+        className="relative w-full h-full max-w-[300px] max-h-[580px] sm:max-h-[620px] mx-auto cursor-grab active:cursor-grabbing touch-manipulation"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleDragEnd}

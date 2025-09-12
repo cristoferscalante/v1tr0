@@ -22,7 +22,7 @@ export default function PinnedScrollSection({
 }: PinnedScrollSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionsCount = children.length
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768
+  const [isMobile, setIsMobile] = useState(false)
   const { setHorizontalScrollActive, setHorizontalScrollPosition } = useScrollContext()
   const [currentSection, setCurrentSection] = useState(0)
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -30,6 +30,18 @@ export default function PinnedScrollSection({
   const [isPaused, setIsPaused] = useState(false)
   const [userInteracted, setUserInteracted] = useState(false)
   const pauseTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Detectar si es móvil en el cliente para evitar errores de hidratación
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkIsMobile()
+    window.addEventListener('resize', checkIsMobile)
+    
+    return () => window.removeEventListener('resize', checkIsMobile)
+  }, [])
 
   // Actualizar horizontalScrollPosition cuando cambie currentSection
   useEffect(() => {

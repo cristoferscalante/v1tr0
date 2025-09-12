@@ -44,7 +44,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <Link href="/" prefetch={false} className="flex items-center">
               <Image 
                 src={isDark ? "/imagenes/logos/v1tr0-logo.svg" : "/imagenes/logos/Imagotipo  modo claro5.svg"} 
                 alt="V1TR0 Logo" 
@@ -66,9 +66,9 @@ export default function Navbar() {
                 </button>
                 <div className="absolute left-0 mt-2 w-56 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
                   <div className="py-2">
-                    <SubNavLink href="/services/dev">Desarrollo de Software</SubNavLink>
-                <SubNavLink href="/services/pm">Automatización de tareas</SubNavLink>
-                <SubNavLink href="/services/new">Sistemas de Información</SubNavLink>
+                    <SubNavLink href="/servicios-referentes/dev">Desarrollo de Software</SubNavLink>
+                <SubNavLink href="/servicios-referentes/pm">Automatización de tareas</SubNavLink>
+                <SubNavLink href="/servicios-referentes/new">Sistemas de Información</SubNavLink>
                   </div>
                 </div>
               </div>
@@ -136,13 +136,13 @@ export default function Navbar() {
             <div className="w-full max-w-xs border-t border-[#08A696]/20 pt-6 mt-6">
               <h3 className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-bold text-lg mb-4 text-center`}>Servicios</h3>
               <div className="space-y-3">
-                <MobileNavLink href="/services/dev" onClick={() => setIsOpen(false)} isService>
+                <MobileNavLink href="/servicios-referentes/dev" onClick={() => setIsOpen(false)} isService>
                   Desarrollo de Software
                 </MobileNavLink>
-                <MobileNavLink href="/services/pm" onClick={() => setIsOpen(false)} isService>
+                <MobileNavLink href="/servicios-referentes/pm" onClick={() => setIsOpen(false)} isService>
                   Automatización de tareas
                 </MobileNavLink>
-                <MobileNavLink href="/services/new" onClick={() => setIsOpen(false)} isService>
+                <MobileNavLink href="/servicios-referentes/new" onClick={() => setIsOpen(false)} isService>
                   Sistemas de Información
                 </MobileNavLink>
               </div>
@@ -170,6 +170,7 @@ const NavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) 
   return (
     <Link
       href={href}
+      prefetch={false}
       className="text-highlight hover:text-highlight/90 px-3 py-2 text-sm font-medium transition-all duration-300 hover:glow-effect"
     >
       {children}
@@ -182,6 +183,7 @@ const SubNavLink: FC<{ href: string; children: ReactNode }> = ({ href, children 
   return (
     <Link
       href={href}
+      prefetch={false}
       className="block px-4 py-3 text-sm text-[#26FFDF] hover:text-[#26FFDF]/90 transition-all duration-300 hover:bg-[#08A696]/10 rounded-xl mx-2 first:mt-0 last:mb-0"
     >
       {children}
@@ -203,6 +205,7 @@ const MobileNavLink: FC<{ href: string; children: ReactNode; indent?: boolean; o
   return (
     <Link
       href={href}
+      prefetch={false}
       className={`block w-full text-center px-4 py-3 text-lg font-medium transition-all duration-300 rounded-xl ${isService ? "text-white hover:text-white/90 hover:bg-[#08A696]/10" : (isDark ? "text-[#26FFDF] hover:text-[#26FFDF]/90 hover:bg-[#08A696]/10" : "text-[#08A696] hover:text-[#08A696]/90 hover:bg-[#08A696]/10")} ${indent ? "ml-4" : ""}`}
       {...(onClick && { onClick })}
     >

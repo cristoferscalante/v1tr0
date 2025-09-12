@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { useScrollContext } from '../shared/ScrollContext'
+import { useScrollSnapEnabled, useDeviceDetection } from '@/hooks/use-device-detection'
 
 // Registrar los plugins
 if (typeof window !== 'undefined') {
@@ -33,7 +34,8 @@ export default function HomeScrollSnap({
   const currentSectionRef = useRef(0)
   const isAnimatingRef = useRef(false)
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768
+  const shouldEnableScrollSnap = useScrollSnapEnabled()
+  const { isMobile } = useDeviceDetection()
   const { canScrollVertically } = useScrollContext()
   // const { isHorizontalScrollActive, horizontalScrollPosition } = useScrollContext() // No utilizadas
 
@@ -43,8 +45,9 @@ export default function HomeScrollSnap({
       return
     }
 
-    // En móviles, permitir scroll normal sin GSAP
-    if (isMobile) {
+    // En móviles y tablets, permitir scroll normal sin GSAP
+    // Solo aplicar scroll snap en desktop
+    if (!shouldEnableScrollSnap) {
       document.body.style.overflow = "auto"
       document.documentElement.style.overflow = "auto"
       return
@@ -206,7 +209,7 @@ export default function HomeScrollSnap({
     const cleanup = setupScrollSnap()
     
     return cleanup
-  }, [canScrollVertically, isMobile])
+  }, [canScrollVertically, isMobile, shouldEnableScrollSnap])
 
   // Agregar sección a refs
   const addToRefs = (el: HTMLElement | null) => {
@@ -215,8 +218,8 @@ export default function HomeScrollSnap({
     }
   }
 
-  // Renderizado responsive
-  if (isMobile) {
+  // Renderizado responsive - scroll normal para móviles y tablets
+  if (!shouldEnableScrollSnap) {
     return (
       <div ref={containerRef} className={`relative ${className}`}>
         {children.map((child, index) => {

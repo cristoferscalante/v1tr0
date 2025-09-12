@@ -4,9 +4,9 @@
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import HomeBanner from "@/components/home/sections/banner/HomeBanner"
 import TechnologiesSection from "@/components/home/layout/GridTechnologies"
-import SoftwareDevelopmentBanner from "@/components/home/sections/services/SoftwareDevelopmentBanner"
-import InformationSystemsPage from "@/components/home/sections/services/InformationSystemsPage"
-import TaskAutomationPage from "@/components/home/sections/services/TaskAutomationPage"
+import SoftwareDevelopmentBanner from "@/components/home/sections/carrusel-componentes/SoftwareDevelopmentBanner"
+import InformationSystemsPage from "@/components/home/sections/carrusel-componentes/InformationSystemsPage"
+import TaskAutomationPage from "@/components/home/sections/carrusel-componentes/TaskAutomationPage"
 import ConsultationAndDemosSection from "@/components/home/sections/contact/ConsultationAndDemosSection"
 
 

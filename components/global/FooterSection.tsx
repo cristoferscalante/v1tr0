@@ -112,13 +112,13 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, ref) =>
             <p className="text-textMuted text-sm sm:text-base">&copy; {new Date().getFullYear()} V1TR0</p>
             <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>•</span>
             <nav className="flex gap-3 sm:gap-4">
-              <Link href="/terminos" className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
+              <Link href="/terminos" prefetch={false} className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
                 Términos
               </Link>
-              <Link href="/privacidad" className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
+              <Link href="/privacidad" prefetch={false} className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
                 Privacidad
               </Link>
-              <Link href="/cookies" className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
+              <Link href="/cookies" prefetch={false} className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
                 Cookies
               </Link>
             </nav>

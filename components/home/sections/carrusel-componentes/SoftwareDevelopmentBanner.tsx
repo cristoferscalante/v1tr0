@@ -22,9 +22,10 @@ export default function SoftwareDevelopmentBanner() {
           text: "Desarrollo ágil para una entrega rápida y flexible",
         },
       ]}
-      imageSrc="/imagenes/home/carrusel/desarrollo_web_end.png"
+      imageSrc="/imagenes/home/carrusel/desarrollo_web_end_backup.png"
       imageAlt="Desarrollador con elementos de programación y tecnología"
       imageSize="sm"
+      titleLink="/servicios-referentes/dev"
     />
   )
 }

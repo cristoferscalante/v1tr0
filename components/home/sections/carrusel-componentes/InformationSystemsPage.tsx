@@ -5,19 +5,21 @@ import Image from "next/image"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRouter } from "next/navigation"
 
 gsap.registerPlugin(ScrollTrigger)
 import { BarChartIcon, PieChartIcon, TrendingUpIcon } from "@/lib/icons"
 
 
 export default function InformationSystemsPage() {
+  const router = useRouter()
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descriptionRef = useRef<HTMLParagraphElement>(null)
   const featuresRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
 
    const serviceData = {
-    title: "Sistemas de Información",
+    title: "Sistemas de Información & Análisis de Datos",
     description: "Los datos son un activo estratégico. Comprenderlos, gestionarlos y convertirlos en decisiones estratégicas es lo que marca la diferencia.",
     features: [
       {
@@ -84,7 +86,8 @@ export default function InformationSystemsPage() {
             <div className="lg:w-1/2 lg:pr-12">
               <h1 
                 ref={titleRef}
-                className="text-4xl md:text-6xl font-bold text-textPrimary mb-6"
+                onClick={() => router.push('/servicios-referentes/new')}
+                className="text-3xl md:text-5xl font-bold text-textPrimary mb-6 transition-all duration-300 hover:text-highlight hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(38,255,223,0.5)] transform-gpu cursor-pointer"
               >
                 {serviceData.title}
               </h1>
@@ -112,8 +115,8 @@ export default function InformationSystemsPage() {
               <div ref={imageRef} className="flex items-center justify-center mb-8">
                 <Image
                   alt={serviceData.imageAlt}
-                  width={350}
-                  height={350}
+                  width={270}
+                  height={270}
                   className="w-full h-auto max-w-sm object-cover transition-all duration-700 ease-in-out"
                   src={serviceData.imageSrc}
                   style={{ color: "transparent" }}
