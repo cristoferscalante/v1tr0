@@ -27,10 +27,10 @@ export default function CardBanner({ icon, title, onClick, href }: CardBannerPro
       >
         <div className="flex-shrink-0 flex items-center justify-center mr-3 transition-transform duration-300 group-hover:scale-110">
           <div className={`p-2 rounded-xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} group-hover:bg-[#08A696]/20 transition-all duration-300`}>
-            <Image src={icon || "/placeholder.svg"} alt="" height={40} width={40} className="transition-transform duration-300 group-hover:rotate-3" />
+            <Image src={icon || "/imagenes/icons/svg/placeholder.svg"} alt="" height={40} width={40} className="transition-transform duration-300 group-hover:rotate-3" />
           </div>
         </div>
-        <h3 className={`flex-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-base leading-tight transition-colors duration-300 group-hover:text-[#08A696] ${isDark ? "group-hover:text-[#26FFDF]" : ""} text-left whitespace-nowrap overflow-hidden text-ellipsis`}>
+        <h3 className={`flex-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-base leading-tight transition-all duration-300 group-hover:text-[#08A696] ${isDark ? "group-hover:text-[#26FFDF]" : ""} text-left whitespace-nowrap overflow-hidden text-ellipsis group-hover:scale-105 group-hover:drop-shadow-[0_0_10px_rgba(38,255,223,0.4)] transform-gpu`}>
           {title}
         </h3>
       </div>

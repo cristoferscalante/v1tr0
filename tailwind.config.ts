@@ -108,6 +108,9 @@ const config: Config = {
         slideInRight: 'slideInRight 0.8s ease-out',
         slideInLeft: 'slideInLeft 0.8s ease-out 0.2s both',
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
       typography: () => ({
         DEFAULT: {
           css: {

@@ -6,7 +6,7 @@ import PostHeader from "@/components/blog/PostHeader"
 import { getPostBySlug, getAllPostSlugs } from "@/lib/mdx"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import BackgroundAnimation from "@/components/home/BackgroundAnimation"
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { MDXContent } from "@/components/blog/MDXContent"
 
 interface PageProps {

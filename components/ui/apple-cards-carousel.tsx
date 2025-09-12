@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface CarouselProps {
   items: React.ReactElement[];
@@ -26,6 +27,7 @@ type Card = {
   description: string;
   technologies: string[];
   content: React.ReactNode;
+  serviceUrl?: string;
 };
 
 export const CarouselContext = createContext<{
@@ -165,6 +167,7 @@ export const Card = ({
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { onCardClose } = useContext(CarouselContext);
+  const router = useRouter();
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -192,6 +195,13 @@ export const Card = ({
 
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const handleNavigateToService = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (card.serviceUrl) {
+      router.push(card.serviceUrl);
+    }
   };
 
   return (
@@ -256,32 +266,55 @@ export const Card = ({
           </div>
         )}
       </AnimatePresence>
-      <motion.button
+      <div
         {...(layout && { layoutId: `card-${card.title}` })}
-        onClick={handleOpen}
-        className="relative z-10 flex h-64 w-48 sm:h-72 sm:w-52 md:h-80 md:w-56 lg:h-[30rem] lg:w-80 xl:h-[40rem] xl:w-96 flex-col items-start justify-start overflow-hidden rounded-2xl sm:rounded-3xl bg-background-secondary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-custom-2"
+        className="relative z-10 flex h-64 w-48 sm:h-72 sm:w-52 md:h-80 md:w-56 lg:h-[30rem] lg:w-80 xl:h-[40rem] xl:w-96 flex-col items-start justify-start overflow-hidden rounded-2xl sm:rounded-3xl bg-background-secondary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-custom-2 group cursor-pointer"
+        onClick={handleNavigateToService}
+        title={`Ir a ${card.category}`}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
-        <div className="relative z-40 p-4 sm:p-6 md:p-8">
-          <motion.p
-            {...(layout && { layoutId: `category-${card.category}` })}
-            className="text-left font-sans text-xs sm:text-sm md:text-base font-medium text-white"
-          >
-            {card.category}
-          </motion.p>
-          <motion.p
-            {...(layout && { layoutId: `title-${card.title}` })}
-            className="mt-1 sm:mt-2 max-w-xs text-left font-sans text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold [text-wrap:balance] text-white leading-tight"
-          >
-            {card.title}
-          </motion.p>
-        </div>
+        {/* Gradient overlay */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+        
+        {/* Background image */}
         <BlurImage
           src={card.src}
           alt={card.title}
-          className="absolute inset-0 z-10 object-cover"
+          className="absolute inset-0 object-cover transition-transform duration-300 group-hover:scale-105"
         />
-      </motion.button>
+        
+        {/* Text content area */}
+        <div className="relative z-30 p-4 sm:p-6 md:p-8 pointer-events-none">
+          {/* Category */}
+          <motion.p
+            {...(layout && { layoutId: `category-${card.category}` })}
+            className="text-left font-sans text-xs sm:text-sm md:text-base font-medium text-white hover:text-primary transition-all duration-300 pointer-events-auto cursor-pointer hover:scale-105 transform"
+          >
+            {card.category}
+          </motion.p>
+          
+          {/* Title */}
+          <motion.h3
+            {...(layout && { layoutId: `title-${card.title}` })}
+            className="mt-1 sm:mt-2 max-w-xs text-left font-sans text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold [text-wrap:balance] text-white leading-tight hover:text-primary transition-all duration-300 pointer-events-auto cursor-pointer hover:scale-105 transform"
+          >
+            {card.title}
+          </motion.h3>
+        </div>
+        
+        {/* Modal trigger area - small button in corner */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpen();
+          }}
+          className="absolute top-2 right-2 z-40 w-8 h-8 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:text-primary transition-all duration-200 opacity-0 group-hover:opacity-100 pointer-events-auto"
+          title="Ver detalles"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      </div>
     </>
   );
 };

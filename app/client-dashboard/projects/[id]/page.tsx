@@ -12,7 +12,7 @@ import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { TaskCard } from '@/components/ui/task-card'
 import { TimelineFilters, FilterState } from '@/components/ui/timeline-filters'
-import BackgroundAnimation from '@/components/home/BackgroundAnimation'
+import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 import { ProjectChatbot } from '@/components/ui/project-chatbot'
 
 interface Project {

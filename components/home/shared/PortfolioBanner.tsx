@@ -162,7 +162,7 @@ export default function PortfolioBanner({
                     src={
                       project.image && project.image.trim() !== ""
                         ? project.image
-                        : `/placeholder.svg?height=300&width=500&query=${encodeURIComponent(project.title)}`
+                        : `/imagenes/icons/svg/placeholder.svg?height=300&width=500&query=${encodeURIComponent(project.title)}`
                     }
                     alt={project.title || "Proyecto"}
                     fill

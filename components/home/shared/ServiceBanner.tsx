@@ -11,6 +11,7 @@ import { useState, useContext, createContext, useRef } from "react"
 import { X, Send } from "lucide-react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
+import { useRouter } from "next/navigation"
 
 // Registrar el plugin useGSAP
 gsap.registerPlugin(useGSAP)
@@ -35,6 +36,8 @@ interface ServiceBannerProps {
   ctaLink?: string
   ctaText?: string
   imageSize?: 'sm' | 'md' | 'lg'
+  titleLink?: string
+
 }
 
 export default function ServiceBanner({
@@ -45,7 +48,11 @@ export default function ServiceBanner({
   imageAlt,
   ctaText,
   imageSize = 'md',
+  titleLink,
+
 }: ServiceBannerProps) {
+
+  const router = useRouter()
 
   
   const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -58,8 +65,7 @@ export default function ServiceBanner({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  const [isGlowing, setIsGlowing] = useState(false)
-  const [isShaking, setIsShaking] = useState(false)
+
 
   // Detectar si estamos dentro de PinnedScrollSection
   const isInsidePinnedScroll = useContext(PinnedScrollContext)
@@ -130,33 +136,7 @@ export default function ServiceBanner({
   // Hook para animaciones de interacción con contextSafe
   const { contextSafe } = useGSAP(() => {}, { dependencies: [] })
 
-  const handleImageClick = contextSafe(() => {
-    if (isInsidePinnedScroll) {
-      return // Deshabilitar en PinnedScrollSection
-    }
-    
-    setIsGlowing(true)
-    setIsShaking(true)
-    
-    if (imageRef.current) {
-      gsap.to(imageRef.current, {
-        scale: 1.05,
-        duration: 0.3,
-        ease: "power2.out",
-        yoyo: true,
-        repeat: 1,
-        onComplete: () => {
-          // Asegurar que la escala vuelva a 1 al completar
-          if (imageRef.current) {
-            gsap.set(imageRef.current, { scale: 1 })
-          }
-        }
-      })
-    }
 
-    setTimeout(() => setIsShaking(false), 500)
-    setTimeout(() => setIsGlowing(false), 800)
-  })
   
   // Animaciones de hover para el botón CTA
   const handleCtaHover = contextSafe((isHovering: boolean) => {
@@ -192,7 +172,7 @@ export default function ServiceBanner({
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const placeholderImage = `/placeholder.svg?height=400&width=500&query=${encodeURIComponent(imageAlt)}`
+  const placeholderImage = `/imagenes/icons/svg/placeholder.svg?height=400&width=500&query=${encodeURIComponent(imageAlt)}`
 
   return (
     <section className="min-h-screen lg:min-h-screen w-full px-4 py-8 lg:py-16 flex items-center bg-transparent">
@@ -200,7 +180,10 @@ export default function ServiceBanner({
         <div className="lg:w-1/2 lg:pr-12">
           <h1
             ref={titleRef}
-            className="text-3xl md:text-5xl font-bold text-textPrimary mb-6"
+            onClick={() => titleLink && router.push(titleLink)}
+            className={`text-3xl md:text-5xl font-bold text-textPrimary mb-6 transition-all duration-300 hover:text-highlight hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(38,255,223,0.5)] transform-gpu ${
+              titleLink ? 'cursor-pointer' : 'cursor-default'
+            }`}
           >
             {title}
           </h1>
@@ -233,17 +216,11 @@ export default function ServiceBanner({
             <Image
               src={imageSrc || placeholderImage}
               alt={imageAlt}
-              width={imageSize === 'sm' ? 200 : imageSize === 'lg' ? 400 : 300}
-              height={imageSize === 'sm' ? 200 : imageSize === 'lg' ? 400 : 300}
-              onClick={handleImageClick}
+              width={imageSize === 'sm' ? 350 : imageSize === 'lg' ? 258 : 300}
+          height={imageSize === 'sm' ? 350 : imageSize === 'lg' ? 258 : 300}
               className={`w-full h-auto ${
                 imageSize === 'sm' ? 'max-w-xs' : imageSize === 'lg' ? 'max-w-md' : 'max-w-sm'
-              } object-cover transition-all duration-700 ease-in-out hover:scale-105 ${
-                isGlowing ? "animate-glow-pulse" : ""
-              } ${isShaking ? "animate-shake" : ""}`}
-              style={{
-                cursor: "pointer",
-              }}
+              } object-cover transition-all duration-700 ease-in-out`}
             />
           </div>
           

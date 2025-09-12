@@ -42,7 +42,7 @@ export default function BlogCard({ post }: BlogCardProps) {
 
   // Usar imágenes reales como fallback
   const coverImage = post.meta.coverImage || `/post/post.png`;
-  const authorImage = post.meta.authorImage || `/placeholder-user.jpg`;
+  const authorImage = post.meta.authorImage || `/imagenes/logos/v1tr0-logo.svg`;
 
   return (
     <Link
@@ -63,7 +63,7 @@ export default function BlogCard({ post }: BlogCardProps) {
         {/* Imagen de portada */}
         <div className="relative aspect-video w-full overflow-hidden">
           <Image
-            src={coverImage || "/placeholder.svg"}
+            src={coverImage || "/imagenes/icons/svg/placeholder.svg"}
             alt={post.meta.title}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -122,7 +122,7 @@ export default function BlogCard({ post }: BlogCardProps) {
             className={`flex items-center pt-4 border-t mt-auto ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"}`}
           >
             <div className={`relative w-10 h-10 rounded-full overflow-hidden border-2 ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"}`}>
-              <Image src={authorImage || "/placeholder.svg"} alt={post.meta.author} fill className="object-cover" />
+              <Image src={authorImage || "/imagenes/icons/svg/placeholder.svg"} alt={post.meta.author} fill className="object-cover" />
             </div>
             <div className="ml-3">
               <p className={`text-sm font-medium ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>{post.meta.author}</p>

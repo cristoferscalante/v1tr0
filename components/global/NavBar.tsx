@@ -46,7 +46,7 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               <Image 
-                src={isDark ? "/v1tr0-logo.svg" : "/Imagotipo  modo claro5.svg"} 
+                src={isDark ? "/imagenes/logos/v1tr0-logo.svg" : "/imagenes/logos/Imagotipo  modo claro5.svg"} 
                 alt="V1TR0 Logo" 
                 width={isDark ? (scrolled ? 44 : 58) : (scrolled ? 35 : 45)} 
                 height={isDark ? (scrolled ? 44 : 58) : (scrolled ? 35 : 45)} 
@@ -67,8 +67,8 @@ export default function Navbar() {
                 <div className="absolute left-0 mt-2 w-56 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
                   <div className="py-2">
                     <SubNavLink href="/services/dev">Desarrollo de Software</SubNavLink>
-                    <SubNavLink href="/services/pm">Automatización de tareas</SubNavLink>
-                    <SubNavLink href="/services/new">Sistemas de Información</SubNavLink>
+                <SubNavLink href="/services/pm">Automatización de tareas</SubNavLink>
+                <SubNavLink href="/services/new">Sistemas de Información</SubNavLink>
                   </div>
                 </div>
               </div>

@@ -35,7 +35,7 @@ function Logo3DModel({
   position: 'left' | 'right'
   currentView: ViewKey
 }) {
-  const { scene } = useGLTF('/3d/v1tr0_logo_3d.glb', true) // true para draco compression
+  const { scene } = useGLTF('/imagenes/3d/models/v1tr0_logo_3d.glb', true) // true para draco compression
   const meshRef = useRef<THREE.Group>(null)
   const targetPosition = useRef(new THREE.Vector3())
   const currentPosition = useRef(new THREE.Vector3())
@@ -465,4 +465,4 @@ export default function V1tr0Logo3D() {
 }
 
 // Preload the model for better performance
-useGLTF.preload('/3d/v1tr0_logo_3d.glb', true) // true para draco compression
+useGLTF.preload('/imagenes/3d/models/v1tr0_logo_3d.glb', true) // true para draco compression

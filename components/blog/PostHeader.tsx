@@ -26,7 +26,7 @@ export default function PostHeader({ title, date, author, coverImage, readingTim
   })
 
   // Usar la imagen de portada real o fallback a placeholder
-  const imageToUse = coverImage || `/placeholder.svg?height=630&width=1200&query=${encodeURIComponent(title)}`
+  const imageToUse = coverImage || `/imagenes/icons/svg/placeholder.svg?height=630&width=1200&query=${encodeURIComponent(title)}`
 
   return (
     <header className="mb-12">

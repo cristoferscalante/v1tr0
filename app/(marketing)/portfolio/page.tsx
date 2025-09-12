@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import BackgroundAnimation from "@/components/home/BackgroundAnimation"
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { ExternalLink, GitBranch, X, Send } from "lucide-react"
@@ -22,7 +22,7 @@ const projects = [
     id: 1,
     title: "Gestión Empresarial",
     description: "Plataforma integral para la gestión de recursos y procesos empresariales.",
-    image: "/home/images/project/gestion-empresarial.png",
+    image: "/imagenes/home/project/gestion-empresarial.png",
     tags: ["Next.js", "Django", "PostgreSQL"],
     link: "https://dashboard-five-green.vercel.app/dashboard",
     category: "software",
@@ -31,7 +31,7 @@ const projects = [
     id: 2,
     title: "Generador de Códigos QR",
     description: "Crea y personaliza tu QR al instante de forma gratuita.",
-    image: "/home/images/project/generador-qr.png",
+    image: "/imagenes/home/project/generador-qr.png",
     tags: ["React Native", "Python", "TensorFlow"],
     link: "https://qr-generator-eight-omega.vercel.app/",
     category: "software",
@@ -40,7 +40,7 @@ const projects = [
     id: 3,
     title: "Plataforma E-commerce",
     description: "Personalizador de prendas para tiendas online, con integración de pagos y gestión de inventario.",
-    image: "/home/images/project/plataforma.png",
+    image: "/imagenes/home/project/plataforma.png",
     tags: ["Next.js", "Supabase"],
     link: "https://template-store-six.vercel.app/",
     category: "software",

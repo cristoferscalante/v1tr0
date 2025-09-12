@@ -7,6 +7,7 @@ import { Eye, EyeOff, User, Mail, Lock, CheckCircle, CheckCircle2, AlertCircle }
 import { toast } from 'sonner'
 import NavBar from '@/components/global/NavBar'
 import FooterSection from '@/components/global/FooterSection'
+import { CustomCheckbox } from '@/components/ui/custom-checkbox'
 import { gsap } from 'gsap'
 // Componentes UI nativos - sin shadcn/ui
 
@@ -367,12 +368,11 @@ export default function RegisterPage() {
 
                   <div className="form-element">
                     <div className="flex items-start space-x-3">
-                      <input
+                      <CustomCheckbox
                         id="terms"
-                        type="checkbox"
                         checked={formData.terms}
-                        onChange={(e) => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
-                        className="mt-1 w-4 h-4 text-[#08A696] bg-[#02505931]/50 border-[#08A696]/30 rounded focus:ring-[#26FFDF]/20 focus:ring-2"
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, terms: checked === true }))}
+                        className="mt-1"
                       />
                       <label htmlFor="terms" className="text-sm text-gray-300 leading-relaxed cursor-pointer">
                         Acepto los{' '}
