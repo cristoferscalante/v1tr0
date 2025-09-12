@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { Code2, Database, Server, Smartphone, Terminal } from "lucide-react"
 import { useTheme } from "@/components/theme-provider"
 
 export default function ModernTechnologiesSection() {
-  const [selectedId, setSelectedId] = useState<number | null>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
@@ -81,12 +79,10 @@ export default function ModernTechnologiesSection() {
           {technologies.map((tech, index) => (
             <motion.div
               key={tech.id}
-              layoutId={`tech-${tech.id}`}
-              onClick={() => setSelectedId(tech.id)}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="relative overflow-hidden cursor-pointer group"
+              className="relative overflow-hidden group"
             >
               {/* Gradiente de fondo con blur - igual que CardBanner */}
               <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`} />
@@ -129,59 +125,7 @@ export default function ModernTechnologiesSection() {
           ))}
         </div>
 
-        <AnimatePresence>
-          {selectedId && (
-            <motion.div
-              layoutId={`tech-${selectedId}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
-              onClick={() => setSelectedId(null)}
-            >
-              <motion.div
-                className="relative w-full max-w-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Gradiente de fondo con blur */}
-                <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-60`} />
-                
-                {/* Modal principal */}
-                <div className={`relative ${isDark ? "bg-[#02505950] backdrop-blur-md" : "bg-[#e6f7f6] backdrop-blur-md"} rounded-2xl border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"} shadow-2xl shadow-[#08A696]/20 p-8`}>
-                  {technologies.find((tech) => tech.id === selectedId) && (
-                    <div>
-                      <div className="flex items-center gap-6 mb-6">
-                        <div className={`p-4 rounded-2xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/10"} transition-all duration-300`}>
-                          <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
-                            {technologies.find((tech) => tech.id === selectedId)?.icon}
-                          </div>
-                        </div>
-                        <h3 className={`text-3xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
-                          {technologies.find((tech) => tech.id === selectedId)?.name}
-                        </h3>
-                      </div>
-                      <p className="text-textMuted text-lg mb-6">
-                        {technologies.find((tech) => tech.id === selectedId)?.description}
-                      </p>
-                      <div className="grid grid-cols-2 gap-4">
-                        {technologies
-                          .find((tech) => tech.id === selectedId)
-                          ?.techs.map((t) => (
-                            <div
-                              key={t}
-                              className={`px-4 py-2 text-sm rounded-xl text-center transition-all duration-300 ${isDark ? "text-[#26FFDF] bg-[#08A696]/10 hover:bg-[#08A696]/20" : "text-[#08A696] bg-[#08A696]/10 hover:bg-[#08A696]/20"}`}
-                            >
-                              {t}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
 
 
       </div>

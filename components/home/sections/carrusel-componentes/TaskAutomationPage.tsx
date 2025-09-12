@@ -24,8 +24,8 @@ export default function TaskAutomationPage() {
       ]}
       imageSrc="/imagenes/home/carrusel/automatizacion_de_tareas.png"
       imageAlt="Especialista en automatización con elementos de IA, robots y workflows digitales en estilo neón"
-      imageSize="lg"
-      titleLink="/services/pm"
+      imageSize="xs"
+      titleLink="/servicios-referentes/pm"
     />
   )
 }

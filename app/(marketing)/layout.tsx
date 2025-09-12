@@ -13,7 +13,7 @@ export default function MarketingLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isServicesNewPage = pathname === '/services/new'
+  const isServicesNewPage = pathname === '/servicios-referentes/new'
   const isAboutPage = pathname === '/about'
 
   return (

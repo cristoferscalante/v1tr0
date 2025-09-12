@@ -80,14 +80,23 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
     ...examples
   ]
 
+  // Estado para controlar errores de video
+  const [videoErrors, setVideoErrors] = useState<{ [key: number]: boolean }>({})
+  
   // Función para gestionar la carga optimizada de videos
   const updateVideoLoading = useCallback((activeIndex: number) => {
     videoRefs.current.forEach((video, index) => {
-      if (video) {
+      if (video && !videoErrors[index]) {
         if (index === activeIndex) {
           // Video activo: carga completa y reproduce si es necesario
           video.preload = 'auto'
-          video.load() // Fuerza la recarga con la nueva configuración
+          // Solo cargar si no hay error previo
+          try {
+            video.load() // Fuerza la recarga con la nueva configuración
+          } catch (error) {
+            console.warn(`Error loading video at index ${index}:`, error)
+            setVideoErrors(prev => ({ ...prev, [index]: true }))
+          }
         } else {
           // Videos inactivos: solo metadata
           video.preload = 'metadata'
@@ -95,7 +104,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
         }
       }
     })
-  }, [])
+  }, [videoErrors])
 
   // Función central que maneja la lógica de la animación de transición entre diapositivas
   const gotoSection = useCallback(
@@ -269,37 +278,88 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                               </div>
                             </div>
                           )}
-                          <video 
-                            ref={(el) => { videoRefs.current[index] = el }}
-                            src={slide.video} 
-                            controls 
-                            preload="none"
-                            className="max-w-[80vh] h-auto max-h-[30vh] md:max-h-[35vh] lg:max-h-[45vh] max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] mx-auto rounded-2xl shadow-2xl border-2 border-[#26FFDF]/40 hover:border-[#26FFDF]/60 transition-all duration-300"
-                            poster={slide.img}
-                            onLoadStart={() => {
-                              // Mostrar spinner cuando inicia la carga
-                              setVideoLoading(prev => ({ ...prev, [index]: true }))
-                              // Asegurar que solo el video activo se carga completamente
-                              if (index !== currentIndex && videoRefs.current[index]) {
-                                videoRefs.current[index]!.preload = 'metadata'
-                              }
-                            }}
-                            onCanPlay={() => {
-                              // Ocultar spinner cuando el video puede reproducirse
-                              setVideoLoading(prev => ({ ...prev, [index]: false }))
-                            }}
-                            onError={(e) => {
-                              console.error('Error loading video:', slide.video, e)
-                              // Ocultar spinner en caso de error
-                              setVideoLoading(prev => ({ ...prev, [index]: false }))
-                              // Fallback: try without crossOrigin
-                              if (videoRefs.current[index]) {
-                                videoRefs.current[index]!.removeAttribute('crossorigin')
-                              }
-                            }}
-                          >
-                            Tu navegador no soporta el elemento de video.
-                          </video>
+                          {!videoErrors[index] ? (
+                            <video 
+                              ref={(el) => { videoRefs.current[index] = el }}
+                              src={slide.video} 
+                              controls 
+                              preload="none"
+                              className="max-w-[80vh] h-auto max-h-[30vh] md:max-h-[35vh] lg:max-h-[45vh] max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] mx-auto rounded-2xl shadow-2xl border-2 border-[#26FFDF]/40 hover:border-[#26FFDF]/60 transition-all duration-300"
+                              poster={slide.img}
+                              onLoadStart={() => {
+                                // Mostrar spinner cuando inicia la carga
+                                setVideoLoading(prev => ({ ...prev, [index]: true }))
+                                // Asegurar que solo el video activo se carga completamente
+                                if (index !== currentIndex && videoRefs.current[index]) {
+                                  videoRefs.current[index]!.preload = 'metadata'
+                                }
+                              }}
+                              onCanPlay={() => {
+                                // Ocultar spinner cuando el video puede reproducirse
+                                setVideoLoading(prev => ({ ...prev, [index]: false }))
+                              }}
+                              onError={(e) => {
+                                console.error('Error loading video:', slide.video, e)
+                                // Marcar video como con error
+                                setVideoErrors(prev => ({ ...prev, [index]: true }))
+                                // Ocultar spinner en caso de error
+                                setVideoLoading(prev => ({ ...prev, [index]: false }))
+                              }}
+                            >
+                              Tu navegador no soporta el elemento de video.
+                            </video>
+                          ) : (
+                            // Fallback cuando hay error de video
+                            <div className="max-w-[80vh] h-auto max-h-[30vh] md:max-h-[35vh] lg:max-h-[45vh] max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] mx-auto rounded-2xl shadow-2xl border-2 border-[#26FFDF]/40 bg-gradient-to-br from-gray-800 to-gray-900 flex flex-col items-center justify-center p-8">
+                              {slide.img ? (
+                                <div className="relative w-full h-full min-h-[200px]">
+                                  <Image 
+                                    src={slide.img} 
+                                    alt={slide.title}
+                                    fill
+                                    className="object-cover rounded-xl opacity-80"
+                                  />
+                                  <div className="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center">
+                                    <div className="text-center">
+                                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#26FFDF]/20 flex items-center justify-center">
+                                        <svg className="w-8 h-8 text-[#26FFDF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                      </div>
+                                      <p className="text-white/80 text-sm">Video no disponible</p>
+                                      <button 
+                                        onClick={() => {
+                                          setVideoErrors(prev => ({ ...prev, [index]: false }))
+                                          setTimeout(() => updateVideoLoading(currentIndex), 100)
+                                        }}
+                                        className="mt-2 px-4 py-2 bg-[#26FFDF]/20 hover:bg-[#26FFDF]/30 text-[#26FFDF] text-xs rounded-lg transition-colors"
+                                      >
+                                        Reintentar
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="text-center">
+                                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#26FFDF]/20 flex items-center justify-center">
+                                    <svg className="w-8 h-8 text-[#26FFDF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                  <p className="text-white/80 text-sm mb-2">Video no disponible</p>
+                                  <button 
+                                    onClick={() => {
+                                      setVideoErrors(prev => ({ ...prev, [index]: false }))
+                                      setTimeout(() => updateVideoLoading(currentIndex), 100)
+                                    }}
+                                    className="px-4 py-2 bg-[#26FFDF]/20 hover:bg-[#26FFDF]/30 text-[#26FFDF] text-xs rounded-lg transition-colors"
+                                  >
+                                    Reintentar
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                         
                         {/* Título con más espacio */}

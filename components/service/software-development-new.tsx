@@ -6,6 +6,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { X, Send, ChevronLeft, ChevronRight, ExternalLink, Users, Calendar } from "lucide-react"
 import { useEffect } from "react"
+import { useScrollSnapEnabled } from "@/hooks/use-device-detection"
 import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
 
@@ -106,10 +107,10 @@ export default function SoftwareDevelopment() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  const shouldEnableScrollSnap = useScrollSnapEnabled()
+
   useEffect(() => {
-    const isMobile = window.innerWidth < 768
-    
-    if (!isMobile) {
+    if (shouldEnableScrollSnap) {
       // Desktop: Enable snap scrolling and animations
       ScrollTrigger.create({
         trigger: ".snap-container",
@@ -148,7 +149,7 @@ export default function SoftwareDevelopment() {
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill())
     }
-  }, [])
+  }, [shouldEnableScrollSnap])
 
   return (
     <section className="relative">
