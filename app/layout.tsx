@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   description: "Desarrollo de software a medida",
   generator: 'v0.dev',
   icons: {
-    icon: '/v1tr0.ico',
-    shortcut: '/v1tr0.ico',
-    apple: '/v1tr0.ico',
+    icon: '/imagenes/logos/v1tr01.ico',
+    shortcut: '/imagenes/logos/v1tr01.ico',
+    apple: '/imagenes/logos/v1tr01.ico',
   },
 }
 
