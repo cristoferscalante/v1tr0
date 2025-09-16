@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseMeetingsDB } from '@/lib/supabase-meetings-db'
+import { createClient } from '@/lib/supabase/server'
 import type { ClientInput, Meeting } from '@/lib/supabase-meetings-db'
 
 // GET - Obtener reuniones
@@ -122,10 +123,90 @@ export async function GET(request: Request) {
   }
 }
 
+// Helper function to create project meetings
+async function createProjectMeeting(request: NextRequest, body: any) {
+  const { title, project_id, start_time } = body;
+  
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    )
+  }
+
+  // Check access to project
+  const { data: project, error: projectError } = await supabase
+    .from('projects')
+    .select('id, client_id, title')
+    .eq('id', project_id)
+    .single()
+
+  if (projectError || !project) {
+    return NextResponse.json(
+      { error: 'Project not found' },
+      { status: 404 }
+    )
+  }
+
+  // Get user role
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profileData?.role === 'admin'
+  const isClient = project.client_id === user.id
+
+  if (!isAdmin && !isClient) {
+    return NextResponse.json(
+      { error: 'Access denied to project' },
+      { status: 403 }
+    )
+  }
+
+  // Create meeting
+  const { data: meeting, error: meetingError } = await supabase
+    .from('meetings')
+    .insert({
+      title,
+      project_id,
+      start_time,
+      status: 'scheduled',
+      created_by: user.id,
+    })
+    .select(`
+      *,
+      project:project_id(id, title, client_id)
+    `)
+    .single()
+
+  if (meetingError) {
+    console.error('Database error:', meetingError)
+    return NextResponse.json(
+      { error: 'Failed to create meeting' },
+      { status: 500 }
+    )
+  }
+
+  return NextResponse.json(meeting, { status: 201 })
+}
+
 // POST - Crear nueva reunión
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    // Check if this is a project meeting creation request
+    if (body.title && body.project_id && body.start_time) {
+      return await createProjectMeeting(request, body)
+    }
+    
+    // Legacy format for website meeting scheduling
     const { date, time, clientName, clientEmail, clientPhone, meetingType, notes } = body;
 
     // Validaciones básicas
