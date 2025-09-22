@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
+import Image from 'next/image';
 import './LogoLoop.css';
 
 // Animation configuration constants
@@ -8,7 +9,7 @@ const ANIMATION_CONFIG = {
   SMOOTH_TAU: 0.25,
   MIN_COPIES: 2,
   COPY_HEADROOM: 2
-} as const;
+};
 
 // Type definitions
 interface LogoNodeItem {
@@ -54,7 +55,7 @@ const toCssLength = (value: string | number | undefined): string | undefined =>
 // Custom hooks
 const useResizeObserver = (
   callback: () => void, 
-  elements: React.RefObject<HTMLElement>[], 
+  elements: React.RefObject<HTMLElement | null>[], 
   dependencies: unknown[]
 ) => {
   useEffect(() => {
@@ -66,7 +67,9 @@ const useResizeObserver = (
     }
 
     const observers = elements.map(ref => {
-      if (!ref.current) return null;
+      if (!ref.current) {
+        return null;
+      }
       const observer = new ResizeObserver(callback);
       observer.observe(ref.current);
       return observer;
@@ -82,7 +85,7 @@ const useResizeObserver = (
 };
 
 const useImageLoader = (
-  seqRef: React.RefObject<HTMLElement>, 
+  seqRef: React.RefObject<HTMLElement | null>, 
   onLoad: () => void, 
   dependencies: unknown[]
 ) => {
@@ -124,7 +127,7 @@ const useImageLoader = (
 };
 
 const useAnimationLoop = (
-  trackRef: React.RefObject<HTMLElement>,
+  trackRef: React.RefObject<HTMLElement | null>,
   targetVelocity: number,
   seqWidth: number,
   isHovered: boolean,
@@ -137,7 +140,9 @@ const useAnimationLoop = (
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track) {
+      return;
+    }
 
     if (seqWidth > 0) {
       offsetRef.current = ((offsetRef.current % seqWidth) + seqWidth) % seqWidth;
@@ -178,7 +183,7 @@ const useAnimationLoop = (
       }
       lastTimestampRef.current = null;
     };
-  }, [targetVelocity, seqWidth, isHovered, pauseOnHover]);
+  }, [targetVelocity, seqWidth, isHovered, pauseOnHover, trackRef]);
 };
 
 // Main component
@@ -245,11 +250,15 @@ export const LogoLoop = memo<LogoLoopProps>(({
   );
 
   const handleMouseEnter = useCallback(() => {
-    if (pauseOnHover) setIsHovered(true);
+    if (pauseOnHover) {
+      setIsHovered(true);
+    }
   }, [pauseOnHover]);
 
   const handleMouseLeave = useCallback(() => {
-    if (pauseOnHover) setIsHovered(false);
+    if (pauseOnHover) {
+      setIsHovered(false);
+    }
   }, [pauseOnHover]);
 
   const renderLogoItem = useCallback((item: LogoItem, key: string) => {
@@ -260,16 +269,15 @@ export const LogoLoop = memo<LogoLoopProps>(({
         {item.node}
       </span>
     ) : (
-      <img
+      <Image
         src={item.src}
-        srcSet={item.srcSet}
-        sizes={item.sizes}
-        width={item.width}
-        height={item.height}
+        width={item.width || 100}
+        height={item.height || 50}
         alt={item.alt ?? ''}
         title={item.title}
-        loading="lazy"
-        decoding="async"
+        sizes={item.sizes}
+        className="logoloop__image"
+        priority={false}
         draggable={false}
       />
     );

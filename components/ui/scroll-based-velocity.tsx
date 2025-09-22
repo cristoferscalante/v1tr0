@@ -18,7 +18,6 @@ interface ScrollVelocityContainerProps {
 interface ScrollVelocityRowProps {
   children: ReactNode;
   baseVelocity: number;
-  direction: 1 | -1;
   className?: string;
 }
 
@@ -36,13 +35,10 @@ export function ScrollVelocityContainer({
 export function ScrollVelocityRow({ 
   children, 
   baseVelocity, 
-  direction, 
   className 
 }: ScrollVelocityRowProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const velocityRef = useRef(baseVelocity);
-  const animationRef = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
