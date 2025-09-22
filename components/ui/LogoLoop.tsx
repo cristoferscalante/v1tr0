@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
-import * as SimpleIcons from 'react-icons/si';
 import './LogoLoop.css';
 
 const ANIMATION_CONFIG = {
@@ -13,15 +12,19 @@ const ANIMATION_CONFIG = {
 const toCssLength = (value: string | number | undefined) => (typeof value === 'number' ? `${value}px` : (value ?? undefined));
 
 // Optimized ResizeObserver with better debouncing
-const useOptimizedResizeObserver = (callback: () => void, elements: React.RefObject<HTMLElement>[], dependencies: any[]) => {
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const rafRef = useRef<number>();
+const useOptimizedResizeObserver = (callback: () => void, elements: React.RefObject<HTMLElement | null>[], dependencies: unknown[]) => {
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     // Enhanced debounced callback using both timeout and RAF
     const debouncedCallback = () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
       
       timeoutRef.current = setTimeout(() => {
         rafRef.current = requestAnimationFrame(callback);
@@ -34,13 +37,19 @@ const useOptimizedResizeObserver = (callback: () => void, elements: React.RefObj
       callback();
       return () => {
         window.removeEventListener('resize', handleResize);
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+        }
       };
     }
 
     const observers = elements.map(ref => {
-      if (!ref.current) return null;
+      if (!ref.current) {
+        return null;
+      }
       const observer = new ResizeObserver(debouncedCallback);
       observer.observe(ref.current);
       return observer;
@@ -50,14 +59,18 @@ const useOptimizedResizeObserver = (callback: () => void, elements: React.RefObj
 
     return () => {
       observers.forEach(observer => observer?.disconnect());
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 };
 
-const useImageLoader = (seqRef: React.RefObject<HTMLElement>, onLoad: () => void, dependencies: any[]) => {
+const useImageLoader = (seqRef: React.RefObject<HTMLElement | null>, onLoad: () => void, dependencies: unknown[]) => {
   useEffect(() => {
     const images = seqRef.current?.querySelectorAll('img') ?? [];
 
@@ -97,7 +110,7 @@ const useImageLoader = (seqRef: React.RefObject<HTMLElement>, onLoad: () => void
 
 // Optimized animation hook using CSS animations and Intersection Observer
 const useOptimizedAnimation = (
-  trackRef: React.RefObject<HTMLElement>,
+  trackRef: React.RefObject<HTMLElement | null>,
   speed: number,
   direction: 'left' | 'right',
   seqWidth: number
@@ -107,22 +120,29 @@ const useOptimizedAnimation = (
 
   // Intersection Observer to pause animation when not visible
   useEffect(() => {
-    if (!trackRef.current) return;
+    if (!trackRef.current) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+      (entries) => {
+        const entry = entries[0];
+        if (entry) {
+          setIsVisible(entry.isIntersecting);
+        }
       },
       { threshold: 0.1, rootMargin: '50px' }
     );
 
     observer.observe(trackRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [trackRef]);
 
   // Apply CSS animation
   useEffect(() => {
-    if (!trackRef.current || seqWidth <= 0) return;
+    if (!trackRef.current || seqWidth <= 0) {
+      return;
+    }
 
     const track = trackRef.current;
     const shouldAnimate = isVisible && speed > 0;
@@ -148,7 +168,7 @@ const useOptimizedAnimation = (
         track.className = track.className.replace(/logoloop__track--\w+/g, '');
       }
     };
-  }, [isVisible, speed, direction, seqWidth]);
+  }, [isVisible, speed, direction, seqWidth, trackRef]);
 
   return { isAnimating, isVisible };
 };
@@ -209,13 +229,6 @@ export const LogoLoop = memo<LogoLoopProps>(
     const [copyCount, setCopyCount] = useState(ANIMATION_CONFIG.MIN_COPIES);
     // Removed hover state management
 
-    const targetVelocity = useMemo(() => {
-      const magnitude = Math.abs(speed);
-      const directionMultiplier = direction === 'left' ? 1 : -1;
-      const speedMultiplier = speed < 0 ? -1 : 1;
-      return magnitude * directionMultiplier * speedMultiplier;
-    }, [speed, direction]);
-
     const updateDimensions = useCallback(() => {
       const containerWidth = containerRef.current?.clientWidth ?? 0;
       const sequenceWidth = seqRef.current?.getBoundingClientRect?.()?.width ?? 0;
@@ -232,24 +245,7 @@ export const LogoLoop = memo<LogoLoopProps>(
     useImageLoader(seqRef, updateDimensions, [logos, gap, logoHeight]);
 
     // Use optimized CSS animation instead of JavaScript animation
-    const { isAnimating, isVisible } = useOptimizedAnimation(trackRef, speed, direction, seqWidth);
-
-    const cssVariables = useMemo(
-      () => ({
-        '--logoloop-gap': `${gap}px`,
-        '--logoloop-logoHeight': `${logoHeight}px`,
-        ...(fadeOutColor && { '--logoloop-fadeColor': fadeOutColor })
-      }),
-      [gap, logoHeight, fadeOutColor]
-    );
-
-    const rootClassName = useMemo(
-      () =>
-        ['logoloop', fadeOut && 'logoloop--fade', className]
-          .filter(Boolean)
-          .join(' '),
-      [fadeOut, className]
-    );
+    useOptimizedAnimation(trackRef, speed, direction, seqWidth);
 
     // Optimized memoized render function
     const renderLogoItem = useCallback((item: LogoItem, key: string) => {
@@ -321,15 +317,24 @@ export const LogoLoop = memo<LogoLoopProps>(
         width: toCssLength(width) ?? '100%',
         '--logo-height': toCssLength(logoHeight),
         '--logo-gap': toCssLength(gap),
+        ...(fadeOutColor && { '--logoloop-fadeColor': fadeOutColor }),
         ...style
       }),
-      [width, logoHeight, gap, style]
+      [width, logoHeight, gap, fadeOutColor, style]
+    );
+
+    const rootClassName = useMemo(
+      () =>
+        ['logoloop', fadeOut && 'logoloop--fade', className]
+          .filter(Boolean)
+          .join(' '),
+      [fadeOut, className]
     );
 
     return (
       <div
         ref={containerRef}
-        className={`logoloop ${className}`}
+        className={rootClassName}
         style={containerStyle}
         role="region"
         aria-label={ariaLabel}

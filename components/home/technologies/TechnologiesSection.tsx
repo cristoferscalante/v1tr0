@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { TechCarousel } from '@/components/ui/tech-carousel';
-import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiPython, SiMongodb, SiPostgresql, SiSupabase, SiDocker, SiAmazonwebservices, SiGit, SiGithub } from "react-icons/si";
+import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiPostgresql, SiSupabase, SiGit, SiGithub } from "react-icons/si";
 
 const techLogos = [
   { name: "React", icon: <SiReact className="text-[#61DAFB]" /> },
@@ -17,34 +17,7 @@ const techLogos = [
   { name: "GitHub", icon: <SiGithub className="text-foreground" /> },
 ];
 
-interface TechItem {
-  name: string;
-  category: string;
-  initials: string;
-  color: string;
-}
-
 const TechnologiesSection: React.FC = () => {
-  const techStack: TechItem[] = [
-    // Frontend
-    { name: "React", category: "Frontend", initials: "R", color: "bg-blue-500" },
-    { name: "Next.js", category: "Frontend", initials: "N", color: "bg-black" },
-    { name: "TypeScript", category: "Frontend", initials: "TS", color: "bg-blue-600" },
-    { name: "Tailwind CSS", category: "Frontend", initials: "TW", color: "bg-cyan-500" },
-    
-    // Backend
-    { name: "Node.js", category: "Backend", initials: "N", color: "bg-green-600" },
-    { name: "Python", category: "Backend", initials: "P", color: "bg-yellow-500" },
-    { name: "PostgreSQL", category: "Backend", initials: "PG", color: "bg-blue-700" },
-    
-    // DevOps
-    { name: "Docker", category: "DevOps", initials: "D", color: "bg-blue-400" },
-    { name: "AWS", category: "DevOps", initials: "AWS", color: "bg-orange-500" },
-    { name: "Git", category: "DevOps", initials: "G", color: "bg-red-500" }
-  ];
-
-  const categoryList = ["Frontend", "Backend", "DevOps"];
-
   return (
     <section className="py-16 bg-transparent">
       <div className="w-full px-4">

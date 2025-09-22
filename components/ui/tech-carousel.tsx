@@ -29,7 +29,7 @@ export function TechCarousel({
   return (
     <div className={cn("relative w-full h-24 overflow-hidden", className)}>
       <ScrollVelocityContainer className="h-full flex items-center">
-        <ScrollVelocityRow baseVelocity={speed} direction={1} className="flex items-center">
+        <ScrollVelocityRow baseVelocity={speed} className="flex items-center">
           <div className="flex items-center gap-20">
             {/* Primera copia de los iconos */}
             {technologies.map((tech, index) => (
