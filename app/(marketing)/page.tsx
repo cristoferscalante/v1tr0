@@ -3,7 +3,7 @@
 // Corrigiendo las rutas de importación
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import HomeBanner from "@/components/home/sections/banner/HomeBanner"
-import TechnologiesSection from "@/components/home/layout/GridTechnologies"
+import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
 import SoftwareDevelopmentBanner from "@/components/home/sections/carrusel-componentes/SoftwareDevelopmentBanner"
 import InformationSystemsPage from "@/components/home/sections/carrusel-componentes/InformationSystemsPage"
 import TaskAutomationPage from "@/components/home/sections/carrusel-componentes/TaskAutomationPage"
