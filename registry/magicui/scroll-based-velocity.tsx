@@ -68,7 +68,7 @@ export function ScrollVelocityRow({ children, baseVelocity, direction, className
         duration: 1.2,
         ease: "none",
         modifiers: {
-          x: (x, target) => {
+          x: (x) => {
             let newX = parseFloat(x);
             // Reset position when element goes off-screen to create infinite effect
             if (newX <= -contentWidth) {
