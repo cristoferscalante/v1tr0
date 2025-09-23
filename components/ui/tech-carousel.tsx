@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { 
   ScrollVelocityContainer, 
   ScrollVelocityRow 
@@ -26,21 +26,52 @@ export function TechCarousel({
   className,
   showGradients = true 
 }: TechCarouselProps) {
+  // Preload optimization: create intersection observer for lazy loading
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry?.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Stop observing once visible
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className={cn("relative w-full h-24 overflow-hidden", className)}>
+    <div 
+      ref={containerRef}
+      className={cn("relative w-full h-24 overflow-hidden", className)}
+      style={{ 
+        contain: 'layout style paint',
+        willChange: isVisible ? 'transform' : 'auto'
+      }}
+    >
       <ScrollVelocityContainer className="h-full flex items-center">
-        <ScrollVelocityRow baseVelocity={speed} className="flex items-center">
-          <div className="flex items-center gap-20">
+          {isVisible && (
+            <ScrollVelocityRow baseVelocity={speed} className="flex items-center">
+              <div className="flex items-center gap-20">
             {/* Primera copia de los iconos */}
             {technologies.map((tech, index) => (
               <div
                 key={`${tech.name}-${index}-first`}
-                className="group relative flex items-center justify-center w-24 h-24 rounded-full bg-card/20 backdrop-blur-sm hover:bg-card/40 transition-all duration-700 cursor-pointer animate-pulse hover:animate-none hover:scale-105"
+                className="group relative flex items-center justify-center w-24 h-24 rounded-full bg-card/20 backdrop-blur-sm hover:bg-card/40 transition-all duration-300 cursor-pointer hover:scale-105"
                 style={{ 
                   contain: 'layout style paint',
-                  willChange: 'transform',
-                  animationDelay: '0s',
-                  animationDuration: '2s'
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden'
                 }}
               >
                 <div className="text-6xl transform hover:rotate-6 transition-transform duration-500">
@@ -55,12 +86,12 @@ export function TechCarousel({
             {technologies.map((tech, index) => (
               <div
                 key={`${tech.name}-${index}-second`}
-                className="group relative flex items-center justify-center w-24 h-24 rounded-full bg-card/20 backdrop-blur-sm hover:bg-card/40 transition-all duration-700 cursor-pointer animate-pulse hover:animate-none hover:scale-105"
+                className="group relative flex items-center justify-center w-24 h-24 rounded-full bg-card/20 backdrop-blur-sm hover:bg-card/40 transition-all duration-300 cursor-pointer hover:scale-105"
                 style={{ 
                   contain: 'layout style paint',
-                  willChange: 'transform',
-                  animationDelay: '0s',
-                  animationDuration: '2s'
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden'
                 }}
               >
                 <div className="text-6xl transform hover:rotate-6 transition-transform duration-500">
@@ -71,9 +102,10 @@ export function TechCarousel({
                 </span>
               </div>
             ))}
-          </div>
-        </ScrollVelocityRow>
-      </ScrollVelocityContainer>
+         </div>
+            </ScrollVelocityRow>
+          )}
+        </ScrollVelocityContainer>
       
       {showGradients && (
         <>

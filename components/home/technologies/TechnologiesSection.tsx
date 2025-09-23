@@ -26,9 +26,7 @@ const TechnologiesSection: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Nuestras Tecnologías
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Utilizamos las mejores herramientas y tecnologías para crear soluciones innovadoras
-          </p>
+
         </div>
         
         {/* TechCarousel Component - Organic scroll-based velocity */}

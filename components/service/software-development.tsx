@@ -4,10 +4,11 @@ import type React from "react"
 
 import Image from "next/image"
 import { useState } from "react"
-import { ArrowRight, Code, Database, Layers, Rocket, Server, Zap, X, Send } from "lucide-react"
+import { Code, Database, Layers, Rocket, Server, Zap, X, Send } from "lucide-react"
 
 // Add the import for BokehBackground at the top of the file, after the other imports
 import BokehBackground from "@/components/about/BokehBackground"
+
 
 export default function SoftwareDevelopment() {
   const [isContactPopupOpen, setIsContactPopupOpen] = useState(false)
@@ -391,22 +392,6 @@ export default function SoftwareDevelopment() {
           </div>
         </div>
 
-        {/* Sección de contacto */}
-        <div className="w-full py-12 border-t border-custom-2">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div>
-              <h3 className="text-2xl font-bold text-textPrimary">¿Listo para transformar tu idea en realidad?</h3>
-              <p className="text-textMuted mt-2">Hablemos sobre tu próximo proyecto de software.</p>
-            </div>
-            <button
-              onClick={() => setIsContactPopupOpen(true)}
-              className="flex items-center gap-2 bg-primary hover:bg-opacity-90 transition-all px-6 py-3 rounded-md text-textPrimary"
-            >
-              <span>Contactar ahora</span>
-              <ArrowRight size={20} />
-            </button>
-          </div>
-        </div>
       </div>
       {/* Popup de contacto */}
       {isContactPopupOpen && (
