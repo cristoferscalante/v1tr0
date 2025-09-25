@@ -20,7 +20,6 @@ const useSnapAnimations = (options: UseSnapAnimationsOptions): UseSnapAnimations
     sections = [],
     duration = 1,
     enableCircularNavigation = true,
-    singleAnimation = true,
     onSnapComplete
   } = options;
 

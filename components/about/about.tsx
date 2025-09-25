@@ -1,7 +1,6 @@
 "use client"
 
 
-import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"

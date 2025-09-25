@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useEffect } from "react"
+import React, { useRef } from "react"
 import Image from "next/image"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
@@ -46,7 +46,9 @@ export default function InformationSystemsPage({ isActive = false }: Information
   // Animación secuencial de entrada más marcada y dramática
   useGSAP(() => {
     // Solo ejecutar animaciones cuando la sección esté activa
-    if (!isActive) return
+    if (!isActive) {
+      return
+    }
 
     const tl = gsap.timeline()
     
@@ -87,7 +89,9 @@ export default function InformationSystemsPage({ isActive = false }: Information
 
   // Animaciones sutiles continuas para la imagen (separadas)
   useGSAP(() => {
-    if (!isActive) return
+    if (!isActive) {
+      return
+    }
 
     const imageElement = imageRef.current?.querySelector('img')
     if (imageElement) {

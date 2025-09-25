@@ -21,7 +21,6 @@ export default function PinnedScrollSection({
   children, 
   className = "" 
 }: PinnedScrollSectionProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
   const sectionsCount = children.length
   const [isMobile, setIsMobile] = useState(false)
@@ -39,7 +38,7 @@ export default function PinnedScrollSection({
     duration: 0.8,
     enableCircularNavigation: true,
     singleAnimation: true,
-    onSnapComplete: (index) => {
+    onSnapComplete: () => {
       // Comentado temporalmente para evitar conflictos con el carrusel automático
       // setCurrentSection(index)
     }
@@ -227,10 +226,8 @@ export default function PinnedScrollSection({
               }`}
             >
               <div className="w-full h-full max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 flex items-center justify-center">
-                {/* Clonar el child y pasar la prop isActive si es un ServiceBanner */}
-                {React.cloneElement(child as React.ReactElement, {
-                  isActive: index === currentSection
-                })}
+                {/* Render the child as-is */}
+                {child}
               </div>
             </div>
           ))}

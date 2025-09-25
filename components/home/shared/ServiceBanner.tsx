@@ -82,13 +82,6 @@ export default function ServiceBanner({
   useGSAP(() => {
     if (isInsidePinnedScroll) {
       // Animaciones específicas para PinnedScrollSection (segundo snap)
-      const elements = [
-        titleRef.current,
-        descriptionRef.current,
-        featuresRef.current,
-        ctaRef.current,
-        imageRef.current
-      ].filter(Boolean)
       
       // Configurar estado inicial para animaciones específicas
       if (titleRef.current) {

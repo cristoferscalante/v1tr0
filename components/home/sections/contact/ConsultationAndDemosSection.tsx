@@ -13,17 +13,17 @@ export default function ConsultationAndDemosSection({ setIsUnifiedModalOpen }: C
   
   // Configurar animaciones de entrada para esta sección
   useSnapAnimations({
-    sections: [sectionRef],
+    sections: ['.consultation-section'],
     duration: 0.8,
     enableCircularNavigation: false,
     singleAnimation: true,
-    onSnapComplete: (index) => {
-      console.log('Consultation section animation completed for section:', index);
+    onSnapComplete: () => {
+      // Animation completed
     }
   })
 
   return (
-    <section ref={sectionRef} className="w-full py-8">
+    <section ref={sectionRef} className="consultation-section w-full py-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* Componente OptionsSelector reemplazando la sección anterior */}
         <div className="options-selector-container animate-element">

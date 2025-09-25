@@ -239,6 +239,7 @@ function Logo3DModel({
       }, 100)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [configuredScene, onModelLoaded])
   
   // Animation loop

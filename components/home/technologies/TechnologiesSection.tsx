@@ -23,17 +23,17 @@ const TechnologiesSection: React.FC = () => {
   
   // Configurar animaciones de entrada para esta sección
   useSnapAnimations({
-    sections: [sectionRef],
+    sections: ['.technologies-section'],
     duration: 0.8,
     enableCircularNavigation: false,
     singleAnimation: true,
-    onSnapComplete: (index) => {
-      console.log('Technologies section animation completed for section:', index);
+    onSnapComplete: () => {
+      // Technologies section animation completed
     }
   });
 
   return (
-    <section ref={sectionRef} className="py-16 bg-transparent">
+    <section ref={sectionRef} className="technologies-section py-16 bg-transparent">
       <div className="w-full px-4">
         {/* Título de la sección */}
         <div className="text-center mb-12">

@@ -50,26 +50,26 @@ interface FooterSectionProps {
   className?: string;
 }
 
-const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, _ref) => {
+const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
   const { theme } = useTheme()
   const isDark = theme === "dark"
   const sectionRef = useRef<HTMLDivElement>(null)
   
   // Configurar animaciones de entrada para esta sección
   useSnapAnimations({
-    sections: [sectionRef],
+    sections: ['.footer-section'],
     duration: 0.8,
     enableCircularNavigation: false,
     singleAnimation: true,
-    onSnapComplete: (index) => {
-      console.log('Footer animation completed for section:', index);
+    onSnapComplete: () => {
+      // Footer animation completed
     }
   })
 
   return (
     <div 
       ref={sectionRef}
-      className={`w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
+      className={`footer-section w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
     >
       <div className="max-w-7xl mx-auto relative w-full">
         <div className="footer-header animate-element text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2">
