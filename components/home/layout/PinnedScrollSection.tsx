@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { PinnedScrollContext } from '../shared/ServiceBanner'
 import { useScrollContext } from '../shared/ScrollContext'
+import useSnapAnimations from '@/hooks/use-snap-animations'
 
 // Registrar los plugins
 if (typeof window !== 'undefined') {
@@ -21,6 +22,7 @@ export default function PinnedScrollSection({
   className = "" 
 }: PinnedScrollSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
   const sectionsCount = children.length
   const [isMobile, setIsMobile] = useState(false)
   const { setHorizontalScrollActive, setHorizontalScrollPosition } = useScrollContext()
@@ -30,6 +32,18 @@ export default function PinnedScrollSection({
   const [isPaused, setIsPaused] = useState(false)
   const [userInteracted, setUserInteracted] = useState(false)
   const pauseTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Configurar animaciones de snap para navegación entre secciones
+  useSnapAnimations({
+    sections: ['.section-0', '.section-1', '.section-2', '.section-3'],
+    duration: 0.8,
+    enableCircularNavigation: true,
+    singleAnimation: true,
+    onSnapComplete: (index) => {
+      // Comentado temporalmente para evitar conflictos con el carrusel automático
+      // setCurrentSection(index)
+    }
+  })
 
   // Detectar si es móvil en el cliente para evitar errores de hidratación
   useEffect(() => {
@@ -50,8 +64,12 @@ export default function PinnedScrollSection({
 
   // Implementar carrusel automático
   useEffect(() => {
-    // Si no es visible, no hacer nada
+    // Si no es visible, limpiar cualquier intervalo existente y salir
     if (!isVisible) {
+      if (autoScrollIntervalRef.current) {
+        clearInterval(autoScrollIntervalRef.current)
+        autoScrollIntervalRef.current = null
+      }
       return
     }
     
@@ -68,7 +86,7 @@ export default function PinnedScrollSection({
       
       autoScrollIntervalRef.current = setInterval(() => {
         setCurrentSection(prev => (prev + 1) % sectionsCount)
-      }, 2000)
+      }, 6000) // Cambiado a 6 segundos como solicitado
     }
 
     startAutoScroll()
@@ -76,22 +94,24 @@ export default function PinnedScrollSection({
     return () => {
       if (autoScrollIntervalRef.current) {
         clearInterval(autoScrollIntervalRef.current)
+        autoScrollIntervalRef.current = null
       }
       
       // Limpiar el temporizador de pausa si existe
       if (pauseTimerRef.current) {
         clearTimeout(pauseTimerRef.current)
+        pauseTimerRef.current = null
       }
     }
   }, [isVisible, sectionsCount, isPaused, userInteracted])
 
   // ScrollTrigger para detectar visibilidad
   useEffect(() => {
-    if (!containerRef.current || typeof window === "undefined") {
+    if (!sectionRef.current || typeof window === "undefined") {
       return
     }
 
-    const container = containerRef.current
+    const container = sectionRef.current
 
     ScrollTrigger.create({
       trigger: container,
@@ -145,7 +165,7 @@ export default function PinnedScrollSection({
       if (pauseCarousel) {
         setIsPaused(true)
         
-        // Configurar un temporizador para reanudar después de 15 segundos
+        // Configurar un temporizador para reanudar después de 10 segundos
         pauseTimerRef.current = setTimeout(() => {
           setIsPaused(false)
           
@@ -153,14 +173,14 @@ export default function PinnedScrollSection({
           if (isVisible && autoScrollIntervalRef.current === null) {
             autoScrollIntervalRef.current = setInterval(() => {
               setCurrentSection(prev => (prev + 1) % sectionsCount)
-            }, 2000)
+            }, 6000) // 6 segundos por sección
           }
-        }, 15000) // 15 segundos
+        }, 10000) // 10 segundos
       } else if (isVisible && !isPaused) {
         // Reiniciar el carrusel automático si no está pausado
         autoScrollIntervalRef.current = setInterval(() => {
           setCurrentSection(prev => (prev + 1) % sectionsCount)
-        }, 2000)
+        }, 6000) // 6 segundos por sección
       }
     }
   }
@@ -190,11 +210,11 @@ export default function PinnedScrollSection({
   return (
     <PinnedScrollContext.Provider value={true}>
       <div 
-        ref={containerRef}
-        className={`relative w-full h-screen overflow-hidden ${className}`}
+        ref={sectionRef}
+        className={`relative w-full h-screen overflow-hidden ${className} pinned-section-container`}
       >
         {/* Contenedor del carrusel */}
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full carousel-content">
           {children.map((child, index) => (
             <div
               key={index}
@@ -207,28 +227,31 @@ export default function PinnedScrollSection({
               }`}
             >
               <div className="w-full h-full max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 flex items-center justify-center">
-                {child}
+                {/* Clonar el child y pasar la prop isActive si es un ServiceBanner */}
+                {React.cloneElement(child as React.ReactElement, {
+                  isActive: index === currentSection
+                })}
               </div>
             </div>
           ))}
         </div>
         
         {/* Navegación con flechas y puntos indicadores */}
-        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center justify-center gap-2 z-20">
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center justify-center gap-2 z-20 carousel-navigation">
           {/* Indicador de pausa */}
           {isPaused && (
             <div className="text-xs text-highlight mb-2 bg-[#02505950] backdrop-blur-sm px-3 py-1 rounded-full border border-[#08A696]/30 animate-pulse">
-              Pausado por 15 segundos
+              Pausado por 10 segundos
             </div>
           )}
           <div className="flex items-center justify-center gap-4">
           <button
             onClick={() => {
-              // Pausar por 15 segundos
-              navigateToSection(currentSection - 1, true)
+              // Navegación circular: si estamos en la primera sección, ir a la última
+              const targetSection = currentSection === 0 ? sectionsCount - 1 : currentSection - 1
+              navigateToSection(targetSection, true)
             }}
-            disabled={currentSection === 0}
-            className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="navigation-button flex items-center justify-center w-12 h-12 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-full text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
             aria-label="Servicio anterior"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,12 +259,12 @@ export default function PinnedScrollSection({
             </svg>
           </button>
           
-          <div className="flex gap-2">
+          <div className="navigation-dots flex gap-2">
             {children.map((_, index) => (
               <button
                 key={index}
                 onClick={() => {
-                  // Pausar por 15 segundos
+                  // Pausar por 10 segundos
                   navigateToSection(index, true)
                 }}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
@@ -256,11 +279,11 @@ export default function PinnedScrollSection({
           
           <button
             onClick={() => {
-              // Pausar por 15 segundos
-              navigateToSection(currentSection + 1, true)
+              // Navegación circular: si estamos en la última sección, ir a la primera
+              const targetSection = currentSection === sectionsCount - 1 ? 0 : currentSection + 1
+              navigateToSection(targetSection, true)
             }}
-            disabled={currentSection === sectionsCount - 1}
-            className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="navigation-button flex items-center justify-center w-12 h-12 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-full text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
             aria-label="Siguiente servicio"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

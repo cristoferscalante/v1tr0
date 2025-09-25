@@ -80,18 +80,18 @@ const LIGHTING_CONFIG = {
 // Animation constants
 const ANIMATION_CONFIG = {
   sway: {
-    x: { amplitude: 0.05, frequency: 0.2 },
-    y: { amplitude: 0.03, frequency: 0.8 },
-    z: { amplitude: 0.02, frequency: 0.011 }
+    x: { amplitude: 0.015, frequency: 0.08 },
+    y: { amplitude: 0.012, frequency: 0.25 },
+    z: { amplitude: 0.008, frequency: 0.05 }
   },
   rotation: {
-    y: { amplitude: 0.08, frequency: 0.15 },
-    z: { amplitude: 0.05, frequency: 0.2 },
-    x: { amplitude: 0.02, frequency: 0.01 }
+    y: { amplitude: 0.025, frequency: 0.06 },
+    z: { amplitude: 0.015, frequency: 0.08 },
+    x: { amplitude: 0.008, frequency: 0.04 }
   },
   transition: {
-    duration: 1.0,
-    lerpFactor: 3
+    duration: 6.0,
+    lerpFactor: 0.5
   }
 } as const
 
@@ -205,11 +205,13 @@ function SceneLighting({ currentView }: { currentView: ViewKey }) {
 function Logo3DModel({ 
   onTogglePosition, 
   position,
-  currentView
+  currentView,
+  onModelLoaded
 }: { 
   onTogglePosition: () => void
   position: 'left' | 'right'
   currentView: ViewKey
+  onModelLoaded?: () => void
 }) {
   const meshRef = useRef<THREE.Group>(null)
   const { targetPosition, currentPosition } = useModelPosition(currentView, position)
@@ -227,6 +229,17 @@ function Logo3DModel({
     })
     return clonedScene
   }, [scene])
+
+  // Notify when model is loaded and configured
+  useEffect(() => {
+    if (configuredScene && onModelLoaded) {
+      // Small delay to ensure the model is fully rendered
+      const timer = setTimeout(() => {
+        onModelLoaded()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [configuredScene, onModelLoaded])
   
   // Animation loop
   useFrame((state, delta) => {
@@ -234,15 +247,20 @@ function Logo3DModel({
       return
     }
     
-    // Smooth position interpolation
-    const lerpFactor = Math.min(1, delta * ANIMATION_CONFIG.transition.lerpFactor)
-    currentPosition.current.lerp(targetPosition.current, lerpFactor)
+    // Smooth position interpolation with easing
+    const baseLerpFactor = Math.min(1, delta * ANIMATION_CONFIG.transition.lerpFactor)
+    // Apply easeOutCubic for more natural movement
+    const easedLerpFactor = 1 - Math.pow(1 - baseLerpFactor, 3)
+    currentPosition.current.lerp(targetPosition.current, easedLerpFactor)
     
-    // Apply sway animation
+    // Apply organic sway animation with multiple harmonics
     const time = state.clock.elapsedTime
-    const swayX = Math.sin(time * ANIMATION_CONFIG.sway.x.frequency) * ANIMATION_CONFIG.sway.x.amplitude
-    const swayY = Math.sin(time * ANIMATION_CONFIG.sway.y.frequency) * ANIMATION_CONFIG.sway.y.amplitude
-    const swayZ = Math.cos(time * ANIMATION_CONFIG.sway.z.frequency) * ANIMATION_CONFIG.sway.z.amplitude
+    const swayX = (Math.sin(time * ANIMATION_CONFIG.sway.x.frequency) + 
+                   Math.sin(time * ANIMATION_CONFIG.sway.x.frequency * 1.3) * 0.3) * ANIMATION_CONFIG.sway.x.amplitude
+    const swayY = (Math.sin(time * ANIMATION_CONFIG.sway.y.frequency) + 
+                   Math.cos(time * ANIMATION_CONFIG.sway.y.frequency * 0.7) * 0.4) * ANIMATION_CONFIG.sway.y.amplitude
+    const swayZ = (Math.cos(time * ANIMATION_CONFIG.sway.z.frequency) + 
+                   Math.sin(time * ANIMATION_CONFIG.sway.z.frequency * 1.1) * 0.2) * ANIMATION_CONFIG.sway.z.amplitude
     
     meshRef.current.position.set(
       currentPosition.current.x + swayX,
@@ -250,10 +268,13 @@ function Logo3DModel({
       currentPosition.current.z + swayZ
     )
     
-    // Apply rotation animation
-    meshRef.current.rotation.y = Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency) * ANIMATION_CONFIG.rotation.y.amplitude
-    meshRef.current.rotation.z = Math.sin(time * ANIMATION_CONFIG.rotation.z.frequency) * ANIMATION_CONFIG.rotation.z.amplitude
-    meshRef.current.rotation.x = Math.cos(time * ANIMATION_CONFIG.rotation.x.frequency) * ANIMATION_CONFIG.rotation.x.amplitude
+    // Apply smooth rotation animation with organic feel
+    meshRef.current.rotation.y = (Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency) + 
+                                   Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency * 1.2) * 0.3) * ANIMATION_CONFIG.rotation.y.amplitude
+    meshRef.current.rotation.z = (Math.sin(time * ANIMATION_CONFIG.rotation.z.frequency) + 
+                                   Math.cos(time * ANIMATION_CONFIG.rotation.z.frequency * 0.8) * 0.2) * ANIMATION_CONFIG.rotation.z.amplitude
+    meshRef.current.rotation.x = (Math.cos(time * ANIMATION_CONFIG.rotation.x.frequency) + 
+                                   Math.sin(time * ANIMATION_CONFIG.rotation.x.frequency * 1.4) * 0.15) * ANIMATION_CONFIG.rotation.x.amplitude
   })
   
   const viewConfig = CAMERA_VIEWS[currentView]
@@ -355,16 +376,16 @@ function MobilePlaceholder() {
       style={{ height: 'auto', padding: '40px 0' }}
     >
       <div className="text-center space-y-4">
-        <div className="w-32 h-32 mx-auto bg-gradient-to-br from-[#26FFDF]/20 to-[#06414D]/20 rounded-full flex items-center justify-center border border-[#26FFDF]/30">
+        <div className="w-32 h-32 mx-auto bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-full flex items-center justify-center shadow-lg">
           <svg 
-            className="w-16 h-16 text-[#26FFDF]" 
+            className="w-16 h-16 text-[#08A696] dark:text-[#26FFDF]" 
             fill="currentColor" 
             viewBox="0 0 24 24"
           >
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-[#26FFDF]">Modelo 3D V1TR0</h3>
+        <h3 className="text-xl font-semibold text-[#08A696] dark:text-[#26FFDF] bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl px-4 py-2 inline-block shadow-lg">Modelo 3D V1TR0</h3>
         <p className="text-sm text-gray-400 max-w-xs mx-auto">
           El modelo 3D interactivo está disponible en dispositivos de escritorio para una mejor experiencia.
         </p>
@@ -385,8 +406,8 @@ function ViewTextOverlay({ currentView, showViewText }: { currentView: ViewKey, 
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="absolute top-4 left-4 z-10 pointer-events-none"
         >
-          <div className="bg-black/20 backdrop-blur-sm border border-[#26FFDF]/30 rounded-lg px-4 py-2">
-            <p className="text-highlight font-medium text-sm">
+          <div className="bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl px-4 py-2 shadow-lg">
+            <p className="text-sm font-medium text-[#08A696] dark:text-[#26FFDF]">
               Vista: {CAMERA_VIEWS[currentView].name}
             </p>
           </div>
@@ -397,46 +418,89 @@ function ViewTextOverlay({ currentView, showViewText }: { currentView: ViewKey, 
 }
 
 function FloatingTextContent({ currentView }: { currentView: ViewKey }) {
-  const isometricContent = (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -5 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="absolute top-[23%] right-4 lg:right-8 xl:right-12 2xl:right-16 transform -translate-y-1/2 z-20 pointer-events-none max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl"
-    >
-      <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl p-6 lg:p-8 xl:p-10 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 transition-all duration-300 hover:border-[#08A696] mr-2 lg:mr-4 xl:mr-6">
-        <p className="text-highlight text-xs lg:text-sm xl:text-base leading-relaxed text-left">
-          V1TR0 nace en 2025 con la misión de potenciar el rendimiento y la eficiencia de todo tipo de organizaciones —desde emprendedores y empresas en crecimiento, hasta agencias de cooperación internacional e instituciones consolidadas— mediante soluciones de software hechas a medida.
-          <br /><br />
-          Nuestra visión es integrar y optimizar las herramientas de gestión y operación diaria, unificando procesos y recursos para maximizar su impacto.
-        </p>
-      </div>
-    </motion.div>
-  )
-  
-  const perspectiveContent = (
-    <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -40 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="absolute top-1/3 left-24 lg:left-28 xl:left-32 2xl:left-36 transform -translate-y-1/2 z-20 pointer-events-none max-w-md"
-    >
-      <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 transition-all duration-300 hover:border-[#08A696]">
-        <p className="text-highlight text-sm leading-relaxed">
-          Analizamos a fondo cada necesidad y, a partir de ello, diseñamos soluciones modulares, adaptadas y escalables, capaces de crecer al ritmo de cada proyecto.
-          <br /><br />
-          Así garantizamos que nuestros clientes, sin importar su tamaño o sector, cuenten siempre con tecnología que impulse su evolución.
-        </p>
-      </div>
-    </motion.div>
-  )
-  
   return (
-    <AnimatePresence>
-      {currentView === 'isometric' && isometricContent}
-      {currentView === 'perspective' && perspectiveContent}
+    <AnimatePresence mode="wait">
+      {currentView === 'isometric' && (
+        <motion.div
+          key="isometric-text"
+          initial={{ 
+            opacity: 0, 
+            x: 80,
+            y: 40,
+            scale: 0.7,
+            rotateY: 15
+          }}
+          animate={{ 
+            opacity: 1, 
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotateY: 0
+          }}
+          exit={{ 
+            opacity: 0, 
+            x: 60,
+            y: -20,
+            scale: 0.8,
+            rotateY: -10
+          }}
+          transition={{ 
+            duration: 1.5, 
+            ease: [0.16, 1, 0.3, 1],
+            delay: 0.5
+          }}
+          className="absolute top-[23%] right-4 lg:right-8 xl:right-12 2xl:right-16 transform -translate-y-1/2 z-20 pointer-events-none max-w-sm lg:max-w-md xl:max-w-lg 2xl:max-w-xl"
+        >
+          <div className="bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl p-6 lg:p-8 xl:p-10 shadow-lg hover:shadow-xl transition-all duration-300 mr-2 lg:mr-4 xl:mr-6">
+            <p className="text-[#08A696] dark:text-[#26FFDF] font-semibold text-xs lg:text-sm xl:text-base leading-relaxed text-left">
+              V1TR0 nace en 2025 con la misión de potenciar el rendimiento y la eficiencia de todo tipo de organizaciones —desde emprendedores y empresas en crecimiento, hasta agencias de cooperación internacional e instituciones consolidadas— mediante soluciones de software hechas a medida.
+              <br /><br />
+              Nuestra visión es integrar y optimizar las herramientas de gestión y operación diaria, unificando procesos y recursos para maximizar su impacto.
+            </p>
+          </div>
+        </motion.div>
+      )}
+      
+      {currentView === 'perspective' && (
+        <motion.div
+          key="perspective-text"
+          initial={{ 
+            opacity: 0, 
+            x: -80,
+            y: 50,
+            scale: 0.7,
+            rotateY: -15
+          }}
+          animate={{ 
+            opacity: 1, 
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotateY: 0
+          }}
+          exit={{ 
+            opacity: 0, 
+            x: -60,
+            y: 30,
+            scale: 0.8,
+            rotateY: 10
+          }}
+          transition={{ 
+            duration: 1.5, 
+            ease: [0.16, 1, 0.3, 1],
+            delay: 0.5
+          }}
+          className="absolute top-1/3 left-24 lg:left-28 xl:left-32 2xl:left-36 transform -translate-y-1/2 z-20 pointer-events-none max-w-md"
+        >
+          <div className="bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl transition-all duration-300">
+            <p className="text-[#08A696] dark:text-[#26FFDF] font-semibold text-sm leading-relaxed">
+              Analizamos a fondo cada necesidad y, a partir de ello, diseñamos soluciones modulares, adaptadas y escalables, capaces de crecer al ritmo de cada proyecto.
+              <br /><br />
+              Así garantizamos que nuestros clientes, sin importar su tamaño o sector, cuenten siempre con tecnología que impulse su evolución.
+            </p>
+          </div>
+        </motion.div>
+      )}
     </AnimatePresence>
   )
 }
@@ -449,6 +513,7 @@ export default function V1tr0Logo3D() {
   const [currentView, setCurrentView] = useState<ViewKey>('isometric')
   const [showViewText, setShowViewText] = useState(false)
   const [showModel, setShowModel] = useState(false)
+  const [isModelLoaded, setIsModelLoaded] = useState(false)
   const isMobile = useIsMobile()
   
   const handleToggleView = useCallback(() => {
@@ -458,6 +523,10 @@ export default function V1tr0Logo3D() {
   
   const handlePositionComplete = useCallback(() => {
     // Position complete callback - can be extended if needed
+  }, [])
+
+  const handleModelLoaded = useCallback(() => {
+    setIsModelLoaded(true)
   }, [])
   
   // Simplified loading sequence
@@ -484,7 +553,7 @@ export default function V1tr0Logo3D() {
       className="w-full h-full relative"
     >
       <ViewTextOverlay currentView={currentView} showViewText={showViewText} />
-      <FloatingTextContent currentView={currentView} />
+      {isModelLoaded && <FloatingTextContent key={currentView} currentView={currentView} />}
       
       {showModel && (
         <Suspense fallback={<Loader />}>
@@ -517,6 +586,7 @@ export default function V1tr0Logo3D() {
               onTogglePosition={handleToggleView} 
               position={currentView === 'isometric' ? 'left' : 'right'}
               currentView={currentView}
+              onModelLoaded={handleModelLoaded}
             />
           </Canvas>
         </Suspense>

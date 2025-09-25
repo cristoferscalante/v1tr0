@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef } from "react"
+import React, { useRef, useEffect } from "react"
 import Image from "next/image"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
@@ -10,8 +10,11 @@ import { useRouter } from "next/navigation"
 gsap.registerPlugin(ScrollTrigger)
 import { BarChartIcon, PieChartIcon, TrendingUpIcon } from "@/lib/icons"
 
+interface InformationSystemsPageProps {
+  isActive?: boolean
+}
 
-export default function InformationSystemsPage() {
+export default function InformationSystemsPage({ isActive = false }: InformationSystemsPageProps) {
   const router = useRouter()
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descriptionRef = useRef<HTMLParagraphElement>(null)
@@ -40,43 +43,87 @@ export default function InformationSystemsPage() {
 
   }
 
-  // Animación secuencial de entrada
+  // Animación secuencial de entrada más marcada y dramática
   useGSAP(() => {
+    // Solo ejecutar animaciones cuando la sección esté activa
+    if (!isActive) return
+
     const tl = gsap.timeline()
     
-    // Reset inicial
+    // Reset inicial más dramático
     gsap.set([titleRef.current, descriptionRef.current, featuresRef.current, imageRef.current], {
       opacity: 0,
-      y: 30
+      y: 80,
+      scale: 0.8,
+      rotationX: 15
     })
 
-    // Secuencia de animaciones - título primero, luego resto con 0.4s delay
-    tl.to(titleRef.current, {
+    // Secuencia de animaciones más rápidas y marcadas
+    tl.to([titleRef.current, imageRef.current], {
       opacity: 1,
       y: 0,
+      scale: 1,
+      rotationX: 0,
       duration: 0.6,
-      ease: "power2.out"
+      ease: "back.out(2.0)"
     })
     .to(descriptionRef.current, {
       opacity: 1,
       y: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "+=0.4")
+      scale: 1,
+      rotationX: 0,
+      duration: 0.5,
+      ease: "back.out(1.7)"
+    }, "+=0.1")
     .to(featuresRef.current, {
       opacity: 1,
       y: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "-=0.4")
+      scale: 1,
+      rotationX: 0,
+      duration: 0.5,
+      ease: "back.out(1.7)"
+    }, "-=0.3")
+  }, [isActive])
 
-    .to(imageRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.4")
-  })
+  // Animaciones sutiles continuas para la imagen (separadas)
+  useGSAP(() => {
+    if (!isActive) return
+
+    const imageElement = imageRef.current?.querySelector('img')
+    if (imageElement) {
+      // Check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      
+      if (!prefersReducedMotion) {
+        // Floating animation - más amplitud y velocidad
+        gsap.to(imageElement, {
+          y: -25,
+          duration: 2,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1
+        })
+        
+        // Breathing/scale animation - más rápido
+        gsap.to(imageElement, {
+          scale: 1.08,
+          duration: 2.5,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1
+        })
+        
+        // Subtle rotation - más rápido
+        gsap.to(imageElement, {
+          rotation: 3,
+          duration: 4,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1
+        })
+      }
+    }
+  }, [isActive])
 
   return (
     <>
@@ -112,14 +159,14 @@ export default function InformationSystemsPage() {
             </div>
             
             <div className="lg:w-1/2 mt-12 lg:mt-0 flex flex-col items-center">
-              <div ref={imageRef} className="flex items-center justify-center mb-8">
+              <div ref={imageRef} className="flex items-center justify-center mb-8" style={{ willChange: 'transform' }}>
                 <Image
                   alt={serviceData.imageAlt}
                   width={270}
                   height={270}
                   className="w-full h-auto max-w-sm object-cover transition-all duration-700 ease-in-out"
                   src={serviceData.imageSrc}
-                  style={{ color: "transparent" }}
+                  style={{ color: "transparent", willChange: 'transform' }}
                 />
               </div>
               

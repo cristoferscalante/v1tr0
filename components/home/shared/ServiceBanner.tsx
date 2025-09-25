@@ -81,7 +81,7 @@ export default function ServiceBanner({
   // Animaciones de entrada con GSAP (solo si NO está en PinnedScrollSection)
   useGSAP(() => {
     if (isInsidePinnedScroll) {
-      // Si está en PinnedScrollSection, asegurar que los elementos estén visibles sin animación
+      // Animaciones específicas para PinnedScrollSection (segundo snap)
       const elements = [
         titleRef.current,
         descriptionRef.current,
@@ -90,13 +90,86 @@ export default function ServiceBanner({
         imageRef.current
       ].filter(Boolean)
       
-      // Establecer estado final directamente sin animación
-      elements.forEach(element => {
-        if (element) {
-          element.style.opacity = '1'
-          element.style.transform = 'translateY(0px)'
-        }
+      // Configurar estado inicial para animaciones específicas
+      if (titleRef.current) {
+        gsap.set(titleRef.current, { opacity: 0, y: -50 }) // Desde arriba
+      }
+      if (descriptionRef.current) {
+        gsap.set(descriptionRef.current, { opacity: 0, y: -30 }) // Desde arriba
+      }
+      if (featuresRef.current) {
+        gsap.set(featuresRef.current, { opacity: 0, y: -40 }) // Desde arriba
+      }
+      if (imageRef.current) {
+        gsap.set(imageRef.current, { opacity: 0, x: 100 }) // Desde la derecha
+      }
+      if (ctaRef.current) {
+        gsap.set(ctaRef.current, { opacity: 0, y: 50 }) // Desde abajo
+      }
+      
+      // Timeline para animaciones secuenciales
+      const tl = gsap.timeline({ delay: 0.3 })
+      
+      // Contenido izquierdo desde arriba (título, descripción, features)
+      tl.to([titleRef.current, descriptionRef.current, featuresRef.current].filter(Boolean), {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        stagger: 0.2
       })
+      // Imagen desde la derecha
+      .to(imageRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.4") // Overlap con la animación anterior
+      // Botones desde abajo
+      .to(ctaRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power2.out"
+      }, "-=0.2") // Overlap con la animación anterior
+      
+      // Agregar animaciones sutiles continuas para la imagen
+      if (imageRef.current) {
+        // Verificar si el usuario prefiere movimiento reducido
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        
+        if (!prefersReducedMotion) {
+          // Animación de flotación sutil
+          gsap.to(imageRef.current, {
+            y: -8,
+            duration: 3,
+            ease: "power1.inOut",
+            yoyo: true,
+            repeat: -1
+          })
+          
+          // Animación de respiración (escala sutil)
+          gsap.to(imageRef.current, {
+            scale: 1.03,
+            duration: 4,
+            ease: "power1.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: 1.5
+          })
+          
+          // Rotación muy sutil
+          gsap.to(imageRef.current, {
+            rotation: 0,
+            duration: 6,
+            ease: "power1.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: 0.5
+          })
+        }
+      }
+      
       return
     }
     
@@ -212,6 +285,7 @@ export default function ServiceBanner({
           <div 
             ref={imageRef}
             className="flex items-center justify-center mb-8"
+            style={{ willChange: 'transform' }}
           >
             <Image
               src={imageSrc || placeholderImage}

@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { TechCarousel } from '@/components/ui/tech-carousel';
 import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiPostgresql, SiSupabase, SiGit, SiGithub } from "react-icons/si";
+import useSnapAnimations from '@/hooks/use-snap-animations';
 
 const techLogos = [
   { name: "React", icon: <SiReact className="text-[#61DAFB]" /> },
@@ -18,19 +19,31 @@ const techLogos = [
 ];
 
 const TechnologiesSection: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  // Configurar animaciones de entrada para esta sección
+  useSnapAnimations({
+    sections: [sectionRef],
+    duration: 0.8,
+    enableCircularNavigation: false,
+    singleAnimation: true,
+    onSnapComplete: (index) => {
+      console.log('Technologies section animation completed for section:', index);
+    }
+  });
+
   return (
-    <section className="py-16 bg-transparent">
+    <section ref={sectionRef} className="py-16 bg-transparent">
       <div className="w-full px-4">
         {/* Título de la sección */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <h2 className="tech-title animate-element text-4xl md:text-5xl font-bold text-foreground mb-4">
             Nuestras Tecnologías
           </h2>
-
         </div>
         
         {/* TechCarousel Component - Organic scroll-based velocity */}
-        <div className="bg-transparent w-full">
+        <div className="tech-carousel-container animate-element bg-transparent w-full">
           <TechCarousel 
             technologies={techLogos}
             speed={8}

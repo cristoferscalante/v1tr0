@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef } from "react"
+import { forwardRef, useRef } from "react"
 import { motion } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
 import {
@@ -13,6 +13,7 @@ import {
   TikTokIcon,
 } from "@/lib/icons"
 import Link from "next/link"
+import useSnapAnimations from '@/hooks/use-snap-animations'
 
 const socialLinks = [
   { icon: <GitHubIcon className="w-6 h-6" />, href: "https://github.com/v1tr0tech" },
@@ -49,22 +50,29 @@ interface FooterSectionProps {
   className?: string;
 }
 
-const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, ref) => {
+const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, _ref) => {
   const { theme } = useTheme()
   const isDark = theme === "dark"
+  const sectionRef = useRef<HTMLDivElement>(null)
+  
+  // Configurar animaciones de entrada para esta sección
+  useSnapAnimations({
+    sections: [sectionRef],
+    duration: 0.8,
+    enableCircularNavigation: false,
+    singleAnimation: true,
+    onSnapComplete: (index) => {
+      console.log('Footer animation completed for section:', index);
+    }
+  })
 
   return (
     <div 
-      ref={ref}
+      ref={sectionRef}
       className={`w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
     >
       <div className="max-w-7xl mx-auto relative w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2"
-        >
+        <div className="footer-header animate-element text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2">
           <div className={`inline-block px-3 sm:px-4 py-2 rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} text-xs sm:text-sm font-medium mb-3 sm:mb-4`}>
             <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
               V1TR0 Technologies
@@ -72,15 +80,12 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, ref) =>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-textPrimary mb-3 sm:mb-4">Impulsando tu Éxito Digital</h2>
           <div className={`w-16 sm:w-20 md:w-24 h-1 ${isDark ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]" : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"} mx-auto mt-6 sm:mt-8 rounded-full`}></div>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative z-10 mb-8 sm:mb-12 md:mb-16 px-2 sm:px-0">
-          {footerSections.map((section, index) => (
-            <motion.div
+        <div className="footer-sections animate-element grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative z-10 mb-8 sm:mb-12 md:mb-16 px-2 sm:px-0">
+          {footerSections.map((section) => (
+            <div
               key={section.id}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2, ease: "easeOut" }}
               className={`relative overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} transition-all duration-300 group hover:border-[#08A696] hover:shadow-lg`}
             >
               <div className="relative p-3 sm:p-4 md:p-5 h-full flex flex-col">
@@ -96,18 +101,11 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, ref) =>
                 </div>
                 <p className="text-textMuted text-xs sm:text-sm">{section.content}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0"
-        >
+        <div className="footer-bottom animate-element flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
             <p className="text-textMuted text-sm sm:text-base">&copy; {new Date().getFullYear()} V1TR0</p>
             <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>•</span>
@@ -140,7 +138,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>((_, ref) =>
               </motion.a>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )

@@ -318,14 +318,14 @@ export default function TeamPage() {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-slate-400 hover:border-[#08A696] hover:text-[#26FFDF] transition-all duration-300"
+                    className="flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     Ver Perfil
                   </Button>
                   <Button 
                     size="sm" 
-                    className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696] transition-all duration-300"
+                    className="flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Asignar

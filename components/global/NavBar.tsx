@@ -180,11 +180,21 @@ const NavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) 
 
 // SubNavLink
 const SubNavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) => {
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
+
+  const baseClasses =
+    "block px-4 py-3 text-sm transition-all duration-300 rounded-xl mx-2 first:mt-0 last:mb-0"
+
+  const themeClasses = isDark
+    ? "text-[#26FFDF] hover:text-[#26FFDF]/90 hover:bg-[#08A696]/10"
+    : "text-white hover:text-white/90 hover:bg-[#02505950]"
+
   return (
     <Link
       href={href}
       prefetch={false}
-      className="block px-4 py-3 text-sm text-[#26FFDF] hover:text-[#26FFDF]/90 transition-all duration-300 hover:bg-[#08A696]/10 rounded-xl mx-2 first:mt-0 last:mb-0"
+      className={`${baseClasses} ${themeClasses}`}
     >
       {children}
     </Link>
