@@ -39,7 +39,7 @@ export function FloatingLoginButton() {
           }}
         >
           <motion.button
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
             style={{
               boxShadow: isHovered
                 ? "0 20px 40px rgba(8, 166, 150, 0.1), 0 10px 25px rgba(38, 255, 223, 0.1)"

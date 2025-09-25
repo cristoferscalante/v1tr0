@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import Image from 'next/image'
 
 interface OptionData {
   id: number
@@ -33,7 +32,7 @@ const optionsData: OptionData[] = [
       "Integración con analytics",
       "Formularios de contacto avanzados"
     ],
-    icon: <Image src="/imagenes/home/negocios/landing.png" alt="Landing Pages" width={24} height={24} className="w-6 h-6" />,
+    icon: <div className="w-6 h-6" />,
     color: "#08a696",
     gradient: "from-custom-3/30 via-custom-2/20 to-custom-4/30",
     image: "/imagenes/home/negocios/landing.png"
@@ -49,7 +48,7 @@ const optionsData: OptionData[] = [
       "Panel de administración",
       "Sistema de inventario"
     ],
-    icon: <Image src="/imagenes/home/negocios/e-comerce.png" alt="E-commerce" width={24} height={24} className="w-6 h-6" />,
+    icon: <div className="w-6 h-6" />,
     color: "#26ffdf",
     gradient: "from-custom-4/30 via-custom-3/20 to-custom-2/30",
     image: "/imagenes/home/negocios/e-comerce.png"
@@ -65,7 +64,7 @@ const optionsData: OptionData[] = [
       "Optimización SEO",
       "Formulario de contacto"
     ],
-    icon: <Image src="/imagenes/home/negocios/portafolio.png" alt="Portfolio" width={24} height={24} className="w-6 h-6" />,
+    icon: <div className="w-6 h-6" />,
     color: "#1e7d7d",
     gradient: "from-custom-2/30 via-custom-4/20 to-custom-3/30",
     image: "/imagenes/home/negocios/portafolio.png"
@@ -81,7 +80,7 @@ const optionsData: OptionData[] = [
       "Integración con sistemas",
       "Soporte técnico completo"
     ],
-    icon: <Image src="/imagenes/home/negocios/personalizada.png" alt="Personalizada" width={24} height={24} className="w-6 h-6" />,
+    icon: <div className="w-6 h-6" />,
     color: "#025159",
     gradient: "from-custom-1/30 via-custom-3/20 to-custom-4/30",
     image: "/imagenes/home/negocios/personalizada.png"
@@ -129,18 +128,22 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                   boxShadow: `0 0 20px ${option.color}30`
                 }}
                 style={{
-                  border: `1px solid ${option.color}30`
+                  border: `1px solid ${option.color}60`,
+                  backgroundColor: `${option.color}10`
                 }}
               >
-                {/* Single Background with Image and Gradient */}
+                {/* Full Background Image */}
                 <div
-                  className="absolute inset-0 bg-cover bg-center opacity-15"
+                  className="absolute inset-0 bg-cover bg-center"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, ${option.color}60, ${option.color}20), url(${option.image})`,
-                    backgroundBlendMode: 'overlay',
-                    filter: 'blur(8px)'
+                    backgroundImage: `url(${option.image})`,
                   }}
                 />
+
+                {/* Blur Overlay - Solo cuando está expandida */}
+                {activeOption === option.id && (
+                  <div className="absolute inset-0 backdrop-blur-sm bg-black/40 transition-all duration-700" />
+                )}
 
                 {/* Content */}
                 <div className="relative z-10 p-8 h-full flex flex-col">
@@ -156,27 +159,11 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
                   >
-                    <motion.div
-                      className={`${activeOption !== option.id ? 'p-8' : 'p-3'} rounded-xl backdrop-blur-sm`}
-                      style={{
-                        backgroundColor: `${option.color}20`,
-                        color: option.color
-                      }}
-                      animate={{
-                        padding: activeOption !== option.id ? '2rem' : '0.75rem',
-                        transition: { duration: 0.4, ease: "easeOut" }
-                      }}
-                    >
-                      {React.cloneElement(option.icon as React.ReactElement<any>, { 
-                        width: activeOption === option.id ? 24 : 64, 
-                        height: activeOption === option.id ? 24 : 64, 
-                        className: activeOption === option.id ? "w-6 h-6" : "w-16 h-16" 
-                      })}
-                    </motion.div>
+                    {option.icon}
                     {/* Title - Solo visible cuando está activa */}
                     {activeOption === option.id && (
                       <div>
-                        <h3 className="text-xl font-bold text-textPrimary">
+                        <h3 className="text-xl font-bold text-white drop-shadow-lg">
                           {option.title}
                         </h3>
                       </div>
@@ -194,7 +181,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                         className="flex-1 flex flex-col justify-between"
                       >
                         <div className="px-2">
-                          <p className="text-textMuted mb-4 leading-relaxed text-sm">
+                          <p className="text-white mb-4 leading-relaxed text-sm drop-shadow-lg">
                             {option.description}
                           </p>
                           
@@ -211,7 +198,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                                   className="w-1.5 h-1.5 rounded-full"
                                   style={{ backgroundColor: option.color }}
                                 />
-                                <span className="text-xs text-textMuted">
+                                <span className="text-xs text-white drop-shadow-lg">
                                   {feature}
                                 </span>
                               </motion.div>
@@ -232,19 +219,31 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
           {optionsData.map((option) => (
             <motion.div
               key={option.id}
-              className="rounded-xl overflow-hidden border"
+              className="rounded-xl overflow-hidden border relative"
               style={{
-                backgroundColor: `${option.color}05`,
-                borderColor: `${option.color}30`
+                backgroundColor: `${option.color}10`,
+                borderColor: `${option.color}60`
               }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
+              {/* Full Background Image for Mobile */}
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url(${option.image})`,
+                }}
+              />
+
+              {/* Blur Overlay - Solo cuando está expandida */}
+              {activeOption === option.id && (
+                <div className="absolute inset-0 backdrop-blur-sm bg-black/40 transition-all duration-700" />
+              )}
               {/* Header - Always Visible */}
               <div
-                className="p-5 cursor-pointer"
+                className="p-5 cursor-pointer relative z-10"
                 onClick={() => handleOptionClick(option.id)}
               >
                 <div className="flex items-center justify-between">
@@ -257,17 +256,9 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div
-                        className="p-3 rounded-lg"
-                        style={{
-                          backgroundColor: `${option.color}20`,
-                          color: option.color
-                        }}
-                      >
-                        {option.icon}
-                      </div>
+                      {option.icon}
                       <div>
-                        <h3 className="text-lg font-bold text-textPrimary">
+                        <h3 className="text-lg font-bold text-white drop-shadow-lg">
                           {option.title}
                         </h3>
                       </div>
@@ -282,15 +273,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div
-                        className="p-4 rounded-xl"
-                        style={{
-                          backgroundColor: `${option.color}20`,
-                          color: option.color
-                        }}
-                      >
-                        {React.cloneElement(option.icon as React.ReactElement<any>, { size: 28 })}
-                      </div>
+                      {option.icon}
                     </motion.div>
                   )}
                   
@@ -315,8 +298,8 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="p-4 pt-0 border-t border-custom-2/20">
-                      <p className="text-textMuted mb-4 leading-relaxed text-sm">
+                    <div className="p-4 pt-0 border-t border-custom-2/20 relative z-10">
+                      <p className="text-white mb-4 leading-relaxed text-sm drop-shadow-lg">
                         {option.description}
                       </p>
                       
@@ -333,7 +316,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                               className="w-1.5 h-1.5 rounded-full"
                               style={{ backgroundColor: option.color }}
                             />
-                            <span className="text-xs text-textMuted">
+                            <span className="text-xs text-white drop-shadow-lg">
                               {feature}
                             </span>
                           </motion.div>
@@ -362,7 +345,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                 setIsUnifiedModalOpen(true)
               }
             }}
-            className="w-full sm:flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:bg-background/20 hover:border-[#08A696] text-[#26FFDF] flex items-center justify-center gap-2"
+            className="w-full sm:flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:bg-[#08A696]/10 dark:hover:bg-background/20 hover:border-[#08A696] text-[#08A696] dark:text-[#26FFDF] flex items-center justify-center gap-2"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -375,7 +358,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
               // Lógica para abrir modal de agendar reunión
               window.open('/agendar-reunion', '_blank')
             }}
-            className="w-full sm:flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:bg-background/20 hover:border-[#08A696] text-[#26FFDF] flex items-center justify-center gap-2"
+            className="w-full sm:flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:bg-[#08A696]/10 dark:hover:bg-background/20 hover:border-[#08A696] text-[#08A696] dark:text-[#26FFDF] flex items-center justify-center gap-2"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

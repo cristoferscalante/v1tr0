@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
+import { useTheme } from "@/components/theme-provider"
 
 interface CardViewerPremiumProps {
   frontImage: string
@@ -19,6 +20,20 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
   const rotationRef = useRef(rotation)
   const cardRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
+
+  const controlButtonBase =
+    "flex items-center justify-center gap-2 px-4 py-2 backdrop-blur-sm border rounded-2xl shadow-lg transition-all duration-300 hover:border-[#08A696] hover:shadow-xl hover:shadow-[#08A696]/10"
+  
+  const controlButtonBorder = isDark
+    ? "border-[#08A696]/30"
+    : "border-[#08A696]/60"
+
+  const controlButtonTheme = isDark
+    ? "bg-[#02505931] text-[#26FFDF]"
+    : "bg-white/90 text-[#08A696] hover:bg-[#08A696]/10"
 
   // Grosor de la tarjeta en píxeles
   const cardThickness = 4
@@ -406,7 +421,7 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
       <div className="mt-4 flex gap-2">
         <button
           onClick={() => setAutoRotate(!autoRotate)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
+          className={`${controlButtonBase} ${controlButtonBorder} ${controlButtonTheme}`}
         >
           {autoRotate ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,3 +439,4 @@ export default function CardViewerPremium({ frontImage, backImage }: CardViewerP
     </div>
   )
 }
+

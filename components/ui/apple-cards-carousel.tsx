@@ -136,18 +136,18 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
         </div>
         <div className="mr-4 sm:mr-6 md:mr-10 flex justify-end gap-2">
           <button
-            className="relative z-40 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-custom-1 hover:bg-custom-2 transition-colors disabled:opacity-50 dark:bg-custom-2 dark:hover:bg-custom-3 shadow-lg"
+            className="relative z-40 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 dark:bg-custom-2 hover:bg-[#08A696]/10 dark:hover:bg-custom-3 transition-colors disabled:opacity-50 shadow-lg border border-[#08A696]/60 dark:border-transparent"
             onClick={scrollLeft}
             disabled={!canScrollLeft}
           >
-            <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
+            <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6 text-[#08A696] dark:text-primary" />
           </button>
           <button
-            className="relative z-40 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-custom-1 hover:bg-custom-2 transition-colors disabled:opacity-50 dark:bg-custom-2 dark:hover:bg-custom-3 shadow-lg"
+            className="relative z-40 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 dark:bg-custom-2 hover:bg-[#08A696]/10 dark:hover:bg-custom-3 transition-colors disabled:opacity-50 shadow-lg border border-[#08A696]/60 dark:border-transparent"
             onClick={scrollRight}
             disabled={!canScrollRight}
           >
-            <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
+            <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6 text-[#08A696] dark:text-primary" />
           </button>
         </div>
       </div>

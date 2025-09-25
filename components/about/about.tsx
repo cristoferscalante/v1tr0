@@ -1,7 +1,6 @@
 "use client"
 
 
-import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
@@ -11,6 +10,8 @@ import { useScrollSnapEnabled, useDeviceDetection } from "@/hooks/use-device-det
 import CardViewerPremium from "./card-viewer-premium"
 import BackgroundAnimation from "../home/animations/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
+import { useTheme } from "@/components/theme-provider"
+import AnimatedV1tr0Logo from "./AnimatedV1tr0Logo"
 
 
 // Dynamic import for 3D component (no SSR)
@@ -32,6 +33,20 @@ if (typeof window !== "undefined") {
 const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
   const [currentMember, setCurrentMember] = useState(0)
   
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
+
+  const navigationButtonBase =
+    "flex items-center justify-center w-12 h-12 backdrop-blur-sm border rounded-full shadow-lg transition-all duration-300 hover:border-[#08A696] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
+  
+  const navigationButtonBorder = isDark
+    ? "border-[#08A696]/30"
+    : "border-[#08A696]/60"
+
+  const navigationButtonTheme = isDark
+    ? "bg-[#02505931] text-[#26FFDF]"
+    : "bg-white/90 text-[#08A696] hover:bg-[#08A696]/10"
+
   const teamMembers = [
     {
       name: "Alvaro Efren B.S.",
@@ -113,7 +128,7 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
       }`}>
         <button
           onClick={prevMember}
-          className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
+          className={`${navigationButtonBase} ${navigationButtonBorder} ${navigationButtonTheme}`}
           aria-label="Miembro anterior"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +153,7 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
         
         <button
           onClick={nextMember}
-          className="flex items-center justify-center w-12 h-12 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-full text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
+          className={`${navigationButtonBase} ${navigationButtonBorder} ${navigationButtonTheme}`}
           aria-label="Siguiente miembro"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,6 +172,19 @@ const About = () => {
   const isAnimatingRef = useRef(false)
   const shouldEnableScrollSnap = useScrollSnapEnabled()
   const { isMobile } = useDeviceDetection()
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
+
+  // Service card styles
+  const serviceCardBase = "backdrop-blur-sm border rounded-2xl shadow-lg transition-all duration-300 hover:border-[#08A696] hover:shadow-xl hover:shadow-[#08A696]/10"
+  
+  const serviceCardBorder = isDark
+    ? "border-[#08A696]/30"
+    : "border-[#08A696]/60"
+
+  const serviceCardTheme = isDark
+    ? "bg-[#02505931] text-[#26FFDF] hover:bg-[#02505950]"
+    : "bg-white/90 text-[#08A696] hover:bg-[#08A696]/10"
 
   // Initialize GSAP ScrollTrigger and snap functionality (only for desktop)
   useEffect(() => {
@@ -370,7 +398,7 @@ const About = () => {
             isMobile ? 'flex flex-col space-y-4' : 'grid lg:grid-cols-2'
           }`}>
             {/* Development */}
-            <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
+            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
               isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
@@ -400,7 +428,7 @@ const About = () => {
             </div>
 
             {/* Data Science */}
-            <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
+            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
               isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
@@ -430,7 +458,7 @@ const About = () => {
             </div>
 
             {/* Project Management */}
-            <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
+            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
               isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
@@ -459,7 +487,7 @@ const About = () => {
             </div>
 
             {/* Data Visualization */}
-            <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
+            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
               isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className="flex items-start space-x-4">
@@ -505,19 +533,13 @@ const About = () => {
           <div className={`gap-6 md:gap-10 items-center ${
             isMobile ? 'flex flex-col space-y-6' : 'grid lg:grid-cols-2'
           }`}>
-            <div className={`relative rounded-2xl overflow-hidden ${
+            <div className={`relative flex items-center justify-center ${
               isMobile ? 'h-[200px]' : 'h-[250px] md:h-[300px]'
             }`}>
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/15-SzfeYK3mFDL4IOh7XyaucnbCXX7OPV.png"
-                alt="Equipo V1TR0 observando una red neuronal digital"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-custom-1/80 to-transparent"></div>
+              <AnimatedV1tr0Logo />
             </div>
 
-            <div className={`bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 ${
+            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
               isMobile ? 'p-4' : 'p-6'
             }`}>
               <div className={`text-center ${
@@ -567,3 +589,4 @@ const About = () => {
 }
 
 export default About
+
