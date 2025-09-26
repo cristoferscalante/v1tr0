@@ -35,13 +35,6 @@ const TechnologiesSection: React.FC = () => {
   return (
     <section ref={sectionRef} className="technologies-section py-16 bg-transparent">
       <div className="w-full px-4">
-        {/* Título de la sección */}
-        <div className="text-center mb-12">
-          <h2 className="tech-title animate-element text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Nuestras Tecnologías
-          </h2>
-        </div>
-        
         {/* TechCarousel Component - Organic scroll-based velocity */}
         <div className="tech-carousel-container animate-element bg-transparent w-full">
           <TechCarousel 

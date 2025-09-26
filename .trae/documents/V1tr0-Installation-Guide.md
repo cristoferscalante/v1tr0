@@ -35,10 +35,10 @@ git branch
 
 ```bash
 # Instalar todas las dependencias
-npm install
+pnpm install
 
 # Verificar la instalación
-npm list --depth=0
+pnpm list --depth=0
 ```
 
 ### 2.3 Configuración de Variables de Entorno
@@ -150,30 +150,30 @@ node scripts/setup-google-auth.js
 
 ```bash
 # Verificar variables de entorno
-npm run check-env
+pnpm check-env
 
 # Verificar conexión a Supabase
-npm run test-supabase
+pnpm test-supabase
 
 # Verificar configuración de Google APIs
-npm run test-google-apis
+pnpm test-google-apis
 ```
 
 ### 4.2 Inicializar Base de Datos
 
 ```bash
 # Ejecutar migraciones (si existen)
-npm run db:migrate
+pnpm db:migrate
 
 # Poblar con datos de ejemplo
-npm run db:seed
+pnpm db:seed
 ```
 
 ### 4.3 Iniciar Servidor de Desarrollo
 
 ```bash
 # Iniciar en modo desarrollo
-npm run dev
+pnpm dev
 
 # El servidor estará disponible en:
 # http://localhost:3000
@@ -216,16 +216,16 @@ npm run dev
 
 ```bash
 # Ejecutar tests unitarios (si están configurados)
-npm run test
+pnpm test
 
 # Ejecutar tests de integración
-npm run test:integration
+pnpm test:integration
 
 # Verificar linting
-npm run lint
+pnpm lint
 
 # Verificar tipos TypeScript
-npm run type-check
+pnpm type-check
 ```
 
 ## 6. Solución de Problemas Comunes
@@ -285,7 +285,7 @@ npm install nombre-del-modulo
 npx tsc --noEmit
 
 # Regenerar tipos si es necesario
-npm run generate-types
+pnpm generate-types
 ```
 
 ## 7. Configuración para Diferentes Entornos
@@ -319,37 +319,37 @@ NEXT_PUBLIC_ENVIRONMENT=production
 ### 8.1 Scripts de Desarrollo
 ```bash
 # Desarrollo con hot reload
-npm run dev
+pnpm dev
 
 # Desarrollo con debug
-npm run dev:debug
+pnpm dev:debug
 
 # Análisis del bundle
-npm run analyze
+pnpm analyze
 ```
 
 ### 8.2 Scripts de Build
 ```bash
 # Build para producción
-npm run build
+pnpm build
 
 # Previsualizar build de producción
-npm run start
+pnpm start
 
 # Verificar build
-npm run build:check
+pnpm build:check
 ```
 
 ### 8.3 Scripts de Mantenimiento
 ```bash
 # Actualizar dependencias
-npm run update-deps
+pnpm update-deps
 
 # Limpiar archivos temporales
-npm run clean
+pnpm clean
 
 # Generar documentación
-npm run docs:generate
+pnpm docs:generate
 ```
 
 ## 9. Configuración del Editor (VS Code)

@@ -27,21 +27,21 @@ const footerSections = [
     id: 1,
     icon: <CodeIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
     title: "Desarrollo",
-    content: "Creamos soluciones digitales a medida para impulsar tu negocio al siguiente nivel.",
+    content: "Creamos soluciones basadas en codigo para darle vida a infraestructuras digitales de vanguardia.",
     color: "from-custom-3 to-custom-4",
   },
   {
     id: 2,
     icon: <PaletteIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
     title: "Diseño",
-    content: "Diseñamos experiencias visuales únicas que cautivan a tu audiencia.",
+    content: "Diseñamos experiencias visuales que renuevan la experiencia de usuario, para optimizar la navegación & la gestión.",
     color: "from-custom-2 to-custom-3",
   },
   {
     id: 3,
     icon: <LightbulbIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
     title: "Innovación",
-    content: "Exploramos nuevas tecnologías para mantenerte a la vanguardia del mercado.",
+    content: "Implementamos tecnologias de vanguardia para automatizar procesos & mejorar la eficiencia.",
     color: "from-custom-1 to-custom-2",
   },
 ]
@@ -110,32 +110,45 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             <p className="text-textMuted text-sm sm:text-base">&copy; {new Date().getFullYear()} V1TR0</p>
             <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>•</span>
             <nav className="flex gap-3 sm:gap-4">
-              <Link href="/terminos" prefetch={false} className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
-                Términos
-              </Link>
-              <Link href="/privacidad" prefetch={false} className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
-                Privacidad
-              </Link>
-              <Link href="/cookies" prefetch={false} className={`text-textMuted text-sm sm:text-base ${isDark ? "hover:text-[#26FFDF]" : "hover:text-[#08A696]"} transition-colors duration-300`}>
-                Cookies
-              </Link>
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
+                <Link href="/terminos" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] font-medium transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
+                  Términos
+                </Link>
+              </div>
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
+                <Link href="/privacidad" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] font-medium transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
+                  Privacidad
+                </Link>
+              </div>
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
+                <Link href="/cookies" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] font-medium transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
+                  Cookies
+                </Link>
+              </div>
             </nav>
           </div>
           <div className="flex gap-4 sm:gap-6">
             {socialLinks.map((link, index) => (
-              <motion.a
-                key={index}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-colors duration-300 p-2 rounded-2xl ${isDark ? "hover:bg-[#02505950] text-[#26FFDF] hover:text-[#26FFDF]" : "hover:bg-[#c5ebe7] text-[#08A696] hover:text-[#08A696]"}`}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <div className="w-5 h-5 sm:w-6 sm:h-6">
-                  {link.icon}
-                </div>
-              </motion.a>
+              <div key={index} className="relative group">
+                {/* Gradiente de fondo con blur - similar al botón de login */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
+                
+                <motion.a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`relative flex items-center justify-center p-3 bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-2xl text-[#08A696] dark:text-[#26FFDF] transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-110`}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="w-5 h-5 sm:w-6 sm:h-6">
+                    {link.icon}
+                  </div>
+                </motion.a>
+              </div>
             ))}
           </div>
         </div>

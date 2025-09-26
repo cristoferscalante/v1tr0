@@ -106,7 +106,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-textPrimary mb-4">
-            ¿Listo para transformar tu negocio?
+            Desarrollamos vida digital
           </h2>
           <p className="text-lg text-textMuted max-w-2xl mx-auto">
             Elige la solución perfecta para llevar tu proyecto al siguiente nivel
@@ -115,26 +115,37 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
 
         {/* Desktop Layout - Horizontal Accordion */}
         <div className="hidden lg:block">
-          <div className="flex h-[280px] gap-4 rounded-2xl overflow-hidden">
+          <div className="flex h-[280px] gap-4 rounded-2xl overflow-visible">
             {optionsData.map((option) => (
               <motion.div
                 key={option.id}
-                className={`relative cursor-pointer transition-all duration-700 ease-out rounded-xl overflow-hidden ${
+                className={`relative cursor-pointer transition-all duration-700 ease-out rounded-xl overflow-hidden group ${
                   activeOption === option.id ? 'flex-[3]' : 'flex-1'
                 }`}
                 onClick={() => handleOptionClick(option.id)}
+                animate={{
+                  y: activeOption === option.id ? 0 : [0, -8, 0],
+                  transition: activeOption === option.id ? 
+                    { duration: 0.3 } : 
+                    { 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      delay: option.id * 0.5
+                    }
+                }}
                 whileHover={{ 
-                  borderColor: `${option.color}80`,
-                  boxShadow: `0 0 20px ${option.color}30`
+                  y: activeOption === option.id ? 0 : -12
                 }}
                 style={{
-                  border: `1px solid ${option.color}60`,
-                  backgroundColor: `${option.color}10`
+                  border: 'none',
+                  backgroundColor: activeOption === option.id ? `${option.color}10` : 'transparent',
+                  boxShadow: 'none'
                 }}
               >
                 {/* Full Background Image */}
                 <div
-                  className="absolute inset-0 bg-cover bg-center"
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out group-hover:scale-110"
                   style={{
                     backgroundImage: `url(${option.image})`,
                   }}
