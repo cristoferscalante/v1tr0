@@ -35,7 +35,7 @@ interface ServiceBannerProps {
   imageAlt: string
   ctaLink?: string
   ctaText?: string
-  imageSize?: 'xs' | 'sm' | 'md' | 'lg'
+  imageSize?: 'xs' | 'sm' | 'md' | 'lg' | 'custom'
   titleLink?: string
 
 }
@@ -283,10 +283,10 @@ export default function ServiceBanner({
             <Image
               src={imageSrc || placeholderImage}
               alt={imageAlt}
-              width={imageSize === 'xs' ? 258 : imageSize === 'sm' ? 500 : imageSize === 'lg' ? 600 : 400}
-          height={imageSize === 'xs' ? 258 : imageSize === 'sm' ? 500 : imageSize === 'lg' ? 600 : 400}
+              width={imageSize === 'xs' ? 258 : imageSize === 'sm' ? 500 : imageSize === 'custom' ? 350 : imageSize === 'lg' ? 600 : 400}
+          height={imageSize === 'xs' ? 258 : imageSize === 'sm' ? 500 : imageSize === 'custom' ? 350 : imageSize === 'lg' ? 600 : 400}
               className={`w-full h-auto ${
-                imageSize === 'sm' ? 'max-w-md' : imageSize === 'lg' ? 'max-w-xl' : 'max-w-lg'
+                imageSize === 'xs' ? 'max-w-xs' : imageSize === 'sm' ? 'max-w-md' : imageSize === 'custom' ? 'max-w-sm' : imageSize === 'lg' ? 'max-w-xl' : 'max-w-lg'
               } object-cover transition-all duration-700 ease-in-out`}
             />
           </div>

@@ -24,7 +24,7 @@ export default function SoftwareDevelopmentBanner() {
       ]}
       imageSrc="/imagenes/home/carrusel/desarrollo_web_end_backup.png"
       imageAlt="Desarrollador con elementos de programación y tecnología"
-      imageSize="sm"
+      imageSize="custom"
       titleLink="/servicios-referentes/dev"
     />
   )

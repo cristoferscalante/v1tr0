@@ -4,12 +4,12 @@ import { useState, useRef, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import NavBar from '@/components/global/NavBar'
 import FooterSection from '@/components/global/FooterSection'
 import { CustomCheckbox } from '@/components/ui/custom-checkbox'
+import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
@@ -143,30 +143,17 @@ export default function LoginPage() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#02505931] via-[#08A696]/20 to-[#02505931] flex flex-col">
+    <div className="min-h-screen flex flex-col">
+      <BackgroundAnimation />
       <div className="fixed top-0 left-0 right-0 z-50 flex justify-center">
         <NavBar />
       </div>
       
-      <div className="flex-1 flex items-center justify-center px-4 py-12 pt-24 relative overflow-hidden min-h-screen">
-        {/* Background Image with Blur - Solo en esta zona */}
-        <div className="absolute inset-0 z-0 min-h-screen">
-          <Image
-            src="/imagenes/login/2.jpeg"
-            alt="Login Background"
-            fill
-            className="object-cover w-full h-full"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#02505931]/80 via-[#08A696]/40 to-[#02505931]/80 backdrop-blur-sm min-h-screen" />
-          {/* Efecto de viñeta elegante */}
-          <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/60 min-h-screen" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 min-h-screen" />
-        </div>
-        <div className="w-full max-w-md relative z-10">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 pt-24 min-h-screen">
+        <div className="w-full max-w-md relative">
           {/* Título */}
           <div className="text-center mb-8" ref={titleRef}>
-            <h1 className="text-3xl font-bold text-[#26FFDF] mb-2">
+            <h1 className="text-3xl font-bold text-[#08A696] dark:text-[#26FFDF] mb-2">
               Bienvenido a V1TR0
             </h1>
           </div>
@@ -174,23 +161,23 @@ export default function LoginPage() {
           {/* Formulario */}
           <div 
             ref={formRef}
-            className="bg-[#02505931]/40 backdrop-blur-xl rounded-2xl p-8 border border-[#08A696]/30 shadow-2xl"
+            className="bg-white/90 dark:bg-[#02505931]/40 backdrop-blur-xl rounded-2xl p-8 border border-[#08A696]/60 dark:border-[#08A696]/30 shadow-2xl"
           >
             <form onSubmit={handleLogin}>
             <div className="space-y-5">
               {/* Email Field */}
               <div className="h-[60px]">
-                <label htmlFor="email" className="block text-sm font-medium text-[#26FFDF] mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[#08A696] dark:text-[#26FFDF] mb-2">
                   Correo electrónico
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#26FFDF]/70 h-5 w-5" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#08A696]/70 dark:text-[#26FFDF]/70 h-5 w-5" />
                   <input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-[48px] pl-12 pr-4 bg-[#08A696]/20 border border-[#08A696]/50 rounded-xl text-[#26FFDF] placeholder-[#26FFDF]/50 focus:outline-none focus:ring-2 focus:ring-[#26FFDF] focus:border-transparent transition-all duration-200"
+                    className="w-full h-[48px] pl-12 pr-4 bg-white/50 dark:bg-[#08A696]/20 border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] placeholder-[#08A696]/50 dark:placeholder-[#26FFDF]/50 focus:outline-none focus:ring-2 focus:ring-[#08A696] dark:focus:ring-[#26FFDF] focus:border-transparent transition-all duration-200"
                     placeholder="tu@ejemplo.com"
                     required
                   />
@@ -199,24 +186,24 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div className="h-[60px]">
-                <label htmlFor="password" className="block text-sm font-medium text-[#26FFDF] mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-[#08A696] dark:text-[#26FFDF] mb-2">
                   Contraseña
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#26FFDF]/70 h-5 w-5" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#08A696]/70 dark:text-[#26FFDF]/70 h-5 w-5" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-[48px] pl-12 pr-12 bg-[#08A696]/20 border border-[#08A696]/50 rounded-xl text-[#26FFDF] placeholder-[#26FFDF]/50 focus:outline-none focus:ring-2 focus:ring-[#26FFDF] focus:border-transparent transition-all duration-200"
+                    className="w-full h-[48px] pl-12 pr-12 bg-white/50 dark:bg-[#08A696]/20 border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] placeholder-[#08A696]/50 dark:placeholder-[#26FFDF]/50 focus:outline-none focus:ring-2 focus:ring-[#08A696] dark:focus:ring-[#26FFDF] focus:border-transparent transition-all duration-200"
                     placeholder="••••••••"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#26FFDF]/70 hover:text-[#26FFDF] transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#08A696]/70 dark:text-[#26FFDF]/70 hover:text-[#08A696] dark:hover:text-[#26FFDF] transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -229,35 +216,46 @@ export default function LoginPage() {
                   checked={rememberMe}
                   onCheckedChange={(checked) => setRememberMe(checked === true)}
                   label="Recordarme"
-                  labelClassName="text-sm text-[#26FFDF]/80"
+                  labelClassName="text-sm text-[#08A696]/80 dark:text-[#26FFDF]/80"
                 />
                 <Link 
                   href="/forgot-password" 
-                  className="text-sm text-[#26FFDF] hover:text-[#26FFDF]/80 transition-colors"
+                  className="text-sm text-[#08A696] dark:text-[#26FFDF] hover:text-[#08A696]/80 dark:hover:text-[#26FFDF]/80 transition-colors"
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
 
               {/* Login Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-[48px] bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#08A696]/80 hover:to-[#26FFDF]/80 text-black font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  'Acceder a V1TR0 →'
-                )}
-              </button>
+              <div className="relative group">
+                {/* Gradiente de fondo con blur */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
+                
+                {/* Botón principal */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="relative w-full h-[48px] bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] font-semibold transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-[#08A696]/10 dark:group-hover:bg-[#02505950] shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transform group-hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-[#08A696] dark:border-[#26FFDF] border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span>
+                      Acceder a V1TR0
+                      <span className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Divider */}
             <div className="my-6 flex items-center">
-              <div className="flex-1 border-t border-[#08A696]/30"></div>
-              <span className="px-4 text-sm text-[#26FFDF]/70">O continúa con</span>
-              <div className="flex-1 border-t border-[#08A696]/30"></div>
+              <div className="flex-1 border-t border-[#08A696]/60 dark:border-[#08A696]/30"></div>
+              <span className="px-4 text-sm text-[#08A696]/70 dark:text-[#26FFDF]/70">O continúa con</span>
+              <div className="flex-1 border-t border-[#08A696]/60 dark:border-[#08A696]/30"></div>
             </div>
 
             {/* Google Login */}
@@ -265,7 +263,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full h-[48px] bg-[#08A696]/20 hover:bg-[#08A696]/30 border border-[#08A696]/50 text-[#26FFDF] font-medium rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+              className="w-full h-[48px] bg-white/50 dark:bg-[#08A696]/20 hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 border border-[#08A696]/60 dark:border-[#08A696]/50 text-[#08A696] dark:text-[#26FFDF] font-medium rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -279,11 +277,11 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="text-center mt-6" ref={footerRef}>
-            <p className="text-[#26FFDF]/70">
+            <p className="text-[#08A696]/70 dark:text-[#26FFDF]/70">
               ¿No tienes una cuenta?{' '}
               <Link 
                 href="/register" 
-                className="text-[#26FFDF] hover:text-[#26FFDF]/80 font-medium transition-colors"
+                className="text-[#08A696] dark:text-[#26FFDF] hover:text-[#08A696]/80 dark:hover:text-[#26FFDF]/80 font-medium transition-colors"
               >
                 Regístrate aquí →
               </Link>

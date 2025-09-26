@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="v1tr0-theme">
+    <ThemeProvider defaultTheme="system" storageKey="v1tr0-theme">
       <AuthProvider>
         {children}
       </AuthProvider>
