@@ -64,6 +64,35 @@ import {
 // Importamos nuestro icono personalizado de TikTok
 import { TikTokIcon as CustomTikTokIcon } from "@/components/icons/TikTokIcon"
 
+// Iconos SVG simples para Instagram, Facebook, YouTube y Discord
+export const InstagramSvgIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width={props.width || 24} height={props.height || 24} viewBox="0 0 24 24" fill="none" {...props}>
+    <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor"/>
+    <circle cx="12" cy="12" r="5" fill="#fff"/>
+    <circle cx="17" cy="7" r="1.5" fill="#fff"/>
+  </svg>
+);
+export const FacebookSvgIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width={props.width || 24} height={props.height || 24} viewBox="0 0 24 24" fill="none" {...props}>
+    <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor"/>
+    <path d="M15.5 8.5h-2V7.5c0-.414.336-.75.75-.75h1.25V5h-2.25A2.25 2.25 0 0 0 11 7.25v1.25H9.5V11H11v6h2.5v-6h1.5l.5-2.5z" fill="#fff"/>
+  </svg>
+);
+export const YouTubeSvgIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width={props.width || 24} height={props.height || 24} viewBox="0 0 24 24" fill="none" {...props}>
+    <rect x="2" y="6" width="20" height="12" rx="4" fill="currentColor"/>
+    <polygon points="10,9 16,12 10,15" fill="#fff"/>
+  </svg>
+);
+export const DiscordSvgIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width={props.width || 24} height={props.height || 24} viewBox="0 0 24 24" fill="none" {...props}>
+    <rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor"/>
+    <ellipse cx="9" cy="13" rx="1.5" ry="1" fill="#fff"/>
+    <ellipse cx="15" cy="13" rx="1.5" ry="1" fill="#fff"/>
+    <path d="M8 17c2 1 6 1 8 0" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
 // Exportamos los iconos con los mismos nombres que se usaban antes
 export const HomeIcon = Home
 export const PersonIcon = User

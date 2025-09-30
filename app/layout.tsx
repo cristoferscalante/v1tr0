@@ -5,7 +5,9 @@ import type { Metadata } from "next"
 import { Providers } from "./providers"
 import { GsapErrorBoundary } from "../components/global/GsapErrorBoundary"
 import { GsapProvider } from "../components/global/GsapProvider"
+
 import ClientCursorWrapper from "../components/ui/ClientCursorWrapper"
+import FloatingSocialButton from "@/components/global/FloatingSocialButton"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -40,10 +42,11 @@ export default function RootLayout({
             <Providers>
               {children}
               <ClientCursorWrapper />
+              <FloatingSocialButton />
             </Providers>
           </GsapProvider>
         </GsapErrorBoundary>
-      </body>
+  </body>
     </html>
   )
 }
