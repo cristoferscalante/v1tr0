@@ -3,21 +3,20 @@
 import { forwardRef, useRef } from "react"
 import { motion } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
-import {
-  GitHubIcon,
-  LinkedInIcon,
-  EmailIcon,
-  CodeIcon,
-  PaletteIcon,
-  LightbulbIcon,
-  TikTokIcon,
-} from "@/lib/icons"
+import { CodeIcon, PaletteIcon, LightbulbIcon, GitHubIcon } from "@/lib/icons"
 import Link from "next/link"
 import useSnapAnimations from '@/hooks/use-snap-animations'
 
+import {
+  LinkedInIcon,
+  EmailIcon,
+  TikTokIcon,
+// ...existing code...
+} from "@/lib/icons"
+
 const socialLinks = [
   { icon: <GitHubIcon className="w-6 h-6" />, href: "https://github.com/v1tr0tech" },
-  { icon: <LinkedInIcon className="w-6 h-6" />, href: "https://www.linkedin.com/in/v1tr0/" },
+  { icon: <LinkedInIcon className="w-6 h-6" />, href: "https://www.linkedin.com/company/v1tr0/?viewAsMember=true" },
   { icon: <TikTokIcon className="w-6 h-6" />, href: "https://www.tiktok.com/@v1tr0_tech" },
   { icon: <EmailIcon className="w-6 h-6" />, href: "mailto:vtr.techh@gmail.com" },
 ]
@@ -67,18 +66,20 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
   })
 
   return (
-    <div 
+    <footer
       ref={sectionRef}
-      className={`footer-section w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans overflow-hidden relative flex items-center justify-center`}
+      role="contentinfo"
+  className={`footer-section w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans relative flex items-center justify-center`}
+      aria-label="Pie de página V1TR0"
     >
-      <div className="max-w-7xl mx-auto relative w-full">
+  <div className="max-w-7xl mx-auto w-full">
         <div className="footer-header animate-element text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2">
-          <div className={`inline-block px-3 sm:px-4 py-2 rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} text-xs sm:text-sm font-medium mb-3 sm:mb-4`}>
-            <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+          <div className={`inline-block px-3 sm:px-4 py-2 rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"} text-xs sm:text-sm font-semibold mb-3 sm:mb-4`}>
+            <span className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}>
               V1TR0 Technologies
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-textPrimary mb-3 sm:mb-4">Impulsando tu Éxito Digital</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-[#04423c] dark:text-[#26FFDF]">Impulsando tu Éxito Digital</h2>
           <div className={`w-16 sm:w-20 md:w-24 h-1 ${isDark ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]" : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"} mx-auto mt-6 sm:mt-8 rounded-full`}></div>
         </div>
 
@@ -86,61 +87,67 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
           {footerSections.map((section) => (
             <div
               key={section.id}
-              className={`relative overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/30"} transition-all duration-300 group hover:border-[#08A696] hover:shadow-lg`}
+              className={`overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"} transition-all duration-300 group hover:border-[#08A696] hover:shadow-lg`}
             >
-              <div className="relative p-3 sm:p-4 md:p-5 h-full flex flex-col">
+              <div className="p-3 sm:p-4 md:p-5 h-full flex flex-col min-h-[180px]">
                 <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                  <div className={`p-1.5 sm:p-2 rounded-xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/30"} group-hover:scale-110 transition-transform duration-300`}>
-                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                  <div className={`p-1.5 sm:p-2 rounded-xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/40"} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#085c54]"}`}>
                       {section.icon}
                     </div>
                   </div>
-                  <h3 className={`text-base sm:text-lg md:text-xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#08A696] group-hover:text-[#08A696]"} transition-colors duration-300`}>
+                  <h3 className={`text-base sm:text-lg md:text-xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#085c54] group-hover:text-[#04423c]"} transition-colors duration-300`}>
                     {section.title}
                   </h3>
                 </div>
-                <p className="text-textMuted text-xs sm:text-sm">{section.content}</p>
+                <p className="text-[#04423c] dark:text-[#b2fff6] text-xs sm:text-sm opacity-90 font-medium">{section.content}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="footer-bottom animate-element flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0">
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
-            <p className="text-textMuted text-sm sm:text-base">&copy; {new Date().getFullYear()} V1TR0</p>
-            <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>•</span>
-            <nav className="flex gap-3 sm:gap-4">
+  <div className="footer-bottom animate-element flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0 w-full">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left flex-shrink-0">
+            <p className="text-[#04423c] dark:text-[#b2fff6] text-sm sm:text-base font-medium">&copy; {new Date().getFullYear()} V1TR0</p>
+            <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#085c54]"}`}>•</span>
+            <nav className="flex gap-3 sm:gap-4" aria-label="Navegación legal">
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <Link href="/terminos" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] font-medium transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
+                <Link href="/terminos" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
                   Términos
                 </Link>
               </div>
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <Link href="/privacidad" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] font-medium transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
+                <Link href="/privacidad" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
                   Privacidad
                 </Link>
               </div>
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <Link href="/cookies" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-xl text-[#08A696] dark:text-[#26FFDF] font-medium transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
+                <Link href="/cookies" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
                   Cookies
                 </Link>
               </div>
             </nav>
           </div>
-          <div className="flex gap-4 sm:gap-6">
+          <div className="flex gap-4 sm:gap-6" aria-label="Redes sociales">
             {socialLinks.map((link, index) => (
               <div key={index} className="relative group">
                 {/* Gradiente de fondo con blur - similar al botón de login */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                
                 <motion.a
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`relative flex items-center justify-center p-3 bg-white/50 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/50 rounded-2xl text-[#08A696] dark:text-[#26FFDF] transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-110`}
+                  aria-label={
+                    link.href.includes('github') ? 'GitHub V1TR0' :
+                    link.href.includes('linkedin') ? 'LinkedIn V1TR0' :
+                    link.href.includes('tiktok') ? 'TikTok V1TR0' :
+                    link.href.includes('mailto') ? 'Enviar correo a V1TR0' :
+                    'Red social V1TR0'
+                  }
+                  className={`relative flex items-center justify-center p-3 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-110`}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -153,7 +160,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
           </div>
         </div>
       </div>
-    </div>
+  </footer>
   )
 })
 
