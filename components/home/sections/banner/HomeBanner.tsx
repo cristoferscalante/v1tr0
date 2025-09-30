@@ -2,6 +2,7 @@
 import CardBanner from "@/components/home/shared/CardBanner"
 import { useTheme } from "@/components/theme-provider"
 import { motion } from "framer-motion"
+import TextType from "@/components/home/hero/TextType"
 
 // Rutas a los archivos SVG
 const devSvg = "/imagenes/icons/svg/dev.svg"
@@ -49,14 +50,30 @@ export default function HomeBanner() {
         initial="hidden"
         animate="visible"
       >
-        {/* Título principal */}
-        <motion.h1 
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 leading-tight max-w-5xl px-2 sm:px-4"
+        {/* Hero animado con efecto typewriter y color personalizado en la segunda línea */}
+        <motion.div
+          className="mb-6 md:mb-8 max-w-5xl px-2 sm:px-4"
           variants={itemVariants}
         >
-          <span className="block text-textPrimary mb-2 sm:mb-1">Transformamos tu potencial</span>
-          <span className={`block ${isDark ? "text-highlight" : "text-primary"}`}>en innovación y resultados</span>
-        </motion.h1>
+          <TextType
+            text={[
+              "Transformamos tu potencial\nen innovación y resultados",
+              "Las estructuras basadas en codigo\nno paran de crecer",
+              "Tu futuro te lo dicen tus datos\nSe soberano de tu información",
+              "Libera tu tiempo\nAutomatiza tus procesos, y tareas",
+              "Inaugura tu tienda virtual\nvende tus productos a todos",
+              "Tus clientes necesitan visitarte\n¡Vive digital!",
+              "Sistemas de información\nGestiona y centraliza tus datos",
+              "Portafolios interactivos\n¡Posiciona tu talento!",
+              "Infraestructura web\nUnifica procesos, sistemas, y tareas",
+              "Integra Inteligencia Artificial\ny potencia tus herramientas",
+            ]}
+            typingSpeed={60}
+            pauseDuration={1500}
+            deletingSpeed={10}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-white text-center min-h-[2.5em]"
+          />
+        </motion.div>
 
         {/* Badge */}
         <motion.div 
