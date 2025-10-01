@@ -35,7 +35,7 @@ const optionsData: OptionData[] = [
     icon: <div className="w-6 h-6" />,
     color: "#08a696",
     gradient: "from-custom-3/30 via-custom-2/20 to-custom-4/30",
-    image: "/imagenes/home/negocios/landing.png"
+    image: "/imagenes/home/negocios/landing.webp"
   },
   {
     id: 2,
@@ -51,7 +51,7 @@ const optionsData: OptionData[] = [
     icon: <div className="w-6 h-6" />,
     color: "#26ffdf",
     gradient: "from-custom-4/30 via-custom-3/20 to-custom-2/30",
-    image: "/imagenes/home/negocios/e-comerce.png"
+    image: "/imagenes/home/negocios/e-comerce.webp"
   },
   {
     id: 3,
@@ -67,7 +67,7 @@ const optionsData: OptionData[] = [
     icon: <div className="w-6 h-6" />,
     color: "#1e7d7d",
     gradient: "from-custom-2/30 via-custom-4/20 to-custom-3/30",
-    image: "/imagenes/home/negocios/portafolio.png"
+    image: "/imagenes/home/negocios/portafolio.webp"
   },
   {
     id: 4,
@@ -83,7 +83,7 @@ const optionsData: OptionData[] = [
     icon: <div className="w-6 h-6" />,
     color: "#025159",
     gradient: "from-custom-1/30 via-custom-3/20 to-custom-4/30",
-    image: "/imagenes/home/negocios/personalizada.png"
+    image: "/imagenes/home/negocios/personalizada.webp"
   }
 ]
 

@@ -38,7 +38,7 @@ export default function InformationSystemsPage({ isActive = false }: Information
         text: "Diseño de dashboards e informes interactivos para la toma de decisiones.",
       },
     ],
-    imageSrc: "/imagenes/home/carrusel/sistemas_de_informacion.png",
+    imageSrc: "/imagenes/home/carrusel/sistemas_de_informacion.webp",
     imageAlt: "Analista de datos entusiasta con visualizaciones, gráficos y elementos de IA en estilo digital neón",
 
   }
