@@ -51,13 +51,13 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
     {
       name: "Alvaro Efren B.S.",
       role: "CEO & Fundador",
-      image: "/imagenes/about/cards/card-efren.png",
+      image: "/imagenes/about/cards/card-efren.webp",
       biography: "Soy politólogo y desarrollador de software apasionado por transformar datos en soluciones con impacto social. He trabajado con varias agencias de Cooperación Internacional creando sistemas de información y dashboards que fortalecen la coordinación humanitaria en contextos de emergencia. Domino Python, bases de datos relacionales y NoSQL, además de front-end con Next.js y TailwindCSS. Mi enfoque une tecnología y análisis social para diseñar herramientas que generan decisiones estratégicas y valor sostenible que aporten al desarrollo de las comunidades y las empresas."
     },
     {
       name: "Cristofer Bolaños Scalante",
       role: "CTO & Fundador",
-      image: "/imagenes/about/cards/card-cristofer.png",
+      image: "/imagenes/about/cards/card-cristofer.webp",
       biography: "Experto en arquitectura de software y tecnologías emergentes, líder en innovación tecnológica. Responsable de la dirección técnica y la implementación de las mejores prácticas de desarrollo. Su expertise incluye desarrollos a medida, microservicios, automatizaciones, infraestructura, seguridad, integraciones APIREST y tecnologías de vanguardia."
     }
   ]
@@ -92,7 +92,7 @@ const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
           }`}>
             <CardViewerPremium 
               frontImage={member.image} 
-              backImage="/imagenes/about/cards/card-back.png" 
+              backImage="/imagenes/about/cards/card-back.webp" 
             />
           </div>
         </div>

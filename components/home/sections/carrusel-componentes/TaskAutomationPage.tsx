@@ -22,7 +22,7 @@ export default function TaskAutomationPage() {
           text: "Configuración y optimización de procesos para mejorar la productividad y reducir costos operativos.",
         },
       ]}
-      imageSrc="/imagenes/home/carrusel/automatizacion_de_tareas.png"
+      imageSrc="/imagenes/home/carrusel/automatizacion_de_tareas.webp"
       imageAlt="Especialista en automatización con elementos de IA, robots y workflows digitales en estilo neón"
       imageSize="xs"
       titleLink="/servicios-referentes/pm"
