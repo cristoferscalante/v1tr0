@@ -233,7 +233,8 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
               className="rounded-xl overflow-hidden border relative"
               style={{
                 backgroundColor: `${option.color}10`,
-                borderColor: `${option.color}60`
+                borderColor: `${option.color}60`,
+                minHeight: activeOption === option.id ? 'auto' : '180px'
               }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -242,9 +243,10 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
             >
               {/* Full Background Image for Mobile */}
               <div
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
                 style={{
                   backgroundImage: `url(${option.image})`,
+                  filter: activeOption === option.id ? 'none' : 'brightness(0.8)'
                 }}
               />
 
@@ -252,12 +254,20 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
               {activeOption === option.id && (
                 <div className="absolute inset-0 backdrop-blur-sm bg-black/40 transition-all duration-700" />
               )}
+              
+              {/* Semi-transparent overlay para las colapsadas */}
+              {activeOption !== option.id && (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              )}
+              
               {/* Header - Always Visible */}
               <div
-                className="p-5 cursor-pointer relative z-10"
+                className={`cursor-pointer relative z-10 flex items-center ${
+                  activeOption === option.id ? 'p-5' : 'min-h-[180px] p-5'
+                }`}
                 onClick={() => handleOptionClick(option.id)}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between w-full">
                   {/* Solo mostrar título e icono cuando está expandida en móvil */}
                   {activeOption === option.id && (
                     <motion.div 
@@ -276,24 +286,31 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                     </motion.div>
                   )}
                   
-                  {/* Mostrar solo el icono cuando está colapsada - centrado */}
+                  {/* Mostrar título e icono cuando está colapsada - centrado verticalmente */}
                   {activeOption !== option.id && (
                     <motion.div 
-                      className="flex items-center justify-center flex-1"
+                      className="flex flex-col items-center justify-center flex-1 gap-3"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3 }}
                     >
                       {option.icon}
+                      <h3 className="text-xl font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        {option.title}
+                      </h3>
+                      <p className="text-sm text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                        {option.subtitle}
+                      </p>
                     </motion.div>
                   )}
                   
                   <motion.div
+                    className="absolute right-5"
                     animate={{ rotate: activeOption === option.id ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
                   >
                     <ArrowRight
-                      className="w-5 h-5 text-textMuted transform rotate-90"
+                      className="w-5 h-5 text-white drop-shadow-lg transform rotate-90"
                     />
                   </motion.div>
                 </div>
