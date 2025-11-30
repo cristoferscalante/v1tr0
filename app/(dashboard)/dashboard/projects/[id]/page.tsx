@@ -9,6 +9,7 @@ import { ProjectMeetings } from "@/components/dashboard/project-meetings"
 import { ProjectComments } from "@/components/dashboard/project-comments"
 import { ProjectPayments } from "@/components/dashboard/project-payments"
 import { ProjectLegal } from "@/components/dashboard/project-legal"
+import { ProjectTasksWrapper } from "@/components/dashboard/project-tasks-wrapper"
 
 interface ProjectPageProps {
   params: Promise<{
@@ -30,8 +31,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <ProjectHeader projectId={projectId} />
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 w-full">
+      <Tabs defaultValue="tasks" className="space-y-4">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-9 w-full">
+          <TabsTrigger value="tasks">Tareas</TabsTrigger>
           <TabsTrigger value="overview">Resumen</TabsTrigger>
           <TabsTrigger value="timeline">Línea de Tiempo</TabsTrigger>
           <TabsTrigger value="files">Archivos</TabsTrigger>
@@ -41,6 +43,18 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <TabsTrigger value="payments">Pagos</TabsTrigger>
           <TabsTrigger value="legal">Legal</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="tasks" className="space-y-4">
+          <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+            <CardHeader>
+              <CardTitle>Tareas del Proyecto</CardTitle>
+              <CardDescription>Gestiona las tareas y tareas de reuniones asignadas</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ProjectTasksWrapper projectId={projectId} />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
