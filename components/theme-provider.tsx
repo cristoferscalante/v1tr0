@@ -26,7 +26,6 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
   storageKey = "v1tr0-theme",
   ...props
 }: ThemeProviderProps) {

@@ -20,6 +20,7 @@ import {
   LogOut
 } from "lucide-react"
 import Link from "next/link"
+import { TaskNotifications } from "@/components/dashboard/task-notifications"
 
 export default function DashboardPage() {
   const { signOut } = useAuth()
@@ -132,6 +133,9 @@ export default function DashboardPage() {
         
         {/* Botones con estilo del home */}
         <div className="flex items-center gap-4">
+          {/* Notificaciones de tareas nuevas */}
+          <TaskNotifications />
+          
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
             <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]">
