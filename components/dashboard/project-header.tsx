@@ -1,107 +1,97 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
   ArrowLeft, 
-  Settings, 
-  Share2, 
-  Star, 
-  Calendar,
-  DollarSign,
-  Users,
-  Clock
+  CheckCircle,
+  Clock,
+  Loader2
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabaseProjectsDB, Project } from '@/lib/supabase-projects-db';
 
 interface ProjectHeaderProps {
   projectId: string;
 }
 
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: 'planning' | 'in_progress' | 'review' | 'completed' | 'on_hold';
-  progress: number;
-  client: string;
-  startDate: string;
-  endDate: string;
-  budget: number;
-  teamSize: number;
-  priority: 'low' | 'medium' | 'high';
-  isFavorite: boolean;
+interface ProjectWithStats extends Project {
+  totalTasks?: number;
+  completedTasks?: number;
+  inProgressTasks?: number;
+  pendingTasks?: number;
 }
 
 export function ProjectHeader({ projectId }: ProjectHeaderProps) {
   const router = useRouter();
-  
-  // En un entorno real, estos datos vendrían de una API
-  const [project] = useState<Project>({
-    id: projectId,
-    name: 'Desarrollo Web V1TR0',
-    description: 'Plataforma web completa para V1TR0 con dashboard interactivo, gestión de proyectos y sistema de autenticación avanzado.',
-    status: 'in_progress',
-    progress: 45,
-    client: 'V1TR0 Technologies',
-    startDate: '2024-12-01',
-    endDate: '2025-03-15',
-    budget: 75000,
-    teamSize: 8,
-    priority: 'high',
-    isFavorite: false
-  });
+  const [project, setProject] = useState<ProjectWithStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [isFavorite, setIsFavorite] = useState(project.isFavorite);
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      setLoading(true);
+      const [projectData, stats] = await Promise.all([
+        supabaseProjectsDB.getProjectById(projectId),
+        supabaseProjectsDB.getProjectStats(projectId)
+      ]);
+
+      if (projectData) {
+        setProject({
+          ...projectData,
+          ...stats
+        });
+      }
+      setLoading(false);
+    };
+
+    fetchProjectData();
+  }, [projectId]);
 
   const getStatusColor = (status: Project['status']) => {
     switch (status) {
-      case 'planning': return 'bg-gray-500';
-      case 'in_progress': return 'bg-blue-500';
-      case 'review': return 'bg-yellow-500';
-      case 'completed': return 'bg-green-500';
-      case 'on_hold': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'active': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'completed': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'paused': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'cancelled': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default: return 'bg-slate-700/50 text-slate-400 border-slate-600/30';
     }
   };
 
   const getStatusText = (status: Project['status']) => {
     switch (status) {
-      case 'planning': return 'Planificación';
-      case 'in_progress': return 'En Progreso';
-      case 'review': return 'En Revisión';
+      case 'active': return 'Activo';
       case 'completed': return 'Completado';
-      case 'on_hold': return 'En Pausa';
+      case 'paused': return 'Pausado';
+      case 'cancelled': return 'Cancelado';
       default: return 'Desconocido';
     }
   };
 
-  const getPriorityColor = (priority: Project['priority']) => {
-    switch (priority) {
-      case 'low': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'high': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
-    }
+  const calculateProgress = () => {
+    if (!project || !project.totalTasks) return 0;
+    return Math.round((project.completedTasks || 0) / project.totalTasks * 100);
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    // En un entorno real, aquí haríamos una llamada a la API
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-[#26FFDF]" />
+      </div>
+    );
+  }
 
-  const calculateDaysRemaining = () => {
-    const endDate = new Date(project.endDate);
-    const today = new Date();
-    const diffTime = endDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  if (!project) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-slate-500">Proyecto no encontrado</p>
+      </div>
+    );
+  }
 
-  const daysRemaining = calculateDaysRemaining();
+  const progress = calculateProgress();
 
   return (
     <div className="space-y-4">
@@ -111,49 +101,28 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
           variant="ghost"
           size="sm"
           onClick={() => router.back()}
+          className="text-[#26FFDF] hover:bg-[#08A696]/20"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Volver
         </Button>
-        <div className="flex-1" />
-        <Button variant="outline" size="sm">
-          <Share2 className="h-4 w-4 mr-2" />
-          Compartir
-        </Button>
-        <Button variant="outline" size="sm">
-          <Settings className="h-4 w-4 mr-2" />
-          Configurar
-        </Button>
       </div>
 
       {/* Header principal */}
-      <Card className="bg-white/80 dark:bg-background/10 rounded-2xl">
+      <Card className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/20 rounded-2xl">
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <CardTitle className="text-2xl">{project.name}</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleFavorite}
-                  className="p-1"
-                >
-                  <Star 
-                    className={`h-5 w-5 ${
-                      isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
-                    }`} 
-                  />
-                </Button>
+                <CardTitle className="text-2xl text-white">{project.name}</CardTitle>
               </div>
-              <p className="text-gray-600 mb-4">{project.description}</p>
+              {project.description && (
+                <p className="text-slate-400 mb-4">{project.description}</p>
+              )}
               
               <div className="flex flex-wrap gap-2">
-                <Badge className={getStatusColor(project.status)}>
+                <Badge className={`${getStatusColor(project.status)} border rounded-lg px-3 py-1`}>
                   {getStatusText(project.status)}
-                </Badge>
-                <Badge variant="outline" className={getPriorityColor(project.priority)}>
-                  Prioridad {project.priority === 'high' ? 'Alta' : project.priority === 'medium' ? 'Media' : 'Baja'}
                 </Badge>
               </div>
             </div>
@@ -161,45 +130,47 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
         </CardHeader>
         <CardContent>
           {/* Métricas del proyecto */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-4 bg-gray-50 dark:bg-background/20 rounded-lg">
-              <Calendar className="h-6 w-6 mx-auto mb-2 text-blue-600" />
-              <p className="text-sm text-gray-600">Días restantes</p>
-              <p className="text-xl font-bold">
-                {daysRemaining > 0 ? daysRemaining : 'Vencido'}
-              </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            <div className="text-center p-4 bg-[#025059]/50 backdrop-blur-sm border border-[#08A696]/20 rounded-lg">
+              <CheckCircle className="h-6 w-6 mx-auto mb-2 text-green-400" />
+              <p className="text-sm text-slate-400">Completadas</p>
+              <p className="text-xl font-bold text-white">{project.completedTasks || 0}</p>
             </div>
-            <div className="text-center p-4 bg-gray-50 dark:bg-background/20 rounded-lg">
-              <DollarSign className="h-6 w-6 mx-auto mb-2 text-green-600" />
-              <p className="text-sm text-gray-600">Presupuesto</p>
-              <p className="text-xl font-bold">${project.budget.toLocaleString()}</p>
+            <div className="text-center p-4 bg-[#025059]/50 backdrop-blur-sm border border-[#08A696]/20 rounded-lg">
+              <Clock className="h-6 w-6 mx-auto mb-2 text-blue-400" />
+              <p className="text-sm text-slate-400">En Progreso</p>
+              <p className="text-xl font-bold text-white">{project.inProgressTasks || 0}</p>
             </div>
-            <div className="text-center p-4 bg-gray-50 dark:bg-background/20 rounded-lg">
-              <Users className="h-6 w-6 mx-auto mb-2 text-purple-600" />
-              <p className="text-sm text-gray-600">Equipo</p>
-              <p className="text-xl font-bold">{project.teamSize} miembros</p>
-            </div>
-            <div className="text-center p-4 bg-gray-50 dark:bg-background/20 rounded-lg">
-              <Clock className="h-6 w-6 mx-auto mb-2 text-orange-600" />
-              <p className="text-sm text-gray-600">Cliente</p>
-              <p className="text-lg font-bold text-sm">{project.client}</p>
+            <div className="text-center p-4 bg-[#025059]/50 backdrop-blur-sm border border-[#08A696]/20 rounded-lg">
+              <Clock className="h-6 w-6 mx-auto mb-2 text-slate-400" />
+              <p className="text-sm text-slate-400">Pendientes</p>
+              <p className="text-xl font-bold text-white">{project.pendingTasks || 0}</p>
             </div>
           </div>
 
           {/* Progreso del proyecto */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Progreso del Proyecto</span>
-              <span className="text-sm text-gray-600">{project.progress}%</span>
+              <span className="text-sm font-medium text-[#26FFDF]">Progreso del Proyecto</span>
+              <span className="text-sm text-slate-400">{progress}%</span>
             </div>
-            <Progress value={project.progress} className="h-2" />
+            <Progress value={progress} className="h-2 bg-slate-800">
+              <div 
+                className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full transition-all" 
+                style={{ width: `${progress}%` }}
+              />
+            </Progress>
           </div>
 
           {/* Fechas */}
-          <div className="flex justify-between text-sm text-gray-600 mt-4">
-            <span>Inicio: {new Date(project.startDate).toLocaleDateString()}</span>
-            <span>Fin: {new Date(project.endDate).toLocaleDateString()}</span>
-          </div>
+          {project.created_at && (
+            <div className="flex justify-between text-sm text-slate-500 mt-4">
+              <span>Creado: {new Date(project.created_at).toLocaleDateString('es-ES')}</span>
+              {project.updated_at && project.updated_at !== project.created_at && (
+                <span>Actualizado: {new Date(project.updated_at).toLocaleDateString('es-ES')}</span>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

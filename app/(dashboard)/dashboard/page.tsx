@@ -1,13 +1,12 @@
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useAuth } from "@/hooks/use-auth"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { 
-  Plus, 
   CheckCircleIcon,
   TrendingUpIcon,
   Users,
@@ -17,14 +16,77 @@ import {
   MessageSquare,
   Building2,
   DollarSign,
-  LogOut
+  LogOut,
+  Loader2
 } from "lucide-react"
 import Link from "next/link"
 import { TaskNotifications } from "@/components/dashboard/task-notifications"
+import { supabase } from "@/lib/supabase/client"
+import { supabaseProjectsDB } from "@/lib/supabase-projects-db"
 
 export default function DashboardPage() {
   const { signOut } = useAuth()
   const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    totalClients: 0,
+    activeClients: 0,
+    totalProjects: 0,
+    activeProjects: 0,
+    totalTasks: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+    inProgressTasks: 0
+  })
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    setLoading(true)
+    
+    try {
+      // Obtener clientes
+      const { data: clients } = await supabase
+        .from('profiles')
+        .select('id, role')
+        .in('role', ['client', 'team'])
+      
+      // Obtener proyectos
+      const projects = await supabaseProjectsDB.getProjects()
+      const activeProjects = projects.filter(p => p.status === 'active')
+      
+      // Obtener estadísticas de tareas de todos los proyectos
+      let totalTasks = 0
+      let completedTasks = 0
+      let inProgressTasks = 0
+      let pendingTasks = 0
+      
+      for (const project of projects) {
+        const projectStats = await supabaseProjectsDB.getProjectStats(project.id)
+        totalTasks += projectStats.totalTasks
+        completedTasks += projectStats.completedTasks
+        inProgressTasks += projectStats.inProgressTasks
+        pendingTasks += projectStats.pendingTasks
+      }
+      
+      setStats({
+        totalClients: clients?.length || 0,
+        activeClients: clients?.filter(c => c.role === 'client').length || 0,
+        totalProjects: projects.length,
+        activeProjects: activeProjects.length,
+        totalTasks,
+        completedTasks,
+        pendingTasks,
+        inProgressTasks
+      })
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -38,7 +100,7 @@ export default function DashboardPage() {
   const navigationCards = [
     {
       title: 'Clientes',
-      description: '5 activos',
+      description: `${stats.activeClients} activos`,
       icon: Users,
       href: '/dashboard/clients',
       gradient: 'from-blue-500/20 to-cyan-500/20',
@@ -46,7 +108,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Proyectos',
-      description: '8 en curso',
+      description: `${stats.activeProjects} en curso`,
       icon: FolderOpen,
       href: '/dashboard/projects',
       gradient: 'from-green-500/20 to-emerald-500/20',
@@ -54,7 +116,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Equipo',
-      description: '12 miembros',
+      description: `${stats.totalClients} miembros`,
       icon: UserCheck,
       href: '/dashboard/team',
       gradient: 'from-purple-500/20 to-pink-500/20',
@@ -62,7 +124,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Reuniones',
-      description: '3 hoy',
+      description: '0 hoy',
       icon: Calendar,
       href: '/dashboard/meetings',
       gradient: 'from-orange-500/20 to-red-500/20',
@@ -70,7 +132,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Mensajes',
-      description: '15 nuevos',
+      description: '0 nuevos',
       icon: MessageSquare,
       href: '/dashboard/messages',
       gradient: 'from-indigo-500/20 to-blue-500/20',
@@ -81,33 +143,41 @@ export default function DashboardPage() {
   const quickStats = [
     {
       title: 'Total Clientes',
-      value: '25',
+      value: stats.totalClients.toString(),
       icon: Building2,
-      change: '+12%',
+      change: stats.totalClients > 0 ? `${stats.activeClients} activos` : 'Sin datos',
       changeType: 'positive' as const
     },
     {
       title: 'Proyectos Activos',
-      value: '8',
+      value: stats.activeProjects.toString(),
       icon: FolderOpen,
-      change: '+3',
+      change: `${stats.totalProjects} total`,
       changeType: 'positive' as const
     },
     {
       title: 'Ingresos del Mes',
-      value: '$45,000',
+      value: '$0',
       icon: DollarSign,
-      change: '+18%',
+      change: 'Próximamente',
       changeType: 'positive' as const
     },
     {
       title: 'Tareas Completadas',
-      value: '156',
+      value: stats.completedTasks.toString(),
       icon: CheckCircleIcon,
-      change: '+24',
+      change: `${stats.totalTasks} total`,
       changeType: 'positive' as const
     }
   ]
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-[#26FFDF]" />
+      </div>
+    )
+  }
 
 
 
@@ -135,14 +205,6 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Notificaciones de tareas nuevas */}
           <TaskNotifications />
-          
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-            <Button className="relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] inline-flex items-center px-6 py-3 font-semibold shadow-lg hover:shadow-xl hover:shadow-[#08A696]/10 group-hover:translate-y-[-2px]">
-              <Plus className="mr-2 h-4 w-4" />
-              Nuevo Proyecto
-            </Button>
-          </div>
           
           {/* Botón de Cerrar Sesión */}
           <div className="relative group">

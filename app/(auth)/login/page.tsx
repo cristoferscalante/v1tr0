@@ -12,6 +12,7 @@ import { CustomCheckbox } from '@/components/ui/custom-checkbox'
 import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { getAuthErrorMessage, logAuthError } from '@/lib/auth-errors'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -77,46 +78,111 @@ export default function LoginPage() {
     setIsLoading(true)
     
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+      console.log('[LOGIN] Intentando iniciar sesión con email:', email)
+      
+      const signInPromise = supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       })
 
+      console.log('[LOGIN] Esperando respuesta de Supabase...')
+      
+      const { data, error } = await signInPromise
+
+      console.log('[LOGIN] ✅ Respuesta recibida de Supabase:', { 
+        hasData: !!data, 
+        hasUser: !!data?.user,
+        hasSession: !!data?.session,
+        error: error?.message 
+      })
+
       if (error) {
-        toast.error('Credenciales incorrectas. Verifica tu email y contraseña.')
+        logAuthError(error, 'LOGIN')
+        const authError = getAuthErrorMessage(error)
+        
+        // Mostrar mensaje de error detallado
+        toast.error(authError.message, {
+          description: authError.description,
+          action: authError.action ? {
+            label: 'Entendido',
+            onClick: () => {}
+          } : undefined,
+          duration: 5000
+        })
+        
         setIsLoading(false)
         return
       }
 
-      if (data.user) {
-        // Obtener el rol del usuario desde la tabla profiles
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single()
+      if (!data.user || !data.session) {
+        console.error('[LOGIN] ❌ Login sin datos de usuario o sesión')
+        toast.error('Error al iniciar sesión. No se recibió información del usuario.')
+        setIsLoading(false)
+        return
+      }
 
-        if (profileError) {
-          console.error('Error fetching user role:', profileError)
-          toast.error('Error al obtener información del usuario')
-          setIsLoading(false)
+      console.log('[LOGIN] ✅ Login exitoso! Usuario:', data.user.email)
+      console.log('[LOGIN] Obteniendo perfil de usuario...')
+      
+      // Obtener el rol del usuario desde la tabla profiles
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single()
+
+      if (profileError) {
+        console.error('[LOGIN] ⚠️ Error al obtener perfil:', profileError)
+          
+          // Si no existe el perfil, crear uno por defecto
+          const { error: createError } = await supabase
+            .from('profiles')
+            .insert([
+              { 
+                id: data.user.id,
+                email: data.user.email, 
+                role: 'client',
+                name: data.user.email?.split('@')[0] || 'Usuario'
+              }
+            ])
+
+          if (createError) {
+            console.error('[LOGIN] Error al crear perfil:', createError)
+            toast.error('Error al configurar tu cuenta. Contacta con soporte.')
+            setIsLoading(false)
+            return
+          }
+
+          // Usar rol por defecto
+          console.log('[LOGIN] Perfil creado con rol por defecto: client')
+          router.push('/client-dashboard')
+          toast.success('¡Bienvenido! Configurando tu cuenta...')
           return
         }
 
-        // Redirigir según el rol
-        const userRole = profileData?.role || 'client'
-        if (userRole === 'admin') {
-          router.push('/dashboard')
-        } else {
-          router.push('/client-dashboard')
-        }
-        
-        toast.success(`¡Bienvenido! Redirigiendo al dashboard de ${userRole === 'admin' ? 'administrador' : 'cliente'}...`)
+      // Redirigir según el rol
+      const userRole = profileData?.role || 'client'
+      console.log('[LOGIN] 🎯 Rol del usuario:', userRole)
+      console.log('[LOGIN] 🚀 Redirigiendo a dashboard...')
+      
+      if (userRole === 'admin') {
+        console.log('[LOGIN] ➡️ Navegando a /dashboard')
+        router.push('/dashboard')
+        toast.success('¡Bienvenido, Administrador!')
+      } else {
+        console.log('[LOGIN] ➡️ Navegando a /client-dashboard')
+        router.push('/client-dashboard')
+        toast.success('¡Bienvenido!')
       }
       
     } catch (error) {
-      console.error('Login error:', error)
-      toast.error('Error al iniciar sesión. Inténtalo de nuevo.')
+      logAuthError(error, 'LOGIN_EXCEPTION')
+      const authError = getAuthErrorMessage(error)
+      
+      toast.error(authError.message, {
+        description: authError.description,
+        duration: 5000
+      })
     } finally {
       setIsLoading(false)
     }
@@ -124,6 +190,8 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
+      console.log('[LOGIN] Iniciando login con Google...')
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -132,11 +200,22 @@ export default function LoginPage() {
       })
 
       if (error) {
-        toast.error('Error al iniciar sesión con Google')
+        logAuthError(error, 'GOOGLE_LOGIN')
+        const authError = getAuthErrorMessage(error)
+        
+        toast.error(authError.message, {
+          description: authError.description,
+          duration: 5000
+        })
       }
     } catch (error) {
-      console.error('Google login error:', error)
-      toast.error('Error al iniciar sesión con Google')
+      logAuthError(error, 'GOOGLE_LOGIN_EXCEPTION')
+      const authError = getAuthErrorMessage(error)
+      
+      toast.error(authError.message, {
+        description: authError.description,
+        duration: 5000
+      })
     }
   }
 

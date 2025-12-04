@@ -56,12 +56,18 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  console.log('[ClientProjects] Component mounted, user:', user?.id)
+
   useEffect(() => {
     const fetchProjects = async () => {
       if (!user) {
+        console.log('[ClientProjects] No hay usuario autenticado, esperando...')
+        setIsLoading(false)
         return
       }
 
+      console.log('[ClientProjects] Cargando proyectos para user.id:', user.id)
+      
       try {
         const { data, error } = await supabase
           .from('projects')
@@ -70,11 +76,12 @@ export default function ProjectsPage() {
           .order('created_at', { ascending: false })
 
         if (error) {
-          console.error('Error fetching projects:', error)
+          console.error('[ClientProjects] Error fetching projects:', error)
           toast.error('Error al cargar los proyectos')
           return
         }
 
+        console.log('[ClientProjects] Proyectos obtenidos:', data?.length || 0, data)
         setProjects(data || [])
       } catch (error) {
         console.error('Error:', error)

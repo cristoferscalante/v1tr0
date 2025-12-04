@@ -1,145 +1,102 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import { 
   FolderOpen, 
   Plus, 
   Calendar, 
-  Users, 
   DollarSign,
   Clock,
   Filter,
   Search,
-  MoreHorizontal,
   Eye,
   Edit,
   Trash2,
-  LogOut
+  LogOut,
+  Loader2,
+  AlertCircle
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
+import { ProjectDialog } from '@/components/dashboard/project-dialog'
+import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface Project {
   id: string
   name: string
-  client: string
-  status: 'En Progreso' | 'Completado' | 'Pausado' | 'Planificación'
-  priority: 'Alta' | 'Media' | 'Baja'
-  progress: number
-  startDate: string
-  endDate: string
-  budget: number
-  teamSize: number
-  description: string
-}
-
-const projects: Project[] = [
-  {
-    id: '1',
-    name: 'Desarrollo Web V1TR0',
-    client: 'TechCorp Solutions',
-    status: 'En Progreso',
-    priority: 'Alta',
-    progress: 75,
-    startDate: '2024-01-15',
-    endDate: '2024-03-30',
-    budget: 45000,
-    teamSize: 5,
-    description: 'Plataforma web completa con dashboard administrativo y portal de clientes'
-  },
-  {
-    id: '2',
-    name: 'App Móvil EcoTrack',
-    client: 'GreenTech Inc',
-    status: 'En Progreso',
-    priority: 'Alta',
-    progress: 60,
-    startDate: '2024-02-01',
-    endDate: '2024-04-15',
-    budget: 38000,
-    teamSize: 4,
-    description: 'Aplicación móvil para seguimiento de huella de carbono personal'
-  },
-  {
-    id: '3',
-    name: 'Sistema CRM Empresarial',
-    client: 'BusinessFlow Ltd',
-    status: 'Planificación',
-    priority: 'Media',
-    progress: 15,
-    startDate: '2024-03-01',
-    endDate: '2024-06-30',
-    budget: 62000,
-    teamSize: 6,
-    description: 'Sistema de gestión de relaciones con clientes con IA integrada'
-  },
-  {
-    id: '4',
-    name: 'E-commerce Fashion Hub',
-    client: 'StyleMart',
-    status: 'Completado',
-    priority: 'Alta',
-    progress: 100,
-    startDate: '2023-10-01',
-    endDate: '2024-01-15',
-    budget: 52000,
-    teamSize: 5,
-    description: 'Plataforma de comercio electrónico para moda con AR virtual'
-  },
-  {
-    id: '5',
-    name: 'Portal Educativo Online',
-    client: 'EduLearn Academy',
-    status: 'En Progreso',
-    priority: 'Media',
-    progress: 40,
-    startDate: '2024-01-20',
-    endDate: '2024-05-20',
-    budget: 35000,
-    teamSize: 4,
-    description: 'Plataforma de aprendizaje online con videoconferencias integradas'
-  },
-  {
-    id: '6',
-    name: 'Sistema IoT Industrial',
-    client: 'IndusTech Corp',
-    status: 'Pausado',
-    priority: 'Baja',
-    progress: 25,
-    startDate: '2024-02-15',
-    endDate: '2024-07-15',
-    budget: 78000,
-    teamSize: 7,
-    description: 'Sistema de monitoreo IoT para maquinaria industrial'
+  description?: string
+  status: 'active' | 'completed' | 'paused' | 'cancelled'
+  client_id?: string
+  created_at: string
+  updated_at: string
+  client?: {
+    name: string
   }
-]
+}
 
 const statusFilters = [
   { id: 'all', label: 'Todos' },
-  { id: 'progress', label: 'En Progreso' },
+  { id: 'active', label: 'Activos' },
   { id: 'completed', label: 'Completados' },
-  { id: 'planning', label: 'Planificación' },
-  { id: 'paused', label: 'Pausados' }
-]
-
-const priorityFilters = [
-  { id: 'all', label: 'Todas' },
-  { id: 'high', label: 'Alta' },
-  { id: 'medium', label: 'Media' },
-  { id: 'low', label: 'Baja' }
+  { id: 'paused', label: 'Pausados' },
+  { id: 'cancelled', label: 'Cancelados' }
 ]
 
 export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
-  const [priorityFilter, setPriorityFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingProject, setEditingProject] = useState<string | undefined>(undefined)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const router = useRouter()
   const { signOut } = useAuth()
+
+  const fetchProjects = useCallback(async () => {
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          client:profiles(name)
+        `)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw error
+      }
+
+      setProjects(data || [])
+    } catch (error) {
+      console.error('Error al cargar proyectos:', error)
+      toast.error('Error al cargar los proyectos')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
 
   const handleLogout = async () => {
     try {
@@ -149,49 +106,94 @@ export default function ProjectsPage() {
       console.error('Error al cerrar sesión:', error)
     }
   }
+
+  const handleNewProject = () => {
+    setEditingProject(undefined)
+    setDialogOpen(true)
+  }
+
+  const handleEditProject = (projectId: string) => {
+    setEditingProject(projectId)
+    setDialogOpen(true)
+  }
+
+  const handleDeleteClick = (projectId: string) => {
+    setProjectToDelete(projectId)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!projectToDelete) {
+      return
+    }
+
+    setDeleting(true)
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectToDelete)
+
+      if (error) {
+        throw error
+      }
+
+      toast.success('Proyecto eliminado exitosamente')
+      fetchProjects()
+      setDeleteDialogOpen(false)
+      setProjectToDelete(null)
+    } catch (error) {
+      console.error('Error al eliminar proyecto:', error)
+      toast.error('Error al eliminar el proyecto')
+    } finally {
+      setDeleting(false)
+    }
+  }
   
   const filteredProjects = projects.filter(project => {
-    const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'progress' && project.status === 'En Progreso') ||
-      (statusFilter === 'completed' && project.status === 'Completado') ||
-      (statusFilter === 'planning' && project.status === 'Planificación') ||
-      (statusFilter === 'paused' && project.status === 'Pausado')
+    const matchesStatus = statusFilter === 'all' || project.status === statusFilter
     
-    const matchesPriority = priorityFilter === 'all' || 
-      (priorityFilter === 'high' && project.priority === 'Alta') ||
-      (priorityFilter === 'medium' && project.priority === 'Media') ||
-      (priorityFilter === 'low' && project.priority === 'Baja')
+    const matchesSearch = 
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (project.client?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (project.description || '').toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.client.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    return matchesStatus && matchesPriority && matchesSearch
+    return matchesStatus && matchesSearch
   })
 
   const stats = {
     total: projects.length,
-    inProgress: projects.filter(p => p.status === 'En Progreso').length,
-    completed: projects.filter(p => p.status === 'Completado').length,
-    totalBudget: projects.reduce((acc, p) => acc + p.budget, 0)
+    active: projects.filter(p => p.status === 'active').length,
+    completed: projects.filter(p => p.status === 'completed').length,
+    paused: projects.filter(p => p.status === 'paused').length
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'active': return 'Activo'
+      case 'completed': return 'Completado'
+      case 'paused': return 'Pausado'
+      case 'cancelled': return 'Cancelado'
+      default: return status
+    }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'En Progreso': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'Completado': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      case 'Pausado': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-      case 'Planificación': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+      case 'active': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      case 'paused': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
     }
   }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'Alta': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      case 'Media': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-      case 'Baja': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
   }
 
   return (
@@ -212,7 +214,10 @@ export default function ProjectsPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Button className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl">
+            <Button 
+              onClick={handleNewProject}
+              className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
               <Plus className="w-5 h-5 mr-2" />
               Nuevo Proyecto
             </Button>
@@ -249,8 +254,8 @@ export default function ProjectsPage() {
         <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">En Progreso</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.inProgress}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Activos</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.active}</p>
               </div>
               <div className="p-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl">
                 <Clock className="w-6 h-6 text-white" />
@@ -273,10 +278,10 @@ export default function ProjectsPage() {
         <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Presupuesto Total</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">${stats.totalBudget.toLocaleString()}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Pausados</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.paused}</p>
               </div>
-              <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+              <div className="p-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl">
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -330,126 +335,165 @@ export default function ProjectsPage() {
                 ))}
               </div>
             </div>
-            
-            {/* Priority Filter */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Filter className="w-4 h-4 text-slate-400" />
-                <span className="text-sm font-medium text-slate-400">Prioridad</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {priorityFilters.map((filter) => (
-                  <Button
-                    key={filter.id}
-                    variant={priorityFilter === filter.id ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setPriorityFilter(filter.id)}
-                    className={`rounded-xl transition-all duration-300 ${
-                      priorityFilter === filter.id
-                        ? 'bg-gradient-to-r from-[#08A696] to-[#26FFDF] text-white border-0'
-                        : 'bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696]'
-                    }`}
-                  >
-                    {filter.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
           </div>
         </Card>
       </motion.div>
 
       {/* Projects Grid */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-      >
-        {filteredProjects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * index }}
-          >
-            <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6 hover:bg-background/20 hover:border-[#08A696] transition-all duration-300 group hover:scale-105">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="font-bold text-[#26FFDF] text-lg mb-1">{project.name}</h3>
-                  <p className="text-slate-400 text-sm mb-2">{project.client}</p>
-                  <p className="text-slate-400 text-xs">{project.description}</p>
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-12 h-12 animate-spin text-[#08A696]" />
+        </div>
+      ) : filteredProjects.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-20"
+        >
+          <FolderOpen className="w-16 h-16 mx-auto text-slate-600 mb-4" />
+          <h3 className="text-xl font-semibold text-slate-300 mb-2">No hay proyectos</h3>
+          <p className="text-slate-400 mb-6">
+            {searchTerm || statusFilter !== 'all' 
+              ? 'No se encontraron proyectos con los filtros aplicados'
+              : 'Comienza creando tu primer proyecto'}
+          </p>
+          {!searchTerm && statusFilter === 'all' && (
+            <Button 
+              onClick={handleNewProject}
+              className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold rounded-xl"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Crear Primer Proyecto
+            </Button>
+          )}
+        </motion.div>
+      ) : (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+        >
+          {filteredProjects.map((project, index) => (
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * index }}
+            >
+              <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6 hover:bg-background/20 hover:border-[#08A696] transition-all duration-300 group h-full flex flex-col">
+                {/* Header Section - Altura fija */}
+                <div className="flex items-start justify-between mb-4 min-h-[100px]">
+                  <div className="flex-1 min-w-0 flex flex-col">
+                    <h3 className="font-bold text-[#26FFDF] text-lg mb-2 line-clamp-2">{project.name}</h3>
+                    {project.client ? (
+                      <p className="text-slate-400 text-sm mb-2">{project.client.name}</p>
+                    ) : (
+                      <div className="h-6 mb-2"></div>
+                    )}
+                    <p className="text-slate-400 text-xs line-clamp-2 flex-1">
+                      {project.description || 'Sin descripción'}
+                    </p>
+                  </div>
                 </div>
-                <Button variant="ghost" size="sm" className="rounded-xl text-slate-400 hover:text-[#26FFDF]">
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </div>
 
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
+                {/* Info Section - Altura fija */}
+                <div className="space-y-3 mb-6 min-h-[100px]">
+                  <div className="flex items-center gap-2">
                     <Badge className={`rounded-lg ${getStatusColor(project.status)}`}>
-                      {project.status}
-                    </Badge>
-                    <Badge className={`rounded-lg ${getPriorityColor(project.priority)}`}>
-                      {project.priority}
+                      {getStatusLabel(project.status)}
                     </Badge>
                   </div>
+
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">Creado: {formatDate(project.created_at)}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <Clock className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">
+                      {project.updated_at !== project.created_at 
+                        ? `Actualizado: ${formatDate(project.updated_at)}`
+                        : 'Sin actualizaciones'}
+                    </span>
+                  </div>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-slate-400">Progreso</span>
-                    <span className="text-sm font-semibold text-[#26FFDF]">{project.progress}%</span>
-                  </div>
-                  <Progress value={project.progress} className="h-2" />
+                {/* Buttons Section - Siempre al final */}
+                <div className="flex gap-2 mt-auto">
+                  <Button 
+                    size="sm" 
+                    onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+                    className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Ver
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => handleEditProject(project.id)}
+                    className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => handleDeleteClick(project.id)}
+                    className="bg-[#02505931] backdrop-blur-sm border border-red-500/30 text-red-400 hover:bg-background/20 hover:border-red-500 rounded-2xl transition-all duration-300"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
 
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-400">{new Date(project.startDate).toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-400">{project.teamSize} miembros</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-400">${project.budget.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-400">{new Date(project.endDate).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </div>
+      {/* Dialogs */}
+      <ProjectDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+        onSuccess={fetchProjects}
+        projectId={editingProject || undefined}
+      />
 
-              <div className="flex gap-2">
-                <Button 
-                  size="sm" 
-                  className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Ver Detalles
-                </Button>
-                <Button 
-                  size="sm" 
-                  className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
-                <Button 
-                  size="sm" 
-                  className="bg-[#02505931] backdrop-blur-sm border border-red-500/30 text-red-400 hover:bg-background/20 hover:border-red-500 rounded-2xl transition-all duration-300"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-background/95 backdrop-blur-md border-[#08A696]/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-[#26FFDF]">
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              ¿Eliminar Proyecto?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              Esta acción no se puede deshacer. El proyecto y todos sus datos asociados serán eliminados permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              disabled={deleting}
+              className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/30 text-[#26FFDF] hover:bg-background/20 rounded-xl"
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={handleDeleteConfirm}
+              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl"
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                'Eliminar Proyecto'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

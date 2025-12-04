@@ -9,6 +9,7 @@ import NavBar from '@/components/global/NavBar'
 import FooterSection from '@/components/global/FooterSection'
 import { CustomCheckbox } from '@/components/ui/custom-checkbox'
 import { gsap } from 'gsap'
+import { getAuthErrorMessage, logAuthError } from '@/lib/auth-errors'
 // Componentes UI nativos - sin shadcn/ui
 
 interface ValidationState {
@@ -128,27 +129,53 @@ export default function RegisterPage() {
   // Función para manejar el registro
   const signUp = async (email: string, password: string, name: string) => {
     try {
+      console.log('[REGISTER] Intentando crear cuenta con email:', email)
+      
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
         options: {
           data: {
-            name: name,
+            name: name.trim(),
           }
         }
       })
 
+      console.log('[REGISTER] Respuesta de Supabase:', { 
+        hasData: !!data, 
+        hasUser: !!data?.user,
+        error: error?.message 
+      })
+
       if (error) {
-        return { success: false, error: error.message }
+        logAuthError(error, 'REGISTER')
+        const authError = getAuthErrorMessage(error)
+        return { 
+          success: false, 
+          error: authError.message,
+          description: authError.description,
+          action: authError.action
+        }
       }
 
       if (data.user) {
+        console.log('[REGISTER] Usuario creado exitosamente')
         return { success: true, data: data.user }
       }
 
-      return { success: false, error: 'No se pudo crear el usuario' }
-    } catch {
-      return { success: false, error: 'Error inesperado durante el registro' }
+      return { 
+        success: false, 
+        error: 'No se pudo crear el usuario',
+        description: 'No se recibió información del nuevo usuario.'
+      }
+    } catch (error) {
+      logAuthError(error, 'REGISTER_EXCEPTION')
+      const authError = getAuthErrorMessage(error)
+      return { 
+        success: false, 
+        error: authError.message,
+        description: authError.description
+      }
     }
   }
 
@@ -181,21 +208,36 @@ export default function RegisterPage() {
 
       if (result.success) {
         setSuccess(true)
-        toast.success('¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.')
+        toast.success('¡Cuenta creada exitosamente!', {
+          description: 'Revisa tu email para confirmar tu cuenta.',
+          duration: 5000
+        })
         // Mostrar mensaje de éxito y redirigir después de unos segundos
         setTimeout(() => {
           router.push("/login?message=check_email")
         }, 3000)
       } else {
-        toast.error(result.error || 'Error al crear la cuenta')
+        toast.error(result.error || 'Error al crear la cuenta', {
+          description: result.description,
+          action: result.action ? {
+            label: 'Entendido',
+            onClick: () => {}
+          } : undefined,
+          duration: 5000
+        })
         setFormErrors((prev) => ({
           ...prev,
           general: result.error || "Error al crear la cuenta",
         }))
       }
     } catch (error) {
-      console.error("Error durante el registro:", error)
-      toast.error('Error inesperado durante el registro')
+      logAuthError(error, 'REGISTER_SUBMIT')
+      const authError = getAuthErrorMessage(error)
+      
+      toast.error(authError.message, {
+        description: authError.description,
+        duration: 5000
+      })
       setFormErrors((prev) => ({
         ...prev,
         general: "Error inesperado durante el registro",

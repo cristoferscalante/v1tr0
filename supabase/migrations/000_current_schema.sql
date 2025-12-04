@@ -13,6 +13,7 @@
 CREATE TABLE IF NOT EXISTS profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     name TEXT,
+    email TEXT UNIQUE,
     avatar TEXT,
     role TEXT DEFAULT 'client' CHECK (role IN ('client', 'admin')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -21,9 +22,26 @@ CREATE TABLE IF NOT EXISTS profiles (
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 
 -- RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Políticas de profiles (sin recursión)
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
+CREATE POLICY "Users can view own profile" ON profiles
+    FOR SELECT USING (true);  -- Permitir a todos ver perfiles
+
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
+CREATE POLICY "Users can insert own profile" ON profiles
+    FOR INSERT WITH CHECK (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
+CREATE POLICY "Users can update own profile" ON profiles
+    FOR UPDATE USING (auth.uid() = id);
+
+-- Nota: Removida política de admin que causaba recursión infinita
+-- Los admins pueden ver todos los perfiles con la política SELECT (true)
 
 -- ============================================================
 -- TABLA: clients
@@ -41,6 +59,25 @@ CREATE TABLE IF NOT EXISTS clients (
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_clients_email ON clients(email);
+
+-- RLS para clients
+ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Authenticated users can view clients" ON clients;
+CREATE POLICY "Authenticated users can view clients" ON clients
+    FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Authenticated users can insert clients" ON clients;
+CREATE POLICY "Authenticated users can insert clients" ON clients
+    FOR INSERT TO authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can update clients" ON clients;
+CREATE POLICY "Authenticated users can update clients" ON clients
+    FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can delete clients" ON clients;
+CREATE POLICY "Authenticated users can delete clients" ON clients
+    FOR DELETE TO authenticated USING (true);
 
 -- ============================================================
 -- TABLA: projects
@@ -63,6 +100,7 @@ CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
 -- RLS
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own projects" ON projects;
 CREATE POLICY "Users can view own projects" ON projects
     FOR SELECT USING (
         auth.uid() = client_id OR 
@@ -100,6 +138,7 @@ CREATE INDEX IF NOT EXISTS idx_tasks_assigned_to ON tasks(assigned_to);
 -- RLS
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view project tasks" ON tasks;
 CREATE POLICY "Users can view project tasks" ON tasks
     FOR SELECT USING (
         EXISTS (
@@ -135,6 +174,25 @@ CREATE INDEX IF NOT EXISTS idx_meetings_date ON meetings(date);
 CREATE INDEX IF NOT EXISTS idx_meetings_status ON meetings(status);
 CREATE INDEX IF NOT EXISTS idx_meetings_google_calendar_event_id ON meetings(google_calendar_event_id);
 
+-- RLS para meetings
+ALTER TABLE meetings ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Authenticated users can view meetings" ON meetings;
+CREATE POLICY "Authenticated users can view meetings" ON meetings
+    FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Authenticated users can insert meetings" ON meetings;
+CREATE POLICY "Authenticated users can insert meetings" ON meetings
+    FOR INSERT TO authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can update meetings" ON meetings;
+CREATE POLICY "Authenticated users can update meetings" ON meetings
+    FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can delete meetings" ON meetings;
+CREATE POLICY "Authenticated users can delete meetings" ON meetings
+    FOR DELETE TO authenticated USING (true);
+
 -- ============================================================
 -- TABLA: meeting_summaries
 -- Descripción: Resúmenes de reuniones con decisiones y seguimientos
@@ -156,6 +214,25 @@ CREATE TABLE IF NOT EXISTS meeting_summaries (
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_meeting_summaries_meeting_date ON meeting_summaries(meeting_date);
+
+-- RLS para meeting_summaries
+ALTER TABLE meeting_summaries ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Authenticated users can view meeting_summaries" ON meeting_summaries;
+CREATE POLICY "Authenticated users can view meeting_summaries" ON meeting_summaries
+    FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Authenticated users can insert meeting_summaries" ON meeting_summaries;
+CREATE POLICY "Authenticated users can insert meeting_summaries" ON meeting_summaries
+    FOR INSERT TO authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can update meeting_summaries" ON meeting_summaries;
+CREATE POLICY "Authenticated users can update meeting_summaries" ON meeting_summaries
+    FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can delete meeting_summaries" ON meeting_summaries;
+CREATE POLICY "Authenticated users can delete meeting_summaries" ON meeting_summaries
+    FOR DELETE TO authenticated USING (true);
 
 -- ============================================================
 -- TABLA: meeting_tasks
@@ -189,9 +266,11 @@ CREATE INDEX IF NOT EXISTS idx_meeting_tasks_assigned_to ON meeting_tasks(assign
 -- RLS
 ALTER TABLE meeting_tasks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can view meeting_tasks" ON meeting_tasks;
 CREATE POLICY "Authenticated users can view meeting_tasks" ON meeting_tasks
     FOR SELECT TO authenticated USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can update meeting_tasks" ON meeting_tasks;
 CREATE POLICY "Authenticated users can update meeting_tasks" ON meeting_tasks
     FOR UPDATE TO authenticated USING (true);
 
@@ -217,9 +296,11 @@ CREATE INDEX IF NOT EXISTS idx_task_comments_user_id ON task_comments(user_id);
 -- RLS
 ALTER TABLE task_comments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated users can view task_comments" ON task_comments;
 CREATE POLICY "Authenticated users can view task_comments" ON task_comments
     FOR SELECT TO authenticated USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can insert task_comments" ON task_comments;
 CREATE POLICY "Authenticated users can insert task_comments" ON task_comments
     FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
 
