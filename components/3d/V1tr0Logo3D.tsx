@@ -106,23 +106,23 @@ const MODEL_PATH = '/imagenes/3d/models/v1tr0_logo_3d.glb'
 function useModelPosition(currentView: ViewKey, position: 'left' | 'right') {
   const targetPosition = useRef(new THREE.Vector3())
   const currentPosition = useRef(new THREE.Vector3())
-  
+
   const getBaseX = useCallback(() => {
     if (currentView === 'isometric') {
       return position === 'left' ? -3 : 3
     }
     return position === 'left' ? -1 : 1
   }, [currentView, position])
-  
+
   useEffect(() => {
     const baseX = getBaseX()
     targetPosition.current.set(baseX, 2.5, 0.5)
-    
+
     if (currentPosition.current.length() === 0) {
       currentPosition.current.copy(targetPosition.current)
     }
   }, [getBaseX])
-  
+
   return { targetPosition, currentPosition }
 }
 
@@ -134,7 +134,7 @@ function useCameraTransition(currentView: ViewKey, camera: THREE.Camera, modelCe
   const isTransitioning = useRef(false)
   const transitionStartTime = useRef(0)
   const isInitialized = useRef(false)
-  
+
   // Initialize camera position
   useEffect(() => {
     if (!isInitialized.current) {
@@ -150,7 +150,7 @@ function useCameraTransition(currentView: ViewKey, camera: THREE.Camera, modelCe
       isInitialized.current = true
     }
   }, [camera, modelCenter])
-  
+
   // Handle view changes
   useEffect(() => {
     const view = CAMERA_VIEWS[currentView]
@@ -159,7 +159,7 @@ function useCameraTransition(currentView: ViewKey, camera: THREE.Camera, modelCe
     isTransitioning.current = true
     transitionStartTime.current = Date.now()
   }, [currentView])
-  
+
   return {
     targetPosition,
     currentPosition,
@@ -176,7 +176,7 @@ function useCameraTransition(currentView: ViewKey, camera: THREE.Camera, modelCe
 // Lighting component
 function SceneLighting({ currentView }: { currentView: ViewKey }) {
   const config = LIGHTING_CONFIG[currentView]
-  
+
   return (
     <>
       <ambientLight intensity={config.ambient.intensity} color={config.ambient.color} />
@@ -202,12 +202,12 @@ function SceneLighting({ currentView }: { currentView: ViewKey }) {
 }
 
 // Optimized 3D Model component
-function Logo3DModel({ 
-  onTogglePosition, 
+function Logo3DModel({
+  onTogglePosition,
   position,
   currentView,
   onModelLoaded
-}: { 
+}: {
   onTogglePosition: () => void
   position: 'left' | 'right'
   currentView: ViewKey
@@ -215,16 +215,16 @@ function Logo3DModel({
 }) {
   const meshRef = useRef<THREE.Group>(null)
   const { targetPosition, currentPosition } = useModelPosition(currentView, position)
-  
+
   // Load and configure model
   const { scene } = useGLTF(MODEL_PATH, true)
-  
+
   // Apply material configuration
   const configuredScene = useMemo(() => {
     const clonedScene = scene.clone()
     clonedScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        child.material = new THREE.MeshPhysicalMaterial(GLASS_MATERIAL_CONFIG)
+        (child as THREE.Mesh).material = new THREE.MeshPhysicalMaterial(GLASS_MATERIAL_CONFIG)
       }
     })
     return clonedScene
@@ -241,47 +241,47 @@ function Logo3DModel({
     }
     return undefined
   }, [configuredScene, onModelLoaded])
-  
+
   // Animation loop
   useFrame((state, delta) => {
     if (!meshRef.current) {
       return
     }
-    
+
     // Smooth position interpolation with easing
     const baseLerpFactor = Math.min(1, delta * ANIMATION_CONFIG.transition.lerpFactor)
     // Apply easeOutCubic for more natural movement
     const easedLerpFactor = 1 - Math.pow(1 - baseLerpFactor, 3)
     currentPosition.current.lerp(targetPosition.current, easedLerpFactor)
-    
+
     // Apply organic sway animation with multiple harmonics
     const time = state.clock.elapsedTime
-    const swayX = (Math.sin(time * ANIMATION_CONFIG.sway.x.frequency) + 
-                   Math.sin(time * ANIMATION_CONFIG.sway.x.frequency * 1.3) * 0.3) * ANIMATION_CONFIG.sway.x.amplitude
-    const swayY = (Math.sin(time * ANIMATION_CONFIG.sway.y.frequency) + 
-                   Math.cos(time * ANIMATION_CONFIG.sway.y.frequency * 0.7) * 0.4) * ANIMATION_CONFIG.sway.y.amplitude
-    const swayZ = (Math.cos(time * ANIMATION_CONFIG.sway.z.frequency) + 
-                   Math.sin(time * ANIMATION_CONFIG.sway.z.frequency * 1.1) * 0.2) * ANIMATION_CONFIG.sway.z.amplitude
-    
+    const swayX = (Math.sin(time * ANIMATION_CONFIG.sway.x.frequency) +
+      Math.sin(time * ANIMATION_CONFIG.sway.x.frequency * 1.3) * 0.3) * ANIMATION_CONFIG.sway.x.amplitude
+    const swayY = (Math.sin(time * ANIMATION_CONFIG.sway.y.frequency) +
+      Math.cos(time * ANIMATION_CONFIG.sway.y.frequency * 0.7) * 0.4) * ANIMATION_CONFIG.sway.y.amplitude
+    const swayZ = (Math.cos(time * ANIMATION_CONFIG.sway.z.frequency) +
+      Math.sin(time * ANIMATION_CONFIG.sway.z.frequency * 1.1) * 0.2) * ANIMATION_CONFIG.sway.z.amplitude
+
     meshRef.current.position.set(
       currentPosition.current.x + swayX,
       currentPosition.current.y + swayY,
       currentPosition.current.z + swayZ
     )
-    
+
     // Apply smooth rotation animation with organic feel
-    meshRef.current.rotation.y = (Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency) + 
-                                   Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency * 1.2) * 0.3) * ANIMATION_CONFIG.rotation.y.amplitude
-    meshRef.current.rotation.z = (Math.sin(time * ANIMATION_CONFIG.rotation.z.frequency) + 
-                                   Math.cos(time * ANIMATION_CONFIG.rotation.z.frequency * 0.8) * 0.2) * ANIMATION_CONFIG.rotation.z.amplitude
-    meshRef.current.rotation.x = (Math.cos(time * ANIMATION_CONFIG.rotation.x.frequency) + 
-                                   Math.sin(time * ANIMATION_CONFIG.rotation.x.frequency * 1.4) * 0.15) * ANIMATION_CONFIG.rotation.x.amplitude
+    meshRef.current.rotation.y = (Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency) +
+      Math.sin(time * ANIMATION_CONFIG.rotation.y.frequency * 1.2) * 0.3) * ANIMATION_CONFIG.rotation.y.amplitude
+    meshRef.current.rotation.z = (Math.sin(time * ANIMATION_CONFIG.rotation.z.frequency) +
+      Math.cos(time * ANIMATION_CONFIG.rotation.z.frequency * 0.8) * 0.2) * ANIMATION_CONFIG.rotation.z.amplitude
+    meshRef.current.rotation.x = (Math.cos(time * ANIMATION_CONFIG.rotation.x.frequency) +
+      Math.sin(time * ANIMATION_CONFIG.rotation.x.frequency * 1.4) * 0.15) * ANIMATION_CONFIG.rotation.x.amplitude
   })
-  
+
   const viewConfig = CAMERA_VIEWS[currentView]
-  
+
   return (
-    <group 
+    <group
       ref={meshRef}
       onClick={onTogglePosition}
       onPointerOver={(e) => {
@@ -293,8 +293,8 @@ function Logo3DModel({
         document.body.style.cursor = 'default'
       }}
     >
-      <primitive 
-        object={configuredScene} 
+      <primitive
+        object={configuredScene}
         scale={viewConfig.modelScale}
         position={viewConfig.modelPosition}
       />
@@ -303,11 +303,11 @@ function Logo3DModel({
 }
 
 // Optimized Camera Controller
-function CameraController({ 
-  currentView, 
-  modelCenter, 
-  onPositionComplete 
-}: { 
+function CameraController({
+  currentView,
+  modelCenter,
+  onPositionComplete
+}: {
   currentView: ViewKey
   modelCenter: THREE.Vector3
   onPositionComplete: () => void
@@ -320,20 +320,20 @@ function CameraController({
     isTransitioning,
     transitionStartTime
   } = useCameraTransition(currentView, camera, modelCenter)
-  
+
   useFrame((_, delta) => {
     if (isTransitioning.current) {
       const elapsed = (Date.now() - transitionStartTime.current) / 1000
       const progress = Math.min(elapsed / ANIMATION_CONFIG.transition.duration, 1)
       const easeProgress = 1 - Math.pow(1 - progress, 3)
       const lerpFactor = easeProgress * 0.1 * (60 * delta)
-      
+
       currentPosition.current.lerpVectors(
         camera.position,
         targetPosition.current,
         lerpFactor
       )
-      
+
       if ('fov' in camera) {
         const perspCamera = camera as THREE.PerspectiveCamera
         const currentFov = perspCamera.fov
@@ -341,10 +341,10 @@ function CameraController({
         perspCamera.fov = newFov
         perspCamera.updateProjectionMatrix()
       }
-      
+
       camera.position.copy(currentPosition.current)
       camera.lookAt(modelCenter)
-      
+
       if (progress >= 1) {
         isTransitioning.current = false
         setTimeout(() => onPositionComplete(), 300)
@@ -353,7 +353,7 @@ function CameraController({
       camera.lookAt(modelCenter)
     }
   })
-  
+
   return null
 }
 
@@ -378,12 +378,12 @@ function MobilePlaceholder() {
     >
       <div className="text-center space-y-4">
         <div className="w-32 h-32 mx-auto bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-full flex items-center justify-center shadow-lg">
-          <svg 
-            className="w-16 h-16 text-[#08A696] dark:text-[#26FFDF]" 
-            fill="currentColor" 
+          <svg
+            className="w-16 h-16 text-[#08A696] dark:text-[#26FFDF]"
+            fill="currentColor"
             viewBox="0 0 24 24"
           >
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </div>
         <h3 className="text-xl font-semibold text-[#08A696] dark:text-[#26FFDF] bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl px-4 py-2 inline-block shadow-lg">Modelo 3D V1TR0</h3>
@@ -424,29 +424,29 @@ function FloatingTextContent({ currentView }: { currentView: ViewKey }) {
       {currentView === 'isometric' && (
         <motion.div
           key="isometric-text"
-          initial={{ 
-            opacity: 0, 
+          initial={{
+            opacity: 0,
             x: 80,
             y: 40,
             scale: 0.7,
             rotateY: 15
           }}
-          animate={{ 
-            opacity: 1, 
+          animate={{
+            opacity: 1,
             x: 0,
             y: 0,
             scale: 1,
             rotateY: 0
           }}
-          exit={{ 
-            opacity: 0, 
+          exit={{
+            opacity: 0,
             x: 60,
             y: -20,
             scale: 0.8,
             rotateY: -10
           }}
-          transition={{ 
-            duration: 1.5, 
+          transition={{
+            duration: 1.5,
             ease: [0.16, 1, 0.3, 1],
             delay: 0.5
           }}
@@ -461,33 +461,33 @@ function FloatingTextContent({ currentView }: { currentView: ViewKey }) {
           </div>
         </motion.div>
       )}
-      
+
       {currentView === 'perspective' && (
         <motion.div
           key="perspective-text"
-          initial={{ 
-            opacity: 0, 
+          initial={{
+            opacity: 0,
             x: -80,
             y: 50,
             scale: 0.7,
             rotateY: -15
           }}
-          animate={{ 
-            opacity: 1, 
+          animate={{
+            opacity: 1,
             x: 0,
             y: 0,
             scale: 1,
             rotateY: 0
           }}
-          exit={{ 
-            opacity: 0, 
+          exit={{
+            opacity: 0,
             x: -60,
             y: 30,
             scale: 0.8,
             rotateY: 10
           }}
-          transition={{ 
-            duration: 1.5, 
+          transition={{
+            duration: 1.5,
             ease: [0.16, 1, 0.3, 1],
             delay: 0.5
           }}
@@ -516,12 +516,12 @@ export default function V1tr0Logo3D() {
   const [showModel, setShowModel] = useState(false)
   const [isModelLoaded, setIsModelLoaded] = useState(false)
   const isMobile = useIsMobile()
-  
+
   const handleToggleView = useCallback(() => {
     setShowViewText(false)
     setCurrentView(prev => prev === 'isometric' ? 'perspective' : 'isometric')
   }, [])
-  
+
   const handlePositionComplete = useCallback(() => {
     // Position complete callback - can be extended if needed
   }, [])
@@ -529,23 +529,23 @@ export default function V1tr0Logo3D() {
   const handleModelLoaded = useCallback(() => {
     setIsModelLoaded(true)
   }, [])
-  
+
   // Simplified loading sequence
   useEffect(() => {
     setShowViewText(true)
-    
+
     const modelTimer = setTimeout(() => {
       setShowModel(true)
       setTimeout(() => setShowViewText(false), 1000)
     }, 1000)
-    
+
     return () => clearTimeout(modelTimer)
   }, [])
-  
+
   if (isMobile) {
     return <MobilePlaceholder />
   }
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -555,22 +555,22 @@ export default function V1tr0Logo3D() {
     >
       <ViewTextOverlay currentView={currentView} showViewText={showViewText} />
       {isModelLoaded && <FloatingTextContent key={currentView} currentView={currentView} />}
-      
+
       {showModel && (
         <Suspense fallback={<Loader />}>
           <Canvas
-            camera={{ 
+            camera={{
               position: [20, 20, 20],
               fov: 1,
               up: [0, 1, 0]
             }}
-            style={{ 
+            style={{
               background: 'transparent',
               width: '100%',
               height: '100%'
             }}
             className="w-full h-full"
-            gl={{ 
+            gl={{
               antialias: true,
               toneMapping: THREE.ACESFilmicToneMapping,
               outputColorSpace: THREE.SRGBColorSpace
@@ -578,13 +578,13 @@ export default function V1tr0Logo3D() {
           >
             <SceneLighting currentView={currentView} />
             <Environment preset="city" resolution={256} />
-            <CameraController 
-              currentView={currentView} 
-              modelCenter={MODEL_CENTER} 
+            <CameraController
+              currentView={currentView}
+              modelCenter={MODEL_CENTER}
               onPositionComplete={handlePositionComplete}
             />
-            <Logo3DModel 
-              onTogglePosition={handleToggleView} 
+            <Logo3DModel
+              onTogglePosition={handleToggleView}
               position={currentView === 'isometric' ? 'left' : 'right'}
               currentView={currentView}
               onModelLoaded={handleModelLoaded}

@@ -14,7 +14,7 @@ interface ClientDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
-  clientId?: string
+  clientId?: string | undefined
 }
 
 type UserRole = 'client' | 'team';
@@ -120,7 +120,7 @@ export function ClientDialog({ open, onOpenChange, onSuccess, clientId }: Client
         // Crear nuevo cliente en profiles
         // Nota: Como es solo para profiles, no creamos usuario de auth
         // Solo actualizamos el perfil si ya existe o creamos uno básico
-        
+
         // Primero verificar si el email ya existe
         const { data: existingProfile, error: checkError } = await supabase
           .from('profiles')
@@ -175,8 +175,8 @@ export function ClientDialog({ open, onOpenChange, onSuccess, clientId }: Client
             {clientId ? 'Editar Cliente' : 'Nuevo Cliente'}
           </DialogTitle>
           <DialogDescription className="text-slate-400">
-            {clientId 
-              ? 'Actualiza la información del cliente' 
+            {clientId
+              ? 'Actualiza la información del cliente'
               : 'Agrega un nuevo cliente al sistema'}
           </DialogDescription>
         </DialogHeader>
@@ -247,7 +247,7 @@ export function ClientDialog({ open, onOpenChange, onSuccess, clientId }: Client
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-slate-500">
-                  {formData.role === 'client' 
+                  {formData.role === 'client'
                     ? '👤 Cliente: Puede ver sus proyectos y tareas asignadas'
                     : '👥 Team: Puede gestionar proyectos, ver todas las tareas pero no editarlas'}
                 </p>

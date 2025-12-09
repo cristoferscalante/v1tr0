@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   CheckCircle,
   Clock,
   Loader2
@@ -71,7 +71,7 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
   };
 
   const calculateProgress = () => {
-    if (!project || !project.totalTasks) return 0;
+    if (!project || !project.totalTasks) { return 0; }
     return Math.round((project.completedTasks || 0) / project.totalTasks * 100);
   };
 
@@ -119,7 +119,7 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
               {project.description && (
                 <p className="text-slate-400 mb-4">{project.description}</p>
               )}
-              
+
               <div className="flex flex-wrap gap-2">
                 <Badge className={`${getStatusColor(project.status)} border rounded-lg px-3 py-1`}>
                   {getStatusText(project.status)}
@@ -155,8 +155,8 @@ export function ProjectHeader({ projectId }: ProjectHeaderProps) {
               <span className="text-sm text-slate-400">{progress}%</span>
             </div>
             <Progress value={progress} className="h-2 bg-slate-800">
-              <div 
-                className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full transition-all" 
+              <div
+                className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full transition-all"
                 style={{ width: `${progress}%` }}
               />
             </Progress>

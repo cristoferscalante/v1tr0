@@ -56,18 +56,18 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  console.log('[ClientProjects] Component mounted, user:', user?.id)
+  // console.log('[ClientProjects] Component mounted, user:', user?.id)
 
   useEffect(() => {
     const fetchProjects = async () => {
       if (!user) {
-        console.log('[ClientProjects] No hay usuario autenticado, esperando...')
+        // console.log('[ClientProjects] No hay usuario autenticado, esperando...')
         setIsLoading(false)
         return
       }
 
-      console.log('[ClientProjects] Cargando proyectos para user.id:', user.id)
-      
+      // console.log('[ClientProjects] Cargando proyectos para user.id:', user.id)
+
       try {
         const { data, error } = await supabase
           .from('projects')
@@ -81,7 +81,7 @@ export default function ProjectsPage() {
           return
         }
 
-        console.log('[ClientProjects] Proyectos obtenidos:', data?.length || 0, data)
+        // console.log('[ClientProjects] Proyectos obtenidos:', data?.length || 0, data)
         setProjects(data || [])
       } catch (error) {
         console.error('Error:', error)
@@ -115,7 +115,7 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen p-4 sm:p-6 font-bricolage">
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -137,7 +137,7 @@ export default function ProjectsPage() {
 
       {/* Projects Grid */}
       {projects.length === 0 ? (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -188,7 +188,7 @@ export default function ProjectsPage() {
                         <span className="text-highlight font-medium">{project.progress}%</span>
                       </div>
                       <div className="w-full bg-background/30 rounded-full h-2 backdrop-blur-sm">
-                        <div 
+                        <div
                           className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] h-2 rounded-full transition-all duration-500 shadow-sm"
                           style={{ width: `${project.progress}%` }}
                         />

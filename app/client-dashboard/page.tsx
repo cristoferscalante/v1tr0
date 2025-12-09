@@ -34,6 +34,7 @@ export default function ClientDashboard() {
     if (user) {
       fetchDashboardStats()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   const fetchDashboardStats = async () => {
@@ -46,14 +47,14 @@ export default function ClientDashboard() {
         .select('id, status')
         .eq('client_id', user!.id)
 
-      if (projectsError) throw projectsError
+      if (projectsError) { throw projectsError }
 
       const activeProjects = projects?.filter(p => p.status === 'active').length || 0
       const totalProjects = projects?.length || 0
 
       // Obtener tareas de los proyectos del cliente
       const projectIds = projects?.map(p => p.id) || []
-      
+
       let pendingTasksCount = 0
       let completedTasksCount = 0
       let totalTasksCount = 0
@@ -70,12 +71,12 @@ export default function ClientDashboard() {
           totalTasksCount += meetingTasks.length
           pendingTasksCount += meetingTasks.filter(t => t.status === 'pending').length
           completedTasksCount += meetingTasks.filter(t => t.status === 'completed').length
-          
+
           // Contar tareas con vencimiento próximo (próximos 7 días)
           const today = new Date()
           const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
           upcomingCount += meetingTasks.filter(t => {
-            if (!t.due_date) return false
+            if (!t.due_date) { return false }
             const dueDate = new Date(t.due_date)
             return dueDate >= today && dueDate <= nextWeek && t.status !== 'completed'
           }).length
@@ -91,12 +92,12 @@ export default function ClientDashboard() {
           totalTasksCount += tasks.length
           pendingTasksCount += tasks.filter(t => t.estado === 'pendiente').length
           completedTasksCount += tasks.filter(t => t.estado === 'completada').length
-          
+
           // Contar tareas con vencimiento próximo
           const today = new Date()
           const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
           upcomingCount += tasks.filter(t => {
-            if (!t.fecha_final) return false
+            if (!t.fecha_final) { return false }
             const dueDate = new Date(t.fecha_final)
             return dueDate >= today && dueDate <= nextWeek && t.estado !== 'completada'
           }).length
@@ -104,7 +105,7 @@ export default function ClientDashboard() {
       }
 
       // Calcular progreso general
-      const overallProgress = totalTasksCount > 0 
+      const overallProgress = totalTasksCount > 0
         ? Math.round((completedTasksCount / totalTasksCount) * 100)
         : 0
 
@@ -130,7 +131,7 @@ export default function ClientDashboard() {
   return (
     <div className="min-h-screen p-4 sm:p-6 font-bricolage">
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -142,9 +143,9 @@ export default function ClientDashboard() {
           </h1>
           <p className="text-textSecondary text-sm sm:text-base">Bienvenido de vuelta, {user?.email}</p>
         </div>
-        <Button 
+        <Button
           onClick={handleSignOut}
-          variant="outline" 
+          variant="outline"
           size="sm"
           className="border-[#08A696]/30 text-textPrimary hover:bg-[#08A696]/10 hover:border-[#26FFDF] backdrop-blur-sm transition-all duration-300 w-fit"
         >
@@ -223,7 +224,7 @@ export default function ClientDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}

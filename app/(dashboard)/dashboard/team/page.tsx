@@ -16,13 +16,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { 
-  Users, 
-  UserPlus, 
-  Code, 
-  Palette, 
-  Shield, 
-  Bug, 
+import {
+  Users,
+  UserPlus,
+  Code,
+  Palette,
+  Shield,
+  Bug,
   Server,
   Eye,
   Plus,
@@ -128,23 +128,24 @@ export default function TeamPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
   const [showProfileDialog, setShowProfileDialog] = useState(false)
   const [showAssignDialog, setShowAssignDialog] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [tasks, setTasks] = useState<any[]>([])
   const [loadingTasks, setLoadingTasks] = useState(false)
-  const { signOut, user, userRole } = useAuth()
+  const { signOut, userRole } = useAuth()
 
   // Cargar usuarios team y admin desde Supabase
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
         setLoading(true)
-        console.log('[TeamPage] Cargando usuarios team y admin...')
-        
+        // console.log('[TeamPage] Cargando usuarios team y admin...')
+
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .in('role', ['admin', 'team'])
           .order('created_at', { ascending: false })
-        
+
         if (error) {
           console.error('[TeamPage] Error al cargar usuarios:', error)
           toast.error('Error al cargar miembros del equipo')
@@ -152,7 +153,7 @@ export default function TeamPage() {
           return
         }
 
-        console.log('[TeamPage] ✅ Usuarios cargados:', data.length)
+        // console.log('[TeamPage] ✅ Usuarios cargados:', data.length)
 
         // Obtener conteo de proyectos por usuario (de meeting_tasks)
         const { data: taskData } = await supabase
@@ -169,7 +170,7 @@ export default function TeamPage() {
           }
         })
 
-        console.log('[TeamPage] 📊 Proyectos por usuario:', projectCounts)
+        // console.log('[TeamPage] 📊 Proyectos por usuario:', projectCounts)
 
         // Transformar datos de Supabase a formato TeamMember
         const members: TeamMember[] = data.map(profile => {
@@ -218,15 +219,16 @@ export default function TeamPage() {
 
       // Get unique project IDs
       const projectIds = [...new Set(data?.map(t => t.project_id).filter(Boolean))]
-      
+
       // Fetch projects separately
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let projectsMap: Record<string, any> = {}
       if (projectIds.length > 0) {
         const { data: projects } = await supabase
           .from('projects')
           .select('id, name, client_name')
           .in('id', projectIds)
-        
+
         if (projects) {
           projectsMap = projects.reduce((acc, p) => ({ ...acc, [p.id]: p }), {})
         }
@@ -239,6 +241,7 @@ export default function TeamPage() {
       }))
 
       setTasks(tasksWithProjects)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error loading tasks:', error)
       toast.error('Error al cargar tareas')
@@ -250,25 +253,25 @@ export default function TeamPage() {
 
   // Assign task to team member (admin or team role)
   const handleAssignTask = async (taskId: string) => {
-    if (!selectedMember) return
+    if (!selectedMember) { return }
 
     try {
       // Update single meeting_task with user ID (mejor práctica)
       const { error } = await supabase
         .from('meeting_tasks')
-        .update({ 
+        .update({
           assigned_to: selectedMember.name.toLowerCase(), // Usar name para compatibilidad actual
           updated_at: new Date().toISOString()
         })
         .eq('id', taskId)
 
-      if (error) throw error
+      if (error) { throw error }
 
       toast.success(`Tarea asignada a ${selectedMember.name}`)
-      
+
       // Refresh task list to show updated assignment
       await fetchTasks()
-      
+
       // Refresh team members list to update task count
       const { data } = await supabase
         .from('profiles')
@@ -310,9 +313,10 @@ export default function TeamPage() {
 
         setTeamMembers(members)
       }
-      
+
       // Close dialog
       setShowAssignDialog(false)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error assigning task:', error)
       toast.error('Error al asignar tarea')
@@ -340,7 +344,7 @@ export default function TeamPage() {
       console.error('Error al cerrar sesión:', error)
     }
   }
-  
+
   const filteredMembers = teamMembers.filter(member => {
     if (selectedFilter === 'all') { return true }
     if (selectedFilter === 'developer') { return member.role.includes('Developer') }
@@ -377,7 +381,7 @@ export default function TeamPage() {
               Agregar Miembro
             </Button>
           )}
-          <Button 
+          <Button
             onClick={handleLogout}
             className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl px-4 py-3 text-[#26FFDF] hover:bg-background/20 hover:border-[#08A696] transition-all duration-300"
           >
@@ -389,7 +393,7 @@ export default function TeamPage() {
 
 
         {/* Quick Stats */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -445,7 +449,7 @@ export default function TeamPage() {
         </motion.div>
 
         {/* Filters */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -464,11 +468,10 @@ export default function TeamPage() {
                     key={filter.id}
                     variant={selectedFilter === filter.id ? "default" : "outline"}
                     onClick={() => setSelectedFilter(filter.id)}
-                    className={`rounded-2xl transition-all duration-300 ${
-                      selectedFilter === filter.id
-                        ? 'bg-[#02505931] backdrop-blur-sm border border-[#08A696] text-[#26FFDF]'
-                        : 'bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-400 hover:border-[#08A696] hover:text-[#26FFDF]'
-                    }`}
+                    className={`rounded-2xl transition-all duration-300 ${selectedFilter === filter.id
+                      ? 'bg-[#02505931] backdrop-blur-sm border border-[#08A696] text-[#26FFDF]'
+                      : 'bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-400 hover:border-[#08A696] hover:text-[#26FFDF]'
+                      }`}
                   >
                     <Icon className="w-4 h-4 mr-2" />
                     {filter.label}
@@ -494,7 +497,7 @@ export default function TeamPage() {
               No hay miembros del equipo
             </h3>
             <p className="text-slate-500 mb-6">
-              No se encontraron usuarios con rol "team" o "admin" en la base de datos
+              No se encontraron usuarios con rol &quot;team&quot; o &quot;admin&quot; en la base de datos
             </p>
             <Button className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-white">
               <UserPlus className="w-4 h-4 mr-2" />
@@ -503,108 +506,105 @@ export default function TeamPage() {
           </Card>
         ) : (
           /* Team Members Grid */
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredMembers.map((member, index) => (
-            <motion.div
-              key={member.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-            >
-              <Card className="p-6 bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl hover:bg-background/20 transition-all duration-300 group">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-[#08A696]/20 to-[#26FFDF]/20 rounded-2xl flex items-center justify-center text-[#26FFDF] font-bold text-xl border border-[#08A696]/30">
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-[#26FFDF] text-lg">{member.name}</h3>
-                    <p className="text-slate-400 text-sm">{member.userRole || member.role}</p>
-                    <p className="text-slate-500 text-xs mt-1">{member.email}</p>
-                    <Badge 
-                      className={`mt-1 text-xs ${
-                        member.role === 'admin' 
-                          ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' 
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+              >
+                <Card className="p-6 bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl hover:bg-background/20 transition-all duration-300 group">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-r from-[#08A696]/20 to-[#26FFDF]/20 rounded-2xl flex items-center justify-center text-[#26FFDF] font-bold text-xl border border-[#08A696]/30">
+                      {member.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-[#26FFDF] text-lg">{member.name}</h3>
+                      <p className="text-slate-400 text-sm">{member.userRole || member.role}</p>
+                      <p className="text-slate-500 text-xs mt-1">{member.email}</p>
+                      <Badge
+                        className={`mt-1 text-xs ${member.role === 'admin'
+                          ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
                           : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                      }`}
-                    >
-                      {member.role === 'admin' ? '👑 Admin' : '👤 Team'}
-                    </Badge>
+                          }`}
+                      >
+                        {member.role === 'admin' ? '👑 Admin' : '👤 Team'}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Estado:</span>
-                    <Badge 
-                      variant={member.status === 'Activo' ? 'default' : 'secondary'}
-                      className={`rounded-2xl ${
-                        member.status === 'Activo' 
-                          ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30' 
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-400">Estado:</span>
+                      <Badge
+                        variant={member.status === 'Activo' ? 'default' : 'secondary'}
+                        className={`rounded-2xl ${member.status === 'Activo'
+                          ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30'
                           : 'bg-background/20 text-slate-400 border border-slate-600/30'
-                      }`}
-                    >
-                      {member.status}
-                    </Badge>
-                  </div>
+                          }`}
+                      >
+                        {member.status}
+                      </Badge>
+                    </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Proyectos:</span>
-                    <span className="font-semibold text-[#26FFDF]">{member.projectsAssigned}</span>
-                  </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-400">Proyectos:</span>
+                      <span className="font-semibold text-[#26FFDF]">{member.projectsAssigned}</span>
+                    </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Disponibilidad:</span>
-                    <Badge 
-                      variant={member.availability === 'Disponible' ? 'default' : 'secondary'}
-                      className={`rounded-2xl ${
-                        member.availability === 'Disponible' 
-                          ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30' 
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-400">Disponibilidad:</span>
+                      <Badge
+                        variant={member.availability === 'Disponible' ? 'default' : 'secondary'}
+                        className={`rounded-2xl ${member.availability === 'Disponible'
+                          ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30'
                           : 'bg-background/20 text-slate-400 border border-slate-600/30'
-                      }`}
-                    >
-                      {member.availability}
-                    </Badge>
+                          }`}
+                      >
+                        {member.availability}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
 
-                {/* Solo admin puede ver estos botones */}
-                {userRole === 'admin' && (
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleOpenProfileDialog(member)}
-                      className="flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver Perfil
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleOpenAssignDialog(member)}
-                      className="flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Asignar
-                    </Button>
-                  </div>
-                )}
+                  {/* Solo admin puede ver estos botones */}
+                  {userRole === 'admin' && (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenProfileDialog(member)}
+                        className="flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Ver Perfil
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleOpenAssignDialog(member)}
+                        className="flex-1 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Asignar
+                      </Button>
+                    </div>
+                  )}
 
-                {/* Para usuarios team, mostrar un mensaje o nada */}
-                {userRole === 'team' && (
-                  <div className="text-center py-3">
-                    <p className="text-xs text-slate-500 italic">
-                      Solo administradores pueden gestionar miembros
-                    </p>
-                  </div>
-                )}
-              </Card>
-            </motion.div>
+                  {/* Para usuarios team, mostrar un mensaje o nada */}
+                  {userRole === 'team' && (
+                    <div className="text-center py-3">
+                      <p className="text-xs text-slate-500 italic">
+                        Solo administradores pueden gestionar miembros
+                      </p>
+                    </div>
+                  )}
+                </Card>
+              </motion.div>
             ))}
           </motion.div>
         )}
@@ -621,7 +621,7 @@ export default function TeamPage() {
               Información detallada del miembro del equipo
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedMember && (
             <div className="space-y-6 mt-4">
               {/* Avatar & Name */}
@@ -632,12 +632,11 @@ export default function TeamPage() {
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-[#26FFDF]">{selectedMember.name}</h3>
                   <p className="text-slate-400">{selectedMember.userRole || selectedMember.role}</p>
-                  <Badge 
-                    className={`mt-1 ${
-                      selectedMember.role === 'admin' 
-                        ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' 
-                        : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                    }`}
+                  <Badge
+                    className={`mt-1 ${selectedMember.role === 'admin'
+                      ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                      : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                      }`}
                   >
                     {selectedMember.role === 'admin' ? '👑 Admin' : '👤 Team'}
                   </Badge>
@@ -666,12 +665,11 @@ export default function TeamPage() {
                   <Calendar className="w-5 h-5 text-[#26FFDF]" />
                   <div>
                     <p className="text-xs text-slate-400">Disponibilidad</p>
-                    <Badge 
-                      className={`rounded-2xl ${
-                        selectedMember.availability === 'Disponible' 
-                          ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30' 
-                          : 'bg-background/20 text-slate-400 border border-slate-600/30'
-                      }`}
+                    <Badge
+                      className={`rounded-2xl ${selectedMember.availability === 'Disponible'
+                        ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30'
+                        : 'bg-background/20 text-slate-400 border border-slate-600/30'
+                        }`}
                     >
                       {selectedMember.availability}
                     </Badge>
@@ -682,12 +680,11 @@ export default function TeamPage() {
                   <Users className="w-5 h-5 text-[#26FFDF]" />
                   <div>
                     <p className="text-xs text-slate-400">Estado</p>
-                    <Badge 
-                      className={`rounded-2xl ${
-                        selectedMember.status === 'Activo' 
-                          ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30' 
-                          : 'bg-background/20 text-slate-400 border border-slate-600/30'
-                      }`}
+                    <Badge
+                      className={`rounded-2xl ${selectedMember.status === 'Activo'
+                        ? 'bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30'
+                        : 'bg-background/20 text-slate-400 border border-slate-600/30'
+                        }`}
                     >
                       {selectedMember.status}
                     </Badge>
@@ -695,7 +692,7 @@ export default function TeamPage() {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={() => setShowProfileDialog(false)}
                 className="w-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl"
               >
@@ -730,7 +727,7 @@ export default function TeamPage() {
           ) : (
             <div className="space-y-3 mt-4">
               {tasks.map((task) => (
-                <Card 
+                <Card
                   key={task.id}
                   className="p-4 bg-[#02505931] border-[#08A696]/20 rounded-xl hover:bg-[#02505950] hover:border-[#08A696]/40 transition-all duration-300 cursor-pointer"
                   onClick={() => handleAssignTask(task.id)}
@@ -738,24 +735,22 @@ export default function TeamPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge 
-                          className={`text-xs ${
-                            task.priority === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                        <Badge
+                          className={`text-xs ${task.priority === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
                             task.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-                            'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                          }`}
+                              'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                            }`}
                         >
                           {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
                         </Badge>
-                        <Badge 
-                          className={`text-xs ${
-                            task.status === 'completed' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                        <Badge
+                          className={`text-xs ${task.status === 'completed' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
                             task.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
-                            'bg-slate-500/20 text-slate-400 border-slate-500/30'
-                          }`}
+                              'bg-slate-500/20 text-slate-400 border-slate-500/30'
+                            }`}
                         >
-                          {task.status === 'completed' ? 'Completada' : 
-                           task.status === 'in_progress' ? 'En Progreso' : 'Pendiente'}
+                          {task.status === 'completed' ? 'Completada' :
+                            task.status === 'in_progress' ? 'En Progreso' : 'Pendiente'}
                         </Badge>
                       </div>
                       <h4 className="font-semibold text-[#26FFDF] mb-1">
@@ -779,7 +774,7 @@ export default function TeamPage() {
                         </p>
                       )}
                     </div>
-                    <Button 
+                    <Button
                       size="sm"
                       className="ml-4 bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:scale-105 transition-all duration-300"
                       onClick={(e) => {
@@ -796,7 +791,7 @@ export default function TeamPage() {
             </div>
           )}
 
-          <Button 
+          <Button
             variant="outline"
             onClick={() => setShowAssignDialog(false)}
             className="w-full mt-4 bg-[#02505931] border-[#08A696]/30 text-[#26FFDF] hover:bg-[#02505950] hover:border-[#08A696] rounded-xl"

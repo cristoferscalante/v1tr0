@@ -15,7 +15,7 @@ interface ProjectDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
-  projectId?: string
+  projectId?: string | undefined
 }
 
 interface ProjectFormData {
@@ -125,8 +125,8 @@ export function ProjectDialog({ open, onOpenChange, onSuccess, projectId }: Proj
         name: formData.name.trim(),
         description: formData.description.trim() || null,
         status: formData.status,
-        client_id: formData.client_id && formData.client_id.trim() !== '' && formData.client_id.trim() !== ' ' 
-          ? formData.client_id 
+        client_id: formData.client_id && formData.client_id.trim() !== '' && formData.client_id.trim() !== ' '
+          ? formData.client_id
           : null,
         updated_at: new Date().toISOString()
       }
@@ -175,8 +175,8 @@ export function ProjectDialog({ open, onOpenChange, onSuccess, projectId }: Proj
             {projectId ? 'Editar Proyecto' : 'Nuevo Proyecto'}
           </DialogTitle>
           <DialogDescription className="text-slate-400">
-            {projectId 
-              ? 'Actualiza la información del proyecto' 
+            {projectId
+              ? 'Actualiza la información del proyecto'
               : 'Crea un nuevo proyecto para gestionar con tu equipo'}
           </DialogDescription>
         </DialogHeader>
@@ -222,8 +222,8 @@ export function ProjectDialog({ open, onOpenChange, onSuccess, projectId }: Proj
                 <Label htmlFor="client" className="text-slate-300">
                   Cliente
                 </Label>
-                <Select 
-                  value={formData.client_id || "none"} 
+                <Select
+                  value={formData.client_id || "none"}
                   onValueChange={(value) => setFormData({ ...formData, client_id: value === "none" ? "" : value })}
                 >
                   <SelectTrigger className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/30 text-[#26FFDF] focus:border-[#08A696] rounded-xl">
@@ -234,8 +234,8 @@ export function ProjectDialog({ open, onOpenChange, onSuccess, projectId }: Proj
                       Sin cliente asignado
                     </SelectItem>
                     {clients.map((client) => (
-                      <SelectItem 
-                        key={client.id} 
+                      <SelectItem
+                        key={client.id}
                         value={client.id}
                         className="text-[#26FFDF] hover:bg-[#08A696]/20"
                       >
@@ -251,8 +251,8 @@ export function ProjectDialog({ open, onOpenChange, onSuccess, projectId }: Proj
                 <Label htmlFor="status" className="text-slate-300">
                   Estado <span className="text-red-400">*</span>
                 </Label>
-                <Select 
-                  value={formData.status} 
+                <Select
+                  value={formData.status}
                   onValueChange={(value) => setFormData({ ...formData, status: value as 'active' | 'completed' | 'paused' | 'cancelled' })}
                 >
                   <SelectTrigger className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/30 text-[#26FFDF] focus:border-[#08A696] rounded-xl">

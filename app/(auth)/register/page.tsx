@@ -31,26 +31,26 @@ export default function RegisterPage() {
   useEffect(() => {
     // Animaciones GSAP
     const tl = gsap.timeline()
-    
-    tl.fromTo('.auth-container', 
+
+    tl.fromTo('.auth-container',
       { opacity: 0, y: 50 },
       { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
     )
-    .fromTo('.auth-title',
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-      '-=0.4'
-    )
-    .fromTo('.auth-form',
-      { opacity: 0, scale: 0.95 },
-      { opacity: 1, scale: 1, duration: 0.6, ease: 'power2.out' },
-      '-=0.3'
-    )
-    .fromTo('.form-element',
-      { opacity: 0, x: -20 },
-      { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
-      '-=0.2'
-    )
+      .fromTo('.auth-title',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+        '-=0.4'
+      )
+      .fromTo('.auth-form',
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: 'power2.out' },
+        '-=0.3'
+      )
+      .fromTo('.form-element',
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
+        '-=0.2'
+      )
   }, [])
   const [formData, setFormData] = useState({
     fullName: "",
@@ -97,10 +97,10 @@ export default function RegisterPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    
+
     // Mark field as touched
     setTouched(prev => ({ ...prev, [name]: true }))
-    
+
     // Clear errors when user starts typing
     if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors(prev => ({ ...prev, [name]: "" }))
@@ -129,8 +129,8 @@ export default function RegisterPage() {
   // Función para manejar el registro
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      console.log('[REGISTER] Intentando crear cuenta con email:', email)
-      
+      // console.log('[REGISTER] Intentando crear cuenta con email:', email)
+
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -141,17 +141,17 @@ export default function RegisterPage() {
         }
       })
 
-      console.log('[REGISTER] Respuesta de Supabase:', { 
-        hasData: !!data, 
-        hasUser: !!data?.user,
-        error: error?.message 
-      })
+      // console.log('[REGISTER] Respuesta de Supabase:', { 
+      //   hasData: !!data, 
+      //   hasUser: !!data?.user,
+      //   error: error?.message 
+      // })
 
       if (error) {
         logAuthError(error, 'REGISTER')
         const authError = getAuthErrorMessage(error)
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: authError.message,
           description: authError.description,
           action: authError.action
@@ -159,20 +159,20 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
-        console.log('[REGISTER] Usuario creado exitosamente')
+        // console.log('[REGISTER] Usuario creado exitosamente')
         return { success: true, data: data.user }
       }
 
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'No se pudo crear el usuario',
         description: 'No se recibió información del nuevo usuario.'
       }
     } catch (error) {
       logAuthError(error, 'REGISTER_EXCEPTION')
       const authError = getAuthErrorMessage(error)
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: authError.message,
         description: authError.description
       }
@@ -221,7 +221,7 @@ export default function RegisterPage() {
           description: result.description,
           action: result.action ? {
             label: 'Entendido',
-            onClick: () => {}
+            onClick: () => { }
           } : undefined,
           duration: 5000
         })
@@ -233,7 +233,7 @@ export default function RegisterPage() {
     } catch (error) {
       logAuthError(error, 'REGISTER_SUBMIT')
       const authError = getAuthErrorMessage(error)
-      
+
       toast.error(authError.message, {
         description: authError.description,
         duration: 5000
@@ -265,7 +265,7 @@ export default function RegisterPage() {
       <div className="fixed top-0 left-0 right-0 z-50 flex justify-center">
         <NavBar />
       </div>
-      
+
       <div className="flex-1 flex items-center justify-center px-4 py-12 pt-24">
         <div className="w-full max-w-md mx-auto">
           {/* Título fuera del formulario */}
@@ -322,24 +322,24 @@ export default function RegisterPage() {
                   </div>
 
                   {/* Campo de email */}
-                   <div className="form-element">
-                     <label htmlFor="email" className="block text-[#26FFDF] font-medium mb-2">
-                       Correo electrónico
-                     </label>
-                     <div className="relative">
-                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#08A696] h-5 w-5" />
-                       <input
-                         id="email"
-                         name="email"
-                         type="email"
-                         value={formData.email}
-                         onChange={handleInputChange}
-                         className="w-full h-[48px] pl-10 pr-4 bg-[#02505931]/50 border border-[#08A696]/30 rounded-xl text-white placeholder-gray-400 focus:border-[#26FFDF] focus:ring-2 focus:ring-[#26FFDF]/20 focus:outline-none transition-all duration-300"
-                         placeholder="tu@ejemplo.com"
-                         required
-                       />
-                     </div>
-                   </div>
+                  <div className="form-element">
+                    <label htmlFor="email" className="block text-[#26FFDF] font-medium mb-2">
+                      Correo electrónico
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#08A696] h-5 w-5" />
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full h-[48px] pl-10 pr-4 bg-[#02505931]/50 border border-[#08A696]/30 rounded-xl text-white placeholder-gray-400 focus:border-[#26FFDF] focus:ring-2 focus:ring-[#26FFDF]/20 focus:outline-none transition-all duration-300"
+                        placeholder="tu@ejemplo.com"
+                        required
+                      />
+                    </div>
+                  </div>
 
                   {/* Campo de contraseña */}
                   <div className="form-element">
@@ -463,10 +463,10 @@ export default function RegisterPage() {
                     }}
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                      <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                     </svg>
                     <span>Continuar con Google</span>
                   </button>

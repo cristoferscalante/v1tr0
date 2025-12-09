@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Clock, 
-  Calendar, 
-  MessageSquare, 
+import {
+  Clock,
+  Calendar,
+  MessageSquare,
   ChevronDown,
   ChevronUp,
   CheckCircle,
@@ -50,11 +50,12 @@ type MeetingTaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
 
 interface TaskComment {
   id: string;
-  task_id: string;
+  task_id?: string | null | undefined;
+  meeting_task_id?: string | null | undefined;
   content: string;
   user_id: string;
   user_name: string;
-  user_role?: string;
+  user_role?: string | undefined;
   created_at: string;
 }
 
@@ -73,10 +74,10 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
   const [meetingTasks, setMeetingTasks] = useState<MeetingTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | TaskStatus>('all');
-  
+
   // Solo admin puede editar tareas
   const canEdit = userRole === 'admin';
-  
+
   // Estado para crear nueva tarea
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [newTask, setNewTask] = useState({
@@ -91,7 +92,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
   });
 
   const fetchTasks = useCallback(async () => {
-    console.log('[ProjectTasks] 🔄 fetchTasks called for projectId:', projectId);
+    // console.log('[ProjectTasks] 🔄 fetchTasks called for projectId:', projectId);
     if (!projectId) {
       console.error('[ProjectTasks] ⚠️ No projectId provided!');
       setLoading(false);
@@ -102,9 +103,9 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
       supabaseProjectsDB.getTasksByProject(projectId),
       supabaseProjectsDB.getMeetingTasksByProject(projectId)
     ]);
-    console.log('[ProjectTasks] ✅ fetchTasks received:', projectTasks.length, 'tasks', projectMeetingTasks.length, 'meeting tasks');
-    console.log('[ProjectTasks] Tasks:', projectTasks);
-    console.log('[ProjectTasks] Meeting tasks:', projectMeetingTasks);
+    // console.log('[ProjectTasks] ✅ fetchTasks received:', projectTasks.length, 'tasks', projectMeetingTasks.length, 'meeting tasks');
+    // console.log('[ProjectTasks] Tasks:', projectTasks);
+    // console.log('[ProjectTasks] Meeting tasks:', projectMeetingTasks);
     setTasks(projectTasks);
     setMeetingTasks(projectMeetingTasks);
     setLoading(false);
@@ -155,6 +156,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const taskData: any = {
       project_id: projectId,
       nombre: newTask.nombre,
@@ -163,11 +165,11 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
       finalizada: false
     };
 
-    if (newTask.descripcion.trim()) taskData.descripcion = newTask.descripcion;
-    if (newTask.categoria.trim()) taskData.categoria = newTask.categoria;
-    if (newTask.fecha_inicio) taskData.fecha_inicio = newTask.fecha_inicio;
-    if (newTask.fecha_final) taskData.fecha_final = newTask.fecha_final;
-    if (newTask.observaciones.trim()) taskData.observaciones = newTask.observaciones;
+    if (newTask.descripcion.trim()) { taskData.descripcion = newTask.descripcion; }
+    if (newTask.categoria.trim()) { taskData.categoria = newTask.categoria; }
+    if (newTask.fecha_inicio) { taskData.fecha_inicio = newTask.fecha_inicio; }
+    if (newTask.fecha_final) { taskData.fecha_final = newTask.fecha_final; }
+    if (newTask.observaciones.trim()) { taskData.observaciones = newTask.observaciones; }
 
     const result = await supabaseProjectsDB.createTask(taskData);
     if (result) {
@@ -190,43 +192,43 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
     }
   };
 
-  const filteredTasks = filter === 'all' 
-    ? tasks 
+  const filteredTasks = filter === 'all'
+    ? tasks
     : tasks.filter(t => t.estado === filter);
 
   const filteredMeetingTasks = filter === 'all'
     ? meetingTasks
     : meetingTasks.filter(t => {
-        const statusMap: Record<TaskStatus, MeetingTaskStatus> = {
-          'pendiente': 'pending',
-          'en progreso': 'in_progress',
-          'completada': 'completed'
-        };
-        return t.status === statusMap[filter];
-      });
+      const statusMap: Record<TaskStatus, MeetingTaskStatus> = {
+        'pendiente': 'pending',
+        'en progreso': 'in_progress',
+        'completada': 'completed'
+      };
+      return t.status === statusMap[filter];
+    });
 
   const stats = {
     total: tasks.length + meetingTasks.length,
-    completed: tasks.filter(t => t.estado === 'completada').length + 
-               meetingTasks.filter(t => t.status === 'completed').length,
-    inProgress: tasks.filter(t => t.estado === 'en progreso').length + 
-                meetingTasks.filter(t => t.status === 'in_progress').length,
-    pending: tasks.filter(t => t.estado === 'pendiente').length + 
-             meetingTasks.filter(t => t.status === 'pending').length
+    completed: tasks.filter(t => t.estado === 'completada').length +
+      meetingTasks.filter(t => t.status === 'completed').length,
+    inProgress: tasks.filter(t => t.estado === 'en progreso').length +
+      meetingTasks.filter(t => t.status === 'in_progress').length,
+    pending: tasks.filter(t => t.estado === 'pendiente').length +
+      meetingTasks.filter(t => t.status === 'pending').length
   };
 
-  const progressPercentage = stats.total > 0 
-    ? Math.round((stats.completed / stats.total) * 100) 
+  const progressPercentage = stats.total > 0
+    ? Math.round((stats.completed / stats.total) * 100)
     : 0;
 
   // Debug: verificar datos después de calcular filteredTasks
   useEffect(() => {
-    console.log('[ProjectTasks] 🔍 userRole:', userRole, 'canEdit:', canEdit);
-    console.log('[ProjectTasks] 📊 tasks.length:', tasks.length, 'filteredTasks.length:', filteredTasks.length);
+    // console.log('[ProjectTasks] 🔍 userRole:', userRole, 'canEdit:', canEdit);
+    // console.log('[ProjectTasks] 📊 tasks.length:', tasks.length, 'filteredTasks.length:', filteredTasks.length);
     if (filteredTasks.length > 0) {
-      console.log('[ProjectTasks] 📋 First task:', filteredTasks[0]?.nombre);
+      // console.log('[ProjectTasks] 📋 First task:', filteredTasks[0]?.nombre);
     } else {
-      console.log('[ProjectTasks] ⚠️ NO HAY TAREAS FILTRADAS');
+      // console.log('[ProjectTasks] ⚠️ NO HAY TAREAS FILTRADAS');
     }
   }, [userRole, canEdit, tasks.length, filteredTasks.length, filteredTasks]);
 
@@ -272,8 +274,8 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
             <span className="text-2xl font-bold text-[#26FFDF]">{progressPercentage}%</span>
           </div>
           <Progress value={progressPercentage} className="h-2 bg-slate-800">
-            <div 
-              className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full transition-all" 
+            <div
+              className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full transition-all"
               style={{ width: `${progressPercentage}%` }}
             />
           </Progress>
@@ -389,7 +391,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 <input
                   type="text"
                   value={newTask.nombre}
-                  onChange={(e) => setNewTask({...newTask, nombre: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, nombre: e.target.value })}
                   className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-[#26FFDF]"
                   placeholder="Ej: Implementar sistema de autenticación"
                 />
@@ -402,7 +404,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 </label>
                 <textarea
                   value={newTask.descripcion}
-                  onChange={(e) => setNewTask({...newTask, descripcion: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, descripcion: e.target.value })}
                   rows={3}
                   className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-[#26FFDF] resize-none"
                   placeholder="Descripción detallada de la tarea..."
@@ -414,7 +416,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 <label className="text-sm font-medium text-slate-300 mb-2 block">
                   Prioridad
                 </label>
-                <Select value={newTask.prioridad} onValueChange={(value) => setNewTask({...newTask, prioridad: value as 'alta' | 'media' | 'baja'})}>
+                <Select value={newTask.prioridad} onValueChange={(value) => setNewTask({ ...newTask, prioridad: value as 'alta' | 'media' | 'baja' })}>
                   <SelectTrigger className="bg-[#025059]/50 border-[#08A696]/30 text-white">
                     <SelectValue />
                   </SelectTrigger>
@@ -431,7 +433,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 <label className="text-sm font-medium text-slate-300 mb-2 block">
                   Estado
                 </label>
-                <Select value={newTask.estado} onValueChange={(value) => setNewTask({...newTask, estado: value as TaskStatus})}>
+                <Select value={newTask.estado} onValueChange={(value) => setNewTask({ ...newTask, estado: value as TaskStatus })}>
                   <SelectTrigger className="bg-[#025059]/50 border-[#08A696]/30 text-white">
                     <SelectValue />
                   </SelectTrigger>
@@ -451,7 +453,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 <input
                   type="text"
                   value={newTask.categoria}
-                  onChange={(e) => setNewTask({...newTask, categoria: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, categoria: e.target.value })}
                   className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-[#26FFDF]"
                   placeholder="Ej: Backend, Frontend, Database"
                 />
@@ -465,7 +467,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 <input
                   type="date"
                   value={newTask.fecha_inicio}
-                  onChange={(e) => setNewTask({...newTask, fecha_inicio: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, fecha_inicio: e.target.value })}
                   className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white focus:outline-none focus:border-[#26FFDF]"
                 />
               </div>
@@ -478,7 +480,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 <input
                   type="date"
                   value={newTask.fecha_final}
-                  onChange={(e) => setNewTask({...newTask, fecha_final: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, fecha_final: e.target.value })}
                   className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white focus:outline-none focus:border-[#26FFDF]"
                 />
               </div>
@@ -490,7 +492,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
                 </label>
                 <textarea
                   value={newTask.observaciones}
-                  onChange={(e) => setNewTask({...newTask, observaciones: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, observaciones: e.target.value })}
                   rows={2}
                   className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-[#26FFDF] resize-none"
                   placeholder="Notas adicionales..."
@@ -532,8 +534,8 @@ interface TaskCardProps {
 }
 
 function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
-  console.log('🎯 [TaskCard] MONTADO -', task.nombre, '- canEdit:', canEdit);
-  
+  // console.log('🎯 [TaskCard] MONTADO -', task.nombre, '- canEdit:', canEdit);
+
   const { user, userRole, userProfile } = useAuth();
   const [expanded, setExpanded] = useState(true);
   const [comments, setComments] = useState<TaskComment[]>([]);
@@ -543,12 +545,12 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
 
   // Debug: Log cuando cambia isEditing
   useEffect(() => {
-    console.log('[TaskCard] isEditing cambió a:', isEditing, 'para tarea:', task.nombre);
+    // console.log('[TaskCard] isEditing cambió a:', isEditing, 'para tarea:', task.nombre);
   }, [isEditing, task.nombre]);
 
   // Debug: verificar el valor de canEdit
   useEffect(() => {
-    console.log('[TaskCard] 🔍 canEdit:', canEdit, 'userRole:', userRole, 'tarea:', task.nombre);
+    // console.log('[TaskCard] 🔍 canEdit:', canEdit, 'userRole:', userRole, 'tarea:', task.nombre);
   }, [canEdit, userRole]);
   const [editedTask, setEditedTask] = useState({
     nombre: task.nombre,
@@ -601,15 +603,17 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
     if (expanded) {
       loadComments();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
-  
+
   // Cargar comentarios al montar si expanded es true por defecto
   useEffect(() => {
     loadComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadComments = async () => {
-    console.log('[TaskCard] Cargando comentarios para task_id:', task.id);
+    // console.log('[TaskCard] Cargando comentarios para task_id:', task.id);
     try {
       const { data: commentsData, error } = await supabase
         .from('task_comments')
@@ -622,30 +626,31 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
         console.error('[TaskCard] Error al cargar comentarios:', error);
         throw error;
       }
-      
-      console.log('[TaskCard] Comentarios cargados:', commentsData?.length || 0);
+
+      // console.log('[TaskCard] Comentarios cargados:', commentsData?.length || 0);
 
       // Obtener perfiles de los usuarios
       const userIds = [...new Set((commentsData || []).map(c => c.user_id))];
-      console.log('[TaskCard] Cargando perfiles para user_ids:', userIds);
-      
+      // console.log('[TaskCard] Cargando perfiles para user_ids:', userIds);
+
       const { data: profilesData, error: profileError } = await supabase
         .from('profiles')
         .select('id, email, name, role')
         .in('id', userIds);
-      
+
       if (profileError) {
         console.error('[TaskCard] Error al cargar perfiles:', profileError);
       }
-      
-      console.log('[TaskCard] Perfiles obtenidos:', profilesData);
+
+      // console.log('[TaskCard] Perfiles obtenidos:', profilesData);
 
       const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedComments: TaskComment[] = (commentsData || []).map((comment: any) => {
         const profile = profilesMap.get(comment.user_id);
         const userName = profile?.name || profile?.email?.split('@')[0] || 'Usuario';
-        console.log('[TaskCard] Comentario user_id:', comment.user_id, 'perfil:', profile, 'nombre final:', userName);
+        // console.log('[TaskCard] Comentario user_id:', comment.user_id, 'perfil:', profile, 'nombre final:', userName);
         return {
           id: comment.id,
           task_id: comment.task_id,
@@ -672,10 +677,10 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
       toast.error('Debes iniciar sesión');
       return;
     }
-    
-    console.log('[TaskCard] Agregando comentario:', { task_id: task.id, user_id: user.id, content: newComment });
+
+    // console.log('[TaskCard] Agregando comentario:', { task_id: task.id, user_id: user.id, content: newComment });
     setLoadingComment(true);
-    
+
     try {
       const { data: newCommentData, error } = await supabase
         .from('task_comments')
@@ -692,13 +697,13 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
         console.error('[TaskCard] Error al insertar comentario:', error);
         throw error;
       }
-      
-      console.log('[TaskCard] Comentario insertado exitosamente:', newCommentData);
-      console.log('[TaskCard] Perfil del usuario que comenta:', userProfile);
-      
+
+      // console.log('[TaskCard] Comentario insertado exitosamente:', newCommentData);
+      // console.log('[TaskCard] Perfil del usuario que comenta:', userProfile);
+
       // Usar el perfil del hook useAuth
       const userName = userProfile?.name || userProfile?.email?.split('@')[0] || user.email?.split('@')[0] || 'Usuario';
-      console.log('[TaskCard] Nombre final para comentario:', userName);
+      // console.log('[TaskCard] Nombre final para comentario:', userName);
 
       const formattedComment: TaskComment = {
         id: newCommentData!.id,
@@ -708,10 +713,11 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
         user_name: userName,
         user_role: userProfile?.role,
         created_at: newCommentData!.created_at
-      };      setComments([...comments, formattedComment]);
+      }; setComments([...comments, formattedComment]);
       setNewComment('');
       toast.success('Comentario agregado');
-      console.log('[TaskCard] Comentario agregado al estado, total:', comments.length + 1);
+      // console.log('[TaskCard] Comentario agregado al estado, total:', comments.length + 1);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('[TaskCard] Error completo al agregar comentario:', error);
       console.error('[TaskCard] Detalles del error:', {
@@ -732,6 +738,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = {
       nombre: editedTask.nombre,
       descripcion: editedTask.descripcion,
@@ -740,12 +747,12 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
       estado: editedTask.estado,
       finalizada: editedTask.estado === 'completada'
     };
-    
-    if (editedTask.fecha_inicio) updateData.fecha_inicio = editedTask.fecha_inicio;
-    if (editedTask.fecha_final) updateData.fecha_final = editedTask.fecha_final;
-    if (editedTask.observaciones) updateData.observaciones = editedTask.observaciones;
 
-    console.log('[TaskCard] Guardando cambios:', updateData);
+    if (editedTask.fecha_inicio) { updateData.fecha_inicio = editedTask.fecha_inicio; }
+    if (editedTask.fecha_final) { updateData.fecha_final = editedTask.fecha_final; }
+    if (editedTask.observaciones) { updateData.observaciones = editedTask.observaciones; }
+
+    // console.log('[TaskCard] Guardando cambios:', updateData);
     const result = await supabaseProjectsDB.updateTask(task.id, updateData);
 
     if (result) {
@@ -792,7 +799,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                     <input
                       type="text"
                       value={editedTask.nombre}
-                      onChange={(e) => setEditedTask({...editedTask, nombre: e.target.value})}
+                      onChange={(e) => setEditedTask({ ...editedTask, nombre: e.target.value })}
                       className="w-full bg-slate-900/50 border border-[#08A696]/30 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#08A696]"
                       placeholder="Nombre de la tarea"
                     />
@@ -810,7 +817,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                   <label className="text-xs text-slate-400 mb-1 block">Descripción</label>
                   <Textarea
                     value={editedTask.descripcion}
-                    onChange={(e) => setEditedTask({...editedTask, descripcion: e.target.value})}
+                    onChange={(e) => setEditedTask({ ...editedTask, descripcion: e.target.value })}
                     className="bg-slate-900/50 border border-[#08A696]/30 text-slate-200 focus:border-[#08A696] resize-none"
                     rows={3}
                     placeholder="Descripción de la tarea"
@@ -831,7 +838,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                       <label className="text-xs text-slate-400 mb-1.5 block font-medium">Estado *</label>
                       <Select
                         value={editedTask.estado}
-                        onValueChange={(value) => setEditedTask({...editedTask, estado: value as Task['estado']})}
+                        onValueChange={(value) => setEditedTask({ ...editedTask, estado: value as Task['estado'] })}
                       >
                         <SelectTrigger className="w-full bg-slate-900/50 border-[#08A696]/30 text-sm">
                           <SelectValue />
@@ -844,12 +851,12 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div>
                       <label className="text-xs text-slate-400 mb-1.5 block font-medium">Prioridad *</label>
                       <Select
                         value={editedTask.prioridad}
-                        onValueChange={(value) => setEditedTask({...editedTask, prioridad: value as Task['prioridad']})}
+                        onValueChange={(value) => setEditedTask({ ...editedTask, prioridad: value as Task['prioridad'] })}
                       >
                         <SelectTrigger className="w-full bg-slate-900/50 border-[#08A696]/30 text-sm">
                           <SelectValue />
@@ -861,12 +868,12 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div>
                       <label className="text-xs text-slate-400 mb-1.5 block font-medium">Categoría</label>
                       <Select
                         value={editedTask.categoria || ''}
-                        onValueChange={(value) => setEditedTask({...editedTask, categoria: value as Task['categoria']})}
+                        onValueChange={(value) => setEditedTask({ ...editedTask, categoria: value as Task['categoria'] })}
                       >
                         <SelectTrigger className="w-full bg-slate-900/50 border-[#08A696]/30 text-sm">
                           <SelectValue placeholder="Sin categoría" />
@@ -881,7 +888,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                       </Select>
                     </div>
                   </div>
-                  
+
                   {/* Fila 2: Fechas */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -889,28 +896,28 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                       <input
                         type="date"
                         value={editedTask.fecha_inicio || ''}
-                        onChange={(e) => setEditedTask({...editedTask, fecha_inicio: e.target.value})}
+                        onChange={(e) => setEditedTask({ ...editedTask, fecha_inicio: e.target.value })}
                         className="w-full bg-slate-900/50 border border-[#08A696]/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#08A696]"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="text-xs text-slate-400 mb-1.5 block font-medium">🏁 Fecha Final</label>
                       <input
                         type="date"
                         value={editedTask.fecha_final || ''}
-                        onChange={(e) => setEditedTask({...editedTask, fecha_final: e.target.value})}
+                        onChange={(e) => setEditedTask({ ...editedTask, fecha_final: e.target.value })}
                         className="w-full bg-slate-900/50 border border-[#08A696]/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#08A696]"
                       />
                     </div>
                   </div>
-                  
+
                   {/* Fila 3: Observaciones */}
                   <div>
                     <label className="text-xs text-slate-400 mb-1.5 block font-medium">📝 Observaciones</label>
                     <Textarea
                       value={editedTask.observaciones || ''}
-                      onChange={(e) => setEditedTask({...editedTask, observaciones: e.target.value})}
+                      onChange={(e) => setEditedTask({ ...editedTask, observaciones: e.target.value })}
                       className="bg-slate-900/50 border border-[#08A696]/30 text-slate-200 focus:border-[#08A696] resize-none text-sm"
                       rows={2}
                       placeholder="Notas adicionales, bloqueos, dependencias..."
@@ -960,7 +967,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                       </div>
                     )}
                   </div>
-                  
+
                   {task.observaciones && (
                     <div className="mt-2 p-2.5 bg-slate-900/30 rounded-lg border border-slate-700/40">
                       <p className="text-xs text-slate-400 leading-relaxed">
@@ -1000,7 +1007,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                       <Button
                         variant="default"
                         onClick={() => {
-                          console.log('[TaskCard] Activando modo edición para tarea:', task.id);
+                          // console.log('[TaskCard] Activando modo edición para tarea:', task.id);
                           setIsEditing(true);
                         }}
                         className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#0a9b8a] hover:to-[#20e6c7] text-white py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-[1.02] shadow-[0_0_20px_rgba(8,166,150,0.3)] hover:shadow-[0_0_30px_rgba(8,166,150,0.5)] border-0 w-full h-11"
@@ -1124,7 +1131,7 @@ interface MeetingTaskCardProps {
 }
 
 function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: MeetingTaskCardProps) {
-  const { user, userRole, userProfile } = useAuth();
+  const { user, userProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showComments, setShowComments] = useState(true);
   const [comments, setComments] = useState<TaskComment[]>([]);
@@ -1141,7 +1148,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
 
   // Cargar comentarios cuando se expande
   const loadComments = async () => {
-    console.log('[MeetingTaskCard] Cargando comentarios para meeting_task_id:', task.id);
+    // console.log('[MeetingTaskCard] Cargando comentarios para meeting_task_id:', task.id);
     try {
       const { data: commentsData, error } = await supabase
         .from('task_comments')
@@ -1149,47 +1156,48 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
         .eq('meeting_task_id', task.id)
         .is('task_id', null)
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         console.error('[MeetingTaskCard] Error al cargar comentarios:', error);
         return;
       }
-      
-      console.log('[MeetingTaskCard] Comentarios cargados:', commentsData?.length || 0);
-      
+
+      // console.log('[MeetingTaskCard] Comentarios cargados:', commentsData?.length || 0);
+
       if (commentsData) {
-      // Obtener perfiles de los usuarios
-      const userIds = [...new Set(commentsData.map(c => c.user_id))];
-      console.log('[MeetingTaskCard] Cargando perfiles para user_ids:', userIds);
-      
-      const { data: profilesData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, email, name, role')
-        .in('id', userIds);
-      
-      if (profileError) {
-        console.error('[MeetingTaskCard] Error al cargar perfiles:', profileError);
-      }
-      
-      console.log('[MeetingTaskCard] Perfiles obtenidos:', profilesData);
+        // Obtener perfiles de los usuarios
+        const userIds = [...new Set(commentsData.map(c => c.user_id))];
+        // console.log('[MeetingTaskCard] Cargando perfiles para user_ids:', userIds);
 
-      const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
+        const { data: profilesData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, email, name, role')
+          .in('id', userIds);
 
-      const formattedComments = commentsData.map((comment: any) => {
-        const profile = profilesMap.get(comment.user_id);
-        const userName = profile?.name || profile?.email?.split('@')[0] || 'Usuario';
-        console.log('[MeetingTaskCard] Comentario user_id:', comment.user_id, 'perfil:', profile, 'nombre final:', userName);
-        return {
-          id: comment.id,
-          meeting_task_id: comment.meeting_task_id,
-          content: comment.content,
-          user_id: comment.user_id,
-          user_name: userName,
-          user_role: profile?.role,
-          created_at: comment.created_at
-        };
-      });
-      setComments(formattedComments);
+        if (profileError) {
+          console.error('[MeetingTaskCard] Error al cargar perfiles:', profileError);
+        }
+
+        // console.log('[MeetingTaskCard] Perfiles obtenidos:', profilesData);
+
+        const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const formattedComments = commentsData.map((comment: any) => {
+          const profile = profilesMap.get(comment.user_id);
+          const userName = profile?.name || profile?.email?.split('@')[0] || 'Usuario';
+          // console.log('[MeetingTaskCard] Comentario user_id:', comment.user_id, 'perfil:', profile, 'nombre final:', userName);
+          return {
+            id: comment.id,
+            meeting_task_id: comment.meeting_task_id,
+            content: comment.content,
+            user_id: comment.user_id,
+            user_name: userName,
+            user_role: profile?.role,
+            created_at: comment.created_at
+          };
+        });
+        setComments(formattedComments);
       }
     } catch (error) {
       console.error('[MeetingTaskCard] Error completo al cargar comentarios:', error);
@@ -1205,10 +1213,10 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
       toast.error('Debes iniciar sesión');
       return;
     }
-    
-    console.log('[MeetingTaskCard] Agregando comentario:', { meeting_task_id: task.id, user_id: user.id, content: newComment });
+
+    // console.log('[MeetingTaskCard] Agregando comentario:', { meeting_task_id: task.id, user_id: user.id, content: newComment });
     setLoadingComment(true);
-    
+
     try {
       const { data: newCommentData, error } = await supabase
         .from('task_comments')
@@ -1225,30 +1233,31 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
         console.error('[MeetingTaskCard] Error al insertar comentario:', error);
         throw error;
       }
-      
-      console.log('[MeetingTaskCard] Comentario insertado exitosamente:', newCommentData);
-      
-      if (newCommentData) {
-      console.log('[MeetingTaskCard] Perfil del usuario que comenta:', userProfile);
-      
-      // Usar el perfil del hook useAuth
-      const userName = userProfile?.name || userProfile?.email?.split('@')[0] || user.email?.split('@')[0] || 'Usuario';
-      console.log('[MeetingTaskCard] Nombre final para comentario:', userName);
 
-      const formattedComment = {
-        id: newCommentData.id,
-        meeting_task_id: newCommentData.meeting_task_id,
-        content: newCommentData.content,
-        user_id: newCommentData.user_id,
-        user_name: userName,
-        user_role: userProfile?.role,
-        created_at: newCommentData.created_at
-      };
-      setComments([formattedComment, ...comments]);
-      setNewComment('');
-      toast.success('Comentario agregado');
-      console.log('[MeetingTaskCard] Comentario agregado al estado, total:', comments.length + 1);
+      // console.log('[MeetingTaskCard] Comentario insertado exitosamente:', newCommentData);
+
+      if (newCommentData) {
+        // console.log('[MeetingTaskCard] Perfil del usuario que comenta:', userProfile);
+
+        // Usar el perfil del hook useAuth
+        const userName = userProfile?.name || userProfile?.email?.split('@')[0] || user.email?.split('@')[0] || 'Usuario';
+        // console.log('[MeetingTaskCard] Nombre final para comentario:', userName);
+
+        const formattedComment = {
+          id: newCommentData.id,
+          meeting_task_id: newCommentData.meeting_task_id,
+          content: newCommentData.content,
+          user_id: newCommentData.user_id,
+          user_name: userName,
+          user_role: userProfile?.role,
+          created_at: newCommentData.created_at
+        };
+        setComments([formattedComment, ...comments]);
+        setNewComment('');
+        toast.success('Comentario agregado');
+        // console.log('[MeetingTaskCard] Comentario agregado al estado, total:', comments.length + 1);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('[MeetingTaskCard] Error completo al agregar comentario:', error);
       console.error('[MeetingTaskCard] Detalles del error:', {
@@ -1269,6 +1278,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = {
       title: editedTask.title.trim(),
       priority: editedTask.priority,
@@ -1285,9 +1295,9 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
       updateData.assigned_to = editedTask.assigned_to.trim();
     }
 
-    console.log('[MeetingTaskCard] Guardando cambios:', updateData);
+    // console.log('[MeetingTaskCard] Guardando cambios:', updateData);
     const result = await supabaseProjectsDB.updateMeetingTask(task.id, updateData);
-    
+
     if (result) {
       toast.success('Tarea actualizada correctamente');
       setIsEditing(false);
@@ -1307,6 +1317,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
     if (showComments) {
       loadComments();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getStatusIcon = (status: MeetingTaskStatus) => {
@@ -1353,7 +1364,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                     <input
                       type="text"
                       value={editedTask.title}
-                      onChange={(e) => setEditedTask({...editedTask, title: e.target.value})}
+                      onChange={(e) => setEditedTask({ ...editedTask, title: e.target.value })}
                       className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#26FFDF]"
                     />
                   </div>
@@ -1361,7 +1372,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                     <label className="text-xs text-slate-400 mb-1 block">Descripción</label>
                     <textarea
                       value={editedTask.description}
-                      onChange={(e) => setEditedTask({...editedTask, description: e.target.value})}
+                      onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
                       rows={3}
                       className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#26FFDF] resize-none"
                     />
@@ -1369,7 +1380,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs text-slate-400 mb-1 block">Prioridad</label>
-                      <Select value={editedTask.priority} onValueChange={(value) => setEditedTask({...editedTask, priority: value as 'high' | 'medium' | 'low'})}>
+                      <Select value={editedTask.priority} onValueChange={(value) => setEditedTask({ ...editedTask, priority: value as 'high' | 'medium' | 'low' })}>
                         <SelectTrigger className="bg-[#025059]/50 border-[#08A696]/30 text-white h-9 text-sm">
                           <SelectValue />
                         </SelectTrigger>
@@ -1385,7 +1396,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                       <input
                         type="text"
                         value={editedTask.category}
-                        onChange={(e) => setEditedTask({...editedTask, category: e.target.value})}
+                        onChange={(e) => setEditedTask({ ...editedTask, category: e.target.value })}
                         className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#26FFDF]"
                       />
                     </div>
@@ -1394,7 +1405,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                       <input
                         type="date"
                         value={editedTask.due_date}
-                        onChange={(e) => setEditedTask({...editedTask, due_date: e.target.value})}
+                        onChange={(e) => setEditedTask({ ...editedTask, due_date: e.target.value })}
                         className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#26FFDF]"
                       />
                     </div>
@@ -1421,11 +1432,10 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                       De Reunión
                     </Badge>
                     {task.priority && (
-                      <Badge className={`border rounded-lg px-3 py-1 text-xs ${
-                        task.priority === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                      <Badge className={`border rounded-lg px-3 py-1 text-xs ${task.priority === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
                         task.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-                        'bg-green-500/20 text-green-400 border-green-500/30'
-                      }`}>
+                          'bg-green-500/20 text-green-400 border-green-500/30'
+                        }`}>
                         {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
                       </Badge>
                     )}
@@ -1513,7 +1523,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
               <Button
                 onClick={() => {
                   setShowComments(!showComments);
-                  if (!showComments) loadComments();
+                  if (!showComments) { loadComments(); }
                 }}
                 variant="outline"
                 className="border-2 border-[#08A696]/40 text-[#26FFDF] hover:bg-[#08A696]/20 hover:border-[#08A696] py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-[1.02] w-full h-11 bg-[#08A696]/5"

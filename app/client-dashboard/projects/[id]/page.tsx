@@ -36,12 +36,12 @@ export default function ProjectTimelinePage() {
   useEffect(() => {
     const fetchProject = async () => {
       if (!user || !projectId) {
-        console.log('[ClientProjectDetail] Falta user o projectId:', { user: !!user, projectId })
+        // console.log('[ClientProjectDetail] Falta user o projectId:', { user: !!user, projectId })
         return
       }
 
-      console.log('[ClientProjectDetail] Cargando proyecto:', projectId, 'para user.id:', user.id)
-      
+      // console.log('[ClientProjectDetail] Cargando proyecto:', projectId, 'para user.id:', user.id)
+
       try {
         // Fetch project
         const { data: projectData, error: projectError } = await supabase
@@ -59,7 +59,7 @@ export default function ProjectTimelinePage() {
           return
         }
 
-        console.log('[ClientProjectDetail] Proyecto obtenido:', projectData)
+        // console.log('[ClientProjectDetail] Proyecto obtenido:', projectData)
         setProject(projectData)
       } catch (error) {
         console.error('Error:', error)

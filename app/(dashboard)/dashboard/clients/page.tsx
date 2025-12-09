@@ -6,15 +6,11 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/use-auth'
-import { 
-  Users, 
-  Plus, 
-  Eye, 
-  Edit, 
-  Building2, 
-  DollarSign, 
+import {
+  Users,
+  Plus,
+  Edit,
   FolderOpen,
-  Filter,
   LogOut,
   Loader2,
   Trash2,
@@ -139,8 +135,9 @@ export default function ClientsPage() {
     }
   }
 
-  const getProjectCount = (client: Client) => {
-    return client.projects && client.projects.length > 0 ? client.projects[0].count : 0
+  const getProjectCount = (client: Client | undefined) => {
+    if (!client) { return 0 }
+    return (client.projects && client.projects.length > 0 ? client.projects[0]?.count : 0) ?? 0
   }
 
   const formatDate = (dateString: string) => {
@@ -170,7 +167,7 @@ export default function ClientsPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
+            <Button
               onClick={handleNewClient}
               className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
             >
@@ -257,7 +254,7 @@ export default function ClientsPage() {
                 <div>
                   <p className="text-slate-400 text-sm font-medium">Última Actividad</p>
                   <p className="text-2xl font-bold text-white">
-                    {clients.length > 0 ? formatDate(clients[0].updated_at) : '-'}
+                    {clients.length > 0 && clients[0]?.updated_at ? formatDate(clients[0].updated_at) : '-'}
                   </p>
                 </div>
                 <div className="p-3 bg-gradient-to-r from-purple-500/20 to-purple-400/20 rounded-xl">
@@ -323,19 +320,19 @@ export default function ClientsPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button 
+                  <Button
                     onClick={() => handleEditClient(client.id)}
-                    variant="outline" 
-                    size="sm" 
+                    variant="outline"
+                    size="sm"
                     className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-300 hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Editar
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => handleDeleteClick(client.id)}
-                    variant="outline" 
-                    size="sm" 
+                    variant="outline"
+                    size="sm"
                     className="bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500 rounded-2xl transition-all duration-300"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -362,7 +359,7 @@ export default function ClientsPage() {
           <p className="text-slate-500 mb-4">
             Los usuarios que se registren aparecerán aquí automáticamente.
           </p>
-          <Button 
+          <Button
             onClick={handleNewClient}
             className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold"
           >
@@ -394,7 +391,7 @@ export default function ClientsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel 
+            <AlertDialogCancel
               disabled={deleting}
               className="bg-transparent border border-[#08A696]/30 text-slate-300 hover:bg-background/20"
             >
