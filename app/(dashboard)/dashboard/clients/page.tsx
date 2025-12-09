@@ -1,105 +1,87 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/use-auth'
-import { 
-  Users, 
-  Plus, 
-  Eye, 
-  Edit, 
-  Building2, 
-  DollarSign, 
+import {
+  Users,
+  Plus,
+  Edit,
   FolderOpen,
-  Filter,
-  LogOut
+  LogOut,
+  Loader2,
+  Trash2,
+  AlertCircle,
+  Mail,
+  Clock
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
+import { ClientDialog } from '@/components/dashboard/client-dialog'
+import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface Client {
   id: string
   name: string
-  status: 'active' | 'paused' | 'completed'
-  projects: number
-  totalValue: number
-  email: string
-  phone: string
-  lastActivity: string
+  email?: string
+  role: string
+  created_at: string
+  updated_at: string
+  projects?: { count: number }[]
 }
-
-const clients: Client[] = [
-  {
-    id: '1',
-    name: 'V1TR0 Technologies',
-    status: 'active',
-    projects: 3,
-    totalValue: 75000,
-    email: 'contact@v1tr0.com',
-    phone: '+1 (555) 123-4567',
-    lastActivity: '2024-01-15'
-  },
-  {
-    id: '2',
-    name: 'TechCorp S.A.',
-    status: 'active',
-    projects: 2,
-    totalValue: 45000,
-    email: 'info@techcorp.com',
-    phone: '+1 (555) 234-5678',
-    lastActivity: '2024-01-14'
-  },
-  {
-    id: '3',
-    name: 'Retail Plus',
-    status: 'paused',
-    projects: 1,
-    totalValue: 25000,
-    email: 'admin@retailplus.com',
-    phone: '+1 (555) 345-6789',
-    lastActivity: '2024-01-10'
-  },
-  {
-    id: '4',
-    name: 'BusinessPro',
-    status: 'completed',
-    projects: 1,
-    totalValue: 35000,
-    email: 'hello@businesspro.com',
-    phone: '+1 (555) 456-7890',
-    lastActivity: '2024-01-08'
-  },
-  {
-    id: '5',
-    name: 'StartupXYZ',
-    status: 'active',
-    projects: 2,
-    totalValue: 50000,
-    email: 'team@startupxyz.com',
-    phone: '+1 (555) 567-8901',
-    lastActivity: '2024-01-12'
-  }
-]
-
-const statusConfig = {
-  active: { label: 'Activo', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  paused: { label: 'En pausa', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  completed: { label: 'Completado', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' }
-}
-
-const filterOptions = [
-  { value: 'all', label: 'Todos' },
-  { value: 'active', label: 'Activos' },
-  { value: 'paused', label: 'En pausa' },
-  { value: 'completed', label: 'Completados' }
-]
 
 export default function ClientsPage() {
-  const [selectedFilter, setSelectedFilter] = useState('all')
+  const [clients, setClients] = useState<Client[]>([])
+  const [loading, setLoading] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingClient, setEditingClient] = useState<string | undefined>(undefined)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [clientToDelete, setClientToDelete] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const { signOut } = useAuth()
   const router = useRouter()
+
+  const fetchClients = useCallback(async () => {
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          projects:projects(count)
+        `)
+        .eq('role', 'client')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw error
+      }
+
+      setClients(data || [])
+    } catch (error) {
+      console.error('Error al cargar clientes:', error)
+      toast.error('Error al cargar los clientes')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchClients()
+  }, [fetchClients])
 
   const handleLogout = async () => {
     try {
@@ -110,15 +92,60 @@ export default function ClientsPage() {
     }
   }
 
-  const filteredClients = clients.filter(client => 
-    selectedFilter === 'all' || client.status === selectedFilter
-  )
+  const handleNewClient = () => {
+    setEditingClient(undefined)
+    setDialogOpen(true)
+  }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount)
+  const handleEditClient = (clientId: string) => {
+    setEditingClient(clientId)
+    setDialogOpen(true)
+  }
+
+  const handleDeleteClick = (clientId: string) => {
+    setClientToDelete(clientId)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!clientToDelete) {
+      return
+    }
+
+    setDeleting(true)
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', clientToDelete)
+
+      if (error) {
+        throw error
+      }
+
+      toast.success('Cliente eliminado exitosamente')
+      fetchClients()
+      setDeleteDialogOpen(false)
+      setClientToDelete(null)
+    } catch (error) {
+      console.error('Error al eliminar cliente:', error)
+      toast.error('Error al eliminar el cliente')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  const getProjectCount = (client: Client | undefined) => {
+    if (!client) { return 0 }
+    return (client.projects && client.projects.length > 0 ? client.projects[0]?.count : 0) ?? 0
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
   }
 
   return (
@@ -140,7 +167,8 @@ export default function ClientsPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
+            <Button
+              onClick={handleNewClient}
               className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <Plus className="w-5 h-5 mr-2" />
@@ -184,13 +212,13 @@ export default function ClientsPage() {
             <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Clientes Activos</p>
+                  <p className="text-slate-400 text-sm font-medium">Con Email</p>
                   <p className="text-2xl font-bold text-white">
-                    {clients.filter(c => c.status === 'active').length}
+                    {clients.filter(c => c.email).length}
                   </p>
                 </div>
                 <div className="p-3 bg-gradient-to-r from-green-500/20 to-green-400/20 rounded-xl">
-                  <Building2 className="w-6 h-6 text-green-400" />
+                  <Mail className="w-6 h-6 text-green-400" />
                 </div>
               </div>
             </Card>
@@ -206,7 +234,7 @@ export default function ClientsPage() {
                 <div>
                   <p className="text-slate-400 text-sm font-medium">Proyectos Totales</p>
                   <p className="text-2xl font-bold text-white">
-                    {clients.reduce((sum, client) => sum + client.projects, 0)}
+                    {clients.reduce((sum, client) => sum + getProjectCount(client), 0)}
                   </p>
                 </div>
                 <div className="p-3 bg-gradient-to-r from-blue-500/20 to-blue-400/20 rounded-xl">
@@ -224,122 +252,100 @@ export default function ClientsPage() {
             <Card className="bg-background/10 backdrop-blur-md border-white/10 rounded-2xl p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Valor Total</p>
+                  <p className="text-slate-400 text-sm font-medium">Última Actividad</p>
                   <p className="text-2xl font-bold text-white">
-                    {formatCurrency(clients.reduce((sum, client) => sum + client.totalValue, 0))}
+                    {clients.length > 0 && clients[0]?.updated_at ? formatDate(clients[0].updated_at) : '-'}
                   </p>
                 </div>
-                <div className="p-3 bg-gradient-to-r from-yellow-500/20 to-yellow-400/20 rounded-xl">
-                  <DollarSign className="w-6 h-6 text-yellow-400" />
+                <div className="p-3 bg-gradient-to-r from-purple-500/20 to-purple-400/20 rounded-xl">
+                  <Clock className="w-6 h-6 text-purple-400" />
                 </div>
               </div>
             </Card>
           </motion.div>
         </div>
-
-        {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="flex items-center gap-4 mb-6"
-        >
-          <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-slate-400" />
-            <span className="text-slate-400 font-medium">Filtrar por estado:</span>
-          </div>
-          <div className="flex gap-2">
-            {filterOptions.map((option) => (
-              <Button
-                key={option.value}
-                variant={selectedFilter === option.value ? "default" : "outline"}
-                onClick={() => setSelectedFilter(option.value)}
-                className={`rounded-2xl transition-all duration-300 ${
-                  selectedFilter === option.value
-                    ? 'bg-gradient-to-r from-[#08A696] to-[#26FFDF] text-slate-900 font-semibold'
-                    : 'bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-300 hover:bg-background/20 hover:border-[#08A696]'
-                }`}
-              >
-                {option.label}
-              </Button>
-            ))}
-          </div>
-        </motion.div>
       </motion.div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-[#26FFDF]" />
+        </div>
+      )}
 
       {/* Clients Grid */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {filteredClients.map((client, index) => (
-          <motion.div
-            key={client.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 * index }}
-          >
-            <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6 hover:bg-background/20 transition-all duration-300 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#26FFDF] transition-colors duration-300">
-                    {client.name}
-                  </h3>
-                  <Badge className={`${statusConfig[client.status].color} border rounded-lg px-3 py-1`}>
-                    {statusConfig[client.status].label}
-                  </Badge>
+      {!loading && clients.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {clients.map((client, index) => (
+            <motion.div
+              key={client.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
+            >
+              <Card className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl p-6 hover:bg-background/20 transition-all duration-300 group">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#26FFDF] transition-colors duration-300">
+                      {client.name}
+                    </h3>
+                    <Badge className="bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/30 rounded-lg px-3 py-1">
+                      {client.role}
+                    </Badge>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">Proyectos:</span>
-                  <span className="text-white font-semibold">{client.projects}</span>
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-slate-400" />
+                    <span className="text-white text-sm">{client.email || 'Sin email'}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400 text-sm">Proyectos:</span>
+                    <span className="text-white font-semibold">{getProjectCount(client)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400 text-sm">Registrado:</span>
+                    <span className="text-white text-sm">{formatDate(client.created_at)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400 text-sm">Actualizado:</span>
+                    <span className="text-white text-sm">{formatDate(client.updated_at)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">Valor total:</span>
-                  <span className="text-[#26FFDF] font-bold">{formatCurrency(client.totalValue)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">Email:</span>
-                  <span className="text-white text-sm">{client.email}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">Teléfono:</span>
-                  <span className="text-white text-sm">{client.phone}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">Última actividad:</span>
-                  <span className="text-white text-sm">{client.lastActivity}</span>
-                </div>
-              </div>
 
-              <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-300 hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Ver
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-300 hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Editar
-                </Button>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => handleEditClient(client.id)}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-slate-300 hover:bg-background/20 hover:border-[#08A696] rounded-2xl transition-all duration-300"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Editar
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteClick(client.id)}
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500 rounded-2xl transition-all duration-300"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
 
-      {filteredClients.length === 0 && (
+      {/* Empty State */}
+      {!loading && clients.length === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -348,13 +354,66 @@ export default function ClientsPage() {
         >
           <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-slate-400 mb-2">
-            No se encontraron clientes
+            No hay clientes registrados
           </h3>
-          <p className="text-slate-500">
-            No hay clientes que coincidan con el filtro seleccionado.
+          <p className="text-slate-500 mb-4">
+            Los usuarios que se registren aparecerán aquí automáticamente.
           </p>
+          <Button
+            onClick={handleNewClient}
+            className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] hover:from-[#26FFDF] hover:to-[#08A696] text-slate-900 font-semibold"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Crear Primer Cliente
+          </Button>
         </motion.div>
       )}
+
+      {/* Client Dialog */}
+      <ClientDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        clientId={editingClient}
+        onSuccess={fetchClients}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-background/95 backdrop-blur-xl border border-[#08A696]/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-white">
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              ¿Eliminar cliente?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              Esta acción no se puede deshacer. El cliente será eliminado permanentemente
+              de la base de datos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={deleting}
+              className="bg-transparent border border-[#08A696]/30 text-slate-300 hover:bg-background/20"
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleting}
+              className="bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30"
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                'Eliminar'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
