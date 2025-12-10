@@ -15,12 +15,13 @@ export default function MarketingLayout({
   const pathname = usePathname()
   const isServicesNewPage = pathname === '/servicios-referentes/new'
   const isAboutPage = pathname === '/about'
+  const isHomePage = pathname === '/'
 
   return (
     <>
       <FloatingHeader />
       <main className="min-h-screen">{children}</main>
-      {!isServicesNewPage && !isAboutPage && <FooterSection />}
+      {!isServicesNewPage && !isAboutPage && !isHomePage && <FooterSection />}
       <FloatingLoginButton /> {/* Añadir el botón flotante aquí */}
     </>
   )

@@ -54,8 +54,8 @@ export default function HomeBanner() {
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 leading-tight max-w-5xl px-2 sm:px-4"
           variants={itemVariants}
         >
-          <span className="block text-textPrimary mb-2 sm:mb-1">Transformamos tu potencial</span>
-          <span className={`block ${isDark ? "text-highlight" : "text-primary"}`}>en innovación y resultados</span>
+          <span className="block text-highlight mb-2 sm:mb-1">Transformamos tu potencial</span>
+          <span className="block text-highlight">en innovación y resultados</span>
         </motion.h1>
 
         {/* Badge */}
