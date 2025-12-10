@@ -241,13 +241,13 @@ export default function ServiceBanner({
   const placeholderImage = `/imagenes/icons/svg/placeholder.svg?height=400&width=500&query=${encodeURIComponent(imageAlt)}`
 
   return (
-    <section className="min-h-screen lg:min-h-screen w-full px-4 py-8 lg:py-16 flex items-center bg-transparent">
+    <section className="min-h-screen lg:min-h-screen w-full px-3 sm:px-4 py-6 sm:py-8 lg:py-16 flex items-center bg-transparent">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 lg:pr-12">
           <h1
             ref={titleRef}
             onClick={() => titleLink && router.push(titleLink)}
-            className={`text-3xl md:text-5xl font-bold text-textPrimary mb-6 transition-all duration-300 hover:text-highlight hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(38,255,223,0.5)] transform-gpu ${
+            className={`text-2xl sm:text-3xl md:text-5xl font-bold text-textPrimary mb-4 sm:mb-6 leading-tight transition-all duration-300 hover:text-highlight hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(38,255,223,0.5)] transform-gpu ${
               titleLink ? 'cursor-pointer' : 'cursor-default'
             }`}
           >
@@ -256,28 +256,28 @@ export default function ServiceBanner({
 
           <p 
             ref={descriptionRef}
-            className="text-textMuted text-base mb-8"
+            className="text-textMuted text-sm sm:text-base mb-6 sm:mb-8 leading-relaxed"
           >
             {description}
           </p>
 
           <div
             ref={featuresRef}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
             {features.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <div className="p-2 rounded-full bg-custom-2 text-highlight">{feature.icon}</div>
-                <p className="text-textPrimary text-sm">{feature.text}</p>
+              <div key={index} className="flex items-start space-x-2 sm:space-x-3">
+                <div className="p-1.5 sm:p-2 rounded-full bg-custom-2 text-highlight flex-shrink-0 mt-0.5">{feature.icon}</div>
+                <p className="text-textPrimary text-xs sm:text-sm leading-relaxed">{feature.text}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="lg:w-1/2 mt-12 lg:mt-0 flex flex-col items-center">
+        <div className="lg:w-1/2 mt-8 sm:mt-10 lg:mt-0 flex flex-col items-center">
           <div 
             ref={imageRef}
-            className="flex items-center justify-center mb-8"
+            className="flex items-center justify-center mb-6 sm:mb-8"
             style={{ willChange: 'transform' }}
           >
             <Image
@@ -286,7 +286,10 @@ export default function ServiceBanner({
               width={imageSize === 'xs' ? 258 : imageSize === 'sm' ? 500 : imageSize === 'custom' ? 350 : imageSize === 'lg' ? 600 : 400}
           height={imageSize === 'xs' ? 258 : imageSize === 'sm' ? 500 : imageSize === 'custom' ? 350 : imageSize === 'lg' ? 600 : 400}
               className={`w-full h-auto ${
-                imageSize === 'xs' ? 'max-w-xs' : imageSize === 'sm' ? 'max-w-md' : imageSize === 'custom' ? 'max-w-sm' : imageSize === 'lg' ? 'max-w-xl' : 'max-w-lg'
+                imageSize === 'xs' ? 'max-w-[200px] sm:max-w-xs' : 
+                imageSize === 'sm' ? 'max-w-[280px] sm:max-w-md' : 
+                imageSize === 'custom' ? 'max-w-[240px] sm:max-w-sm' : 
+                imageSize === 'lg' ? 'max-w-[320px] sm:max-w-xl' : 'max-w-[260px] sm:max-w-lg'
               } object-cover transition-all duration-700 ease-in-out`}
             />
           </div>

@@ -71,7 +71,7 @@ export default function HomeBanner() {
             typingSpeed={60}
             pauseDuration={1500}
             deletingSpeed={10}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-white text-center min-h-[2.5em]"
+            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-center min-h-[2.5em] ${isDark ? 'text-white' : 'text-[#08a696]'}`}
           />
         </motion.div>
 
