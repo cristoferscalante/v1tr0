@@ -58,7 +58,7 @@ export default function LoginPage() {
 
         const userRole = profileData?.role || 'client'
         if (userRole === 'admin') {
-          router.push('/dashboard')
+          router.push('/admin') // Redirigir al nuevo panel de admin
         } else {
           router.push('/client-dashboard')
         }
@@ -165,9 +165,9 @@ export default function LoginPage() {
       // console.log('[LOGIN] 🎯 Rol del usuario:', userRole)
       // console.log('[LOGIN] 🚀 Redirigiendo a dashboard...')
 
-      if (userRole === 'admin') {
-        // console.log('[LOGIN] ➡️ Navegando a /dashboard')
-        router.push('/dashboard')
+      if (userRole === 'admin' || userRole === 'team') {
+        // console.log('[LOGIN] ➡️ Navegando a /admin')
+        router.push('/admin') // Redirigir al nuevo panel de admin
         toast.success('¡Bienvenido, Administrador!')
       } else {
         // console.log('[LOGIN] ➡️ Navegando a /client-dashboard')
@@ -218,7 +218,6 @@ export default function LoginPage() {
       })
     }
   }
-
 
 
   return (

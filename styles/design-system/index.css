@@ -14,4 +14,7 @@
 /* ===== ANIMACIONES ===== */
 @import './_animations.css';
 
+/* ===== COMPONENTES ===== */
+@import './_components.css';
+
 /* Exportar para uso en otros archivos */

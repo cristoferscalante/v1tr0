@@ -1,0 +1,100 @@
+import type { Plan, Product } from "@/components/shop/packages/PackagePromotion"
+
+export const hardwarePlans: Plan[] = [
+  {
+    id: "hardware-basic",
+    name: "Kit Básico",
+    price: 150000,
+    features: [
+      "1x ESP32 DevKit",
+      "Kit de 10 sensores básicos",
+      "Cables y conectores",
+      "Guía de inicio rápido",
+      "Acceso a tutoriales básicos",
+    ],
+    folios: 0,
+    cta: "Comprar Kit Básico",
+  },
+  {
+    id: "hardware-pro",
+    name: "Kit Profesional",
+    price: 499000,
+    features: [
+      "Cyber Deck Pro completo",
+      "ESP32 Heltec V4 WiFi LoRa",
+      "Cardputer ESP32 DevKit",
+      "Kit de 20 sensores IoT",
+      "Power Bank Solar 20000mAh",
+      "Documentación completa",
+      "Soporte técnico especializado",
+    ],
+    folios: 0,
+    isPopular: true,
+    cta: "Comprar Kit Pro",
+  },
+  {
+    id: "hardware-enterprise",
+    name: "Kit Enterprise",
+    price: 899000,
+    features: [
+      "Todo lo del Kit Profesional",
+      "M5Stack Core2 ESP32 Hub",
+      "2x ESP32 Heltec V4 adicionales",
+      "Gateway IoT multicapa",
+      "Herramientas de pentesting",
+      "Capacitación personalizada",
+      "Soporte VIP 24/7",
+      "Actualizaciones gratuitas por 1 año",
+    ],
+    folios: 0,
+    cta: "Comprar Kit Enterprise",
+  },
+]
+
+export const hardwareProducts: Product[] = [
+  {
+    id: "cyber-deck-pro",
+    name: "Cyber Deck Pro",
+    description: "Kit completo de seguridad IoT con ESP32 y herramientas de pentesting",
+    image: "/imagenes/productos/cyber-deck-pro.jpg",
+    price: 299000,
+    features: [
+      "ESP32 de alto rendimiento",
+      "Pantalla OLED integrada",
+      "WiFi + Bluetooth + LoRa",
+      "Batería de larga duración",
+      "Herramientas de análisis WiFi",
+      "Firmware actualizable",
+    ],
+  },
+  {
+    id: "esp32-heltec",
+    name: "ESP32 Heltec V4 WiFi LoRa",
+    description: "Módulo ESP32 con conectividad WiFi, Bluetooth y LoRa de largo alcance",
+    image: "/imagenes/productos/esp32-heltec.jpg",
+    price: 85000,
+    features: [
+      "WiFi 802.11 b/g/n",
+      "Bluetooth 4.2 BLE",
+      "LoRa 433/868/915 MHz",
+      "Pantalla OLED 0.96\"",
+      "Batería recargable",
+      "Antena integrada",
+    ],
+  },
+  {
+    id: "sensor-kit",
+    name: "Kit de Sensores IoT",
+    description: "Colección de 20 sensores para proyectos IoT variados",
+    image: "/imagenes/productos/sensor-kit.jpg",
+    price: 120000,
+    features: [
+      "Sensores de temperatura y humedad",
+      "Sensores de movimiento PIR",
+      "Sensores de luz y sonido",
+      "Sensores de gas y humo",
+      "Módulos relay",
+      "Documentación incluida",
+    ],
+  },
+]

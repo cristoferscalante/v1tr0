@@ -185,6 +185,10 @@
   animation: slideInUp 0.5s var(--transition-timing);
 }
 
+.animate-slide-in-up {
+  animation: slideInUp 0.5s var(--transition-timing);
+}
+
 .animate-slide-up-delay-1 {
   animation: slideInUp 0.5s var(--transition-timing) 0.1s both;
 }

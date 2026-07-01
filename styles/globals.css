@@ -10,6 +10,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== UTILIDADES PERSONALIZADAS ===== */
+@layer utilities {
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(8, 166, 150, 0.3), 0 0 40px rgba(38, 255, 223, 0.1);
+  }
+
+  .shadow-glow-strong {
+    box-shadow: 0 0 30px rgba(8, 166, 150, 0.5), 0 0 60px rgba(38, 255, 223, 0.2);
+  }
+
+  .glow-effect {
+    text-shadow: 0 0 10px rgba(38, 255, 223, 0.5);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-background-secondary);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 10px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-light);
+  }
+}
+
 /* ===== SISTEMA DE DISEÑO V1TR0 ===== */
 @import './design-system/index.css';
 

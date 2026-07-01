@@ -4,15 +4,11 @@ import { type ReactNode, type FC, useState, useEffect } from "react"
 import Link from "next/link"
 import { X, LogIn } from "lucide-react"
 import Image from "next/image"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { useTheme } from "@/components/theme-provider"
 import { motion } from "framer-motion"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,9 +31,7 @@ export default function Navbar() {
         style={{
           borderRadius: "9999px",
           boxShadow: scrolled
-            ? isDark
-              ? "0 4px 8px rgba(38, 255, 223, 0.20)"
-              : "0 4px 8px rgba(0, 0, 0, 0.08)"
+            ? "0 4px 8px rgba(38, 255, 223, 0.20)"
             : "none",
         }}
       >
@@ -46,11 +40,11 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link href="/" prefetch={false} className="flex items-center">
               <Image 
-                src={isDark ? "/imagenes/logos/v1tr0-logo.svg" : "/imagenes/logos/Imagotipo  modo claro5.svg"} 
+                src="/imagenes/logos/v1tr0-logo.svg"
                 alt="V1TR0 Logo" 
-                width={isDark ? (scrolled ? 44 : 58) : (scrolled ? 35 : 45)} 
-                height={isDark ? (scrolled ? 44 : 58) : (scrolled ? 35 : 45)} 
-                className={`${isDark ? (scrolled ? 'h-11' : 'h-16') : (scrolled ? 'h-9' : 'h-11')} w-auto filter brightness-110 hover:brightness-125 hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer`} 
+                width={scrolled ? 44 : 58}
+                height={scrolled ? 44 : 58}
+                className={`${scrolled ? 'h-11' : 'h-16'} w-auto filter brightness-110 hover:brightness-125 hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer`} 
               />
             </Link>
           </div>
@@ -59,12 +53,13 @@ export default function Navbar() {
           <div className="hidden md:flex md:items-center md:justify-between md:flex-1">
             <div className="ml-10 flex items-center space-x-4">
               <NavLink href="/about">V1TR0</NavLink>
+              <NavLink href="/tienda">Tienda</NavLink>
               <NavLink href="/blog">Blog</NavLink>
               <div className="relative group">
-                <button className="text-highlight hover:text-highlight/90 px-3 py-2 text-sm font-medium transition-all duration-300 hover:glow-effect">
+                <button className="text-[#26FFDF] hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-300">
                   Servicios
                 </button>
-                <div className="absolute left-0 mt-2 w-56 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
+                <div className="absolute left-0 mt-2 w-56 bg-white/70 dark:bg-[#02505950] backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                   <div className="py-2">
                     <SubNavLink href="/servicios-referentes/dev">Desarrollo de Software</SubNavLink>
                 <SubNavLink href="/servicios-referentes/pm">Automatización de tareas</SubNavLink>
@@ -73,19 +68,13 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
-
-            {/* Theme Toggle Button */}
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-            </div>
           </div>
 
-          {/* Mobile menu button and theme toggle */}
+          {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-2">
-            <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 text-highlight hover:text-highlight/90 focus:outline-none transition-colors hover:glow-effect"
+              className="inline-flex items-center justify-center p-2 text-[#26FFDF] hover:text-white focus:outline-none transition-colors"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -118,7 +107,7 @@ export default function Navbar() {
           <div className="flex justify-end p-4">
             <button
               onClick={() => setIsOpen(false)}
-              className="inline-flex items-center justify-center p-2 text-highlight hover:text-highlight/90 focus:outline-none transition-colors hover:glow-effect"
+              className="inline-flex items-center justify-center p-2 text-[#26FFDF] hover:text-white focus:outline-none transition-colors"
             >
               <X className="h-6 w-6" />
             </button>
@@ -130,11 +119,14 @@ export default function Navbar() {
             <MobileNavLink href="/about" onClick={() => setIsOpen(false)}>
               V1TR0
             </MobileNavLink>
+            <MobileNavLink href="/tienda" onClick={() => setIsOpen(false)}>
+              Tienda
+            </MobileNavLink>
             <MobileNavLink href="/blog" onClick={() => setIsOpen(false)}>
               Blog
             </MobileNavLink>
             <div className="w-full max-w-xs border-t border-[#08A696]/20 pt-6 mt-6">
-              <h3 className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-bold text-lg mb-4 text-center`}>Servicios</h3>
+              <h3 className="text-[#26FFDF] font-bold text-lg mb-4 text-center">Servicios</h3>
               <div className="space-y-3">
                 <MobileNavLink href="/servicios-referentes/dev" onClick={() => setIsOpen(false)} isService>
                   Desarrollo de Software
@@ -171,7 +163,7 @@ const NavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) 
     <Link
       href={href}
       prefetch={false}
-      className="text-highlight hover:text-highlight/90 px-3 py-2 text-sm font-medium transition-all duration-300 hover:glow-effect"
+      className="text-[#26FFDF] hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-300"
     >
       {children}
     </Link>
@@ -180,21 +172,14 @@ const NavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) 
 
 // SubNavLink
 const SubNavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) => {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
   const baseClasses =
-    "block px-4 py-3 text-sm transition-all duration-300 rounded-xl mx-2 first:mt-0 last:mb-0"
-
-  const themeClasses = isDark
-    ? "text-[#26FFDF] hover:text-[#26FFDF]/90 hover:bg-[#08A696]/10"
-    : "text-white hover:text-white/90 hover:bg-[#02505950]"
+    "block px-4 py-3 text-sm transition-colors duration-300 rounded-xl mx-2 first:mt-0 last:mb-0"
 
   return (
     <Link
       href={href}
       prefetch={false}
-      className={`${baseClasses} ${themeClasses}`}
+      className={`${baseClasses} text-[#26FFDF] hover:text-white hover:bg-[#08A696]/20`}
     >
       {children}
     </Link>
@@ -209,14 +194,11 @@ const MobileNavLink: FC<{ href: string; children: ReactNode; indent?: boolean; o
   onClick,
   isService = false,
 }) => {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-  
   return (
     <Link
       href={href}
       prefetch={false}
-      className={`block w-full text-center px-4 py-3 text-lg font-medium transition-all duration-300 rounded-xl ${isService ? "text-white hover:text-white/90 hover:bg-[#08A696]/10" : (isDark ? "text-[#26FFDF] hover:text-[#26FFDF]/90 hover:bg-[#08A696]/10" : "text-[#08A696] hover:text-[#08A696]/90 hover:bg-[#08A696]/10")} ${indent ? "ml-4" : ""}`}
+      className={`block w-full text-center px-4 py-3 text-lg font-medium transition-all duration-300 rounded-xl ${isService ? "text-white hover:text-white/90 hover:bg-[#08A696]/10" : "text-[#26FFDF] hover:text-[#26FFDF]/90 hover:bg-[#08A696]/10"} ${indent ? "ml-4" : ""}`}
       {...(onClick && { onClick })}
     >
       {children}
