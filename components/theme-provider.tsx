@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect } from "react"
 
 type Theme = "dark" | "light" | "system"
 
@@ -26,34 +26,18 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
   children,
-  storageKey = "v1tr0-theme",
   ...props
 }: ThemeProviderProps) {
-  // Siempre iniciar en oscuro, pero permitir cambio manual
-  const [theme, setTheme] = useState<Theme>("dark");
-
-  useEffect(() => {
-    // Revisar si hay preferencia guardada
-    const savedTheme = localStorage.getItem(storageKey) as Theme | null;
-    if (savedTheme === "light" || savedTheme === "dark") {
-      setTheme(savedTheme);
-    } else {
-      setTheme("dark");
-    }
-  }, [storageKey]);
-
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    localStorage.setItem(storageKey, theme);
-  }, [theme, storageKey]);
+    root.classList.add("dark");
+  }, []);
 
   const value = {
-    theme,
-    setTheme: (newTheme: Theme) => {
-      setTheme(newTheme);
-      localStorage.setItem(storageKey, newTheme);
+    theme: "dark" as Theme,
+    setTheme: () => {
+      // No hacer nada - tema bloqueado en dark
     },
   };
 

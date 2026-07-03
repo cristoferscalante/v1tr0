@@ -1,0 +1,57 @@
+# Codebase Memory MCP - Archivos a ignorar
+
+# Tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+**/__tests__/**
+**/__mocks__/**
+**/__snapshots__/**
+
+# Build outputs
+.next/**
+out/**
+dist/**
+build/**
+
+# Dependencies
+node_modules/**
+.pnp/**
+.yarn/**
+
+# Logs
+*.log
+logs/**
+
+# Temporal
+.tmp/**
+temp/**
+*.tmp
+
+# Lock files (ya están parseados pero son muy grandes)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# IDE
+.vscode/**
+.idea/**
+*.swp
+*.swo
+
+# Generated types
+*.d.ts.map
+
+# Coverage
+coverage/**
+.nyc_output/**
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Documentación generada
+api-docs/**
+storybook-static/**

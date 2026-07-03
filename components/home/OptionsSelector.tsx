@@ -14,84 +14,93 @@ interface OptionData {
   color: string
   gradient: string
   image: string
+  category: string
 }
 
 interface OptionsSelectorProps {
   setIsUnifiedModalOpen?: (isOpen: boolean) => void
+  onCategorySelect?: (category: string) => void
 }
 
 const optionsData: OptionData[] = [
   {
     id: 1,
-    title: "Landing Pages",
-    subtitle: "Convierte visitantes en clientes",
-    description: "Páginas de aterrizaje optimizadas para conversión con diseño atractivo y llamadas a la acción efectivas.",
+    title: "Desarrollo de Software",
+    subtitle: "Soluciones digitales a medida",
+    description: "Creamos soluciones de software innovadoras y escalables para impulsar tu negocio hacia el futuro digital.",
     features: [
-      "Diseño responsive y moderno",
-      "Optimización para conversiones",
-      "Integración con analytics",
-      "Formularios de contacto avanzados"
+      "E-Commerce personalizados",
+      "Landing Pages optimizadas",
+      "Aplicaciones Web escalables",
+      "Portafolios profesionales"
     ],
     icon: <div className="w-6 h-6" />,
     color: "#08a696",
     gradient: "from-custom-3/30 via-custom-2/20 to-custom-4/30",
-    image: "/imagenes/home/negocios/landing.webp"
+    image: "/imagenes/home/negocios/landing.webp",
+    category: "Desarrollo de Software"
   },
   {
     id: 2,
-    title: "E-commerce",
-    subtitle: "Vende online sin límites",
-    description: "Tiendas online completas con gestión de inventario, pagos seguros y experiencia de compra excepcional.",
+    title: "Sistemas de Información",
+    subtitle: "Datos que impulsan decisiones",
+    description: "Los datos son un activo estratégico. Comprenderlos, gestionarlos y convertirlos en decisiones estratégicas es lo que marca la diferencia.",
     features: [
-      "Catálogo de productos dinámico",
-      "Pasarelas de pago integradas",
-      "Panel de administración",
-      "Sistema de inventario"
+      "Dashboards & Analytics",
+      "Sistemas de gestión empresarial",
+      "Análisis avanzado de datos",
+      "Reportes interactivos"
     ],
     icon: <div className="w-6 h-6" />,
     color: "#26ffdf",
     gradient: "from-custom-4/30 via-custom-3/20 to-custom-2/30",
-    image: "/imagenes/home/negocios/e-comerce.webp"
+    image: "/imagenes/home/negocios/portafolio.webp",
+    category: "Sistemas de Información"
   },
   {
     id: 3,
-    title: "Portfolio",
-    subtitle: "Muestra tu mejor trabajo",
-    description: "Portafolios profesionales que destacan tu trabajo y atraen a clientes potenciales con diseño impactante.",
+    title: "Automatización de Tareas",
+    subtitle: "Optimiza y libera tu tiempo",
+    description: "Optimizamos tus procesos empresariales mediante la automatización inteligente, liberando tiempo valioso y reduciendo errores humanos.",
     features: [
-      "Galería de proyectos interactiva",
-      "Secciones personalizables",
-      "Optimización SEO",
-      "Formulario de contacto"
+      "Bots & Agentes IA",
+      "Workflows automatizados",
+      "Integraciones de sistemas",
+      "Herramientas de productividad"
     ],
     icon: <div className="w-6 h-6" />,
     color: "#1e7d7d",
     gradient: "from-custom-2/30 via-custom-4/20 to-custom-3/30",
-    image: "/imagenes/home/negocios/portafolio.webp"
-  },
-  {
-    id: 4,
-    title: "Personalizada",
-    subtitle: "Tu visión hecha realidad",
-    description: "Soluciones web completamente personalizadas adaptadas a tus necesidades específicas y objetivos únicos.",
-    features: [
-      "Desarrollo a medida",
-      "Funcionalidades específicas",
-      "Integración con sistemas",
-      "Soporte técnico completo"
-    ],
-    icon: <div className="w-6 h-6" />,
-    color: "#025159",
-    gradient: "from-custom-1/30 via-custom-3/20 to-custom-4/30",
-    image: "/imagenes/home/negocios/personalizada.webp"
+    image: "/imagenes/home/negocios/personalizada.webp",
+    category: "Automatización de Tareas"
   }
 ]
 
-export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelectorProps = {}) {
+export default function OptionsSelector({ setIsUnifiedModalOpen, onCategorySelect }: OptionsSelectorProps = {}) {
   const [activeOption, setActiveOptionState] = useState<number>(0)
 
-  const handleOptionClick = (id: number) => {
-    setActiveOptionState(activeOption === id ? 0 : id)
+  const handleOptionClick = (option: OptionData) => {
+    // Si ya está activa, navegar a proyectos
+    if (activeOption === option.id) {
+      scrollToProjects(option.category)
+    } else {
+      // Mostrar detalles
+      setActiveOptionState(option.id)
+    }
+  }
+
+  const scrollToProjects = (category?: string) => {
+    const projectsSection = document.querySelector('.project-bank-section')
+    if (projectsSection) {
+      projectsSection.scrollIntoView({ behavior: 'smooth' })
+      
+      // Notificar la categoría seleccionada si hay callback
+      if (onCategorySelect && category) {
+        setTimeout(() => {
+          onCategorySelect(category)
+        }, 800)
+      }
+    }
   }
 
   return (
@@ -122,7 +131,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                 className={`relative cursor-pointer transition-all duration-700 ease-out rounded-xl overflow-hidden group ${
                   activeOption === option.id ? 'flex-[3]' : 'flex-1'
                 }`}
-                onClick={() => handleOptionClick(option.id)}
+                onClick={() => handleOptionClick(option)}
                 animate={{
                   y: activeOption === option.id ? 0 : [0, -8, 0],
                   transition: activeOption === option.id ? 
@@ -215,6 +224,21 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                               </motion.div>
                             ))}
                           </div>
+                          
+                          {/* Botón Ver Proyectos */}
+                          <motion.button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              scrollToProjects(option.category)
+                            }}
+                            className="w-full bg-white/90 hover:bg-white text-custom-3 font-semibold py-2 px-4 transition-all duration-300 flex items-center justify-center gap-2"
+                            style={{ borderRadius: 0 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <span>Ver Proyectos</span>
+                            <ArrowRight className="w-4 h-4" />
+                          </motion.button>
                         </div>
                       </motion.div>
                     )}
@@ -265,7 +289,7 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                 className={`cursor-pointer relative z-10 flex items-center ${
                   activeOption === option.id ? 'p-5' : 'min-h-[180px] p-5'
                 }`}
-                onClick={() => handleOptionClick(option.id)}
+                onClick={() => handleOptionClick(option)}
               >
                 <div className="flex items-center justify-between w-full">
                   {/* Solo mostrar título e icono cuando está expandida en móvil */}
@@ -350,6 +374,21 @@ export default function OptionsSelector({ setIsUnifiedModalOpen }: OptionsSelect
                           </motion.div>
                         ))}
                       </div>
+                      
+                      {/* Botón Ver Proyectos Mobile */}
+                      <motion.button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          scrollToProjects(option.category)
+                        }}
+                        className="w-full bg-white/90 hover:bg-white text-custom-3 font-semibold py-2 px-4 transition-all duration-300 flex items-center justify-center gap-2"
+                        style={{ borderRadius: 0 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span>Ver Proyectos</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </motion.button>
                     </div>
                   </motion.div>
                 )}

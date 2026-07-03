@@ -1,0 +1,101 @@
+import type { Plan, Product } from "@/components/shop/packages/PackagePromotion"
+
+export const iotPlans: Plan[] = [
+  {
+    id: "iot-starter",
+    name: "Starter Network",
+    price: 180000,
+    features: [
+      "2x ESP32 WiFi básicos",
+      "Alcance hasta 100m",
+      "Configuración punto a punto",
+      "Software de monitoreo básico",
+      "Guía de configuración",
+    ],
+    folios: 0,
+    cta: "Comenzar Red Básica",
+  },
+  {
+    id: "iot-advanced",
+    name: "Advanced LoRa",
+    price: 349000,
+    features: [
+      "2x ESP32 Heltec V4 WiFi LoRa",
+      "M5Stack Core2 ESP32 Hub",
+      "Alcance hasta 10km",
+      "Antenas LoRa de alto alcance",
+      "Red mesh configurable",
+      "Software de gestión avanzado",
+      "Soporte técnico prioritario",
+    ],
+    folios: 0,
+    isPopular: true,
+    cta: "Montar Red LoRa",
+  },
+  {
+    id: "iot-enterprise",
+    name: "Enterprise Mesh",
+    price: 699000,
+    features: [
+      "Todo lo del plan Advanced",
+      "4x ESP32 Heltec V4 adicionales",
+      "Gateway IoT multicapa profesional",
+      "Módulos de comunicación RF",
+      "Alcance hasta 30km",
+      "Sistema redundante",
+      "Monitoreo en tiempo real",
+      "Capacitación especializada",
+      "Soporte VIP dedicado",
+    ],
+    folios: 0,
+    cta: "Desplegar Red Enterprise",
+  },
+]
+
+export const iotProducts: Product[] = [
+  {
+    id: "lora-node",
+    name: "Nodo LoRa ESP32",
+    description: "Nodo de comunicación de largo alcance con tecnología LoRa",
+    image: "/imagenes/productos/lora-node.jpg",
+    price: 95000,
+    features: [
+      "Comunicación hasta 10km",
+      "Bajo consumo energético",
+      "Batería de larga duración",
+      "Encriptación AES-256",
+      "Firmware actualizable OTA",
+      "Compatible con LoRaWAN",
+    ],
+  },
+  {
+    id: "iot-gateway",
+    name: "Gateway IoT Multicapa",
+    description: "Puente de comunicación entre redes LoRa, WiFi y Internet",
+    image: "/imagenes/productos/iot-gateway.jpg",
+    price: 280000,
+    features: [
+      "Soporte LoRa + WiFi + Ethernet",
+      "Procesamiento local de datos",
+      "Almacenamiento interno 32GB",
+      "Panel web de administración",
+      "Hasta 1000 dispositivos conectados",
+      "API REST completa",
+    ],
+  },
+  {
+    id: "mesh-hub",
+    name: "M5Stack Core2 Hub",
+    description: "Hub central para redes mesh IoT con pantalla táctil",
+    image: "/imagenes/productos/m5stack-core2.jpg",
+    price: 165000,
+    features: [
+      "Pantalla táctil 2\" a color",
+      "ESP32 dual-core",
+      "WiFi + Bluetooth 5.0",
+      "Expansión modular",
+      "Batería 390mAh",
+      "Compatible con UIFlow",
+    ],
+  },
+]

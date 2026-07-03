@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { LogIn } from "lucide-react"
 
-export function FloatingLoginButton() {
+interface FloatingLoginButtonProps {
+  isTiendaPage?: boolean
+}
+
+export function FloatingLoginButton({ isTiendaPage = false }: FloatingLoginButtonProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const router = useRouter()
@@ -27,7 +31,8 @@ export function FloatingLoginButton() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-8 right-24 z-50 hidden md:block"
+          className="fixed right-24 z-50 hidden md:block"
+          style={{ top: isTiendaPage ? '60px' : '32px' }}
           initial={{ scale: 0, rotate: 180 }}
           animate={{ scale: 1, rotate: 0 }}
           exit={{ scale: 0, rotate: 180 }}

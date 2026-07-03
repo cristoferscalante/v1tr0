@@ -25,3 +25,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+tsc_output*.txt
+
+# backups
+*.backup
+package-lock.json.backup
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+tests/screenshots/
+tests/videos/

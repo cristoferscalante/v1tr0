@@ -1,0 +1,20 @@
+/**
+ * Design System - V1TR0
+ * 
+ * Sistema de diseño modular y reutilizable.
+ * Importa todos los módulos del sistema de diseño.
+ */
+
+/* ===== VARIABLES Y TOKENS ===== */
+@import './_variables.css';
+
+/* ===== TIPOGRAFÍA ===== */
+@import './_typography.css';
+
+/* ===== ANIMACIONES ===== */
+@import './_animations.css';
+
+/* ===== COMPONENTES ===== */
+@import './_components.css';
+
+/* Exportar para uso en otros archivos */

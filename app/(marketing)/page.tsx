@@ -8,6 +8,7 @@ import SoftwareDevelopmentBanner from "@/components/home/sections/carrusel-compo
 import InformationSystemsPage from "@/components/home/sections/carrusel-componentes/InformationSystemsPage"
 import TaskAutomationPage from "@/components/home/sections/carrusel-componentes/TaskAutomationPage"
 import ConsultationAndDemosSection from "@/components/home/sections/contact/ConsultationAndDemosSection"
+import ProjectBankSection from "@/components/home/ProjectBankSection"
 
 
 import PinnedScrollSection from "@/components/home/layout/PinnedScrollSection"
@@ -38,10 +39,13 @@ export default function Home() {
         {/* Sección de Consulta y Demos */}
         <ConsultationAndDemosSection setIsUnifiedModalOpen={setIsUnifiedModalOpen} />
         
-        {/* Sección 3: Tecnologías */}
+        {/* Sección 3: Banco de Proyectos */}
+        <ProjectBankSection />
+        
+        {/* Sección 4: Tecnologías */}
         <TechnologiesSection />
         
-        {/* Sección 4: Footer */}
+        {/* Sección 5: Footer */}
         <FooterSection />
       </HomeScrollSnap>
       
