@@ -35,7 +35,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={bricolageGrotesque.variable} suppressHydrationWarning>
+    <html lang="es" className={`dark ${bricolageGrotesque.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                document.documentElement.classList.add('dark');
+              })();
+            `,
+          }}
+        />
+      </head>
       <body>
         <GsapErrorBoundary>
           <GsapProvider initialDelay={150} maxRetries={5}>

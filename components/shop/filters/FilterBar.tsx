@@ -42,26 +42,26 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-5">
       {/* Search Bar & Filter Toggle */}
       <div className="flex flex-col sm:flex-row gap-3">
-        {/* Search Input */}
+        {/* Search Input - Diseño limpio y sobrio */}
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-textSecondary" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#26FFDF]/40" />
           <input
             type="text"
             placeholder="Buscar productos..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-12 pr-12 py-3 bg-backgroundSecondary/50 backdrop-blur-sm border border-primary/20 rounded-xl text-white placeholder:text-textSecondary focus:outline-none focus:border-primary focus:shadow-glow transition-all duration-300"
+            className="w-full pl-12 pr-12 py-3 bg-[#0f0f10]/60 backdrop-blur-sm border border-[#08A696]/20 text-[#e0e0e0] placeholder:text-[#808080] focus:outline-none focus:border-[#08A696]/50 transition-colors duration-200 font-medium"
           />
           {searchQuery && (
             <button
               onClick={clearSearch}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-primary/20 rounded-full transition-colors"
-              aria-label="Clear search"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-[#08A696]/10 transition-colors"
+              aria-label="Limpiar búsqueda"
             >
-              <X className="w-4 h-4 text-textSecondary" />
+              <X className="w-4 h-4 text-[#808080]" />
             </button>
           )}
         </div>
@@ -69,7 +69,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         {/* Filter Toggle (Mobile) */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="sm:hidden flex items-center justify-center gap-2 px-6 py-3 bg-backgroundSecondary/50 backdrop-blur-sm border border-primary/20 rounded-xl text-white font-semibold transition-all duration-300 hover:border-primary hover:shadow-glow"
+          className="sm:hidden flex items-center justify-center gap-2 px-6 py-3 bg-[#0f0f10]/60 backdrop-blur-sm border border-[#08A696]/20 text-[#e0e0e0] font-medium transition-colors duration-200 hover:border-[#08A696]/40"
         >
           <SlidersHorizontal className="w-5 h-5" />
           Filtros
@@ -77,10 +77,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       {/* Filters Container */}
-      <div className={`space-y-4 ${showFilters ? "block" : "hidden sm:block"}`}>
+      <div className={`space-y-5 ${showFilters ? "block" : "hidden sm:block"}`}>
         {/* Category Filters */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-textSecondary uppercase tracking-wide">
+        <div className="space-y-3">
+          <label className="text-xs font-bold text-[#808080] uppercase tracking-wider">
             Categorías
           </label>
           <div className="flex flex-wrap gap-2">
@@ -98,8 +98,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
         {/* Sort Options */}
         {sortOptions.length > 0 && onSortChange && (
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-textSecondary uppercase tracking-wide">
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-[#808080] uppercase tracking-wider">
               Ordenar por
             </label>
             <div className="flex flex-wrap gap-2">
@@ -136,15 +136,15 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 ${
+      className={`px-4 py-2 font-medium text-sm transition-all duration-200 ${
         isActive
-          ? "bg-primary text-background shadow-glow scale-105"
-          : "bg-backgroundSecondary/50 text-white border border-primary/20 hover:border-primary hover:bg-primary/10"
+          ? "bg-[#08A696]/15 border border-[#08A696]/60 text-[#26FFDF]"
+          : "bg-[#0f0f10]/40 border border-[#08A696]/10 text-[#b0b0b0] hover:border-[#08A696]/30 hover:text-[#e0e0e0]"
       }`}
     >
       {label}
-      {count !== undefined && (
-        <span className={`ml-2 ${isActive ? "text-background/70" : "text-textSecondary"}`}>
+      {count > 0 && (
+        <span className={`ml-2 ${isActive ? "text-[#26FFDF]/60" : "text-[#808080]"}`}>
           ({count})
         </span>
       )}

@@ -1,7 +1,6 @@
 "use client"
 
 
-import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -12,17 +11,7 @@ import BackgroundAnimation from "../home/animations/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
 import { useTheme } from "@/components/theme-provider"
 import AnimatedV1tr0Logo from "./AnimatedV1tr0Logo"
-
-
-// Dynamic import for 3D component (no SSR)
-const V1tr0Logo3D = dynamic(() => import("../3d/V1tr0Logo3D"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="animate-pulse text-highlight text-xl">Cargando experiencia 3D...</div>
-    </div>
-  )
-})
+import AboutHero from "./AboutHero"
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -313,38 +302,17 @@ const About = () => {
     <div ref={containerRef} className="relative">
       <BackgroundAnimation />
       
-      {/* Section 1: Hero 3D */}
-      <section 
+      {/* Section 1: Hero 3D + Storytelling */}
+      <section
         ref={addToRefs}
         role="region"
-        aria-label="Presentación 3D de V1TR0"
-        className={`relative flex items-end justify-center overflow-hidden ${
-          isMobile ? 'min-h-screen py-12 px-4 pt-24' : 'h-screen w-screen pb-20'
+        aria-label="Presentación de V1TR0"
+        className={`relative overflow-hidden ${
+          isMobile ? 'min-h-screen' : 'h-screen w-screen'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
-        {!isMobile ? (
-          <div className="absolute inset-0 w-full h-full mt-16">
-            <V1tr0Logo3D />
-          </div>
-        ) : (
-          <div className="w-full flex items-center justify-center bg-gradient-to-br from-custom-1/20 to-custom-2/20 rounded-2xl mt-4">
-            <div className="text-center py-16 px-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-highlight mb-6">V1TR0</h1>
-              <div className="space-y-4 text-textMuted text-sm sm:text-base leading-relaxed max-w-2xl">
-                <p>
-                  V1TR0 nace en el año 2025 con el propósito de ayudar a las empresas a optimizar el uso de sus recursos a través de la implementación y desarrollo de software hecho a medida.
-                </p>
-                <p>
-                  Apostamos por integrar y optimizar todas las herramientas de gestión y trabajo diario de cualquier entorno empresarial, institucional o corporativo mediante el uso del software.
-                </p>
-                <p>
-                  Analizamos que tipo de necesidades pueden ser resueltas mediante diferentes módulos soportados por nuestros software y ofrecemos una solución adaptada y escalable que nos permita hacerla crecer al ritmo del crecimiento del negocio.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        <AboutHero />
       </section>
 
       {/* Section 2: Team Cards */}

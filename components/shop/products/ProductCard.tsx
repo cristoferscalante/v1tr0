@@ -38,7 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const productImage = product.image || "/imagenes/placeholders/placeholder.jpg";
 
   return (
-    <div className="group relative bg-backgroundSecondary/50 backdrop-blur-sm border border-primary/20 rounded-xl overflow-hidden transition-all duration-300 hover:border-primary hover:shadow-glow">
+    <div className="group relative bg-[#0f0f10]/60 backdrop-blur-sm border border-[#08A696]/20 overflow-hidden transition-all duration-300 hover:border-[#08A696]/50">
       {/* Link wrapper */}
       <Link href={`/tienda/${product.slug}`} className="block">
         {/* Image Container - Minimalista */}

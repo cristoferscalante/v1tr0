@@ -56,6 +56,8 @@ export default function HomeScrollSnap({
     const sections = sectionsRef.current
     const totalSections = sections.length
 
+    console.log('[DEBUG] Total sections:', totalSections, sections)
+
     // Configurar scroll snap limpio (solo desktop)
     const setupScrollSnap = () => {
       // Deshabilitar scroll normal
@@ -64,14 +66,17 @@ export default function HomeScrollSnap({
 
       // Crear ScrollTrigger para cada sección
       sections.forEach((section, index) => {
+        console.log('[DEBUG] Creating ScrollTrigger for section', index, section)
         ScrollTrigger.create({
           trigger: section,
           start: "top center",
           end: "bottom center",
           onEnter: () => {
+            console.log('[DEBUG] onEnter section', index)
             currentSectionRef.current = index
           },
           onEnterBack: () => {
+            console.log('[DEBUG] onEnterBack section', index)
             currentSectionRef.current = index
           }
         })
@@ -79,7 +84,7 @@ export default function HomeScrollSnap({
 
       // Función para resetear el flag de animación de forma segura
       const resetAnimationFlag = () => {
-        // console.log('[DEBUG] Resetting animation flag')
+        console.log('[DEBUG] Resetting animation flag')
         isAnimatingRef.current = false
         if (animationTimeoutRef.current) {
           clearTimeout(animationTimeoutRef.current)
@@ -90,33 +95,33 @@ export default function HomeScrollSnap({
       // Función de navegación snap con manejo de errores robusto - igual que /about
       const goToSection = (index: number) => {
         if (isAnimatingRef.current || index < 0 || index >= totalSections) {
-          // console.log('[DEBUG] Navigation blocked:', { isAnimating: isAnimatingRef.current, index, totalSections })
+          console.log('[DEBUG] Navigation blocked:', { isAnimating: isAnimatingRef.current, index, totalSections })
           return
         }
         
-        // console.log('[DEBUG] Starting navigation:', { from: currentSectionRef.current, to: index })
+        console.log('[DEBUG] Starting navigation:', { from: currentSectionRef.current, to: index })
         isAnimatingRef.current = true
         currentSectionRef.current = index
         
         // Timeout de seguridad para evitar congelamientos
         animationTimeoutRef.current = setTimeout(() => {
-          // console.log('[DEBUG] Animation timeout triggered - force reset')
+          console.log('[DEBUG] Animation timeout triggered - force reset')
           resetAnimationFlag()
-        }, 1500)
+        }, 400) // Reducido de 1500ms a 400ms para scroll instantáneo
         
         gsap.to(window, {
-          duration: 0.8,
+          duration: 0.3, // Reducido de 0.8 a 0.3 para transición instantánea
           scrollTo: {
             y: index * window.innerHeight,
             autoKill: false
           },
           ease: "power2.out",
           onComplete: () => {
-            // console.log('[DEBUG] Animation completed successfully')
+            console.log('[DEBUG] Animation completed successfully')
             resetAnimationFlag()
           },
           onInterrupt: () => {
-            // console.log('[DEBUG] Animation interrupted')
+            console.log('[DEBUG] Animation interrupted')
             resetAnimationFlag()
           }
         })
@@ -126,14 +131,14 @@ export default function HomeScrollSnap({
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault()
         if (isAnimatingRef.current) {
-          // console.log('[DEBUG] Wheel blocked - animation in progress')
+          console.log('[DEBUG] Wheel blocked - animation in progress')
           return
         }
 
         const direction = e.deltaY > 0 ? 1 : -1
         const nextSection = currentSectionRef.current + direction
         
-        // console.log('[DEBUG] Wheel event:', { current: currentSectionRef.current, direction, next: nextSection })
+        console.log('[DEBUG] Wheel event:', { current: currentSectionRef.current, direction, next: nextSection })
         goToSection(nextSection)
       }
 
@@ -211,10 +216,11 @@ export default function HomeScrollSnap({
     return cleanup
   }, [canScrollVertically, isMobile, shouldEnableScrollSnap])
 
-  // Agregar sección a refs
-  const addToRefs = (el: HTMLElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el)
+  // Agregar sección a refs manteniendo el orden por índice
+  const addToRefs = (el: HTMLElement | null, index: number) => {
+    if (el) {
+      console.log('[DEBUG] Adding section to refs at index', index, el)
+      sectionsRef.current[index] = el
     }
   }
 
@@ -248,7 +254,7 @@ export default function HomeScrollSnap({
         return (
           <section 
             key={index}
-            ref={addToRefs}
+            ref={(el) => addToRefs(el, index)}
             role="region"
             aria-label={`Sección ${index + 1}`}
             className={`

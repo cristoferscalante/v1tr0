@@ -3,8 +3,6 @@
 import type React from "react"
 import FooterSection from "@/components/global/FooterSection"
 import FloatingHeader from "@/components/global/FloatingHeader"
-// Importar el botón flotante de login
-import { FloatingLoginButton } from "@/components/auth/FloatingLoginButton"
 import { TopBar } from "@/components/shop/TopBar"
 import { usePathname } from "next/navigation"
 
@@ -17,7 +15,7 @@ export default function MarketingLayout({
   const isServicesNewPage = pathname === '/servicios-referentes/new'
   const isAboutPage = pathname === '/about'
   const isHomePage = pathname === '/'
-  const isTiendaPage = pathname?.startsWith('/tienda') || false // Cambiado para incluir todas las rutas de tienda
+  const isTiendaPage = pathname?.startsWith('/tienda') || false
 
   return (
     <>
@@ -25,7 +23,6 @@ export default function MarketingLayout({
       <FloatingHeader isTiendaPage={isTiendaPage} />
       <main className="min-h-screen">{children}</main>
       {!isServicesNewPage && !isAboutPage && !isHomePage && <FooterSection />}
-      <FloatingLoginButton isTiendaPage={isTiendaPage} /> {/* Botón de login adaptado a tienda */}
     </>
   )
 }

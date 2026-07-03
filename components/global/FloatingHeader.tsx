@@ -16,7 +16,7 @@ export default function FloatingHeader({ isTiendaPage = false }: FloatingHeaderP
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      <div className="flex justify-center items-start pt-4 pointer-events-auto">
+      <div className="flex justify-center items-start pt-4 px-4 sm:px-6 lg:px-8 pointer-events-auto w-full">
         <NavBar />
       </div>
     </motion.header>

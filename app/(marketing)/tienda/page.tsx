@@ -65,9 +65,12 @@ export default function TiendaPage() {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0b0b0c]">
       {/* Hero Section with Carousel */}
       <ShopHeroCarousel />
+
+      {/* Transición suave y minimalista */}
+      <div className="h-16 bg-gradient-to-b from-transparent to-[#0b0b0c]" />
 
       {/* Products Grid Section */}
       <ProductGrid products={mockProducts} onAddToCart={handleAddToCart} />

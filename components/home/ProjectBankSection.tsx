@@ -92,10 +92,10 @@ export default function ProjectBankSection() {
   return (
     <section 
       ref={sectionRef} 
-      className="project-bank-section relative min-h-screen w-full flex items-center justify-center py-12 px-4"
+      className="project-bank-section relative min-h-screen w-full flex items-center justify-center py-8 px-4"
     >
       <motion.div 
-        className="max-w-7xl mx-auto z-10 flex flex-col items-center w-full"
+        className="max-w-6xl mx-auto z-10 flex flex-col items-center w-full scale-90"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -103,20 +103,20 @@ export default function ProjectBankSection() {
       >
         {/* Header */}
         <motion.div
-          className="text-center mb-6"
+          className="text-center mb-4"
           variants={itemVariants}
         >
-          <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-[#08a696]'}`}>
+          <h2 className={`text-xl md:text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-[#08a696]'}`}>
             Banco de Proyectos
           </h2>
-          <p className={`text-sm md:text-base max-w-2xl mx-auto ${isDark ? 'text-[#a0a0a0]' : 'text-[#6b7280]'}`}>
+          <p className={`text-xs md:text-sm max-w-2xl mx-auto ${isDark ? 'text-[#a0a0a0]' : 'text-[#6b7280]'}`}>
             Descubre nuestro trabajo y soluciones tecnológicas desarrolladas
           </p>
         </motion.div>
 
         {/* Tags de categorías minimalistas */}
         <motion.div
-          className="flex flex-wrap gap-2 justify-center mb-8"
+          className="flex flex-wrap gap-2 justify-center mb-6"
           variants={itemVariants}
         >
           {categories.map((category) => {
@@ -128,7 +128,7 @@ export default function ProjectBankSection() {
                 key={category.name}
                 onClick={() => toggleCategory(category.name)}
                 className={`
-                  inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+                  inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
                   transition-all duration-300 border
                   ${isActive 
                     ? isDark 
@@ -142,17 +142,17 @@ export default function ProjectBankSection() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3 h-3" />
                 <span>{category.name}</span>
               </motion.button>
             )
           })}
         </motion.div>
 
-        {/* Grid de proyectos 3x2 - Estilo CardBanner */}
+        {/* Grid de proyectos 3x2 - Estilo CardBanner - Reducido */}
         <motion.div 
           key={activeCategoriesTags.join('-')}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full mb-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 w-full mb-5"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -168,23 +168,23 @@ export default function ProjectBankSection() {
                 className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
               />
               
-              {/* Card principal - igual que CardBanner */}
+              {/* Card principal - Reducido */}
               <div
-                className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} p-4 rounded-xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} flex flex-col transition-all duration-300 transform scale-95 group-hover:scale-98 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} min-h-[200px] w-full h-full shadow-md group-hover:shadow-lg group-hover:shadow-[#08A696]/10`}
+                className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} p-3 rounded-xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} flex flex-col transition-all duration-300 transform scale-95 group-hover:scale-98 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} min-h-[180px] w-full h-full shadow-md group-hover:shadow-lg group-hover:shadow-[#08A696]/10`}
               >
                 {/* Header con categoría y año */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-lg ${isDark ? "bg-[#08A696]/10 text-[#26FFDF]" : "bg-[#08A696]/10 text-[#08A696]"} transition-all duration-300 group-hover:bg-[#08A696]/20`}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-lg ${isDark ? "bg-[#08A696]/10 text-[#26FFDF]" : "bg-[#08A696]/10 text-[#08A696]"} transition-all duration-300 group-hover:bg-[#08A696]/20`}>
                     {project.subcategory}
                   </span>
-                  <span className={`text-xs ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
+                  <span className={`text-[10px] ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
                     {project.year}
                   </span>
                 </div>
                 
-                {/* Video o Imagen del proyecto */}
-                <div className="flex-shrink-0 flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-105 overflow-hidden rounded-lg">
-                  <div className={`relative w-full h-32 ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/10"} group-hover:bg-[#08A696]/20 transition-all duration-300`}>
+                {/* Video o Imagen del proyecto - Más pequeño */}
+                <div className="flex-shrink-0 flex items-center justify-center mb-2 transition-transform duration-300 group-hover:scale-105 overflow-hidden rounded-lg">
+                  <div className={`relative w-full h-24 ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/10"} group-hover:bg-[#08A696]/20 transition-all duration-300`}>
                     {project.video ? (
                       <video
                         src={project.video}
@@ -204,7 +204,7 @@ export default function ProjectBankSection() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <span className={`text-4xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                        <span className={`text-3xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                           {project.title.charAt(0)}
                         </span>
                       </div>
@@ -212,44 +212,44 @@ export default function ProjectBankSection() {
                   </div>
                 </div>
                 
-                {/* Título */}
-                <h3 className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-base mb-2 transition-all duration-300 transform-gpu line-clamp-1`}>
+                {/* Título - Más pequeño */}
+                <h3 className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-sm mb-1.5 transition-all duration-300 transform-gpu line-clamp-1`}>
                   {project.title}
                 </h3>
                 
-                {/* Descripción */}
-                <p className={`text-xs mb-3 line-clamp-2 flex-1 ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
+                {/* Descripción - Más pequeña */}
+                <p className={`text-[11px] mb-2 line-clamp-2 flex-1 ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
                   {project.description}
                 </p>
                 
-                {/* Tecnologías */}
-                <div className="flex flex-wrap gap-1.5 mb-3">
+                {/* Tecnologías - Más pequeñas */}
+                <div className="flex flex-wrap gap-1 mb-2">
                   {project.technologies.slice(0, 3).map((tech, i) => (
                     <span
                       key={i}
-                      className={`px-1.5 py-0.5 text-xs rounded-md ${isDark ? "bg-[#08A696]/5 text-[#26FFDF]/80" : "bg-[#08A696]/5 text-[#08A696]"} border ${isDark ? "border-[#08A696]/10" : "border-[#08A696]/10"}`}
+                      className={`px-1 py-0.5 text-[10px] rounded-md ${isDark ? "bg-[#08A696]/5 text-[#26FFDF]/80" : "bg-[#08A696]/5 text-[#08A696]"} border ${isDark ? "border-[#08A696]/10" : "border-[#08A696]/10"}`}
                     >
                       {tech}
                     </span>
                   ))}
                   {project.technologies.length > 3 && (
-                    <span className={`px-1.5 py-0.5 text-xs ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
+                    <span className={`px-1 py-0.5 text-[10px] ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
                       +{project.technologies.length - 3}
                     </span>
                   )}
                 </div>
                 
-                {/* Botones de acción */}
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* Botones de acción - Más pequeños */}
+                <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-xs font-medium`}
+                      className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-2.5 h-2.5" />
                       <span>Ver</span>
                     </a>
                   )}
@@ -258,10 +258,10 @@ export default function ProjectBankSection() {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-xs font-medium`}
+                      className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Github className="w-3 h-3" />
+                      <Github className="w-2.5 h-2.5" />
                       <span>Code</span>
                     </a>
                   )}
