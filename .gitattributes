@@ -1,0 +1,3 @@
+# Codebase Memory MCP - Artifact del grafo
+# Evitar conflictos de merge en el grafo comprimido
+.codebase-memory/graph.db.zst merge=ours
