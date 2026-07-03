@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Re-indexar el grafo de código después de cada commit
+echo "🔄 Actualizando grafo de código..."
+codebase-memory-mcp cli index_repository "{\"repo_path\": \"$(pwd)\", \"project\": \"v1tr0-web\"}" > /dev/null 2>&1 &
+echo "✅ Grafo actualizado en segundo plano"
