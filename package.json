@@ -6,7 +6,13 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "od:generate": "./scripts/generate-design.sh",
+    "od:component": "od generate component --design-system ./DESIGN.md",
+    "od:prototype": "od generate prototype --design-system ./DESIGN.md",
+    "od:asset": "od generate image --design-system ./DESIGN.md",
+    "od:mcp": "od mcp install opencode",
+    "od:server": "od daemon start"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.3.1",

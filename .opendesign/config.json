@@ -1,0 +1,144 @@
+{
+  "$schema": "https://open-design.ai/schemas/config.json",
+  "version": "0.13.0",
+  "project": {
+    "name": "v1tr0-web",
+    "description": "Plataforma de Gestión de Proyectos y E-Commerce - V1TR0",
+    "type": "web-app",
+    "framework": "next-js-15"
+  },
+  "design": {
+    "systemPath": "./DESIGN.md",
+    "brand": "v1tr0",
+    "theme": "light-dark-auto",
+    "primaryColor": "#08a696",
+    "accentColor": "#1e7d7d"
+  },
+  "components": {
+    "library": "shadcn-ui",
+    "customPath": "./components",
+    "iconLibrary": "lucide-react",
+    "styleFramework": "tailwindcss"
+  },
+  "generation": {
+    "outputDir": "./public/generated",
+    "prototypesDir": "./public/generated/prototypes",
+    "componentsDir": "./components/generated",
+    "assetsDir": "./public/generated/assets",
+    "templatesDir": "./.opendesign/templates"
+  },
+  "automation": {
+    "enabled": true,
+    "workflows": [
+      {
+        "name": "generate-landing-section",
+        "trigger": "manual",
+        "steps": [
+          "read-design-system",
+          "generate-component",
+          "export-html",
+          "save-to-components"
+        ]
+      },
+      {
+        "name": "generate-dashboard-widget",
+        "trigger": "manual",
+        "steps": [
+          "read-design-system",
+          "generate-react-component",
+          "add-typescript-types",
+          "save-to-components"
+        ]
+      },
+      {
+        "name": "generate-marketing-asset",
+        "trigger": "manual",
+        "steps": [
+          "read-design-system",
+          "generate-image",
+          "optimize-webp",
+          "save-to-assets"
+        ]
+      }
+    ]
+  },
+  "export": {
+    "formats": ["html", "react", "pdf", "pptx", "png", "webp"],
+    "optimizeImages": true,
+    "minifyCode": false,
+    "includeSourceMaps": true
+  },
+  "mcp": {
+    "enabled": true,
+    "server": {
+      "host": "localhost",
+      "port": 7456
+    },
+    "agents": [
+      "opencode",
+      "claude",
+      "codex",
+      "cursor"
+    ]
+  },
+  "ai": {
+    "provider": "opencode",
+    "model": "claude-sonnet-4.5",
+    "temperature": 0.7,
+    "maxTokens": 4096,
+    "systemPrompt": "You are a design assistant for V1TR0, a modern project management and e-commerce platform. Always follow the DESIGN.md specifications strictly. Generate components that are responsive, accessible (WCAG 2.1 AA), and include dark mode support. Use the V1TR0 color palette (primary: #08a696, accent: #1e7d7d) and include glow effects for interactive elements."
+  },
+  "skills": {
+    "enabled": [
+      "landing-page",
+      "dashboard-component",
+      "e-commerce-card",
+      "marketing-section",
+      "form-builder",
+      "data-visualization",
+      "3d-hero-section"
+    ],
+    "customSkillsPath": "./.opendesign/skills"
+  },
+  "plugins": {
+    "enabled": [
+      "figma-import",
+      "component-generator",
+      "asset-optimizer",
+      "screenshot-to-code"
+    ],
+    "customPluginsPath": "./.opendesign/plugins"
+  },
+  "library": {
+    "assetsPath": "./public/assets",
+    "logos": {
+      "light": "/assets/logos/v1tr0-logo.svg",
+      "dark": "/assets/logos/v1tr0-logo-dark.svg",
+      "icon": "/assets/logos/v1tr0-icon.svg"
+    },
+    "fonts": {
+      "primary": "Bricolage Grotesque",
+      "mono": "SF Mono"
+    }
+  },
+  "integrations": {
+    "supabase": {
+      "enabled": true,
+      "url": "${NEXT_PUBLIC_SUPABASE_URL}",
+      "anonKey": "${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
+    },
+    "vercel": {
+      "enabled": true,
+      "projectId": "${VERCEL_PROJECT_ID}"
+    },
+    "analytics": {
+      "enabled": false
+    }
+  },
+  "meta": {
+    "createdAt": "2026-07-06T00:00:00.000Z",
+    "updatedAt": "2026-07-06T00:00:00.000Z",
+    "version": "1.0.0",
+    "author": "V1TR0 Team"
+  }
+}
