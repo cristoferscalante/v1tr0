@@ -3,6 +3,7 @@
 import { use } from "react"
 import { notFound } from "next/navigation"
 import { PackagePromotion } from "@/components/shop/packages/PackagePromotion"
+import type { FolioRecharge, Plan, Product } from "@/components/shop/packages/PackagePromotion"
 import { posPlans, posProducts, folioRecharges } from "@/lib/data/posPackageData"
 import { hardwarePlans, hardwareProducts } from "@/lib/data/hardwarePackageData"
 import { iotPlans, iotProducts } from "@/lib/data/iotPackageData"
@@ -20,9 +21,9 @@ export default function PackagePage({ params }: PackagePageProps) {
   let title = ""
   let subtitle = ""
   let heroImage = ""
-  let plans: any[] = []
-  let products: any[] = []
-  let folios: any[] | undefined = undefined
+  let plans: Plan[] = []
+  let products: Product[] = []
+  let folios: FolioRecharge[] | undefined = undefined
 
   switch (slug) {
     case "sistema-pos-gestion-negocio":

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { CodeIcon, GitBranchIcon, ZapIcon, BarChartIcon, PieChartIcon, TrendingUpIcon, SmartToyIcon, SettingsIcon, ShoppingCart, FileText, Smartphone, Globe, Database, Brain, Workflow, Bot, Link as LinkIcon, LayoutGrid, BarChart3, Cpu } from "lucide-react"
+import { BarChartIcon, TrendingUpIcon, SettingsIcon, ShoppingCart, FileText, Smartphone, Globe, Database, Brain, Workflow, Bot, Link as LinkIcon, LayoutGrid, BarChart3, Cpu } from "lucide-react"
 
 const servicesData = [
   {
@@ -252,8 +252,8 @@ export default function ServicesTabSection() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const activeService = servicesData[activeTab]
-  const activeSubcat = activeService.subcategories[activeSubcategory]
+  const activeService = (servicesData[activeTab] ?? servicesData[0])!
+  const activeSubcat = (activeService.subcategories[activeSubcategory] ?? activeService.subcategories[0])!
 
   // Reset subcategory cuando cambia el tab principal
   const handleTabChange = (index: number) => {
@@ -282,6 +282,8 @@ export default function ServicesTabSection() {
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
+
+    return undefined
   }, [isDropdownOpen])
 
   return (
@@ -509,4 +511,3 @@ export default function ServicesTabSection() {
     </section>
   )
 }
-

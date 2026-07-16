@@ -4,7 +4,7 @@ import React from "react"
 import { useTheme } from "@/components/theme-provider"
 import CardViewerPremium from "./card-viewer-premium"
 
-interface TeamMemberProfileProps {
+export interface TeamMemberProfileProps {
   name: string
   role: string
   image: string

@@ -1,17 +1,19 @@
 "use client"
 
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import { useScrollSnapEnabled, useDeviceDetection } from "@/hooks/use-device-detection"
-import TeamMemberProfile from "./TeamMemberProfile"
+import TeamMemberProfile, { type TeamMemberProfileProps } from "./TeamMemberProfile"
 import BackgroundAnimation from "../home/animations/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
 import { useTheme } from "@/components/theme-provider"
 import AnimatedV1tr0Logo from "./AnimatedV1tr0Logo"
 import AboutHero from "./AboutHero"
+
+type TeamMemberData = Omit<TeamMemberProfileProps, "isMobile" | "animationDelay">
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -58,7 +60,9 @@ const teamMembersData = [
     github: "https://github.com/cristoferbolanos",
     linkedin: "https://www.linkedin.com/in/cristofer-bolanos"
   }
-]
+] as const satisfies readonly [TeamMemberData, TeamMemberData]
+
+const [alvaroMember, cristoferMember] = teamMembersData
 
 const About = () => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -233,7 +237,7 @@ const About = () => {
       >
         <div className="max-w-7xl mx-auto w-full">
           <TeamMemberProfile
-            {...teamMembersData[0]}
+            {...alvaroMember}
             isMobile={isMobile}
             animationDelay="0s"
           />
@@ -252,7 +256,7 @@ const About = () => {
       >
         <div className="max-w-7xl mx-auto w-full">
           <TeamMemberProfile
-            {...teamMembersData[1]}
+            {...cristoferMember}
             isMobile={isMobile}
             animationDelay="0.5s"
           />
@@ -329,4 +333,3 @@ const About = () => {
 }
 
 export default About
-
