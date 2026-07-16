@@ -63,25 +63,25 @@ export function PackagePromotion({
   folioRecharges,
 }: PackagePromotionProps) {
   return (
-    <section className="pt-44 pb-12 md:pt-48 md:pb-16 xl:pt-56 2xl:pt-60 bg-[#e6f7f6] dark:bg-[#02505931] backdrop-blur-sm">
-      <div className="mx-auto max-w-6xl 2xl:max-w-[1240px] px-4 sm:px-6 lg:px-8">
+    <section className="pt-56 pb-12 sm:pt-60 md:pt-72 lg:pt-80 md:pb-16 bg-[#e6f7f6] dark:bg-[#02505931] backdrop-blur-sm">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-[3.2rem] font-bold text-[#04423c] dark:text-[#26FFDF] mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#04423c] dark:text-[#26FFDF] mb-4">
             {title}
           </h2>
-          <p className="text-lg md:text-xl xl:text-[1.08rem] text-[#085c54] dark:text-[#b2fff6] max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-[#085c54] dark:text-[#b2fff6] max-w-3xl mx-auto">
             {subtitle}
           </p>
         </div>
 
         {/* Main Content: Image + Products (Left) | Plans (Right) */}
-        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 items-stretch">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 mb-12 md:mb-16 items-stretch">
           {/* Left Column: Hero Image + Products */}
-          <div className="flex flex-col gap-4 md:gap-6 h-full lg:items-center">
+          <div className="flex flex-col gap-4 md:gap-6 h-full">
             {/* Hero Image - Flex-grow para ocupar espacio disponible */}
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#08A696]/10 to-[#26FFDF]/10 p-4 md:p-6 lg:p-7 xl:p-6 flex items-center justify-center flex-1 w-full">
-              <div className="relative w-full h-full min-h-[230px] md:min-h-[280px] lg:min-h-[300px] max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[380px] xl:max-w-[400px] mx-auto flex items-center justify-center">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#08A696]/10 to-[#26FFDF]/10 p-4 md:p-6 lg:p-8 flex items-center justify-center flex-1">
+              <div className="relative w-full h-full min-h-[250px] md:min-h-[300px]">
                 <Image
                   src={heroImage}
                   alt={title}
@@ -106,11 +106,11 @@ export function PackagePromotion({
           </div>
 
           {/* Right Column: Plans - Flex container para distribución uniforme */}
-          <div className="flex flex-col gap-4 md:gap-6 h-full lg:justify-center">
+          <div className="flex flex-col gap-4 md:gap-6 h-full">
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative bg-white/70 dark:bg-[#02505950] backdrop-blur-sm rounded-xl md:rounded-2xl border-2 transition-all duration-300 hover:scale-[1.01] hover:shadow-xl flex-1 ${
+                className={`relative bg-white/70 dark:bg-[#02505950] backdrop-blur-sm rounded-xl md:rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl flex-1 ${
                   plan.isPopular
                     ? "border-[#08A696] shadow-lg shadow-[#08A696]/20"
                     : "border-[#08A696]/60 dark:border-[#08A696]/30 hover:border-[#08A696]"
@@ -126,15 +126,15 @@ export function PackagePromotion({
                   </div>
                 )}
 
-                <div className="p-4 md:p-6 xl:p-5 2xl:p-6">
+                <div className="p-4 md:p-6">
                   <div className="flex flex-col sm:flex-row items-start justify-between gap-3 md:gap-4 mb-4">
                     {/* Plan Info */}
                     <div className="flex-1 w-full sm:w-auto">
-                      <h3 className="text-lg md:text-xl xl:text-[1.05rem] font-bold text-[#04423c] dark:text-[#26FFDF] mb-2">
+                      <h3 className="text-lg md:text-xl font-bold text-[#04423c] dark:text-[#26FFDF] mb-2">
                         {plan.name}
                       </h3>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-2xl md:text-3xl xl:text-[1.9rem] font-bold text-[#08A696] dark:text-[#26FFDF]">
+                        <span className="text-2xl md:text-3xl font-bold text-[#08A696] dark:text-[#26FFDF]">
                           ${plan.price.toLocaleString()}
                         </span>
                         {plan.billingPeriod && (
@@ -149,16 +149,19 @@ export function PackagePromotion({
                     </div>
 
                     {/* CTA Button */}
-                    <button
-                      className={`w-full sm:w-auto px-3 py-2 md:px-4 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${
-                        plan.isPopular
-                          ? "bg-[#08A696] text-white hover:scale-105 hover:shadow-lg hover:shadow-[#08A696]/30"
-                          : "bg-white/70 dark:bg-[#08A696]/20 border border-[#08A696]/80 dark:border-[#08A696]/50 text-[#085c54] dark:text-[#26FFDF] hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30"
-                      }`}
-                    >
-                      <ShoppingCart className="w-3 h-3 md:w-4 md:h-4" />
-                      {plan.cta}
-                    </button>
+                    <div className="relative group w-full sm:w-auto">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
+                      <button
+                        className={`relative w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 whitespace-nowrap text-xs md:text-sm font-semibold ${
+                          plan.isPopular
+                            ? "shadow-lg shadow-[#08A696]/10"
+                            : ""
+                        }`}
+                      >
+                        <ShoppingCart className="w-3 h-3 md:w-4 md:h-4" />
+                        {plan.cta}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Features */}
@@ -223,9 +226,12 @@ export function PackagePromotion({
                     </div>
                   )}
 
-                  <button className="w-full py-2 px-3 md:px-4 bg-white/70 dark:bg-[#08A696]/20 border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold text-xs md:text-sm hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 transition-all duration-300">
-                    Agregar
-                  </button>
+                  <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
+                    <button className="relative w-full py-2 px-3 md:px-4 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] font-semibold text-xs md:text-sm hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transition-all duration-300 transform hover:scale-[1.02]">
+                      Agregar
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

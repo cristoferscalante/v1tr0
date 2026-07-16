@@ -83,6 +83,9 @@ export const ShopHeroCarousel: React.FC = () => {
         </div>
       </div>
       
+      {/* Gradiente inferior: 100% opaco → transparente */}
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent z-[30] pointer-events-none" />
+
       {/* Grid Container - respeta el header */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">

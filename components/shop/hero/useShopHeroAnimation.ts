@@ -21,7 +21,7 @@ export function useShopHeroAnimation(): ShopHeroAnimationState {
     line2: "Tienda V1TR0",
   };
 
-  const subtitle = "Descubre nuestros productos de hardware IoT, sistemas digitales y servicios de desarrollo personalizados. Tecnología de vanguardia para tus proyectos.";
+  const subtitle = "Ciberseguridad, hardware IoT, comunicación descentralizada y facturación. Tecnología de vanguardia para tus proyectos.";
 
   useEffect(() => {
     setMounted(true);

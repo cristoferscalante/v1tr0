@@ -243,7 +243,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 
           {/* Subtítulo */}
           <p className="text-white/60 text-center text-sm md:text-base">
-            Explora nuestro catálogo de hardware, software y servicios profesionales
+            Explora nuestro catálogo de ciberseguridad, hardware, comunicación descentralizada y facturación
           </p>
 
           {/* Search Bar */}

@@ -74,8 +74,8 @@ export default function TiendaPage() {
         {/* Hero Section with Carousel */}
         <ShopHeroCarousel />
 
-      {/* Transición suave y minimalista */}
-      <div className="h-16 bg-gradient-to-b from-transparent to-[#0b0b0c]/50" />
+      {/* Transición suave - el gradiente del hero ya cubre la degradación */}
+      <div className="h-4 bg-background" />
 
       {/* Products Grid Section */}
       <ProductGrid products={mockProducts} onAddToCart={handleAddToCart} />
