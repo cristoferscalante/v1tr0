@@ -24,11 +24,6 @@ const servicesData = [
           { title: "Marketplace Local", description: "Gestión de múltiples vendedores." },
           { title: "Suscripciones", description: "Modelo recurrente automatizado." },
         ],
-        pqr: [
-          { q: "¿Cuánto tarda la implementación?", a: "Depende de la complejidad, pero entregamos MVP en semanas." },
-          { q: "¿Es escalable?", a: "Sí, crecemos junto a tu volumen de ventas." },
-          { q: "¿Qué pasarelas soportan?", a: "Integramos Stripe, PayPal y métodos locales según tu región." },
-        ],
       },
       {
         id: "landing",
@@ -40,11 +35,6 @@ const servicesData = [
           { title: "Landing de Lanzamiento", description: "Campaña de producto nuevo." },
           { title: "Captación de Leads", description: "Página de registro optimizada." },
           { title: "Landing de Evento", description: "Inscripción y gestión de asistentes." },
-        ],
-        pqr: [
-          { q: "¿Mejoran la conversión?", a: "Absolutamente, optimizamos cada elemento para convertir." },
-          { q: "¿Incluyen analítica?", a: "Sí, integramos herramientas para medir visitas y conversiones." },
-          { q: "¿Son rápidas?", a: "Garantizamos tiempos de carga optimizados para SEO." },
         ],
       },
       {
@@ -58,11 +48,6 @@ const servicesData = [
           { title: "Portal de Clientes", description: "Área privada de usuario." },
           { title: "App de Reservas", description: "Gestión de citas profesional." },
         ],
-        pqr: [
-          { q: "¿Qué tecnología usan?", a: "Tecnologías modernas y escalables como React y Node.js." },
-          { q: "¿Soportan miles de usuarios?", a: "Sí, nuestra arquitectura está diseñada para escalar bajo demanda." },
-          { q: "¿Es segura?", a: "Implementamos los estándares más altos de ciberseguridad." },
-        ],
       },
       {
         id: "mobile",
@@ -74,11 +59,6 @@ const servicesData = [
           { title: "App de Delivery", description: "Pedidos en tiempo real." },
           { title: "App de Fitness", description: "Seguimiento de entrenamientos." },
           { title: "App Social", description: "Comunidad y chat en vivo." },
-        ],
-        pqr: [
-          { q: "¿Publicación en tiendas?", a: "Sí, gestionamos todo el proceso con Apple y Google." },
-          { q: "¿Sincronización offline?", a: "Sí, la app funciona sin conexión y sincroniza al volver." },
-          { q: "¿Diseño personalizado?", a: "Crearemos una interfaz única para tu marca." },
         ],
       },
     ],
@@ -103,11 +83,6 @@ const servicesData = [
           { title: "Monitor de Ventas", description: "Seguimiento de KPIs en tiempo real." },
           { title: "Reporte de Marketing", description: "Análisis de conversión y ROI." },
         ],
-        pqr: [
-          { q: "¿Es seguro mi dashboard?", a: "Totalmente. Implementamos encriptación de extremo a extremo." },
-          { q: "¿Se integra con otros sistemas?", a: "Sí, conectamos tus fuentes de datos actuales (SQL, APIs, Excel)." },
-          { q: "¿Es personalizable?", a: "Totalmente, adaptamos los KPIs a tus necesidades reales." },
-        ],
       },
       {
         id: "datamanagement",
@@ -119,11 +94,6 @@ const servicesData = [
           { title: "CRM Centralizado", description: "Gestión de base de clientes y prospectos." },
           { title: "Data Warehouse", description: "Consolidación de datos de múltiples fuentes." },
           { title: "Migración de Datos", description: "Traslado seguro a nuevas plataformas." },
-        ],
-        pqr: [
-          { q: "¿Cómo garantizan la integridad?", a: "Mediante validaciones estrictas y backups automáticos." },
-          { q: "¿Es escalable?", a: "Sí, nuestras bases de datos crecen con tu empresa." },
-          { q: "¿Es compatible con GDPR?", a: "Sí, cumplimos con todas las normativas de protección de datos." },
         ],
       },
       {
@@ -137,11 +107,6 @@ const servicesData = [
           { title: "Segmentación de Clientes", description: "Agrupación basada en comportamiento." },
           { title: "Estudio de Mercado", description: "Análisis de tendencias de industria." },
         ],
-        pqr: [
-          { q: "¿Qué tan precisos son los modelos?", a: "Usamos algoritmos de ML entrenados para alta precisión." },
-          { q: "¿Es fácil de entender?", a: "Traducimos datos complejos a conclusiones simples." },
-          { q: "¿Tienen alertas?", a: "Sí, notificamos anomalías o tendencias clave automáticamente." },
-        ],
       },
       {
         id: "bi",
@@ -153,11 +118,6 @@ const servicesData = [
           { title: "Tablero Estratégico", description: "Vista global del rendimiento empresarial." },
           { title: "Alertas de Riesgo", description: "Notificaciones proactivas de desviaciones." },
           { title: "Informe de Eficiencia", description: "Optimización de procesos internos." },
-        ],
-        pqr: [
-          { q: "¿Es solo para grandes empresas?", a: "No, escalamos la solución según tu tamaño." },
-          { q: "¿Soporta toma de decisiones?", a: "Proporcionamos las herramientas para decidir con datos." },
-          { q: "¿Qué tan frecuente es la actualización?", a: "Los datos se actualizan en tiempo real o diario, según prefieras." },
         ],
       },
     ],
@@ -182,11 +142,6 @@ const servicesData = [
           { title: "Agente de Ventas", description: "Cualificación de leads." },
           { title: "Asistente de Tareas", description: "Agente de productividad." },
         ],
-        pqr: [
-          { q: "¿Es natural el lenguaje?", a: "Usamos IA avanzada para interacciones fluidas." },
-          { q: "¿Qué tareas automatiza?", a: "Atención, respuestas, tareas recurrentes y más." },
-          { q: "¿Requiere mantenimiento?", a: "Nuestros agentes mejoran continuamente con el uso." },
-        ],
       },
       {
         id: "workflows",
@@ -198,11 +153,6 @@ const servicesData = [
           { title: "Gestión de Emails", description: "Clasificación automática." },
           { title: "Carga de Datos", description: "Sincronización entre CRM y ERP." },
           { title: "Automatización de Facturas", description: "Procesamiento y envío." },
-        ],
-        pqr: [
-          { q: "¿Qué sistemas se pueden conectar?", a: "Cualquiera con API o soporte de integración." },
-          { q: "¿Puedo personalizar el flujo?", a: "Sí, creamos flujos a la medida de tu proceso." },
-          { q: "¿Qué pasa si hay un error?", a: "El sistema notifica al administrador de inmediato." },
         ],
       },
       {
@@ -216,11 +166,6 @@ const servicesData = [
           { title: "Conector API", description: "Pasarelas personalizadas." },
           { title: "Integración CRM", description: "Datos unificados de clientes." },
         ],
-        pqr: [
-          { q: "¿Es seguro?", a: "Totalmente, usamos protocolos estándar de la industria." },
-          { q: "¿Qué aplicaciones soportan?", a: "Casi cualquier aplicación moderna con API." },
-          { q: "¿Tienen mantenimiento?", a: "Sí, monitoreamos las integraciones 24/7." },
-        ],
       },
       {
         id: "optimization",
@@ -232,11 +177,6 @@ const servicesData = [
           { title: "Auditoría de Procesos", description: "Identificación de cuellos de botella." },
           { title: "Reducción de Costos", description: "Automatización de tareas caras." },
           { title: "Mejora de Productividad", description: "Optimización de tiempo de equipo." },
-        ],
-        pqr: [
-          { q: "¿Cómo se mide el éxito?", a: "Mediante KPIs claros y aumento de productividad." },
-          { q: "¿Cuánto tarda la optimización?", a: "Depende del proceso, pero los resultados se ven pronto." },
-          { q: "¿Es un proceso continuo?", a: "Sí, buscamos siempre nuevas áreas para mejorar." },
         ],
       },
     ],
@@ -268,6 +208,14 @@ export default function ServicesTabSection() {
     }
   }
 
+  const handleDesktopTabChange = (index: number) => {
+    if (activeTab !== index) {
+      setActiveTab(index)
+      setActiveSubcategory(0)
+    }
+    setIsDropdownOpen(false)
+  }
+
   // Cerrar dropdown al hacer click fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -287,15 +235,15 @@ export default function ServicesTabSection() {
   }, [isDropdownOpen])
 
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center px-4 py-8 snap-start">
-      <div className="max-w-7xl mx-auto w-full">
-        
+    <section className="relative min-h-screen w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-14 pt-12 pb-8 xl:pt-10 xl:pb-6 snap-start">
+      <div className="max-w-[90rem] 2xl:max-w-[100rem] mx-auto w-full">
+
         {/* BENTO GRID LAYOUT */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 auto-rows-auto">
-          
-          {/* BENTO 1: TABS PILLS */}
-          <div className="md:col-span-2 lg:col-span-12 relative" ref={dropdownRef}>
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-5 xl:gap-6 auto-rows-auto">
+
+          {/* BENTO 1: TABS PILLS (móvil) */}
+          <div className="md:col-span-2 lg:hidden relative" ref={dropdownRef}>
+            <div className="flex flex-wrap gap-2 justify-center">
               {servicesData.map((service, index) => {
                 const TabIcon = service.tabIcon
                 const isActive = activeTab === index
@@ -307,30 +255,23 @@ export default function ServicesTabSection() {
                       relative group flex items-center gap-2 px-4 py-2 rounded-full
                       text-sm font-medium overflow-hidden
                       transition-all duration-300
-                      ${isActive 
-                        ? "text-[#26FFDF] scale-100" 
+                      ${isActive
+                        ? "text-[#26FFDF] scale-100"
                         : "text-textMuted/70 hover:text-textPrimary hover:scale-100"
                       }
                     `}
                   >
-                    {/* Gradiente blur activo */}
                     {isActive && (
                       <>
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08A696]/40 to-[#26FFDF]/40 rounded-full blur opacity-60" />
                         <div className="absolute inset-0 bg-[#0d5d5d]/60 backdrop-blur-md border border-[#26FFDF]/40 rounded-full" />
                       </>
                     )}
-                    
-                    {/* Fondo inactivo */}
                     {!isActive && (
                       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm border border-[#0d3d3d]/60 rounded-full transition-all duration-300 group-hover:border-[#26FFDF]/30 group-hover:bg-black/40" />
                     )}
-                    
-                    {/* Contenido */}
                     <TabIcon className={`relative z-10 w-4 h-4 transition-all duration-300 ${isActive ? 'text-[#26FFDF]' : 'text-textMuted/60 group-hover:text-[#26FFDF]/80'}`} />
                     <span className="relative z-10">{service.shortTitle}</span>
-                    
-                    {/* Indicador de dropdown activo */}
                     {isActive && (
                       <motion.div
                         animate={{ rotate: isDropdownOpen ? 180 : 0 }}
@@ -347,7 +288,6 @@ export default function ServicesTabSection() {
               })}
             </div>
 
-
             {/* DROPDOWN FLOTANTE */}
             <AnimatePresence>
               {isDropdownOpen && (
@@ -358,7 +298,7 @@ export default function ServicesTabSection() {
                   transition={{ duration: 0.25, ease: "easeOut" }}
                   className="absolute top-full mt-3 left-0 z-50"
                 >
-                  <div className="flex flex-col gap-0 rounded-2xl overflow-hidden bg-black/60 backdrop-blur-xl border border-[#26FFDF]/20 shadow-2xl min-w-[280px] md:min-w-[340px]">
+                  <div className="flex flex-col gap-0 rounded-2xl overflow-hidden bg-black/60 backdrop-blur-xl border border-[#26FFDF]/20 shadow-2xl min-w-[280px]">
                     {activeService.subcategories.map((subcat, index) => {
                       const IconComponent = subcat.icon
                       return (
@@ -367,38 +307,16 @@ export default function ServicesTabSection() {
                           initial={{ opacity: 0, y: -8 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          transition={{ 
-                            duration: 0.3,
-                            delay: index * 0.06,
-                            ease: [0.25, 0.1, 0.25, 1]
-                          }}
+                          transition={{ duration: 0.3, delay: index * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
                           onMouseEnter={() => setActiveSubcategory(index)}
-                          onClick={() => {
-                            setActiveSubcategory(index)
-                            setIsDropdownOpen(false)
-                          }}
-                          className={`
-                            flex items-center gap-3 px-4 py-3 text-left
-                            transition-all duration-200 
-                            ${activeSubcategory === index
+                          onClick={() => { setActiveSubcategory(index); setIsDropdownOpen(false) }}
+                          className={`flex items-center gap-3 px-4 py-3 text-left transition-all duration-200 ${
+                            activeSubcategory === index
                               ? "bg-[#0d5d5d]/60 text-[#26FFDF]"
                               : "text-textMuted/80 hover:bg-white/5 hover:text-textPrimary"
-                            }
-                            ${index !== activeService.subcategories.length - 1 ? 'border-b border-white/5' : ''}
-                          `}
+                          } ${index !== activeService.subcategories.length - 1 ? 'border-b border-white/5' : ''}`}
                         >
-                          <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ 
-                              duration: 0.3,
-                              delay: index * 0.06 + 0.15,
-                              ease: "easeOut"
-                            }}
-                            className={`flex-shrink-0 ${activeSubcategory === index ? 'text-[#26FFDF]' : 'text-textMuted/60'}`}
-                          >
-                            <IconComponent className="w-4 h-4" />
-                          </motion.div>
+                          <IconComponent className={`w-4 h-4 flex-shrink-0 ${activeSubcategory === index ? 'text-[#26FFDF]' : 'text-textMuted/60'}`} />
                           <span className="text-sm font-medium">{subcat.name}</span>
                         </motion.button>
                       )
@@ -409,7 +327,63 @@ export default function ServicesTabSection() {
             </AnimatePresence>
           </div>
 
-          {/* BENTO 2: IMAGEN GRANDE */}
+          {/* Sidebar desktop: categorías + subcategorías */}
+          <div className="hidden lg:flex lg:col-span-3 lg:row-span-2 flex-col gap-4 rounded-2xl bg-black/30 backdrop-blur-sm border border-[#26FFDF]/10 pt-8 pb-4 px-4 xl:pt-10 xl:pb-5 xl:px-5 min-w-0">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#26FFDF]/80 mb-3">Categorías</p>
+              <div className="space-y-2">
+                {servicesData.map((service, index) => {
+                  const TabIcon = service.tabIcon
+                  const isActive = activeTab === index
+                  return (
+                    <button
+                      key={service.id}
+                      onClick={() => handleDesktopTabChange(index)}
+                      className={`w-full text-left flex items-center gap-2 rounded-xl px-3 py-2.5 border transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#0d5d5d]/60 border-[#26FFDF]/40 text-[#26FFDF]"
+                          : "bg-black/20 border-[#0d3d3d]/60 text-textMuted hover:text-textPrimary hover:border-[#26FFDF]/25"
+                      }`}
+                    >
+                      <TabIcon className="w-4 h-4" />
+                      <span className="text-sm font-medium break-words">{service.shortTitle}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="pt-2 border-t border-[#26FFDF]/15">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#26FFDF]/80 mb-3">Subcategorías</p>
+              <div className="grid grid-cols-2 gap-2">
+                {activeService.subcategories.map((subcat, index) => {
+                  const IconComponent = subcat.icon
+                  const isActive = activeSubcategory === index
+                  return (
+                    <button
+                      key={subcat.id}
+                      onClick={() => setActiveSubcategory(index)}
+                      className={`group/sub relative aspect-square rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#0d5d5d]/60 border-[#26FFDF]/40 text-[#26FFDF]"
+                          : "bg-black/20 border-[#0d3d3d]/60 text-textMuted hover:text-textPrimary hover:border-[#26FFDF]/25 hover:bg-black/30"
+                      }`}
+                      aria-label={subcat.name}
+                    >
+                      <IconComponent className="w-5 h-5 transition-transform duration-300 group-hover/sub:scale-110" />
+                      <span className="text-[10px] font-medium leading-tight text-center px-1 break-words line-clamp-1">
+                        {subcat.name}
+                      </span>
+                      <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 z-50 whitespace-nowrap rounded-lg bg-black/90 border border-[#26FFDF]/30 px-2.5 py-1 text-[11px] font-medium text-[#26FFDF] opacity-0 -translate-y-1 transition-all duration-200 group-hover/sub:opacity-100 group-hover/sub:-translate-y-0">
+                        {subcat.name}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Imagen principal */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -417,9 +391,9 @@ export default function ServicesTabSection() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="md:col-span-2 lg:col-span-7 lg:row-span-2 rounded-2xl bg-gradient-to-br from-[#0d4d4d]/20 to-[#0a3d3d]/10 backdrop-blur-sm border border-[#26FFDF]/10 p-8 flex items-center justify-center overflow-hidden"
+              className="md:col-span-2 lg:col-span-4 rounded-2xl bg-gradient-to-br from-[#0d4d4d]/20 to-[#0a3d3d]/10 backdrop-blur-sm border border-[#26FFDF]/10 pt-8 px-6 pb-6 xl:pt-10 xl:px-6 xl:pb-6 2xl:pt-12 2xl:px-8 2xl:pb-8 flex items-center justify-center overflow-hidden"
             >
-              <div className="relative w-full aspect-square max-w-sm">
+              <div className="relative w-full aspect-square max-w-[280px] xl:max-w-[320px] 2xl:max-w-[360px]">
                 <Image
                   src={activeService.imageSrc}
                   alt={activeService.imageAlt}
@@ -433,7 +407,7 @@ export default function ServicesTabSection() {
             </motion.div>
           </AnimatePresence>
 
-          {/* BENTO 3: TÍTULO Y DESCRIPCIÓN */}
+          {/* Título + descripción */}
           <AnimatePresence mode="wait">
             <motion.div
               key={`title-${activeTab}-${activeSubcategory}`}
@@ -441,21 +415,21 @@ export default function ServicesTabSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="md:col-span-2 lg:col-span-5 rounded-2xl bg-black/30 backdrop-blur-sm border border-[#26FFDF]/10 p-6 md:p-8 flex flex-col justify-center gap-4"
+              className="md:col-span-2 lg:col-span-5 rounded-2xl bg-black/30 backdrop-blur-sm border border-[#26FFDF]/10 pt-8 px-6 pb-6 md:pt-10 md:px-8 md:pb-8 xl:pt-10 xl:px-6 xl:pb-6 2xl:pt-12 2xl:px-8 2xl:pb-8 flex flex-col justify-center gap-4 min-w-0 overflow-hidden"
             >
-              <h3 
+              <h3
                 onClick={() => router.push(activeService.link)}
-                className="text-2xl lg:text-3xl font-bold text-textPrimary leading-tight cursor-pointer transition-all duration-300 hover:text-highlight"
+                className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold text-[#04423c] dark:text-[#26FFDF] leading-tight break-words cursor-pointer transition-all duration-300 hover:text-[#08A696]"
               >
                 {activeSubcat.name}
               </h3>
-              <p className="text-textMuted text-base leading-relaxed">
+              <p className="text-textMuted text-sm md:text-base leading-relaxed break-words">
                 {activeSubcat.description}
               </p>
             </motion.div>
           </AnimatePresence>
 
-          {/* BENTO 4: EXAMPLES */}
+          {/* Ejemplos - ancho completo */}
           <AnimatePresence mode="wait">
             {activeSubcat.examples && activeSubcat.examples.length > 0 && (
               <motion.div
@@ -464,41 +438,17 @@ export default function ServicesTabSection() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }}
-                className="md:col-span-2 lg:col-span-5 rounded-2xl bg-black/20 backdrop-blur-sm border border-[#26FFDF]/10 p-6 md:p-8"
+                className="md:col-span-2 lg:col-span-9 rounded-2xl bg-black/20 backdrop-blur-sm border border-[#26FFDF]/10 pt-8 px-6 pb-6 md:pt-10 md:px-8 md:pb-8 xl:pt-10 xl:px-6 xl:pb-6 2xl:pt-12 2xl:px-8 2xl:pb-8 min-w-0 overflow-hidden"
               >
-                <h4 className="text-lg font-semibold text-textPrimary mb-4">Ejemplos</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <h4 className="text-lg font-semibold text-[#26FFDF] mb-4">Ejemplos</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {activeSubcat.examples.map((example, index) => (
                     <div
                       key={index}
-                      className="bg-[#0d5d5d]/20 border border-[#26FFDF]/10 p-4 rounded-xl hover:border-[#26FFDF]/30 transition-all"
+                      className="bg-[#0d5d5d]/20 border border-[#26FFDF]/10 p-4 rounded-xl hover:border-[#26FFDF]/30 transition-all min-w-0"
                     >
-                      <p className="text-textPrimary text-sm font-medium mb-1">{example.title}</p>
-                      <p className="text-textMuted text-xs leading-snug">{example.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* BENTO 6: PQR */}
-          <AnimatePresence mode="wait">
-            {activeSubcat.pqr && activeSubcat.pqr.length > 0 && (
-              <motion.div
-                key={`pqr-${activeTab}-${activeSubcategory}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, delay: 0.2, ease: "easeOut" }}
-                className="md:col-span-2 lg:col-span-12 rounded-2xl bg-black/40 backdrop-blur-sm border border-[#26FFDF]/20 p-8"
-              >
-                <h4 className="text-xl font-bold text-textPrimary mb-6">Preguntas Recurrentes</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {activeSubcat.pqr.map((item, index) => (
-                    <div key={index} className="flex flex-col gap-2">
-                      <p className="text-[#26FFDF] font-semibold text-sm">Q: {item.q}</p>
-                      <p className="text-textMuted text-sm leading-relaxed">{item.a}</p>
+                      <p className="text-[#26FFDF] text-sm font-medium mb-1 break-words">{example.title}</p>
+                      <p className="text-textMuted text-xs leading-snug break-words">{example.description}</p>
                     </div>
                   ))}
                 </div>
