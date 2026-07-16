@@ -63,25 +63,25 @@ export function PackagePromotion({
   folioRecharges,
 }: PackagePromotionProps) {
   return (
-    <section className="pt-40 pb-12 md:pt-48 md:pb-16 bg-[#e6f7f6] dark:bg-[#02505931] backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="pt-44 pb-12 md:pt-48 md:pb-16 xl:pt-56 2xl:pt-60 bg-[#e6f7f6] dark:bg-[#02505931] backdrop-blur-sm">
+      <div className="mx-auto max-w-6xl 2xl:max-w-[1240px] px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#04423c] dark:text-[#26FFDF] mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-[3.2rem] font-bold text-[#04423c] dark:text-[#26FFDF] mb-4">
             {title}
           </h2>
-          <p className="text-lg md:text-xl text-[#085c54] dark:text-[#b2fff6] max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl xl:text-[1.08rem] text-[#085c54] dark:text-[#b2fff6] max-w-3xl mx-auto">
             {subtitle}
           </p>
         </div>
 
         {/* Main Content: Image + Products (Left) | Plans (Right) */}
-        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 mb-12 md:mb-16 items-stretch">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 items-stretch">
           {/* Left Column: Hero Image + Products */}
-          <div className="flex flex-col gap-4 md:gap-6 h-full">
+          <div className="flex flex-col gap-4 md:gap-6 h-full lg:items-center">
             {/* Hero Image - Flex-grow para ocupar espacio disponible */}
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#08A696]/10 to-[#26FFDF]/10 p-4 md:p-6 lg:p-8 flex items-center justify-center flex-1">
-              <div className="relative w-full h-full min-h-[250px] md:min-h-[300px]">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#08A696]/10 to-[#26FFDF]/10 p-4 md:p-6 lg:p-7 xl:p-6 flex items-center justify-center flex-1 w-full">
+              <div className="relative w-full h-full min-h-[230px] md:min-h-[280px] lg:min-h-[300px] max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[380px] xl:max-w-[400px] mx-auto flex items-center justify-center">
                 <Image
                   src={heroImage}
                   alt={title}
@@ -106,11 +106,11 @@ export function PackagePromotion({
           </div>
 
           {/* Right Column: Plans - Flex container para distribución uniforme */}
-          <div className="flex flex-col gap-4 md:gap-6 h-full">
+          <div className="flex flex-col gap-4 md:gap-6 h-full lg:justify-center">
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative bg-white/70 dark:bg-[#02505950] backdrop-blur-sm rounded-xl md:rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl flex-1 ${
+                className={`relative bg-white/70 dark:bg-[#02505950] backdrop-blur-sm rounded-xl md:rounded-2xl border-2 transition-all duration-300 hover:scale-[1.01] hover:shadow-xl flex-1 ${
                   plan.isPopular
                     ? "border-[#08A696] shadow-lg shadow-[#08A696]/20"
                     : "border-[#08A696]/60 dark:border-[#08A696]/30 hover:border-[#08A696]"
@@ -126,15 +126,15 @@ export function PackagePromotion({
                   </div>
                 )}
 
-                <div className="p-4 md:p-6">
+                <div className="p-4 md:p-6 xl:p-5 2xl:p-6">
                   <div className="flex flex-col sm:flex-row items-start justify-between gap-3 md:gap-4 mb-4">
                     {/* Plan Info */}
                     <div className="flex-1 w-full sm:w-auto">
-                      <h3 className="text-lg md:text-xl font-bold text-[#04423c] dark:text-[#26FFDF] mb-2">
+                      <h3 className="text-lg md:text-xl xl:text-[1.05rem] font-bold text-[#04423c] dark:text-[#26FFDF] mb-2">
                         {plan.name}
                       </h3>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-2xl md:text-3xl font-bold text-[#08A696] dark:text-[#26FFDF]">
+                        <span className="text-2xl md:text-3xl xl:text-[1.9rem] font-bold text-[#08A696] dark:text-[#26FFDF]">
                           ${plan.price.toLocaleString()}
                         </span>
                         {plan.billingPeriod && (
