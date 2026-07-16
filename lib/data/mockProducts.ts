@@ -269,19 +269,48 @@ export const detailedProducts: ProductDetailed[] = [
  * Productos mock originales (simplificados para listado)
  */
 export const mockProducts: Product[] = [
-  ...detailedProducts.map((p) => ({
-    id: p.id,
-    name: p.name,
-    slug: p.slug,
-    description: p.description,
-    price: p.price,
-    ...(p.originalPrice !== undefined && { originalPrice: p.originalPrice }),
-    image: p.image,
-    category: p.category,
-    stock: p.stock,
-    ...(p.featured !== undefined && { featured: p.featured }),
-    ...(p.badge !== undefined && { badge: p.badge }),
-  })),
+  // Productos detallados mapeados
+  {
+    id: "1",
+    name: "Cyber Deck Pro - Kit Completo",
+    slug: "cyber-deck-pro-kit",
+    description: "Plataforma profesional de pentesting WiFi y análisis de redes IoT. Incluye herramientas de deauthentication, packet sniffing, y auditoría de seguridad wireless. Firmware preconfigurado con scripts de ethical hacking.",
+    price: 299,
+    originalPrice: 399,
+    image: "/imagenes/home/negocios/personalizada.webp",
+    category: "hardware",
+    stock: 8,
+    featured: true,
+    badge: "Destacado",
+    likes: 54800,
+  },
+  {
+    id: "3",
+    name: "Cardputer ESP32 - DevKit",
+    slug: "cardputer-esp32",
+    description: "Terminal portátil de pentesting con teclado mecánico QWERTY. Ideal para wardriving, análisis de redes WiFi en campo y ejecución de scripts de auditoría. Interfaz CLI para herramientas de seguridad.",
+    price: 89,
+    originalPrice: 119,
+    image: "/imagenes/home/negocios/portafolio.webp",
+    category: "hardware",
+    stock: 22,
+    featured: true,
+    likes: 32400,
+  },
+  {
+    id: "7",
+    name: "Sistema POS Cloud - Licencia Anual",
+    slug: "pos-cloud-anual",
+    description: "Sistema de punto de venta en la nube con gestión de inventario, ventas, clientes y reportes en tiempo real.",
+    price: 499,
+    originalPrice: 699,
+    image: "/imagenes/home/negocios/e-comerce.webp",
+    category: "software",
+    stock: 999,
+    featured: true,
+    badge: "Más vendido",
+    likes: 78900,
+  },
   // Resto de productos simplificados
   {
     id: "2",
@@ -292,6 +321,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/portafolio.webp",
     category: "hardware",
     stock: 15,
+    likes: 42300,
   },
   {
     id: "4",
@@ -302,6 +332,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/e-comerce.webp",
     category: "hardware",
     stock: 35,
+    likes: 32400,
   },
   {
     id: "5",
@@ -313,6 +344,7 @@ export const mockProducts: Product[] = [
     category: "hardware",
     stock: 12,
     badge: "Nuevo",
+    likes: 86600,
   },
   {
     id: "6",
@@ -323,6 +355,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/personalizada.webp",
     category: "hardware",
     stock: 18,
+    likes: 54800,
   },
   {
     id: "8",
@@ -334,6 +367,7 @@ export const mockProducts: Product[] = [
     category: "software",
     stock: 999,
     featured: true,
+    likes: 78900,
   },
   {
     id: "9",
@@ -344,6 +378,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/portafolio.webp",
     category: "software",
     stock: 999,
+    likes: 45200,
   },
   {
     id: "10",
@@ -355,6 +390,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/landing.webp",
     category: "software",
     stock: 999,
+    likes: 67100,
   },
   {
     id: "11",
@@ -367,6 +403,7 @@ export const mockProducts: Product[] = [
     stock: 5,
     featured: true,
     badge: "Premium",
+    likes: 93400,
   },
   {
     id: "16",
@@ -378,6 +415,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/portafolio.webp",
     category: "hardware",
     stock: 25,
+    likes: 38700,
   },
   {
     id: "18",
@@ -388,6 +426,7 @@ export const mockProducts: Product[] = [
     image: "/imagenes/home/negocios/landing.webp",
     category: "hardware",
     stock: 0,
+    likes: 21500,
   },
 ];
 

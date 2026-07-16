@@ -2,9 +2,14 @@
 
 import React, { useState, useMemo } from "react";
 import { ProductCard, type Product } from "./ProductCard";
-import { FilterBar, type FilterOption } from "../filters/FilterBar";
-import { TechGridBackground } from "../background/TechGridBackground";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { SmartSearchBar } from "../search/SmartSearchBar";
+
+export interface FilterOption {
+  id: string;
+  label: string;
+  count?: number;
+}
 
 interface ProductGridProps {
   products: Product[];
@@ -22,6 +27,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   const [activeSort, setActiveSort] = useState("featured");
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Get unique categories with counts
   const categories: FilterOption[] = useMemo(() => {
@@ -144,10 +150,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         key="prev"
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-3 py-2 bg-[#0f0f10]/40 border border-[#08A696]/20  font-medium transition-colors duration-200 hover:border-[#08A696]/40 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-[#08A696]/20"
+        className="px-3 py-2 bg-[#0b0b0c]/60 border border-primary/30 rounded-lg font-medium transition-colors duration-200 hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-primary/30"
         aria-label="Página anterior"
       >
-        <ChevronLeft className="w-5 h-5 text-[#b0b0b0]" />
+        <ChevronLeft className="w-5 h-5 text-white/70" />
       </button>
     );
 
@@ -157,14 +163,14 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <button
           key={1}
           onClick={() => handlePageChange(1)}
-          className="px-4 py-2 bg-[#0f0f10]/40 border border-[#08A696]/20  font-medium transition-colors duration-200 hover:border-[#08A696]/40 text-[#b0b0b0] hover:text-[#e0e0e0]"
+          className="px-4 py-2 bg-[#0b0b0c]/60 border border-primary/30 rounded-lg font-medium transition-colors duration-200 hover:border-primary text-white/70 hover:text-white"
         >
           1
         </button>
       );
       if (startPage > 2) {
         buttons.push(
-          <span key="ellipsis1" className="px-2 text-[#808080] font-medium">
+          <span key="ellipsis1" className="px-2 text-white/40 font-medium">
             ...
           </span>
         );
@@ -177,10 +183,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`px-4 py-2 border  font-medium transition-colors duration-200 ${
+          className={`px-4 py-2 border rounded-lg font-medium transition-colors duration-200 ${
             i === currentPage
-              ? "bg-[#08A696]/15 border-[#08A696]/60 text-[#26FFDF]"
-              : "bg-[#0f0f10]/40 border-[#08A696]/20 text-[#b0b0b0] hover:border-[#08A696]/40 hover:text-[#e0e0e0]"
+              ? "bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(8,166,150,0.3)]"
+              : "bg-[#0b0b0c]/60 border-primary/30 text-white/70 hover:border-primary hover:text-white"
           }`}
         >
           {i}
@@ -192,7 +198,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         buttons.push(
-          <span key="ellipsis2" className="px-2 text-[#808080] font-medium">
+          <span key="ellipsis2" className="px-2 text-white/40 font-medium">
             ...
           </span>
         );
@@ -201,7 +207,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <button
           key={totalPages}
           onClick={() => handlePageChange(totalPages)}
-          className="px-4 py-2 bg-[#0f0f10]/40 border border-[#08A696]/20  font-medium transition-colors duration-200 hover:border-[#08A696]/40 text-[#b0b0b0] hover:text-[#e0e0e0]"
+          className="px-4 py-2 bg-[#0b0b0c]/60 border border-primary/30 rounded-lg font-medium transition-colors duration-200 hover:border-primary text-white/70 hover:text-white"
         >
           {totalPages}
         </button>
@@ -214,10 +220,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         key="next"
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-3 py-2 bg-[#0f0f10]/40 border border-[#08A696]/20  font-medium transition-colors duration-200 hover:border-[#08A696]/40 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-[#08A696]/20"
+        className="px-3 py-2 bg-[#0b0b0c]/60 border border-primary/30 rounded-lg font-medium transition-colors duration-200 hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-primary/30"
         aria-label="Página siguiente"
       >
-        <ChevronRight className="w-5 h-5 text-[#b0b0b0]" />
+        <ChevronRight className="w-5 h-5 text-white/70" />
       </button>
     );
 
@@ -225,78 +231,174 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   };
 
   return (
-    <section className="relative w-full pt-0 pb-16 px-4 overflow-hidden">
-      {/* Tech Grid Background - Iconos sutiles estilo Matrix */}
-      <div className="absolute inset-0 z-0">
-        <TechGridBackground />
+    <section className="relative w-full">
+      {/* Search Section - Simplificada sin fondo */}
+      <div className="w-full py-8 md:py-12 px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="max-w-[1400px] mx-auto space-y-4 md:space-y-6">
+          {/* Título */}
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center leading-tight">
+            Encuentra tu{" "}
+            <span className="text-primary">Producto Ideal</span>
+          </h2>
+
+          {/* Subtítulo */}
+          <p className="text-white/60 text-center text-sm md:text-base">
+            Explora nuestro catálogo de hardware, software y servicios profesionales
+          </p>
+
+          {/* Search Bar */}
+          <div className="max-w-3xl mx-auto">
+            <SmartSearchBar
+              products={products}
+              onSearch={setSearchQuery}
+              searchQuery={searchQuery}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="relative z-20 max-w-7xl mx-auto space-y-6 pt-8">
-        {/* Filter Bar */}
-        <FilterBar
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-          onSearch={setSearchQuery}
-          sortOptions={sortOptions}
-          activeSort={activeSort}
-          onSortChange={setActiveSort}
-        />
+      {/* Main Content Container */}
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Results Count */}
-        <div className="flex items-center justify-between">
-          <p className="text-[#b0b0b0] font-medium text-sm">
-            Mostrando <span className="text-[#e0e0e0] font-semibold">{paginatedProducts.length}</span> de <span className="text-[#e0e0e0] font-semibold">{filteredProducts.length}</span> productos
-            {searchQuery && (
-              <span> para &quot;<span className="text-[#26FFDF]">{searchQuery}</span>&quot;</span>
-            )}
-          </p>
-          {totalPages > 1 && (
-            <p className="text-[#b0b0b0] text-sm font-medium">
-              Página <span className="text-[#e0e0e0]">{currentPage}</span> de <span className="text-[#e0e0e0]">{totalPages}</span>
-            </p>
-          )}
-        </div>
+        {/* Mobile Filter Toggle */}
+        <button
+          onClick={() => setShowMobileFilters(!showMobileFilters)}
+          className="lg:hidden w-full mb-6 flex items-center justify-center gap-2 px-6 py-3 bg-[#0f0f10]/80 backdrop-blur-md border-2 border-primary/30 text-white font-semibold rounded-xl transition-all duration-200 hover:border-primary"
+        >
+          <SlidersHorizontal className="w-5 h-5" />
+          {showMobileFilters ? "Ocultar Filtros" : "Mostrar Filtros"}
+        </button>
 
-        {/* Products Grid - 3 columnas */}
-        {paginatedProducts.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  {...(onAddToCart && { onAddToCart })}
-                  onToggleFavorite={toggleFavorite}
-                  isFavorite={favorites.has(product.id)}
-                />
-              ))}
+        {/* Main Layout: Sidebar + Products */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* LEFT SIDEBAR - Filters & Categories */}
+          <aside className={`lg:w-72 flex-shrink-0 ${showMobileFilters ? "block" : "hidden lg:block"}`}>
+            <div className="sticky top-24 space-y-6">
+              {/* Categories Section */}
+              <div className="bg-[#0f0f10]/80 backdrop-blur-md border-2 border-primary/20 rounded-2xl p-6">
+                <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                  <span className="w-1 h-6 bg-primary rounded-full"></span>
+                  Categorías
+                </h3>
+                <div className="space-y-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => {
+                        setActiveCategory(category.id);
+                        setCurrentPage(1);
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 flex items-center justify-between group ${
+                        activeCategory === category.id
+                          ? "bg-primary/20 text-primary border-2 border-primary shadow-lg"
+                          : "bg-transparent text-white/70 hover:bg-primary/5 hover:text-white border-2 border-transparent"
+                      }`}
+                    >
+                      <span>{category.label}</span>
+                      {category.count !== undefined && (
+                        <span
+                          className={`text-xs px-2.5 py-1 rounded-lg font-semibold ${
+                            activeCategory === category.id
+                              ? "bg-primary/30 text-white"
+                              : "bg-[#0b0b0c]/60 text-white/50 group-hover:bg-primary/10"
+                          }`}
+                        >
+                          {category.count}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sort Options Section */}
+              <div className="bg-[#0f0f10]/80 backdrop-blur-md border-2 border-primary/20 rounded-2xl p-6">
+                <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                  <span className="w-1 h-6 bg-primary rounded-full"></span>
+                  Ordenar por
+                </h3>
+                <div className="space-y-2">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      onClick={() => {
+                        setActiveSort(option.id);
+                        setCurrentPage(1);
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
+                        activeSort === option.id
+                          ? "bg-primary/20 text-primary border-2 border-primary shadow-lg"
+                          : "bg-transparent text-white/70 hover:bg-primary/5 hover:text-white border-2 border-transparent"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* RIGHT CONTENT - Products Grid */}
+          <div className="flex-1 min-w-0">
+            {/* Results Count */}
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-white/70 font-medium text-sm">
+                Mostrando <span className="text-white font-semibold">{paginatedProducts.length}</span> de{" "}
+                <span className="text-white font-semibold">{filteredProducts.length}</span> productos
+                {searchQuery && (
+                  <span> para &quot;<span className="text-primary">{searchQuery}</span>&quot;</span>
+                )}
+              </p>
+              {totalPages > 1 && (
+                <p className="text-white/70 text-sm font-medium hidden sm:block">
+                  Página <span className="text-white">{currentPage}</span> de{" "}
+                  <span className="text-white">{totalPages}</span>
+                </p>
+              )}
             </div>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-8">
-                {renderPaginationButtons()}
+            {/* Products Grid - Responsive */}
+            {paginatedProducts.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {paginatedProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      {...(onAddToCart && { onAddToCart })}
+                      onToggleFavorite={toggleFavorite}
+                      isFavorite={favorites.has(product.id)}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-10">
+                    {renderPaginationButtons()}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-20 bg-[#0f0f10]/40 backdrop-blur-md border-2 border-primary/20 rounded-2xl">
+                <p className="text-white/70 text-lg font-medium mb-6">
+                  No se encontraron productos
+                  {searchQuery && ` para "${searchQuery}"`}
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setActiveCategory("all");
+                  }}
+                  className="px-8 py-3 bg-transparent border-2 border-primary rounded-xl text-primary font-semibold transition-all duration-300 hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(8,166,150,0.3)]"
+                >
+                  Limpiar filtros
+                </button>
               </div>
             )}
-          </>
-        ) : (
-          <div className="text-center py-20">
-            <p className="text-[#b0b0b0] text-lg font-medium mb-6">
-              No se encontraron productos
-              {searchQuery && ` para "${searchQuery}"`}
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setActiveCategory("all");
-              }}
-              className="px-6 py-3 bg-[#08A696]/15 border border-[#08A696]/40  text-[#26FFDF] font-medium transition-colors duration-200 hover:bg-[#08A696]/25 hover:border-[#08A696]/60"
-            >
-              Limpiar filtros
-            </button>
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

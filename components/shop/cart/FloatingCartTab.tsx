@@ -14,6 +14,18 @@ export function FloatingCartTab({ onToggle, cartCount, isCartOpen: externalIsOpe
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [drawerOffset, setDrawerOffset] = useState(480)
+
+  // Actualizar offset según tamaño de ventana
+  useEffect(() => {
+    const updateOffset = () => {
+      setDrawerOffset(window.innerWidth < 768 ? window.innerWidth : 480);
+    };
+    
+    updateOffset();
+    window.addEventListener('resize', updateOffset);
+    return () => window.removeEventListener('resize', updateOffset);
+  }, []);
 
   // Mostrar el botón después de un pequeño retraso para la animación inicial
   useEffect(() => {
@@ -57,17 +69,14 @@ export function FloatingCartTab({ onToggle, cartCount, isCartOpen: externalIsOpe
     setIsOpen(!isOpen);
   }
 
-  // Ancho del drawer cuando está abierto
-  const drawerWidth = 480; // 480px = sm:w-[480px] del CartDrawer
-
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-1/2 -translate-y-1/2 z-[75] hidden md:block"
+          className="fixed top-1/2 -translate-y-1/2 z-[75]"
           initial={{ right: -200 }}
           animate={{ 
-            right: isOpen ? drawerWidth : 0,
+            right: isOpen ? drawerOffset : 0,
           }}
           transition={{
             type: "spring",
@@ -80,12 +89,12 @@ export function FloatingCartTab({ onToggle, cartCount, isCartOpen: externalIsOpe
           <motion.button
             className="relative flex items-center justify-center bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border-2 border-r-0 border-[#08A696]/60 dark:border-[#08A696]/30 rounded-l-2xl text-[#08A696] dark:text-[#26FFDF] shadow-xl transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] overflow-hidden"
             style={{
-              paddingTop: "1rem",
-              paddingBottom: "1rem",
-              paddingLeft: isHovered && !isOpen ? "1.5rem" : "1rem",
-              paddingRight: isHovered && !isOpen ? "1.5rem" : "1rem",
-              minWidth: "3.5rem",
-              height: "3.5rem",
+              paddingTop: "0.75rem",
+              paddingBottom: "0.75rem",
+              paddingLeft: isHovered && !isOpen ? "1.25rem" : "0.75rem",
+              paddingRight: isHovered && !isOpen ? "1.25rem" : "0.75rem",
+              minWidth: "3rem",
+              height: "3rem",
               boxShadow: "0 10px 40px rgba(8, 166, 150, 0.15), 0 5px 20px rgba(38, 255, 223, 0.1)",
             }}
             whileHover={{ scale: 1.05, x: -4 }}
@@ -102,10 +111,10 @@ export function FloatingCartTab({ onToggle, cartCount, isCartOpen: externalIsOpe
               className="relative flex-shrink-0"
             >
               {isOpen ? (
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 md:w-5 md:h-5" />
               ) : (
                 <>
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                   {/* Badge contador */}
                   {cartCount > 0 && (
                     <motion.span
@@ -120,9 +129,9 @@ export function FloatingCartTab({ onToggle, cartCount, isCartOpen: externalIsOpe
               )}
             </motion.div>
 
-            {/* Texto horizontal - solo visible en hover cuando está cerrado */}
+            {/* Texto horizontal - solo visible en hover cuando está cerrado y en desktop */}
             <motion.span
-              className="text-sm font-bold tracking-wider uppercase whitespace-nowrap"
+              className="hidden md:block text-sm font-bold tracking-wider uppercase whitespace-nowrap"
               animate={{ 
                 opacity: isOpen ? 0 : (isHovered ? 1 : 0),
                 width: isOpen ? 0 : (isHovered ? "auto" : 0),

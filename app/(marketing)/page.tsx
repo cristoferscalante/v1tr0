@@ -4,13 +4,9 @@
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import HomeBanner from "@/components/home/sections/banner/HomeBanner"
 import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
-import SoftwareDevelopmentBanner from "@/components/home/sections/carrusel-componentes/SoftwareDevelopmentBanner"
-import InformationSystemsPage from "@/components/home/sections/carrusel-componentes/InformationSystemsPage"
-import TaskAutomationPage from "@/components/home/sections/carrusel-componentes/TaskAutomationPage"
+import ServicesTabSection from "@/components/home/sections/ServicesTabSection"
 import ProjectBankSection from "@/components/home/ProjectBankSection"
 
-
-import PinnedScrollSection from "@/components/home/layout/PinnedScrollSection"
 import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
 import UnifiedContactModal from "@/components/home/sections/contact/UnifiedContactModal"
@@ -28,12 +24,8 @@ export default function Home() {
         {/* Sección 1: Hero */}
         <HomeBanner />
         
-        {/* Sección 2: Servicios (Scroll Horizontal) */}
-        <PinnedScrollSection>
-          <SoftwareDevelopmentBanner />
-          <InformationSystemsPage />
-          <TaskAutomationPage />
-        </PinnedScrollSection>
+        {/* Sección 2: Servicios con Tabs */}
+        <ServicesTabSection />
         
         {/* Sección 3: Banco de Proyectos */}
         <ProjectBankSection />

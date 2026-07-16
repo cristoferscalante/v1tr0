@@ -6,7 +6,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import { useScrollSnapEnabled, useDeviceDetection } from "@/hooks/use-device-detection"
-import CardViewerPremium from "./card-viewer-premium"
+import TeamMemberProfile from "./TeamMemberProfile"
 import BackgroundAnimation from "../home/animations/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
 import { useTheme } from "@/components/theme-provider"
@@ -18,141 +18,47 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 }
 
-// Team Member Slider Component
-const TeamMemberSlider = ({ isMobile }: { isMobile: boolean }) => {
-  const [currentMember, setCurrentMember] = useState(0)
-  
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
-  const navigationButtonBase =
-    "flex items-center justify-center w-12 h-12 backdrop-blur-sm border rounded-full shadow-lg transition-all duration-300 hover:border-[#08A696] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-110"
-  
-  const navigationButtonBorder = isDark
-    ? "border-[#08A696]/30"
-    : "border-[#08A696]/60"
-
-  const navigationButtonTheme = isDark
-    ? "bg-[#02505931] text-[#26FFDF]"
-    : "bg-white/90 text-[#08A696] hover:bg-[#08A696]/10"
-
-  const teamMembers = [
-    {
-      name: "Alvaro Efren B.S.",
-      role: "CEO & Fundador",
-      image: "/imagenes/about/cards/card-efren.webp",
-      biography: "Soy politólogo y desarrollador de software apasionado por transformar datos en soluciones con impacto social. He trabajado con varias agencias de Cooperación Internacional creando sistemas de información y dashboards que fortalecen la coordinación humanitaria en contextos de emergencia. Domino Python, bases de datos relacionales y NoSQL, además de front-end con Next.js y TailwindCSS. Mi enfoque une tecnología y análisis social para diseñar herramientas que generan decisiones estratégicas y valor sostenible que aporten al desarrollo de las comunidades y las empresas."
-    },
-    {
-      name: "Cristofer Bolaños Scalante",
-      role: "CTO & Fundador",
-      image: "/imagenes/about/cards/card-cristofer.webp",
-      biography: "Experto en arquitectura de software y tecnologías emergentes, líder en innovación tecnológica. Responsable de la dirección técnica y la implementación de las mejores prácticas de desarrollo. Su expertise incluye desarrollos a medida, microservicios, automatizaciones, infraestructura, seguridad, integraciones APIREST y tecnologías de vanguardia."
-    }
-  ]
-
-  const nextMember = () => {
-    setCurrentMember((prev) => (prev + 1) % teamMembers.length)
+// Team Members Data
+const teamMembersData = [
+  {
+    name: "Alvaro Efren B.S.",
+    role: "CEO & Fundador",
+    image: "/imagenes/about/cards/card-efren.webp",
+    biography: "Soy politólogo y desarrollador de software apasionado por transformar datos en soluciones con impacto social. He trabajado con varias agencias de Cooperación Internacional creando sistemas de información y dashboards que fortalecen la coordinación humanitaria en contextos de emergencia. Domino Python, bases de datos relacionales y NoSQL, además de front-end con Next.js y TailwindCSS. Mi enfoque une tecnología y análisis social para diseñar herramientas que generan decisiones estratégicas y valor sostenible que aporten al desarrollo de las comunidades y las empresas.",
+    specialties: [
+      "Python",
+      "Next.js",
+      "TailwindCSS",
+      "PostgreSQL",
+      "MongoDB",
+      "Data Visualization",
+      "Dashboards",
+      "Ciencia de Datos",
+      "Análisis Social"
+    ],
+    github: "https://github.com/alvaroefren",
+    linkedin: "https://www.linkedin.com/in/alvaro-efren"
+  },
+  {
+    name: "Cristofer Bolaños Scalante",
+    role: "CTO & Fundador",
+    image: "/imagenes/about/cards/card-cristofer.webp",
+    biography: "Experto en arquitectura de software y tecnologías emergentes, líder en innovación tecnológica. Responsable de la dirección técnica y la implementación de las mejores prácticas de desarrollo. Su expertise incluye desarrollos a medida, microservicios, automatizaciones, infraestructura, seguridad, integraciones APIREST y tecnologías de vanguardia.",
+    specialties: [
+      "Arquitectura de Software",
+      "Microservicios",
+      "DevOps",
+      "Cloud Infrastructure",
+      "API REST",
+      "Seguridad",
+      "Automatización",
+      "Node.js",
+      "Docker"
+    ],
+    github: "https://github.com/cristoferbolanos",
+    linkedin: "https://www.linkedin.com/in/cristofer-bolanos"
   }
-
-  const prevMember = () => {
-    setCurrentMember((prev) => (prev - 1 + teamMembers.length) % teamMembers.length)
-  }
-
-  const member = teamMembers[currentMember]
-
-  if (!member) {
-    return null
-  }
-
-  return (
-    <div className="relative">
-      {/* Main Content */}
-      <div className={`flex items-center gap-8 ${
-        isMobile ? 'flex-col' : 'flex-row'
-      }`}>
-        {/* Card Section */}
-        <div className={`flex-shrink-0 ${
-          // Slightly larger cards for professionals (small increase)
-          isMobile ? 'w-full max-w-[300px]' : 'w-[420px]'
-        }`}>
-          <div className={`w-full mx-auto ${
-            isMobile ? 'h-[450px]' : 'h-[480px]'
-          }`}>
-            <CardViewerPremium 
-              frontImage={member.image} 
-              backImage="/imagenes/about/cards/card-back.webp" 
-            />
-          </div>
-        </div>
-
-        {/* Info Section */}
-        <div className={`flex-1 space-y-6 ${
-          isMobile ? 'text-center' : 'text-left'
-        }`}>
-          <div>
-            <h2 className={`font-bold tracking-tighter text-textPrimary mb-2 ${
-              isMobile ? 'text-2xl sm:text-3xl text-center' : 'text-3xl md:text-4xl lg:text-5xl text-left'
-            }`}>
-              {member.name}
-            </h2>
-            <p className={`text-highlight font-medium ${
-              isMobile ? 'text-base' : 'text-lg md:text-xl'
-            }`}>
-              {member.role}
-            </p>
-          </div>
-          
-          <div className={`text-textMuted leading-relaxed ${
-            isMobile ? 'text-sm' : 'text-base md:text-lg'
-          }`}>
-            <p>{member.biography}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Arrows */}
-      <div className={`flex items-center justify-center gap-4 ${
-        isMobile ? 'mt-8' : 'mt-12'
-      }`}>
-        <button
-          onClick={prevMember}
-          className={`${navigationButtonBase} ${navigationButtonBorder} ${navigationButtonTheme}`}
-          aria-label="Miembro anterior"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        
-        <div className="flex gap-2">
-          {teamMembers.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentMember(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentMember 
-                  ? 'bg-highlight shadow-lg shadow-highlight/30' 
-                  : 'bg-[#08A696]/30 hover:bg-[#08A696]/50'
-              }`}
-              aria-label={`Ir a ${teamMembers[index]?.name || 'miembro'}`}
-            />
-          ))}
-        </div>
-        
-        <button
-          onClick={nextMember}
-          className={`${navigationButtonBase} ${navigationButtonBorder} ${navigationButtonTheme}`}
-          aria-label="Siguiente miembro"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  )
-}
+]
 
 const About = () => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -315,175 +221,41 @@ const About = () => {
         <AboutHero />
       </section>
 
-      {/* Section 2: Team Cards */}
+      {/* Section 2: Alvaro Card */}
       <section 
         ref={addToRefs}
         role="region"
-        aria-label="Nuestro equipo"
-        className={`relative flex items-center justify-center overflow-hidden ${
-          isMobile ? 'py-12 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
+        aria-label="CEO"
+        className={`relative flex items-center justify-center overflow-x-hidden ${
+          isMobile ? 'py-12 px-2 sm:px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
-        {/* Badge eliminado */}
-
-        <div className="max-w-6xl mx-auto w-full">
-          {/* Team Member Display */}
-          <TeamMemberSlider isMobile={isMobile} />
+        <div className="max-w-7xl mx-auto w-full">
+          <TeamMemberProfile
+            {...teamMembersData[0]}
+            isMobile={isMobile}
+            animationDelay="0s"
+          />
         </div>
       </section>
 
-      {/* Section 3: Services */}
+      {/* Section 3: Cristofer Card */}
       <section 
         ref={addToRefs}
         role="region"
-        aria-label="Nuestros servicios"
-        className={`relative flex items-center justify-center overflow-hidden ${
-          isMobile ? 'py-16 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
+        aria-label="CTO"
+        className={`relative flex items-center justify-center overflow-x-hidden ${
+          isMobile ? 'py-16 px-2 sm:px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
-        <div className="max-w-5xl mx-auto w-full">
-          <div className={`text-center ${
-            isMobile ? 'mb-6' : 'mb-8'
-          }`}>
-            <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium mb-3">
-              Servicios
-            </div>
-            <h3 className={`font-bold tracking-tighter text-textPrimary mb-4 ${
-              isMobile ? 'text-xl sm:text-2xl' : 'text-2xl md:text-3xl lg:text-4xl'
-            }`}>
-              Nuestros Servicios
-            </h3>
-            <p className={`text-textMuted max-w-2xl mx-auto ${
-              isMobile ? 'text-sm' : 'text-base md:text-lg'
-            }`}>
-              Soluciones integrales para impulsar tu negocio hacia el futuro digital
-            </p>
-          </div>
-
-          <div className={`gap-6 md:gap-8 ${
-            isMobile ? 'flex flex-col space-y-4' : 'grid lg:grid-cols-2'
-          }`}>
-            {/* Development */}
-            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
-              isMobile ? 'p-4' : 'p-6'
-            }`}>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
-                  }`}>
-                    <svg className={`text-highlight ${
-                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
-                    }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-2 ${
-                    isMobile ? 'text-base' : 'text-lg'
-                  }`}>Desarrollo de Software</h4>
-                  <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-xs' : 'text-sm'
-                  }`}>
-                    Creamos aplicaciones web y móviles robustas utilizando las últimas tecnologías como React, Next.js,
-                    Node.js y bases de datos modernas.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Data Science */}
-            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
-              isMobile ? 'p-4' : 'p-6'
-            }`}>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
-                  }`}>
-                    <svg className={`text-highlight ${
-                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
-                    }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-2 ${
-                    isMobile ? 'text-base' : 'text-lg'
-                  }`}>Ciencia de Datos</h4>
-                  <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-xs' : 'text-sm'
-                  }`}>
-                    Transformamos datos en insights accionables mediante análisis avanzado, machine learning y
-                    inteligencia artificial.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Project Management */}
-            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
-              isMobile ? 'p-4' : 'p-6'
-            }`}>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
-                  }`}>
-                    <svg className={`text-highlight ${
-                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
-                    }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-2 ${
-                    isMobile ? 'text-base' : 'text-lg'
-                  }`}>Gestión de Proyectos</h4>
-                  <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-xs' : 'text-sm'
-                  }`}>
-                    Implementamos metodologías ágiles como Scrum y Kanban para optimizar la entrega de proyectos.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Data Visualization */}
-            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
-              isMobile ? 'p-4' : 'p-6'
-            }`}>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className={`bg-highlight/20 rounded-xl flex items-center justify-center ${
-                    isMobile ? 'w-8 h-8' : 'w-10 h-10'
-                  }`}>
-                    <svg className={`text-highlight ${
-                      isMobile ? 'w-4 h-4' : 'w-5 h-5'
-                    }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h4 className={`font-bold text-textPrimary mb-2 ${
-                    isMobile ? 'text-base' : 'text-lg'
-                  }`}>Visualización de Datos</h4>
-                  <p className={`text-textMuted leading-relaxed ${
-                    isMobile ? 'text-xs' : 'text-sm'
-                  }`}>
-                    Creamos dashboards interactivos y visualizaciones impactantes que facilitan la comprensión de
-                    datos complejos.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto w-full">
+          <TeamMemberProfile
+            {...teamMembersData[1]}
+            isMobile={isMobile}
+            animationDelay="0.5s"
+          />
         </div>
       </section>
 

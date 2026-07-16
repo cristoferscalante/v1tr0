@@ -7,6 +7,7 @@ import { CartDrawer } from "@/components/shop/cart/CartDrawer";
 import { FloatingCartTab } from "@/components/shop/cart/FloatingCartTab";
 import { mockProducts } from "@/lib/data/mockProducts";
 import type { Product } from "@/components/shop/products/ProductCard";
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation";
 
 interface CartItem extends Product {
   quantity: number;
@@ -65,12 +66,16 @@ export default function TiendaPage() {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[#0b0b0c]">
-      {/* Hero Section with Carousel */}
-      <ShopHeroCarousel />
+    <>
+      {/* Fondo animado del home reutilizable */}
+      <BackgroundAnimation />
+      
+      <div className="min-h-screen relative">
+        {/* Hero Section with Carousel */}
+        <ShopHeroCarousel />
 
       {/* Transición suave y minimalista */}
-      <div className="h-16 bg-gradient-to-b from-transparent to-[#0b0b0c]" />
+      <div className="h-16 bg-gradient-to-b from-transparent to-[#0b0b0c]/50" />
 
       {/* Products Grid Section */}
       <ProductGrid products={mockProducts} onAddToCart={handleAddToCart} />
@@ -112,5 +117,6 @@ export default function TiendaPage() {
         </div>
       )}
     </div>
+    </>
   );
 }
