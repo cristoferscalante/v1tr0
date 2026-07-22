@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import React from "react";
+import { useTheme } from "@/components/theme-provider";
 
 export interface FilterOption {
   id: string;
@@ -13,141 +13,70 @@ interface FilterBarProps {
   categories: FilterOption[];
   activeCategory: string;
   onCategoryChange: (categoryId: string) => void;
-  onSearch?: (query: string) => void;
-  sortOptions?: FilterOption[];
-  activeSort?: string;
-  onSortChange?: (sortId: string) => void;
+  sortOptions: FilterOption[];
+  activeSort: string;
+  onSortChange: (sortId: string) => void;
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
   categories,
   activeCategory,
   onCategoryChange,
-  onSearch,
-  sortOptions = [],
-  activeSort = "",
+  sortOptions,
+  activeSort,
   onSortChange,
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    onSearch?.(query);
-  };
+  const chipBase = isDark
+    ? "bg-[#02505931] border-[#08A696]/20 text-[#a0a0a0] hover:border-[#08A696] hover:text-[#26FFDF]"
+    : "bg-[#e6f7f6] border-[#08A696]/30 text-[#666666] hover:border-[#08A696] hover:text-[#08A696]"
 
-  const clearSearch = () => {
-    setSearchQuery("");
-    onSearch?.("");
-  };
+  const chipActive = isDark
+    ? "bg-[#08A696]/10 border-[#08A696] text-[#26FFDF]"
+    : "bg-[#08A696]/10 border-[#08A696] text-[#08A696]"
 
   return (
-    <div className="w-full space-y-5">
-      {/* Search Bar & Filter Toggle */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* Search Input - Diseño limpio y sobrio */}
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/40" />
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-12 pr-12 py-3 bg-[#0f0f10]/60 backdrop-blur-sm border border-primary/20 text-white placeholder:text-white/40 focus:outline-none focus:border-primary/50 transition-colors duration-200 font-medium rounded-lg"
-          />
-          {searchQuery && (
-            <button
-              onClick={clearSearch}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-primary/10 rounded transition-colors"
-              aria-label="Limpiar búsqueda"
-            >
-              <X className="w-4 h-4 text-white/60" />
-            </button>
-          )}
-        </div>
-
-        {/* Filter Toggle (Mobile) */}
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="sm:hidden flex items-center justify-center gap-2 px-6 py-3 bg-[#0f0f10]/60 backdrop-blur-sm border border-primary/20 text-white font-medium transition-colors duration-200 hover:border-primary/40 rounded-lg"
-        >
-          <SlidersHorizontal className="w-5 h-5" />
-          Filtros
-        </button>
+    <div className="space-y-4">
+      {/* Categories */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`text-xs font-semibold uppercase tracking-wider mr-1 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>
+          Categorías:
+        </span>
+        {categories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => onCategoryChange(cat.id)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 ${
+              activeCategory === cat.id ? chipActive : chipBase
+            }`}
+          >
+            {cat.label}
+            {cat.count !== undefined && (
+              <span className={`ml-1.5 opacity-60`}>({cat.count})</span>
+            )}
+          </button>
+        ))}
       </div>
 
-      {/* Filters Container */}
-      <div className={`space-y-5 ${showFilters ? "block" : "hidden sm:block"}`}>
-        {/* Category Filters */}
-        <div className="space-y-3">
-          <label className="text-xs font-bold text-white/60 uppercase tracking-wider">
-            Categorías
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <FilterButton
-                key={category.id}
-                label={category.label}
-                count={category.count ?? 0}
-                isActive={activeCategory === category.id}
-                onClick={() => onCategoryChange(category.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Sort Options */}
-        {sortOptions.length > 0 && onSortChange && (
-          <div className="space-y-3">
-            <label className="text-xs font-bold text-white/60 uppercase tracking-wider">
-              Ordenar por
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {sortOptions.map((option) => (
-                <FilterButton
-                  key={option.id}
-                  label={option.label}
-                  count={0}
-                  isActive={activeSort === option.id}
-                  onClick={() => onSortChange(option.id)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+      {/* Sort */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`text-xs font-semibold uppercase tracking-wider mr-1 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>
+          Ordenar:
+        </span>
+        {sortOptions.map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => onSortChange(opt.id)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 ${
+              activeSort === opt.id ? chipActive : chipBase
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
     </div>
-  );
-};
-
-interface FilterButtonProps {
-  label: string;
-  count: number;
-  isActive: boolean;
-  onClick: () => void;
+  )
 }
-
-const FilterButton: React.FC<FilterButtonProps> = ({
-  label,
-  count,
-  isActive,
-  onClick,
-}) => {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
-        isActive
-          ? "bg-primary/20 border border-primary text-primary"
-          : "bg-[#0f0f10]/40 border border-primary/20 text-white/70 hover:border-primary/40 hover:text-white"
-      }`}
-    >
-      {label}
-      {count > 0 && (
-        <span className={`ml-2 ${isActive ? "text-primary/80" : "text-white/50"}`}>
-          ({count})
-        </span>
-      )}
-    </button>
-  );
-};

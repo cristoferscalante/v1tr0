@@ -1,63 +1,27 @@
 "use client"
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 export default function AuthCallback() {
   const router = useRouter()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        // Primero verificar si hay un hash con los datos de sesión
-        const hashParams = new URLSearchParams(window.location.hash.substring(1))
-        const accessToken = hashParams.get('access_token')
-        
-        if (accessToken) {
-          // Esperar a que Supabase procese la sesión automáticamente
-          await new Promise(resolve => setTimeout(resolve, 1000))
-        }
+    if (status === "loading") return
 
-        const { data, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error('Error in auth callback:', error)
-          router.push('/login?error=callback_error')
-          return
-        }
-
-        if (data.session) {
-          // Obtener el rol del usuario para redirigir correctamente
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.session.user.id)
-            .single()
-
-          const userRole = profileData?.role || 'client'
-          if (userRole === 'admin') {
-            router.push('/dashboard')
-          } else {
-            router.push('/client-dashboard')
-          }
-        } else {
-          // No hay sesión
-          router.push('/login')
-        }
-      } catch (error) {
-        console.error('Unexpected error in auth callback:', error)
-        router.push('/login?error=unexpected_error')
-      }
+    if (session?.user) {
+      router.push("/client-dashboard")
+    } else {
+      router.push("/login")
     }
-
-    handleAuthCallback()
-  }, [router])
+  }, [session, status, router])
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#08A696]"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#08A696]" />
         <p className="mt-4 text-gray-600">Procesando autenticación...</p>
       </div>
     </div>

@@ -12,13 +12,13 @@ excerpt: "Aprende a evaluar modelos de Deep Learning con métricas avanzadas y s
 
 # 5. Evaluación del Rendimiento y Desafíos Comunes
 
-## 🎯 Introducción
+## Introducción
 
 Aunque la **precisión (accuracy)** es una métrica intuitiva, no siempre es suficiente para una evaluación completa de un modelo. Además, durante el desarrollo de modelos, es común enfrentarse a desafíos como el **sobreajuste** y el **subajuste**, que deben ser identificados y gestionados adecuadamente.
 
 ---
 
-## 📊 La Matriz de Confusión
+## La Matriz de Confusión
 
 Una herramienta más profunda para la evaluación es la **Matriz de Confusión**. Esta tabla visualiza el rendimiento de un algoritmo de clasificación, mostrando explícitamente cuándo una clase es confundida con otra.
 
@@ -59,7 +59,7 @@ plt.show()
 
 ---
 
-## 📈 Métricas Derivadas
+## Métricas Derivadas
 
 ### 1. Precisión (Accuracy)
 
@@ -149,9 +149,9 @@ print(report)
 
 ---
 
-## ⚠️ Desafíos Comunes: Subajuste y Sobreajuste
+## Desafíos Comunes: Subajuste y Sobreajuste
 
-### 🔻 Subajuste (Underfitting)
+### Subajuste (Underfitting)
 
 **Definición:** Ocurre cuando un modelo es demasiado simple para capturar la complejidad subyacente de los datos.
 
@@ -206,7 +206,7 @@ model_complejo = Sequential([
 
 ---
 
-### 🔺 Sobreajuste (Overfitting)
+### Sobreajuste (Overfitting)
 
 **Definición:** Ocurre cuando un modelo es demasiado complejo y "memoriza" los datos de entrenamiento.
 
@@ -315,7 +315,7 @@ history = model.fit(
 
 ---
 
-## 🎯 Resumen de Estrategias
+## Resumen de Estrategias
 
 | **Problema**     | **Síntoma**                              | **Soluciones**                                                                 |
 |------------------|------------------------------------------|--------------------------------------------------------------------------------|
@@ -324,7 +324,7 @@ history = model.fit(
 
 ---
 
-## 🧪 Ejemplo Completo: Pipeline Anti-Overfitting
+## Ejemplo Completo: Pipeline Anti-Overfitting
 
 ```python
 import numpy as np
@@ -387,7 +387,7 @@ print(f"\nPrecisión en test: {test_acc:.4f} ({test_acc*100:.2f}%)")
 
 ---
 
-## 🎓 Conclusión
+## Conclusión
 
 Hemos completado este recorrido por los fundamentos del Deep Learning:
 
@@ -406,7 +406,7 @@ Hemos completado este recorrido por los fundamentos del Deep Learning:
 
 ---
 
-## 📚 Referencias
+## Referencias
 
 - Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep learning*. MIT Press.
 - AWS. (s.f.). ¿En qué consiste el ajuste de hiperparámetros?

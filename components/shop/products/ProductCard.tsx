@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 export interface Product {
   id: string;
@@ -17,7 +18,7 @@ export interface Product {
   stock: number;
   featured?: boolean;
   badge?: string;
-  likes?: number; // Número de likes/favoritos
+  likes?: number;
 }
 
 interface ProductCardProps {
@@ -33,13 +34,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onToggleFavorite,
   isFavorite = false,
 }) => {
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
   const isOutOfStock = product.stock === 0;
   const [localFavorite, setLocalFavorite] = useState(isFavorite);
-  
-  // Usar imagen del producto o fallback a placeholder
+
   const productImage = product.image || "/imagenes/placeholders/placeholder.jpg";
 
-  // Formatear número de likes (54.8k, 32.4k, etc)
   const formatLikes = (num: number = 0) => {
     if (num >= 1000) {
       return `${(num / 1000).toFixed(1)}k`;
@@ -47,7 +48,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     return num.toString();
   };
 
-  // Usar likes del producto o 0 si no está definido (evita hydration mismatch)
   const productLikes = product.likes || 0;
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -60,95 +60,124 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div className="group relative bg-[#0b0b0c]/80 backdrop-blur-sm rounded-2xl md:rounded-3xl border-2 border-primary/30 overflow-hidden transition-all duration-500 hover:border-primary hover:shadow-[0_0_30px_rgba(8,166,150,0.4)] hover:scale-[1.02]">
-      
-      {/* Badge opcional (Featured, Nuevo, etc) */}
-      {product.badge && (
-        <div className="absolute top-2 left-2 md:top-4 md:left-4 z-10 bg-primary/90 backdrop-blur-sm px-2 py-1 md:px-4 md:py-1.5 rounded-full">
-          <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-wide">
-            {product.badge}
-          </span>
-        </div>
-      )}
+    <div className="relative group w-full h-full text-left focus:outline-none focus:ring-2 focus:ring-[#08A696] focus:ring-opacity-50 focus:ring-offset-2 rounded-2xl block transition-all duration-300 hover:transform hover:-translate-y-1">
+      {/* Gradiente exterior - mismo estilo que BlogCard */}
+      <div
+        className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
+      ></div>
 
-      {/* Favorite Button - Siempre visible en esquina superior derecha */}
-      <button
-        onClick={handleToggleFavorite}
-        className="absolute top-2 right-2 md:top-4 md:right-4 z-10 p-1.5 md:p-2.5 rounded-full bg-[#0b0b0c]/80 backdrop-blur-md border border-primary/30 transition-all duration-300 hover:scale-110 hover:bg-[#0b0b0c]/90 hover:border-primary"
-        aria-label={localFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+      {/* Card principal con mismo estilo que BlogCard */}
+      <article
+        className={`relative h-full flex flex-col ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
       >
-        <Heart 
-          className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${
-            localFavorite 
-              ? "fill-primary text-primary" 
-              : "text-white/60 hover:text-primary"
-          }`} 
-        />
-      </button>
+        {/* Badge opcional (Featured, Nuevo, etc) */}
+        {product.badge && (
+          <div className="absolute top-2 left-2 md:top-4 md:left-4 z-10">
+            <span className={`text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-300 ${isDark ? "bg-[#08A696]/10 text-[#26FFDF] border-[#08a696]/50" : "bg-[#08A696]/5 text-[#08a696] border-[#08a696]/30"} border`}>
+              {product.badge}
+            </span>
+          </div>
+        )}
 
-      {/* Link wrapper */}
-      <Link href={`/tienda/${product.slug}`} className="block relative z-[1]">
-        {/* Image Container - Bordes redondeados con padding */}
-        <div className="p-2 pb-0 md:p-4 md:pb-0">
-          <div className="relative aspect-square overflow-hidden rounded-xl md:rounded-2xl bg-[#0b0b0c] border border-primary/20">
+        {/* Favorite Button */}
+        <button
+          onClick={handleToggleFavorite}
+          className={`absolute top-2 right-2 md:top-4 md:right-4 z-10 p-1.5 md:p-2.5 rounded-full backdrop-blur-sm border transition-all duration-300 hover:scale-110 ${isDark ? "bg-[#02505931] border-[#08A696]/20 hover:bg-[#02505950] hover:border-[#08A696]" : "bg-[#e6f7f6] border-[#08A696]/30 hover:bg-[#c5ebe7] hover:border-[#08A696]"}`}
+          aria-label={localFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+        >
+          <Heart
+            className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${
+              localFavorite
+                ? "fill-primary text-primary"
+                : isDark ? "text-[#a0a0a0] hover:text-[#26FFDF]" : "text-[#666666] hover:text-[#08A696]"
+            }`}
+          />
+        </button>
+
+        {/* Link wrapper */}
+        <Link href={`/tienda/${product.slug}`} className="block relative z-[1]">
+          {/* Image Container */}
+          <div className="relative aspect-square w-full overflow-hidden">
             <Image
               src={productImage}
               alt={product.name}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
-        </div>
 
-        {/* Content - Info del producto */}
-        <div className="p-3 pt-2 md:p-6 md:pt-5 space-y-2 md:space-y-4">
-          {/* Product Name + Likes */}
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="text-white font-semibold text-sm md:text-xl line-clamp-1 flex-1">
-              {product.name}
-            </h3>
-            
-            {/* Likes Counter */}
-            <div className="flex items-center gap-1 md:gap-1.5 text-white/70">
-              <span className="text-xs md:text-sm font-medium">
-                {formatLikes(productLikes)}
-              </span>
-              <Heart className="w-3 h-3 md:w-4 md:h-4" />
+          {/* Content - Info del producto */}
+          <div className="flex-1 flex flex-col p-4 md:p-6">
+            {/* Product Name + Likes */}
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <h3 className={`text-lg md:text-xl font-bold line-clamp-1 transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                {product.name}
+              </h3>
+              <div className={`flex items-center gap-1 text-xs ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>
+                <Heart className={`w-3 h-3 ${localFavorite ? "fill-primary text-primary" : ""}`} />
+                <span className="font-medium">{formatLikes(productLikes)}</span>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p
+              className={`text-sm mb-4 flex-1 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}
+              style={{
+                lineHeight: '1.5rem',
+                minHeight: '3rem',
+                maxHeight: '3rem',
+                overflow: 'hidden',
+              }}
+            >
+              {product.description}
+            </p>
+
+            {/* Price and Add to Cart */}
+            <div className={`flex items-center justify-between pt-4 border-t mt-auto ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"}`}>
+              <div className="flex items-baseline gap-2">
+                <span className={`text-xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                  ${product.price.toFixed(2)}
+                </span>
+                {product.originalPrice && (
+                  <span className={`text-sm line-through ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>
+                    ${product.originalPrice.toFixed(2)}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!isOutOfStock && onAddToCart) {
+                    onAddToCart(product);
+                  }
+                }}
+                disabled={isOutOfStock}
+                className={`text-xs font-medium px-3 py-1.5 rounded-full backdrop-blur-sm border transition-all duration-300 ${
+                  isOutOfStock
+                    ? `${isDark ? "bg-[#02505931] text-[#a0a0a0] border-[#08A696]/20" : "bg-[#e6f7f6] text-[#666666] border-[#08A696]/30"} cursor-not-allowed`
+                    : `${isDark ? "bg-[#08A696]/10 text-[#26FFDF] border-[#08a696]/50 hover:bg-[#08A696]/20" : "bg-[#08A696]/5 text-[#08a696] border-[#08a696]/30 hover:bg-[#08A696]/10"}`
+                }`}
+              >
+                {isOutOfStock ? "Sin Stock" : "Agregar"}
+              </button>
             </div>
           </div>
+        </Link>
 
-          {/* Add to Cart Button - Estilo "Place Bid" */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!isOutOfStock && onAddToCart) {
-                onAddToCart(product);
-              }
-            }}
-            disabled={isOutOfStock}
-            className={`w-full py-2 md:py-3.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-base transition-all duration-300 ${
-              isOutOfStock
-                ? "bg-[#0b0b0c]/50 text-white/30 cursor-not-allowed border-2 border-primary/20"
-                : "bg-transparent text-primary border-2 border-primary/60 hover:bg-primary/20 hover:border-primary hover:shadow-[0_0_20px_rgba(8,166,150,0.3)]"
-            }`}
-          >
-            {isOutOfStock ? "Sin Stock" : "Agregar al Carrito"}
-          </button>
-        </div>
-      </Link>
-
-      {/* Out of Stock Overlay */}
-      {isOutOfStock && (
-        <div className="absolute inset-0 bg-[#0b0b0c]/95 backdrop-blur-md rounded-2xl md:rounded-3xl flex items-center justify-center z-20">
-          <div className="text-center space-y-1 md:space-y-2">
-            <span className="text-white/80 font-bold text-lg md:text-2xl uppercase tracking-wider">
-              Agotado
-            </span>
-            <p className="text-primary/70 text-xs md:text-sm">Próximamente disponible</p>
+        {/* Out of Stock Overlay */}
+        {isOutOfStock && (
+          <div className={`absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center z-20 ${isDark ? "bg-[#02505980]" : "bg-[#e6f7f680]"}`}>
+            <div className="text-center space-y-1 md:space-y-2">
+              <span className={`font-bold text-lg md:text-2xl uppercase tracking-wider ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                Agotado
+              </span>
+              <p className={`text-xs md:text-sm ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>Próximamente disponible</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </article>
     </div>
   );
 };

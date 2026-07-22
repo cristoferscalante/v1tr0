@@ -8,12 +8,16 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
-  Package,
   ShoppingBag,
+  ClipboardList,
+  MessageSquare,
+  FolderKanban,
   LogOut,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  CalendarClock,
+  FileBarChart,
 } from "lucide-react"
 
 interface NavItem {
@@ -24,24 +28,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  {
-    id: "dashboard",
-    icon: <LayoutDashboard className="w-5 h-5" />,
-    label: "Dashboard",
-    href: "/admin"
-  },
-  {
-    id: "productos",
-    icon: <ShoppingBag className="w-5 h-5" />,
-    label: "Productos",
-    href: "/admin/productos"
-  },
-  {
-    id: "paquetes",
-    icon: <Package className="w-5 h-5" />,
-    label: "Paquetes",
-    href: "/admin/paquetes"
-  }
+  { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard", href: "/admin" },
+  { id: "pedidos", icon: <ClipboardList className="w-5 h-5" />, label: "Pedidos", href: "/admin/pedidos" },
+  { id: "cotizaciones", icon: <MessageSquare className="w-5 h-5" />, label: "Cotizaciones", href: "/admin/cotizaciones" },
+  { id: "reuniones", icon: <CalendarClock className="w-5 h-5" />, label: "Reuniones", href: "/admin/reuniones" },
+  { id: "proyectos", icon: <FolderKanban className="w-5 h-5" />, label: "Proyectos", href: "/admin/proyectos" },
+  { id: "productos", icon: <ShoppingBag className="w-5 h-5" />, label: "Productos", href: "/admin/productos" },
+  { id: "reportes", icon: <FileBarChart className="w-5 h-5" />, label: "Reportes", href: "/admin/reportes" },
 ]
 
 export default function AdminSidebar() {

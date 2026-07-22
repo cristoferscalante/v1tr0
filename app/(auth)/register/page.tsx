@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { signIn } from 'next-auth/react'
 import { Eye, EyeOff, User, Mail, Lock, CheckCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import NavBar from '@/components/global/NavBar'
@@ -22,7 +22,6 @@ interface ValidationState {
 
 export default function RegisterPage() {
   const router = useRouter()
-  const supabase = createClientComponentClient()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -126,56 +125,11 @@ export default function RegisterPage() {
     )
   }
 
-  // Función para manejar el registro
-  const signUp = async (email: string, password: string, name: string) => {
-    try {
-      // console.log('[REGISTER] Intentando crear cuenta con email:', email)
-
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          data: {
-            name: name.trim(),
-          }
-        }
-      })
-
-      // console.log('[REGISTER] Respuesta de Supabase:', { 
-      //   hasData: !!data, 
-      //   hasUser: !!data?.user,
-      //   error: error?.message 
-      // })
-
-      if (error) {
-        logAuthError(error, 'REGISTER')
-        const authError = getAuthErrorMessage(error)
-        return {
-          success: false,
-          error: authError.message,
-          description: authError.description,
-          action: authError.action
-        }
-      }
-
-      if (data.user) {
-        // console.log('[REGISTER] Usuario creado exitosamente')
-        return { success: true, data: data.user }
-      }
-
-      return {
-        success: false,
-        error: 'No se pudo crear el usuario',
-        description: 'No se recibió información del nuevo usuario.'
-      }
-    } catch (error) {
-      logAuthError(error, 'REGISTER_EXCEPTION')
-      const authError = getAuthErrorMessage(error)
-      return {
-        success: false,
-        error: authError.message,
-        description: authError.description
-      }
+  const signUp = async (_email: string, _password: string, _name: string) => {
+    return {
+      success: false,
+      error: 'Registro con email no disponible',
+      description: 'Por ahora usa Google para crear tu cuenta. El registro con email estará disponible próximamente.'
     }
   }
 
@@ -219,7 +173,7 @@ export default function RegisterPage() {
       } else {
         toast.error(result.error || 'Error al crear la cuenta', {
           description: result.description,
-          action: result.action ? {
+          action: 'action' in result && result.action ? {
             label: 'Entendido',
             onClick: () => { }
           } : undefined,
@@ -457,10 +411,7 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     className="w-full h-[48px] bg-transparent border border-[#08A696]/30 text-white hover:bg-[#08A696]/10 hover:border-[#08A696] transition-all duration-300 rounded-xl flex items-center justify-center space-x-2"
-                    onClick={() => {
-                      // Implementar autenticación con Google
-                      toast.info('Próximamente disponible')
-                    }}
+                    onClick={() => signIn('google', { callbackUrl: '/client-dashboard' })}
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

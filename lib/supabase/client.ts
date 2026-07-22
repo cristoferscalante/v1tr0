@@ -3,32 +3,58 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
-}
-
-// Create standard Supabase client for better session persistence
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined
+function createSupabaseClient() {
+  if (typeof window !== 'undefined' && (!supabaseUrl || !supabaseAnonKey)) {
+    console.warn('[Supabase] Variables de entorno faltantes')
   }
-})
 
-// Utility function to get client safely
-export const getSupabaseClient = () => {
-  return supabase
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return {
+      auth: {
+        getSession: async () => ({ data: { session: null }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+        signOut: async () => {},
+        signInWithOAuth: async () => ({ data: null, error: new Error('Supabase no configurado') }),
+      },
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            single: async () => ({ data: null, error: null }),
+            order: () => ({ data: [], error: null }),
+          }),
+          order: () => ({ data: [], error: null }),
+        }),
+        insert: async () => ({ data: null, error: new Error('Supabase no configurado') }),
+        update: async () => ({ data: null, error: new Error('Supabase no configurado') }),
+        delete: async () => ({ data: null, error: new Error('Supabase no configurado') }),
+      }),
+      channel: () => ({
+        on: () => ({ subscribe: () => {} }),
+        subscribe: () => {},
+      }),
+    } as any
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      storage: typeof window !== 'undefined' ? window.localStorage : undefined
+    }
+  })
 }
 
-// Types for authentication
+export const supabase = createSupabaseClient()
+
+export type ProfileRole = 'client' | 'admin' | 'team'
+
 export interface User {
   id: string
   email: string
   name?: string
   avatar?: string
-  role: 'admin' | 'user'
+  role: ProfileRole
   created_at: string
   updated_at: string
 }
@@ -38,5 +64,5 @@ export interface AuthUser {
   email: string
   name?: string
   avatar?: string
-  role: 'admin' | 'user'
+  role: ProfileRole
 }

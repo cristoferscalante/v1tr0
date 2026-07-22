@@ -18,7 +18,8 @@ import {
   Trash2,
   LogOut,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  BarChart3,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
@@ -429,6 +430,14 @@ export default function ProjectsPage() {
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     Ver
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => router.push(`/dashboard/projects/${project.id}/reporte`)}
+                    className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-yellow-400 hover:bg-background/20 hover:border-yellow-400 rounded-2xl transition-all duration-300"
+                    title="Reporte"
+                  >
+                    <BarChart3 className="w-4 h-4" />
                   </Button>
                   <Button 
                     size="sm"

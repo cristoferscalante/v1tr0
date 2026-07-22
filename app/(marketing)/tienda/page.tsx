@@ -1,39 +1,46 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ShopHeroCarousel } from "@/components/shop/hero/ShopHeroCarousel";
 import { ProductGrid } from "@/components/shop/products/ProductGrid";
 import { CartDrawer } from "@/components/shop/cart/CartDrawer";
 import { FloatingCartTab } from "@/components/shop/cart/FloatingCartTab";
 import { mockProducts } from "@/lib/data/mockProducts";
-import type { Product } from "@/components/shop/products/ProductCard";
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation";
 
-interface CartItem extends Product {
+interface CartItem {
+  id: string;
+  name: string;
   quantity: number;
+  price: number;
+  image: string;
+  category?: string;
 }
 
 export default function TiendaPage() {
+  const router = useRouter()
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showCartNotification, setShowCartNotification] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false)
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: { id: string }) => {
+    const p = mockProducts.find(m => m.id === product.id)
+    if (!p) return
     setCart((prev) => {
       const existingItem = prev.find((item) => item.id === product.id);
       
       if (existingItem) {
-        // Incrementar cantidad
         return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        // Agregar nuevo producto
-        return [...prev, { ...product, quantity: 1 }];
+        return [...prev, { id: p.id, name: p.name, quantity: 1, price: p.price, image: p.image, category: p.category }];
       }
     });
 
@@ -59,6 +66,21 @@ export default function TiendaPage() {
   const handleRemoveItem = (productId: string) => {
     setCart((prev) => prev.filter((item) => item.id !== productId));
   };
+
+  const handleCheckout = async () => {
+    setCheckingOut(true)
+    try {
+      const res = await fetch("/api/checkout", { method: "POST" })
+      if (res.status === 401) { router.push("/login"); return }
+      if (!res.ok) return
+      const data = await res.json()
+      if (data.wompiUrl) window.location.href = data.wompiUrl
+    } catch {
+      // silent
+    } finally {
+      setCheckingOut(false)
+    }
+  }
 
   // Productos recomendados (aleatorios que no están en el carrito)
   const recommendedProducts = mockProducts
@@ -98,6 +120,8 @@ export default function TiendaPage() {
         onRemoveItem={handleRemoveItem}
         recommendedProducts={recommendedProducts}
         onAddRecommended={handleAddToCart}
+        onCheckout={handleCheckout}
+        checkoutLoading={checkingOut}
       />
 
       {/* Cart Notification Toast */}

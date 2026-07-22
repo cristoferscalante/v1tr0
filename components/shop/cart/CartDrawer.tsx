@@ -3,20 +3,25 @@
 import React from "react";
 import Image from "next/image";
 import { X, Minus, Plus, ShoppingCart } from "lucide-react";
-import type { Product } from "@/components/shop/products/ProductCard";
-
-interface CartItem extends Product {
+interface FlatCartItem {
+  id: string;
+  name: string | null;
   quantity: number;
+  price: number;
+  image: string;
+  category?: string;
 }
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  cartItems: CartItem[];
+  cartItems: FlatCartItem[];
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-  recommendedProducts: Product[];
-  onAddRecommended: (product: Product) => void;
+  recommendedProducts?: { id: string; name: string; image: string }[];
+  onAddRecommended?: (product: { id: string }) => void;
+  onCheckout?: () => void;
+  checkoutLoading?: boolean;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -27,6 +32,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onRemoveItem,
   recommendedProducts,
   onAddRecommended,
+  onCheckout,
+  checkoutLoading,
 }) => {
   // Calcular total
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -106,7 +113,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     <div className="relative w-24 h-24 flex-shrink-0 bg-white/50 dark:bg-[#025159]/30 rounded-lg overflow-hidden">
                       <Image
                         src={item.image || "/imagenes/placeholders/placeholder.jpg"}
-                        alt={item.name}
+                        alt={item.name ?? "Producto"}
                         fill
                         className="object-cover"
                       />
@@ -129,7 +136,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                       {/* Category */}
                       <p className="text-[#085c54] dark:text-[#b2fff6] text-xs mb-3">
-                        {item.category}
+                        {item.category ?? "Producto"}
                       </p>
 
                       {/* Price & Quantity */}
@@ -164,7 +171,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 ))}
 
                 {/* Recommended Products */}
-                {recommendedProducts.length > 0 && (
+                {recommendedProducts && recommendedProducts.length > 0 && (
                   <div className="pt-6 border-t border-[#08A696]/60 dark:border-[#08A696]/20">
                     <h3 className="text-[#04423c] dark:text-[#26FFDF] font-semibold mb-4">También te puede gustar:</h3>
                     <div className="space-y-3">
@@ -187,10 +194,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                             </h4>
                             <div className="flex items-center justify-between">
                               <span className="text-[#08A696] dark:text-[#26FFDF] font-bold">
-                                ${product.price.toLocaleString()} COP
+                                {"price" in product ? `$${Number(product.price).toLocaleString()} COP` : ""}
                               </span>
                               <button
-                                onClick={() => onAddRecommended(product)}
+                                  onClick={() => onAddRecommended?.(product)}
                                 className="px-3 py-1.5 bg-[#08A696] text-white text-xs font-semibold rounded-lg hover:scale-105 transition-transform hover:shadow-lg hover:shadow-[#08A696]/20"
                               >
                                 Agregar
@@ -209,13 +216,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           {/* Footer - Totals & Checkout */}
           {cartItems.length > 0 && (
             <div className="border-t border-[#08A696]/60 dark:border-[#08A696]/20 p-6 space-y-4 bg-[#c5ebe7] dark:bg-[#02505950]">
-              {/* Order notes toggle */}
-              <button className="flex items-center gap-2 text-[#085c54] dark:text-[#b2fff6] hover:text-[#08A696] dark:hover:text-[#26FFDF] transition-colors text-sm">
-                <span>✏️</span>
-                <span>Notas del pedido</span>
-                <Plus className="w-4 h-4 ml-auto" />
-              </button>
-
               {/* Total */}
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between">
@@ -230,8 +230,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               </div>
 
               {/* Checkout Button */}
-              <button className="w-full py-4 bg-[#08A696] text-white rounded-2xl font-bold text-lg hover:scale-[1.02] hover:shadow-xl hover:shadow-[#08A696]/30 transition-all duration-300 border-2 border-[#08A696] hover:border-[#26FFDF]">
-                Finalizar compra
+              <button
+                onClick={onCheckout}
+                disabled={checkoutLoading}
+                className="w-full py-4 bg-[#08A696] text-white rounded-2xl font-bold text-lg hover:scale-[1.02] hover:shadow-xl hover:shadow-[#08A696]/30 transition-all duration-300 border-2 border-[#08A696] hover:border-[#26FFDF] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {checkoutLoading ? "Procesando..." : "Finalizar compra"}
               </button>
             </div>
           )}

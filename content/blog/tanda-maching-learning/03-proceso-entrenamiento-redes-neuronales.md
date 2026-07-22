@@ -9,7 +9,7 @@ part: 3
 
 # El Proceso de Entrenamiento de una Red Neuronal
 
-## 🎯 Introducción
+## Introducción
 
 El entrenamiento de una red neuronal es un **ciclo de optimización** cuyo objetivo es ajustar los parámetros del modelo (pesos y sesgos) para minimizar su error.
 
@@ -19,7 +19,7 @@ Este proceso se fundamenta en **tres pilares matemáticos**:
 2. ⬇️ **Descenso de Gradiente**
 3. 🔄 **Retropropagación**
 
-## 1️⃣ La Función de Costo: Cuantificación del Error
+## 1 La Función de Costo: Cuantificación del Error
 
 La **función de costo J(w,b)** cuantifica cuán equivocadas están las predicciones del modelo.
 
@@ -59,11 +59,11 @@ print(f"Costo: {costo_mse(y_true, y_pred):.4f}")
 
 **Objetivo:** Encontrar W y b que minimicen J(w,b).
 
-## 2️⃣ Descenso del Gradiente: El Algoritmo de Optimización
+## 2 Descenso del Gradiente: El Algoritmo de Optimización
 
 El **Descenso de Gradiente Estocástico (SGD)** es el algoritmo más utilizado para minimizar la función de costo.
 
-### 🏔️ Analogía: Descenso de una Montaña
+### Analogía: Descenso de una Montaña
 
 Imagina que estás en una montaña con niebla densa. Para bajar:
 1. Sientes la pendiente del terreno
@@ -115,7 +115,7 @@ W_nuevo = W_actual - 0.01 * gradiente_W
 b_nuevo = b_actual - 0.01 * gradiente_b
 ```
 
-## 3️⃣ Retropropagación: Cálculo Eficiente de Gradientes
+## 3 Retropropagación: Cálculo Eficiente de Gradientes
 
 La **backpropagation** calcula los gradientes aplicando la **regla de la cadena** del cálculo diferencial.
 
@@ -190,7 +190,7 @@ Capa de Entrada ────────────────────┘
 ∂J/∂b[l] = δ[l]
 ```
 
-## 🔄 El Ciclo Completo de Aprendizaje
+## El Ciclo Completo de Aprendizaje
 
 ```python
 def ciclo_entrenamiento(X, y, arquitectura, epochs, alpha):
@@ -216,7 +216,7 @@ def ciclo_entrenamiento(X, y, arquitectura, epochs, alpha):
     return parametros
 ```
 
-## 📊 Visualización del Proceso
+## Visualización del Proceso
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -240,7 +240,7 @@ def ciclo_entrenamiento(X, y, arquitectura, epochs, alpha):
 └─────────────────────────────────────────────────────┘
 ```
 
-## 💡 Consejos Prácticos
+## Consejos Prácticos
 
 ### Elegir la Tasa de Aprendizaje
 
@@ -268,7 +268,7 @@ def plot_training(historial_costos):
 
 ---
 
-## 📚 Referencias
+## Referencias
 
 - Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep learning*. MIT Press.
 - Mazur, M. (2015). A Step by Step Backpropagation Example.

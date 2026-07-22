@@ -9,11 +9,11 @@ part: 4
 
 # Aplicación Práctica: Construcción de una Red Neuronal con Keras
 
-## 🎯 Introducción
+## Introducción
 
 Tras explorar los fundamentos matemáticos, es hora de **pasar de la teoría a la práctica**. Utilizaremos **Keras**, una biblioteca de alto nivel para Deep Learning, para construir, entrenar y evaluar una red neuronal.
 
-## 📦 Caso de Estudio: Clasificación de Dígitos (MNIST)
+## Caso de Estudio: Clasificación de Dígitos (MNIST)
 
 Trabajaremos con el dataset **MNIST**: 70,000 imágenes de dígitos escritos a mano (0-9).
 
@@ -27,7 +27,7 @@ Trabajaremos con el dataset **MNIST**: 70,000 imágenes de dígitos escritos a m
 
 ---
 
-## 🛠️ Paso 1: Preparación y Preprocesado de Datos
+## Paso 1: Preparación y Preprocesado de Datos
 
 ### 1.1 Instalación de Dependencias
 
@@ -103,7 +103,7 @@ print(f"Etiqueta codificada:\n{y_train_encoded[0]}")
 
 ---
 
-## 🏗️ Paso 2: Definición y Compilación del Modelo
+## Paso 2: Definición y Compilación del Modelo
 
 ### 2.1 Arquitectura de la Red
 
@@ -194,7 +194,7 @@ model.compile(
 
 ---
 
-## 🚀 Paso 3: Entrenamiento del Modelo
+## Paso 3: Entrenamiento del Modelo
 
 ### 3.1 Entrenar
 
@@ -255,7 +255,7 @@ plt.show()
 
 ---
 
-## 📊 Paso 4: Evaluación del Modelo
+## Paso 4: Evaluación del Modelo
 
 ### 4.1 Evaluar en Datos de Prueba
 
@@ -320,7 +320,7 @@ plt.show()
 
 ---
 
-## 💾 Paso 5: Guardar y Cargar el Modelo
+## Paso 5: Guardar y Cargar el Modelo
 
 ### 5.1 Guardar el Modelo
 
@@ -348,7 +348,7 @@ print(f"Precisión del modelo cargado: {test_acc_cargado:.4f}")
 
 ---
 
-## 🎨 Código Completo
+## Código Completo
 
 ```python
 """
@@ -450,7 +450,7 @@ print("\n✅ ¡Entrenamiento completado!")
 
 ---
 
-## 🎯 Ejercicios Propuestos
+## Ejercicios Propuestos
 
 1. **Cambiar la arquitectura**: Prueba con más/menos capas y neuronas
 2. **Probar otros optimizadores**: `'sgd'`, `'rmsprop'`
@@ -474,7 +474,7 @@ model = Sequential([
 
 ---
 
-## 📚 Referencias
+## Referencias
 
 - Torres, J. (2020). *Python Deep Learning: Introducción práctica con Keras y TensorFlow 2*. Marcombo.
 - Documentación de Keras: https://keras.io

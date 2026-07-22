@@ -1,19 +1,27 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { Product } from "@/components/shop/products/ProductCard";
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { useSession } from "next-auth/react";
 
-interface CartItem extends Product {
+interface CartItem {
+  id: string;
+  productId: string;
+  name: string | null;
+  slug: string | null;
   quantity: number;
+  priceSnapshot: string;
+  image: string[] | null;
+  productType: string | null;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeItem: (productId: string) => void;
-  clearCart: () => void;
+  addToCart: (productId: string) => Promise<void>;
+  updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+  removeItem: (itemId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
   totalItems: number;
+  loading: boolean;
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
@@ -23,72 +31,78 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { data: session } = useSession();
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToCart = (product: Product) => {
-    setCart((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id);
-      
-      if (existingItem) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prev, { ...product, quantity: 1 }];
-      }
-    });
-  };
-
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity === 0) {
-      removeItem(productId);
+  const fetchCart = useCallback(async () => {
+    if (!session?.user) {
+      setCart([]);
+      setLoading(false);
       return;
     }
+    try {
+      const res = await fetch("/api/cart");
+      if (res.ok) {
+        const data = await res.json();
+        setCart(data.items ?? []);
+      }
+    } catch {
+      setCart([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [session]);
 
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      )
-    );
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
+
+  const addToCart = async (productId: string) => {
+    await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    });
+    await fetchCart();
   };
 
-  const removeItem = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== productId));
+  const updateQuantity = async (itemId: string, quantity: number) => {
+    await fetch("/api/cart", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemId, quantity }),
+    });
+    await fetchCart();
   };
 
-  const clearCart = () => {
+  const removeItem = async (itemId: string) => {
+    await fetch(`/api/cart?itemId=${itemId}`, { method: "DELETE" });
+    await fetchCart();
+  };
+
+  const clearCart = async () => {
+    await fetch("/api/cart?clear=true", { method: "DELETE" });
     setCart([]);
   };
 
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-
-  // Listen to custom event from NavBar
   useEffect(() => {
     const handleToggleCart = () => toggleCart();
-    window.addEventListener('toggleCart', handleToggleCart);
-    return () => window.removeEventListener('toggleCart', handleToggleCart);
+    window.addEventListener("toggleCart", handleToggleCart);
+    return () => window.removeEventListener("toggleCart", handleToggleCart);
   }, []);
 
   return (
     <CartContext.Provider
       value={{
-        cart,
-        addToCart,
-        updateQuantity,
-        removeItem,
-        clearCart,
-        totalItems,
-        isCartOpen,
-        openCart,
-        closeCart,
-        toggleCart,
+        cart, addToCart, updateQuantity, removeItem, clearCart,
+        totalItems, loading, isCartOpen, openCart, closeCart, toggleCart,
       }}
     >
       {children}

@@ -10,13 +10,13 @@ description: "Aprende a evaluar modelos de Deep Learning con métricas avanzadas
 
 # 5. Evaluación del Rendimiento y Desafíos Comunes
 
-## 🎯 Introducción
+## Introducción
 
 Aunque la **precisión (accuracy)** es una métrica intuitiva, no siempre es suficiente para una evaluación completa de un modelo. Además, durante el desarrollo de modelos, es común enfrentarse a desafíos como el **sobreajuste** y el **subajuste**, que deben ser identificados y gestionados adecuadamente.
 
 ---
 
-## 📊 La Matriz de Confusión
+## La Matriz de Confusión
 
 Una herramienta más profunda para la evaluación es la **Matriz de Confusión**. Esta tabla visualiza el rendimiento de un algoritmo de clasificación, mostrando explícitamente cuándo una clase es confundida con otra.
 
@@ -86,7 +86,7 @@ plot_confusion_matrix_detailed(y_true, y_pred_classes, classes=range(10))
 
 ---
 
-## 📈 Métricas Derivadas
+## Métricas Derivadas
 
 ### 1. Precisión (Accuracy)
 
@@ -261,11 +261,11 @@ plot_metrics_comparison(y_true, y_pred_classes, class_names=[str(i) for i in ran
 
 ---
 
-## ⚠️ Desafíos Comunes: Subajuste y Sobreajuste
+## Desafíos Comunes: Subajuste y Sobreajuste
 
 Dos de los problemas más comunes en el entrenamiento de modelos son el **subajuste (underfitting)** y el **sobreajuste (overfitting)**.
 
-### 🔻 Subajuste (Underfitting)
+### Subajuste (Underfitting)
 
 **Definición:** Ocurre cuando un modelo es demasiado simple para capturar la complejidad subyacente de los datos.
 
@@ -381,7 +381,7 @@ model = Sequential([
 
 ---
 
-### 🔺 Sobreajuste (Overfitting)
+### Sobreajuste (Overfitting)
 
 **Definición:** Ocurre cuando un modelo es demasiado complejo y "memoriza" los datos de entrenamiento en lugar de aprender las relaciones generales.
 
@@ -489,8 +489,8 @@ print("✅ Dropout aplicado para reducir overfitting")
 # Durante el entrenamiento
 # Algunas neuronas se desactivan aleatoriamente
 # [1, 0.5, 0, 0.8, 0, 0.3] → [1, 0.5, 0, 0.8, 0, 0.3]
-#                              ↑         ↑     ↑
-#                           activa    activa desactivada
+#                             ↑         ↑     ↑
+#                          activa    activa desactivada
 
 # Durante la predicción
 # Todas las neuronas están activas (escaladas)
@@ -630,7 +630,7 @@ La mejor solución (si es posible): conseguir más datos.
 
 ---
 
-## 📉 Visualización Completa del Entrenamiento
+## Visualización Completa del Entrenamiento
 
 ```python
 def plot_training_analysis(history, save_path='training_analysis.png'):
@@ -713,7 +713,7 @@ plot_training_analysis(history)
 
 ---
 
-## 🎯 Resumen de Estrategias
+## Resumen de Estrategias
 
 | **Problema**     | **Síntoma**                              | **Soluciones**                                                                 |
 |------------------|------------------------------------------|--------------------------------------------------------------------------------|
@@ -722,7 +722,7 @@ plot_training_analysis(history)
 
 ---
 
-## 🧪 Ejemplo Completo: Pipeline Anti-Overfitting
+## Ejemplo Completo: Pipeline Anti-Overfitting
 
 ```python
 """
@@ -877,7 +877,7 @@ print("\n✅ ¡Entrenamiento completado exitosamente!")
 
 ---
 
-## 📊 Comparación de Modelos
+## Comparación de Modelos
 
 ```python
 def comparar_modelos(modelos_dict, x_test, y_test):
@@ -942,7 +942,7 @@ comparar_modelos(modelos, x_test, y_test)
 
 ---
 
-## 🎓 Conclusión
+## Conclusión
 
 Hemos completado este recorrido exhaustivo por los fundamentos matemáticos y la aplicación práctica del Deep Learning:
 
@@ -983,7 +983,7 @@ La comprensión conjunta de la **teoría matemática** y las **herramientas prá
 
 ---
 
-## 📚 Referencias
+## Referencias
 
 - Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep learning*. MIT Press.
 - AWS. (s.f.). ¿En qué consiste el ajuste de hiperparámetros? https://aws.amazon.com/es/what-is/hyperparameter-tuning/
@@ -993,7 +993,7 @@ La comprensión conjunta de la **teoría matemática** y las **herramientas prá
 
 ---
 
-## 🔗 Enlaces de la Serie
+## Enlaces de la Serie
 
 **← Anterior:** [Blog 4: Aplicación Práctica con Keras](04-aplicacion-practica-keras.md)
 
@@ -1001,7 +1001,7 @@ La comprensión conjunta de la **teoría matemática** y las **herramientas prá
 
 ---
 
-## 💬 Feedback
+## Feedback
 
 *¿Te ha resultado útil este artículo? ¿Tienes sugerencias o preguntas? Déjame tus comentarios y comparte si te ha gustado.*
 

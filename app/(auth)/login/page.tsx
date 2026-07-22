@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { useState, useRef } from 'react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
@@ -12,7 +12,6 @@ import { CustomCheckbox } from '@/components/ui/custom-checkbox'
 import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { getAuthErrorMessage, logAuthError } from '@/lib/auth-errors'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -45,28 +44,6 @@ export default function LoginPage() {
       )
   }, [])
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        // Obtener el rol del usuario para redirigir correctamente
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single()
-
-        const userRole = profileData?.role || 'client'
-        if (userRole === 'admin') {
-          router.push('/admin') // Redirigir al nuevo panel de admin
-        } else {
-          router.push('/client-dashboard')
-        }
-      }
-    }
-    checkUser()
-  }, [router])
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -78,147 +55,30 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      // console.log('[LOGIN] Intentando iniciar sesión con email:', email)
-
-      const signInPromise = supabase.auth.signInWithPassword({
+      const result = await signIn('credentials', {
         email: email.trim(),
         password,
+        redirect: false,
       })
 
-      // console.log('[LOGIN] Esperando respuesta de Supabase...')
-
-      const { data, error } = await signInPromise
-
-      // console.log('[LOGIN] ✅ Respuesta recibida de Supabase:', { 
-      //   hasData: !!data, 
-      //   hasUser: !!data?.user,
-      //   hasSession: !!data?.session,
-      //   error: error?.message 
-      // })
-
-      if (error) {
-        logAuthError(error, 'LOGIN')
-        const authError = getAuthErrorMessage(error)
-
-        // Mostrar mensaje de error detallado
-        toast.error(authError.message, {
-          description: authError.description,
-          action: authError.action ? {
-            label: 'Entendido',
-            onClick: () => { }
-          } : undefined,
-          duration: 5000
-        })
-
+      if (result?.error) {
+        toast.error('Credenciales inválidas. Usa Google para iniciar sesión.')
         setIsLoading(false)
         return
       }
 
-      if (!data.user || !data.session) {
-        console.error('[LOGIN] ❌ Login sin datos de usuario o sesión')
-        toast.error('Error al iniciar sesión. No se recibió información del usuario.')
-        setIsLoading(false)
-        return
-      }
-
-      // console.log('[LOGIN] ✅ Login exitoso! Usuario:', data.user.email)
-      // console.log('[LOGIN] Obteniendo perfil de usuario...')
-
-      // Obtener el rol del usuario desde la tabla profiles
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single()
-
-      if (profileError) {
-        console.error('[LOGIN] ⚠️ Error al obtener perfil:', profileError)
-
-        // Si no existe el perfil, crear uno por defecto
-        const { error: createError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              email: data.user.email,
-              role: 'client',
-              name: data.user.email?.split('@')[0] || 'Usuario'
-            }
-          ])
-
-        if (createError) {
-          console.error('[LOGIN] Error al crear perfil:', createError)
-          toast.error('Error al configurar tu cuenta. Contacta con soporte.')
-          setIsLoading(false)
-          return
-        }
-
-        // Usar rol por defecto
-        // console.log('[LOGIN] Perfil creado con rol por defecto: client')
-        router.push('/client-dashboard')
-        toast.success('¡Bienvenido! Configurando tu cuenta...')
-        return
-      }
-
-      // Redirigir según el rol
-      const userRole = profileData?.role || 'client'
-      // console.log('[LOGIN] 🎯 Rol del usuario:', userRole)
-      // console.log('[LOGIN] 🚀 Redirigiendo a dashboard...')
-
-      if (userRole === 'admin' || userRole === 'team') {
-        // console.log('[LOGIN] ➡️ Navegando a /admin')
-        router.push('/admin') // Redirigir al nuevo panel de admin
-        toast.success('¡Bienvenido, Administrador!')
-      } else {
-        // console.log('[LOGIN] ➡️ Navegando a /client-dashboard')
-        router.push('/client-dashboard')
-        toast.success('¡Bienvenido!')
-      }
-
+      router.push('/client-dashboard')
+      router.refresh()
     } catch (error) {
-      logAuthError(error, 'LOGIN_EXCEPTION')
-      const authError = getAuthErrorMessage(error)
-
-      toast.error(authError.message, {
-        description: authError.description,
-        duration: 5000
-      })
-    } finally {
+      toast.error('Error al iniciar sesión')
       setIsLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
-    try {
-      // console.log('[LOGIN] Iniciando login con Google...')
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
-      })
-
-      if (error) {
-        logAuthError(error, 'GOOGLE_LOGIN')
-        const authError = getAuthErrorMessage(error)
-
-        toast.error(authError.message, {
-          description: authError.description,
-          duration: 5000
-        })
-      }
-    } catch (error) {
-      logAuthError(error, 'GOOGLE_LOGIN_EXCEPTION')
-      const authError = getAuthErrorMessage(error)
-
-      toast.error(authError.message, {
-        description: authError.description,
-        duration: 5000
-      })
-    }
+    setIsLoading(true)
+    await signIn('google', { callbackUrl: '/client-dashboard' })
   }
-
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -229,21 +89,18 @@ export default function LoginPage() {
 
       <div className="flex-1 flex items-center justify-center px-4 py-12 pt-24 min-h-screen">
         <div className="w-full max-w-md relative">
-          {/* Título */}
           <div className="text-center mb-8" ref={titleRef}>
             <h1 className="text-3xl font-bold text-[#08A696] dark:text-[#26FFDF] mb-2">
               Bienvenido a V1TR0
             </h1>
           </div>
 
-          {/* Formulario */}
           <div
             ref={formRef}
             className="bg-white/90 dark:bg-[#02505931]/40 backdrop-blur-xl rounded-2xl p-8 border border-[#08A696]/60 dark:border-[#08A696]/30 shadow-2xl"
           >
             <form onSubmit={handleLogin}>
               <div className="space-y-5">
-                {/* Email Field */}
                 <div className="h-[60px]">
                   <label htmlFor="email" className="block text-sm font-medium text-[#08A696] dark:text-[#26FFDF] mb-2">
                     Correo electrónico
@@ -262,7 +119,6 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Password Field */}
                 <div className="h-[60px]">
                   <label htmlFor="password" className="block text-sm font-medium text-[#08A696] dark:text-[#26FFDF] mb-2">
                     Contraseña
@@ -288,7 +144,6 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Remember Me & Forgot Password */}
                 <div className="flex items-center justify-between">
                   <CustomCheckbox
                     checked={rememberMe}
@@ -304,12 +159,9 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
-                {/* Login Button */}
                 <div className="relative group">
-                  {/* Gradiente de fondo con blur */}
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
 
-                  {/* Botón principal */}
                   <button
                     type="submit"
                     disabled={isLoading}
@@ -329,14 +181,12 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Divider */}
               <div className="my-6 flex items-center">
                 <div className="flex-1 border-t border-[#08A696]/60 dark:border-[#08A696]/30"></div>
                 <span className="px-4 text-sm text-[#08A696]/70 dark:text-[#26FFDF]/70">O continúa con</span>
                 <div className="flex-1 border-t border-[#08A696]/60 dark:border-[#08A696]/30"></div>
               </div>
 
-              {/* Google Login */}
               <button
                 type="button"
                 onClick={handleGoogleLogin}
@@ -353,7 +203,6 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Footer */}
             <div className="text-center mt-6" ref={footerRef}>
               <p className="text-[#08A696]/70 dark:text-[#26FFDF]/70">
                 ¿No tienes una cuenta?{' '}
