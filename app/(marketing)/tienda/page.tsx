@@ -1,13 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShopHeroCarousel } from "@/components/shop/hero/ShopHeroCarousel";
 import { ProductGrid } from "@/components/shop/products/ProductGrid";
 import { CartDrawer } from "@/components/shop/cart/CartDrawer";
 import { FloatingCartTab } from "@/components/shop/cart/FloatingCartTab";
-import { mockProducts } from "@/lib/data/mockProducts";
+import type { Product } from "@/components/shop/products/ProductCard";
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation";
+
+interface ProductRow {
+  id: string; name: string; slug: string; description: string | null
+  price: string; originalPrice: string | null; category: string
+  stock: number; images: string[]; isFeatured: boolean; badge: string | null
+}
+
+function rowToProduct(row: ProductRow): Product {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description ?? "",
+    price: Number(row.price),
+    ...(row.originalPrice ? { originalPrice: Number(row.originalPrice) } : {}),
+    image: row.images?.[0] ?? "/imagenes/placeholders/placeholder.jpg",
+    category: row.category,
+    stock: row.stock,
+    featured: row.isFeatured,
+    ...(row.badge ? { badge: row.badge } : {}),
+  };
+}
 
 interface CartItem {
   id: string;
@@ -20,16 +42,24 @@ interface CartItem {
 
 export default function TiendaPage() {
   const router = useRouter()
+  const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showCartNotification, setShowCartNotification] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false)
 
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts((data.products as ProductRow[]).map(rowToProduct)))
+      .catch(() => setProducts([]));
+  }, []);
+
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleAddToCart = (product: { id: string }) => {
-    const p = mockProducts.find(m => m.id === product.id)
-    if (!p) return
+    const p = products.find(m => m.id === product.id)
+    if (!p) {return}
     setCart((prev) => {
       const existingItem = prev.find((item) => item.id === product.id);
       
@@ -72,9 +102,9 @@ export default function TiendaPage() {
     try {
       const res = await fetch("/api/checkout", { method: "POST" })
       if (res.status === 401) { router.push("/login"); return }
-      if (!res.ok) return
+      if (!res.ok) {return}
       const data = await res.json()
-      if (data.wompiUrl) window.location.href = data.wompiUrl
+      if (data.wompiUrl) {window.location.href = data.wompiUrl}
     } catch {
       // silent
     } finally {
@@ -83,7 +113,7 @@ export default function TiendaPage() {
   }
 
   // Productos recomendados (aleatorios que no están en el carrito)
-  const recommendedProducts = mockProducts
+  const recommendedProducts = products
     .filter((product) => !cart.find((item) => item.id === product.id))
     .slice(0, 3);
 
@@ -100,7 +130,7 @@ export default function TiendaPage() {
       <div className="h-4 bg-background" />
 
       {/* Products Grid Section */}
-      <ProductGrid products={mockProducts} onAddToCart={handleAddToCart} />
+      <ProductGrid products={products} onAddToCart={handleAddToCart} />
 
       {/* Footer viene del layout, no duplicarlo aquí */}
 

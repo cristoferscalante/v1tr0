@@ -203,11 +203,45 @@ export const appointments = pgTable("appointments", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
+// Etapas del pipeline visible en el Kanban de /admin/proyectos.
+// Reutiliza el vocabulario que ya consume app/client-dashboard/projects/[id]/page.tsx
+// (statusConfig) para no romper esa vista con un segundo set de valores.
+// "maintenance" es una etapa posterior a la entrega (soporte continuo), no
+// una parada más del pipeline lineal — se muestra aparte en el Kanban.
+export const PROJECT_STATUSES = [
+  "planning", // Cotizado
+  "design", // En diseño
+  "development", // En desarrollo
+  "testing", // Revisión
+  "completed", // Entregado
+  "maintenance", // Mantenimiento (post-entrega)
+  "paused",
+  "cancelled",
+] as const;
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
+
+export const KANBAN_COLUMNS: { status: ProjectStatus; label: string }[] = [
+  { status: "planning", label: "Cotizado" },
+  { status: "design", label: "En diseño" },
+  { status: "development", label: "En desarrollo" },
+  { status: "testing", label: "Revisión" },
+  { status: "completed", label: "Entregado" },
+  { status: "maintenance", label: "Mantenimiento" },
+];
+
+// El catálogo de 7 tipos de servicio (con su ícono e IconKind animado) vive
+// en components/shared/service-type.ts — única fuente de verdad, para no
+// duplicar la lista aquí de nuevo.
+
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   description: text("description"),
-  status: text("status").default("active"),
+  status: text("status").default("planning"),
+  serviceType: text("service_type").notNull().default("other"),
+  // Ícono elegido a mano (uno de los 7 de components/shared/service-type.ts).
+  // Si es null, la UI cae de vuelta al ícono que corresponde a serviceType.
+  icon: text("icon"),
   clientId: text("client_id").references(() => profiles.id, { onDelete: "cascade" }),
   images: text("images").array().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -224,6 +258,9 @@ export const quotes = pgTable("quotes", {
   techReqs: text("tech_reqs"),
   status: text("status").notNull().default("pending"),
   adminNotes: text("admin_notes"),
+  // Toda cotización crea de una vez su proyecto en el pipeline (etapa
+  // "planning" = tarjeta roja); este vínculo permite rastrear cuál es.
+  projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
@@ -241,6 +278,11 @@ export const meetingRequests = pgTable("meeting_requests", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
+// Las 3 ramas del árbol de habilidades que ve el cliente en
+// components/client/ProjectPipeline.tsx. Cada fase pertenece a una sola rama.
+export const PROJECT_TRACKS = ["planning", "development", "quality", "maintenance"] as const;
+export type ProjectTrack = (typeof PROJECT_TRACKS)[number];
+
 export const projectPhases = pgTable("project_phases", {
   id: uuid("id").primaryKey().defaultRandom(),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
@@ -248,6 +290,7 @@ export const projectPhases = pgTable("project_phases", {
   description: text("description"),
   order: integer("order").notNull().default(0),
   status: text("status").notNull().default("pending"),
+  track: text("track").notNull().default("development"),
   startDate: timestamp("start_date", { withTimezone: true }),
   endDate: timestamp("end_date", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -258,12 +301,31 @@ export const phaseTasks = pgTable("phase_tasks", {
   phaseId: uuid("phase_id").notNull().references(() => projectPhases.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   description: text("description"),
+  // Uno de los "key" de components/shared/task-icons.ts, elegido a mano por
+  // el admin al crear la tarea. Si es null, el árbol usa un ícono genérico.
+  icon: text("icon"),
   completed: boolean("completed").default(false),
   assignedTo: text("assigned_to").references(() => profiles.id),
   dueDate: timestamp("due_date", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+// Desglose de una tarea en pasos concretos. El admin las agrega libremente
+// (de a 3, según necesite) para que la rama de esa tarea siga creciendo en
+// el árbol. No gatillan el desbloqueo global — solo son detalle bajo su tarea.
+export const phaseTaskSubtasks = pgTable("phase_task_subtasks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  taskId: uuid("task_id").notNull().references(() => phaseTasks.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  completed: boolean("completed").default(false),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// @deprecated: reemplazada por phaseTasks (tarea ligada a una fase de projectPhases).
+// Ya no se escribe ni se lee desde ninguna ruta; se conserva la tabla en la DB
+// por ahora, se elimina en una migración posterior una vez confirmado que no
+// queda ningún consumidor.
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().defaultRandom(),
   nombre: text("nombre").notNull(),
@@ -297,6 +359,27 @@ export const bugReports = pgTable("bug_reports", {
   description: text("description"),
   severity: text("severity").notNull().default("medium"),
   status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+// Bóveda de credenciales por cliente/proyecto (tokens de API, contraseñas de
+// hosting, claves de terceros, etc.). El valor NUNCA se guarda en texto
+// plano: se cifra con AES-256-GCM en lib/crypto/secrets.ts antes de llegar
+// aquí. `value`/`iv`/`authTag` van en base64. Solo admin/team pueden leer
+// o escribir esta tabla (ver lib/auth/require-admin.ts).
+export const clientSecrets = pgTable("client_secrets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clientId: text("client_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
+  label: text("label").notNull(),
+  value: text("value").notNull(),
+  iv: text("iv").notNull(),
+  authTag: text("auth_tag").notNull(),
+  notes: text("notes"),
+  createdBy: text("created_by").references(() => profiles.id, { onDelete: "set null" }),
+  lastRevealedAt: timestamp("last_revealed_at", { withTimezone: true }),
+  lastRevealedBy: text("last_revealed_by").references(() => profiles.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });

@@ -9,6 +9,7 @@ interface UserProfile {
   id: string
   email: string
   name: string | null
+  image: string | null
   role: UserRole
 }
 
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: session.user.id,
         email: session.user.email ?? "",
         name: session.user.name ?? null,
+        image: session.user.image ?? null,
         role: userRole ?? "client",
       }
     : null

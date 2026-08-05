@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, Send } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import ProjectTypeTree from './ProjectTypeTree'
+import ProjectIdentityStep from './ProjectIdentityStep'
 
 const questions = [
   {
@@ -20,6 +22,10 @@ const questions = [
       'Tienda Online / E-commerce',
       'Otro',
     ],
+  },
+  {
+    id: 'identity',
+    label: 'Nombra y personaliza tu proyecto',
   },
   {
     id: 'description',
@@ -68,24 +74,28 @@ export default function QuoteSurvey({ open, onClose }: Props) {
     setAnswers((prev) => ({ ...prev, [id]: value }))
   }
 
+  const isStepValid = (id: string) => {
+    if (id === 'identity') {return Boolean(answers.projectName?.trim())}
+    const val = answers[id]
+    return Boolean(val && val.trim() !== '')
+  }
+
   const next = () => {
     const q = questions[step]!
-    const val = answers[q.id]
-    if (!val || val.trim() === '') {
+    if (!isStepValid(q.id)) {
       toast.error('Responde esta pregunta antes de continuar')
       return
     }
-    if (step < questions.length - 1) setStep(step + 1)
+    if (step < questions.length - 1) {setStep(step + 1)}
   }
 
   const prev = () => {
-    if (step > 0) setStep(step - 1)
+    if (step > 0) {setStep(step - 1)}
   }
 
   const submit = async () => {
     const q = questions[step]!
-    const val = answers[q.id]
-    if (!val || val.trim() === '') {
+    if (!isStepValid(q.id)) {
       toast.error('Responde esta pregunta antes de enviar')
       return
     }
@@ -96,7 +106,7 @@ export default function QuoteSurvey({ open, onClose }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers),
       })
-      if (!res.ok) throw new Error('Error al enviar')
+      if (!res.ok) {throw new Error('Error al enviar')}
       toast.success('Cotización enviada con éxito', {
         description: 'Te contactaremos pronto con un presupuesto personalizado.',
       })
@@ -156,7 +166,16 @@ export default function QuoteSurvey({ open, onClose }: Props) {
                   </p>
                   <h3 className="text-lg font-semibold text-white mb-4">{q.label}</h3>
 
-                  {'options' in q && q.options ? (
+                  {q.id === 'projectType' ? (
+                    <ProjectTypeTree value={answers.projectType} onChange={(v) => setAnswer('projectType', v)} />
+                  ) : q.id === 'identity' ? (
+                    <ProjectIdentityStep
+                      name={answers.projectName ?? ''}
+                      icon={answers.projectIcon ?? ''}
+                      onNameChange={(v) => setAnswer('projectName', v)}
+                      onIconChange={(v) => setAnswer('projectIcon', v)}
+                    />
+                  ) : 'options' in q && q.options ? (
                     <div className="space-y-2">
                       {q.options.map((opt) => (
                         <button

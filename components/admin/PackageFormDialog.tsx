@@ -89,7 +89,7 @@ export function PackageFormDialog({
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const { fields, append, remove } = useFieldArray({
     control: form.control as any,
     name: "features",

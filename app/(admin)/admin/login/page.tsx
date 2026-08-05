@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (status === "loading") return
+    if (status === "loading") {return}
     if (session?.user) {
       router.push("/admin")
     } else {

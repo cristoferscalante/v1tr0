@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { BarChartIcon, TrendingUpIcon, SettingsIcon, ShoppingCart, FileText, Smartphone, Globe, Database, Brain, Workflow, Bot, Link as LinkIcon, LayoutGrid, BarChart3, Cpu } from "lucide-react"
+import { AnimatedIcon } from "./AnimatedIcon"
 
 const servicesData = [
   {
@@ -12,10 +13,12 @@ const servicesData = [
     title: "Desarrollo de Software",
     shortTitle: "Software",
     tabIcon: LayoutGrid,
+    tabIconKind: "grid-ripple" as const,
     subcategories: [
       {
         id: "ecommerce",
         icon: ShoppingCart,
+        iconKind: "cart-bounce" as const,
         name: "E-Commerce",
         description: "Tiendas online completas con pasarelas de pago, gestión de inventario y experiencia de compra optimizada.",
         features: [],
@@ -28,6 +31,7 @@ const servicesData = [
       {
         id: "landing",
         icon: FileText,
+        iconKind: "type-blink" as const,
         name: "Landing Pages",
         description: "Páginas de aterrizaje de alto impacto diseñadas para convertir visitantes en clientes.",
         features: [],
@@ -40,6 +44,7 @@ const servicesData = [
       {
         id: "webapp",
         icon: Globe,
+        iconKind: "globe-spin" as const,
         name: "Web Apps",
         description: "Aplicaciones web robustas y escalables para gestionar tu negocio de manera eficiente.",
         features: [],
@@ -52,6 +57,7 @@ const servicesData = [
       {
         id: "mobile",
         icon: Smartphone,
+        iconKind: "phone-tilt" as const,
         name: "Apps Móviles",
         description: "Aplicaciones móviles nativas para iOS y Android con experiencia de usuario excepcional.",
         features: [],
@@ -71,10 +77,12 @@ const servicesData = [
     title: "Sistemas de Información",
     shortTitle: "Análisis de datos",
     tabIcon: BarChart3,
+    tabIconKind: "bar-grow" as const,
     subcategories: [
       {
         id: "dashboards",
         icon: BarChartIcon,
+        iconKind: "bar-grow" as const,
         name: "Dashboards",
         description: "Paneles interactivos que transforman tus datos en información visual clara y accionable.",
         features: [],
@@ -87,6 +95,7 @@ const servicesData = [
       {
         id: "datamanagement",
         icon: Database,
+        iconKind: "db-sync" as const,
         name: "Gestión de Datos",
         description: "Centraliza y organiza toda tu información empresarial en sistemas seguros y eficientes.",
         features: [],
@@ -99,6 +108,7 @@ const servicesData = [
       {
         id: "analytics",
         icon: TrendingUpIcon,
+        iconKind: "trend-rise" as const,
         name: "Análisis",
         description: "Análisis profundo de datos para descubrir patrones, tendencias y oportunidades de negocio.",
         features: [],
@@ -111,6 +121,7 @@ const servicesData = [
       {
         id: "bi",
         icon: Brain,
+        iconKind: "brain-think" as const,
         name: "Business Intelligence",
         description: "Soluciones inteligentes que convierten datos complejos en estrategias de negocio efectivas.",
         features: [],
@@ -130,10 +141,12 @@ const servicesData = [
     title: "Automatización de Tareas",
     shortTitle: "Automatización",
     tabIcon: Cpu,
+    tabIconKind: "chip-pulse" as const,
     subcategories: [
       {
         id: "bots",
         icon: Bot,
+        iconKind: "bot-idle" as const,
         name: "Bots & IA",
         description: "Agentes inteligentes que automatizan tareas repetitivas y mejoran la eficiencia operativa.",
         features: [],
@@ -146,6 +159,7 @@ const servicesData = [
       {
         id: "workflows",
         icon: Workflow,
+        iconKind: "workflow-cycle" as const,
         name: "Workflows",
         description: "Flujos de trabajo automatizados que conectan tus sistemas y eliminan tareas manuales.",
         features: [],
@@ -158,6 +172,7 @@ const servicesData = [
       {
         id: "integrations",
         icon: LinkIcon,
+        iconKind: "link-connect" as const,
         name: "Integraciones",
         description: "Conecta todas tus aplicaciones y servicios para que trabajen juntos sin fricción.",
         features: [],
@@ -170,6 +185,7 @@ const servicesData = [
       {
         id: "optimization",
         icon: SettingsIcon,
+        iconKind: "gear-spin" as const,
         name: "Optimización",
         description: "Mejora continua de procesos para maximizar productividad y reducir costos operativos.",
         features: [],
@@ -270,7 +286,13 @@ export default function ServicesTabSection() {
                     {!isActive && (
                       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm border border-[#0d3d3d]/60 rounded-full transition-all duration-300 group-hover:border-[#26FFDF]/30 group-hover:bg-black/40" />
                     )}
-                    <TabIcon className={`relative z-10 w-4 h-4 transition-all duration-300 ${isActive ? 'text-[#26FFDF]' : 'text-textMuted/60 group-hover:text-[#26FFDF]/80'}`} />
+                    <AnimatedIcon
+                      kind={service.tabIconKind}
+                      icon={TabIcon}
+                      active={isActive}
+                      size={16}
+                      className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-[#26FFDF]' : 'text-textMuted/60 group-hover:text-[#26FFDF]/80'}`}
+                    />
                     <span className="relative z-10">{service.shortTitle}</span>
                     {isActive && (
                       <motion.div
@@ -316,7 +338,13 @@ export default function ServicesTabSection() {
                               : "text-textMuted/80 hover:bg-white/5 hover:text-textPrimary"
                           } ${index !== activeService.subcategories.length - 1 ? 'border-b border-white/5' : ''}`}
                         >
-                          <IconComponent className={`w-4 h-4 flex-shrink-0 ${activeSubcategory === index ? 'text-[#26FFDF]' : 'text-textMuted/60'}`} />
+                          <AnimatedIcon
+                            kind={subcat.iconKind}
+                            icon={IconComponent}
+                            active={activeSubcategory === index}
+                            size={16}
+                            className={`flex-shrink-0 ${activeSubcategory === index ? 'text-[#26FFDF]' : 'text-textMuted/60'}`}
+                          />
                           <span className="text-sm font-medium">{subcat.name}</span>
                         </motion.button>
                       )
@@ -345,7 +373,7 @@ export default function ServicesTabSection() {
                           : "bg-black/20 border-[#0d3d3d]/60 text-textMuted hover:text-textPrimary hover:border-[#26FFDF]/25"
                       }`}
                     >
-                      <TabIcon className="w-4 h-4" />
+                      <AnimatedIcon kind={service.tabIconKind} icon={TabIcon} active={isActive} size={16} />
                       <span className="text-sm font-medium break-words">{service.shortTitle}</span>
                     </button>
                   )
@@ -369,7 +397,13 @@ export default function ServicesTabSection() {
                       }`}
                       aria-label={subcat.name}
                     >
-                      <IconComponent className="w-5 h-5 transition-transform duration-300 group-hover/sub:scale-110" />
+                      <AnimatedIcon
+                        kind={subcat.iconKind}
+                        icon={IconComponent}
+                        active={isActive}
+                        size={20}
+                        className="transition-transform duration-300 group-hover/sub:scale-110"
+                      />
                       <span className="text-[10px] font-medium leading-tight text-center px-1 break-words line-clamp-1">
                         {subcat.name}
                       </span>

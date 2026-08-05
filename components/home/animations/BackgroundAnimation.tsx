@@ -4,7 +4,21 @@ import type React from "react"
 import { useEffect, useRef } from "react"
 import { useTheme } from "@/components/theme-provider"
 
-const BackgroundAnimation: React.FC = () => {
+interface BackgroundAnimationProps {
+  /** Proporción de celdas encendidas. Menor = fondo más despejado. */
+  density?: number
+  /** Multiplicador de brillo de los dígitos. Menor = más tenue. */
+  intensity?: number
+}
+
+/**
+ * En los paneles (admin y portal del cliente) se usa con density/intensity
+ * reducidos para que el fondo no compita con tablas, gráficos y el Kanban.
+ */
+const BackgroundAnimation: React.FC<BackgroundAnimationProps> = ({
+  density = 0.5,
+  intensity = 1,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { theme } = useTheme()
   const isDarkMode = theme === "dark"
@@ -36,7 +50,7 @@ const BackgroundAnimation: React.FC = () => {
     let lastMouseMoveTime = 0
 
     const easeAmount = 0.1
-    const targetFillRatio = 0.5 // Objetivo de 50% de celdas llenas
+    const targetFillRatio = density
 
     // Colores según el tema
     const darkModeColors = {
@@ -98,7 +112,7 @@ const BackgroundAnimation: React.FC = () => {
         for (let y = 0; y < rows; y++) {
           const distanceToLight = Math.hypot(lightX - x * fontSize, lightY - y * fontSize)
           // Ajustar brillo según el tema
-          const brightness = Math.max(1 - distanceToLight / 300, 0) * (isDarkMode ? 0.1 : 0.2)
+          const brightness = Math.max(1 - distanceToLight / 300, 0) * (isDarkMode ? 0.1 : 0.2) * intensity
 
           if (Math.random() < 0.01 && background[x]) {
             const row = background[x]!;
@@ -156,7 +170,7 @@ const BackgroundAnimation: React.FC = () => {
       window.removeEventListener("mousemove", handleMouseMove)
       cancelAnimationFrame(animationFrameId)
     }
-  }, [isDarkMode, theme]) // Añadir theme como dependencia para que se actualice cuando cambie
+  }, [isDarkMode, theme, density, intensity])
 
   return (
     <canvas

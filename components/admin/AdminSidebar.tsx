@@ -2,10 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useTheme } from "@/components/theme-provider"
 import { useAuth } from "@/hooks/use-auth"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -15,53 +12,55 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronRight,
   CalendarClock,
   FileBarChart,
+  Users,
+  Package,
 } from "lucide-react"
+import { TreeNav, type TreeGroup } from "@/components/shared/tree-nav"
 
-interface NavItem {
-  id: string
-  icon: React.ReactNode
-  label: string
-  href: string
-}
-
-const navItems: NavItem[] = [
-  { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard", href: "/admin" },
-  { id: "pedidos", icon: <ClipboardList className="w-5 h-5" />, label: "Pedidos", href: "/admin/pedidos" },
-  { id: "cotizaciones", icon: <MessageSquare className="w-5 h-5" />, label: "Cotizaciones", href: "/admin/cotizaciones" },
-  { id: "reuniones", icon: <CalendarClock className="w-5 h-5" />, label: "Reuniones", href: "/admin/reuniones" },
-  { id: "proyectos", icon: <FolderKanban className="w-5 h-5" />, label: "Proyectos", href: "/admin/proyectos" },
-  { id: "productos", icon: <ShoppingBag className="w-5 h-5" />, label: "Productos", href: "/admin/productos" },
-  { id: "reportes", icon: <FileBarChart className="w-5 h-5" />, label: "Reportes", href: "/admin/reportes" },
+// Árbol de navegación: 3 ramas (Clientes / Tienda / Proyectos), sin mezclar
+// productos con proyectos, más los accesos transversales Dashboard y Reportes.
+const treeGroups: TreeGroup[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
+  {
+    id: "clientes",
+    label: "Clientes",
+    icon: Users,
+    children: [
+      { id: "clientes", label: "Clientes", href: "/admin/clientes", icon: Users },
+      { id: "cotizaciones", label: "Cotizaciones", href: "/admin/cotizaciones", icon: MessageSquare },
+      { id: "reuniones", label: "Reuniones", href: "/admin/reuniones", icon: CalendarClock },
+    ],
+  },
+  {
+    id: "tienda",
+    label: "Tienda",
+    icon: ShoppingBag,
+    children: [
+      { id: "productos", label: "Productos", href: "/admin/productos", icon: ShoppingBag },
+      { id: "paquetes", label: "Paquetes", href: "/admin/paquetes", icon: Package },
+      { id: "pedidos", label: "Pedidos", href: "/admin/pedidos", icon: ClipboardList },
+    ],
+  },
+  { id: "proyectos", label: "Proyectos", icon: FolderKanban, href: "/admin/proyectos" },
+  { id: "reportes", label: "Reportes", icon: FileBarChart, href: "/admin/reportes" },
 ]
 
 export default function AdminSidebar() {
-  const { theme } = useTheme()
   const { signOut, userProfile } = useAuth()
-  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
-  const isDark = theme === "dark"
 
   const handleSignOut = async () => {
     await signOut()
   }
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen)
-  }
-
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Botón móvil */}
       <button
-        onClick={toggleSidebar}
-        className={`lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl ${
-          isDark
-            ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 text-[#26FFDF]"
-            : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60 text-[#04423c]"
-        } transition-all duration-300 hover:border-[#08A696] hover:shadow-lg transform hover:scale-105`}
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-black/40 backdrop-blur-sm border border-[#26FFDF]/15 text-[#26FFDF] transition-all duration-300 hover:border-[#26FFDF]/50 hover:shadow-lg"
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -74,175 +73,62 @@ export default function AdminSidebar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={toggleSidebar}
+            onClick={() => setIsOpen(false)}
             className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
           />
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
-      <motion.aside
-        initial={false}
-        animate={{
-          x: isOpen ? 0 : "-100%"
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`fixed lg:static top-0 left-0 h-screen w-72 ${
-          isDark
-            ? "bg-[#02505931] backdrop-blur-sm border-r border-[#08A696]/20"
-            : "bg-[#e6f7f6] backdrop-blur-sm border-r border-[#08A696]/60"
-        } z-40 lg:z-0 flex flex-col lg:translate-x-0`}
+      {/* Riel flotante: alto ajustado a su contenido y centrado verticalmente
+          (nada de espacio vacío estirado edge-to-edge). En escritorio queda
+          fijo, colapsado a solo íconos, y se expande con `.group`+hover
+          mostrando los nombres sin mover los íconos de lugar. En móvil sigue
+          siendo el cajón deslizable de siempre, ya expandido por completo. */}
+      <aside
+        className={`group fixed z-40 top-1/2 -translate-y-1/2 left-4 lg:left-12 flex flex-col rounded-[28px] border border-[#26FFDF]/10 bg-black/30 backdrop-blur-xl shadow-2xl shadow-black/50 font-bricolage transition-[width,transform] duration-300 ease-out w-64 lg:w-20 lg:hover:w-64 max-h-[85vh] ${
+          isOpen ? "translate-x-0" : "-translate-x-[calc(100%+2rem)]"
+        } lg:translate-x-0`}
       >
-        {/* Logo/Header */}
-        <div className="p-6 border-b border-[#08A696]/20">
-          <div
-            className={`inline-block px-4 py-2 rounded-2xl ${
-              isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } transition-all duration-300`}
-          >
-            <h1
-              className={`text-xl font-bold ${
-                isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-              }`}
-            >
-              V1TR0 Admin
-            </h1>
-          </div>
-          {userProfile && (
-            <div className="mt-4">
-              <p
-                className={`text-sm font-medium ${
-                  isDark ? "text-[#b2fff6]" : "text-[#04423c]"
-                } opacity-90`}
-              >
-                {userProfile.name || userProfile.email}
-              </p>
-              <p
-                className={`text-xs ${
-                  isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                } opacity-75`}
-              >
-                {userProfile.role}
-              </p>
+        {/* Cuenta: barra flotante propia con foto real, nombre y rol */}
+        <div className="p-3">
+          <div className="flex items-center rounded-full border border-[#26FFDF]/10 bg-black/20 p-1">
+            <div className="w-11 h-11 shrink-0 rounded-full overflow-hidden border border-[#26FFDF]/30 bg-gradient-to-br from-[#08A696]/40 to-[#26FFDF]/20 flex items-center justify-center">
+              {userProfile?.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={userProfile.image} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-sm font-bold text-[#26FFDF]">
+                  {(userProfile?.name ?? userProfile?.email ?? "?").charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
-          )}
+            <div className="ml-3 overflow-hidden whitespace-nowrap max-w-0 opacity-0 transition-all duration-300 group-hover:max-w-[10rem] group-hover:opacity-100 pr-3">
+              <p className="text-sm font-medium text-[#e6f7f6] truncate">{userProfile?.name || "Admin"}</p>
+              <p className="text-[11px] text-[#26FFDF]/80 truncate capitalize">{userProfile?.role}</p>
+            </div>
+          </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="block"
-              >
-                <div className="relative group">
-                  {/* Gradiente de fondo con blur - igual que en el footer */}
-                  <div
-                    className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-xl blur opacity-0 ${
-                      isActive ? "opacity-40" : "group-hover:opacity-40"
-                    } transition-all duration-300`}
-                  />
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                      isActive
-                        ? isDark
-                          ? "bg-[#08A696]/30 border border-[#26FFDF] text-[#26FFDF] shadow-lg shadow-[#26FFDF]/20"
-                          : "bg-white/70 border border-[#08A696] text-[#04423c] shadow-lg shadow-[#08A696]/20"
-                        : isDark
-                        ? "bg-[#08A696]/10 border border-[#08A696]/20 text-[#b2fff6] hover:border-[#08A696] hover:bg-[#08A696]/20 hover:shadow-lg"
-                        : "bg-white/50 border border-[#08A696]/40 text-[#085c54] hover:border-[#08A696] hover:bg-white/70 hover:shadow-lg"
-                    }`}
-                  >
-                    <div
-                      className={`p-2 rounded-lg ${
-                        isActive
-                          ? isDark
-                            ? "bg-[#02505950] border border-[#08A696]/40"
-                            : "bg-[#c5ebe7] border border-[#08A696]/60"
-                          : isDark
-                          ? "bg-[#02505950] border border-[#08A696]/20"
-                          : "bg-[#c5ebe7] border border-[#08A696]/40"
-                      } transition-all duration-300 group-hover:scale-110`}
-                    >
-                      {item.icon}
-                    </div>
-                    <span className="flex-1 font-semibold">{item.label}</span>
-                    {isActive && (
-                      <ChevronRight className="w-5 h-5 animate-pulse" />
-                    )}
-                  </motion.div>
-                </div>
-              </Link>
-            )
-          })}
+        {/* Árbol de navegación */}
+        <nav className="px-3 pb-1 overflow-y-auto overflow-x-hidden">
+          <TreeNav groups={treeGroups} onNavigate={() => setIsOpen(false)} />
         </nav>
 
-        {/* Separator */}
-        <div
-          className={`mx-4 h-px ${
-            isDark ? "bg-[#08A696]/20" : "bg-[#08A696]/40"
-          }`}
-        />
-
-        {/* Sign Out Button */}
-        <div className="p-4">
-          <div className="relative group">
-            {/* Gradiente de fondo con blur */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-            <motion.button
-              onClick={handleSignOut}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                isDark
-                  ? "bg-[#08A696]/10 border border-[#08A696]/20 text-[#26FFDF] hover:border-[#08A696] hover:bg-[#08A696]/20 hover:shadow-lg hover:shadow-[#26FFDF]/20"
-                  : "bg-white/50 border border-[#08A696]/40 text-[#085c54] hover:border-[#08A696] hover:bg-white/70 hover:shadow-lg hover:shadow-[#08A696]/20"
-              }`}
-            >
-              <div
-                className={`p-2 rounded-lg ${
-                  isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                } transition-all duration-300 group-hover:scale-110`}
-              >
-                <LogOut className="w-5 h-5" />
-              </div>
-              <span className="font-semibold">Cerrar Sesión</span>
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div
-          className={`p-4 border-t ${
-            isDark ? "border-[#08A696]/20" : "border-[#08A696]/40"
-          }`}
-        >
-          <p
-            className={`text-center text-xs ${
-              isDark ? "text-[#b2fff6]" : "text-[#04423c]"
-            } opacity-75`}
+        {/* Cerrar sesión */}
+        <div className="p-3">
+          <button
+            onClick={handleSignOut}
+            className="flex items-center w-full py-1 rounded-full text-[#FF6B6B] hover:text-[#ff8a7f] transition-colors"
           >
-            &copy; {new Date().getFullYear()} V1TR0
-          </p>
-          <div
-            className={`w-16 h-1 ${
-              isDark
-                ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]"
-                : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"
-            } mx-auto mt-2 rounded-full`}
-          />
+            <span className="w-11 h-11 shrink-0 rounded-full bg-black/30 border border-[#FF6B6B]/25 flex items-center justify-center">
+              <LogOut className="w-[18px] h-[18px]" />
+            </span>
+            <span className="ml-3 overflow-hidden whitespace-nowrap max-w-0 opacity-0 transition-all duration-300 group-hover:max-w-[10rem] group-hover:opacity-100 text-sm font-semibold">
+              Cerrar Sesión
+            </span>
+          </button>
         </div>
-      </motion.aside>
+      </aside>
     </>
   )
 }

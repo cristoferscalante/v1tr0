@@ -1,8 +1,41 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { mockProducts } from "@/lib/data/mockProducts";
 import type { Product } from "@/components/shop/products/ProductCard";
+
+// Fila cruda de la tabla `products` (Drizzle) tal como la devuelve /api/admin/products.
+interface ProductRow {
+  id: string; name: string; slug: string; description: string | null
+  price: string; originalPrice: string | null; category: string
+  stock: number; images: string[]; isFeatured: boolean; badge: string | null
+}
+
+function rowToProduct(row: ProductRow): Product {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description ?? "",
+    price: Number(row.price),
+    ...(row.originalPrice ? { originalPrice: Number(row.originalPrice) } : {}),
+    image: row.images?.[0] ?? "/imagenes/placeholders/placeholder.jpg",
+    category: row.category,
+    stock: row.stock,
+    featured: row.isFeatured,
+    ...(row.badge ? { badge: row.badge } : {}),
+  };
+}
+
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/--+/g, "-")
+    .trim();
+}
 import { ProductFormDialog } from "@/components/admin/ProductFormDialog";
 import { useTheme } from "@/components/theme-provider";
 import { toast } from "sonner";
@@ -60,31 +93,22 @@ export default function ProductosAdminPage() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
 
-  // Cargar productos desde localStorage al iniciar
-  useEffect(() => {
-    const savedProducts = localStorage.getItem("v1tr0-products");
-    if (savedProducts) {
-      try {
-        const parsed = JSON.parse(savedProducts);
-        setProducts(parsed);
-        toast.success("Productos cargados desde localStorage");
-      } catch (error) {
-        console.error("Error al cargar productos:", error);
-        setProducts(mockProducts);
-        toast.error("Error al cargar productos, usando datos de ejemplo");
-      }
-    } else {
-      setProducts(mockProducts);
-      toast.info("Usando productos de ejemplo");
+  // Cargar productos reales desde la base de datos (Drizzle) vía la API admin.
+  const loadProducts = async () => {
+    try {
+      const res = await fetch("/api/admin/products");
+      if (!res.ok) {throw new Error("fetch failed");}
+      const data = await res.json();
+      setProducts((data.products as ProductRow[]).map(rowToProduct));
+    } catch (error) {
+      console.error("Error al cargar productos:", error);
+      toast.error("Error al cargar productos");
     }
-  }, []);
+  };
 
-  // Guardar en localStorage cuando cambian los productos
   useEffect(() => {
-    if (products.length > 0) {
-      localStorage.setItem("v1tr0-products", JSON.stringify(products));
-    }
-  }, [products]);
+    loadProducts();
+  }, []);
 
   // Filtrado y búsqueda
   const filteredProducts = useMemo(() => {
@@ -111,26 +135,67 @@ export default function ProductosAdminPage() {
     return { totalProducts, totalValue, outOfStock, featured };
   }, [products]);
 
-  // CRUD Functions
-  const handleCreate = (product: Product) => {
-    setProducts((prev) => [...prev, product]);
-    toast.success(`Producto "${product.name}" creado exitosamente`, {
-      description: `ID: ${product.id}`,
-    });
+  // CRUD Functions — llaman a /api/admin/products (Drizzle), no a localStorage.
+  const handleCreate = async (product: Product) => {
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: product.name,
+          slug: generateSlug(product.name),
+          description: product.description,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          category: product.category,
+          stock: product.stock,
+          images: product.image ? [product.image] : [],
+          isFeatured: product.featured ?? false,
+          badge: product.badge,
+        }),
+      });
+      if (!res.ok) {throw new Error("create failed");}
+      toast.success(`Producto "${product.name}" creado exitosamente`);
+      await loadProducts();
+    } catch {
+      toast.error("Error al crear el producto");
+    }
   };
 
-  const handleUpdate = (updatedProduct: Product) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
-    );
-    toast.success(`Producto "${updatedProduct.name}" actualizado exitosamente`);
+  const handleUpdate = async (updatedProduct: Product) => {
+    try {
+      const res = await fetch(`/api/admin/products/${updatedProduct.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: updatedProduct.name,
+          description: updatedProduct.description,
+          price: updatedProduct.price,
+          originalPrice: updatedProduct.originalPrice ?? null,
+          category: updatedProduct.category,
+          stock: updatedProduct.stock,
+          images: updatedProduct.image ? [updatedProduct.image] : [],
+          isFeatured: updatedProduct.featured ?? false,
+          badge: updatedProduct.badge ?? null,
+        }),
+      });
+      if (!res.ok) {throw new Error("update failed");}
+      toast.success(`Producto "${updatedProduct.name}" actualizado exitosamente`);
+      await loadProducts();
+    } catch {
+      toast.error("Error al actualizar el producto");
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const product = products.find((p) => p.id === id);
-    if (product) {
-      setProducts((prev) => prev.filter((p) => p.id !== id));
-      toast.success(`Producto "${product.name}" eliminado exitosamente`);
+    try {
+      const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      if (!res.ok) {throw new Error("delete failed");}
+      toast.success(`Producto "${product?.name ?? ""}" eliminado exitosamente`);
+      await loadProducts();
+    } catch {
+      toast.error("Error al eliminar el producto");
     }
   };
 

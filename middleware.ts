@@ -15,6 +15,9 @@ export async function middleware(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.redirect(new URL("/login", request.url))
     }
+    if (!["admin", "team"].includes(session.user.role ?? "")) {
+      return NextResponse.redirect(new URL("/client-dashboard", request.url))
+    }
   }
 
   return NextResponse.next()

@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/use-auth'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Package, Loader2 } from 'lucide-react'
+import { Package, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { Panel, PanelPage, Pill, SectionHeading } from '@/components/shared/panel-ui'
 
 interface OrderItem {
   id: string
@@ -28,19 +26,21 @@ interface Order {
   items: OrderItem[]
 }
 
-const statusBadge: Record<string, { color: string; label: string }> = {
-  pending: { color: 'bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/30', label: 'Pendiente' },
-  confirmed: { color: 'bg-[#08A696]/20 text-[#26FFDF] border-[#08A696]/30', label: 'Confirmado' },
-  processing: { color: 'bg-[#08A696]/30 text-[#26FFDF] border-[#08A696]/40', label: 'Procesando' },
-  shipped: { color: 'bg-[#00D084]/20 text-[#00D084] border-[#00D084]/30', label: 'Enviado' },
-  delivered: { color: 'bg-[#00D084]/30 text-[#00D084] border-[#00D084]/40', label: 'Entregado' },
-  cancelled: { color: 'bg-[#FF6B6B]/20 text-[#FF6B6B] border-[#FF6B6B]/30', label: 'Cancelado' },
+type Tone = 'default' | 'success' | 'warning' | 'danger' | 'muted'
+
+const statusTone: Record<string, { tone: Tone; label: string }> = {
+  pending: { tone: 'warning', label: 'Pendiente' },
+  confirmed: { tone: 'default', label: 'Confirmado' },
+  processing: { tone: 'default', label: 'Procesando' },
+  shipped: { tone: 'success', label: 'Enviado' },
+  delivered: { tone: 'success', label: 'Entregado' },
+  cancelled: { tone: 'danger', label: 'Cancelado' },
 }
 
-const paymentBadge: Record<string, { color: string; label: string }> = {
-  pending: { color: 'bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/30', label: 'Pendiente' },
-  paid: { color: 'bg-[#00D084]/20 text-[#00D084] border-[#00D084]/30', label: 'Pagado' },
-  failed: { color: 'bg-[#FF6B6B]/20 text-[#FF6B6B] border-[#FF6B6B]/30', label: 'Fallido' },
+const paymentTone: Record<string, { tone: Tone; label: string }> = {
+  pending: { tone: 'warning', label: 'Pago pendiente' },
+  paid: { tone: 'success', label: 'Pagado' },
+  failed: { tone: 'danger', label: 'Pago fallido' },
 }
 
 export default function OrdersPage() {
@@ -53,7 +53,7 @@ export default function OrdersPage() {
     const fetchOrders = async () => {
       try {
         const res = await fetch('/api/client-orders')
-        if (res.ok) setOrders(await res.json())
+        if (res.ok) {setOrders(await res.json())}
       } catch {
         // silent
       } finally {
@@ -65,85 +65,91 @@ export default function OrdersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen p-6 font-bricolage flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#26FFDF]" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 font-bricolage">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="flex items-center space-x-4 mb-8 p-6 rounded-2xl bg-background/10 backdrop-blur-sm border border-[#08A696]/20"
-      >
-        <Link href="/client-dashboard">
-          <Button variant="outline" size="sm" className="border-[#08A696]/30 text-textPrimary hover:bg-[#08A696]/10">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Volver
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-textPrimary bg-gradient-to-r from-[#08A696] to-[#26FFDF] bg-clip-text text-transparent">Mis Compras</h1>
-          <p className="text-textSecondary text-sm">Productos y servicios adquiridos</p>
-        </div>
-      </motion.div>
+    <PanelPage>
+      <SectionHeading
+        badge="Tienda"
+        title="Mis Compras"
+        subtitle="Productos y servicios que has adquirido"
+      />
 
       {orders.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center py-12 rounded-2xl bg-background/10 backdrop-blur-sm border border-[#08A696]/20"
-        >
-          <Package className="h-12 w-12 mx-auto mb-4 text-textSecondary" />
-          <div className="text-textSecondary mb-2">No tienes compras aún</div>
-          <Link href="/tienda">
-            <Button className="mt-4 bg-gradient-to-r from-[#08A696] to-[#26FFDF] text-black font-semibold">
-              Ir a la tienda
-            </Button>
+        <Panel className="text-center py-16 px-6">
+          <Package className="h-10 w-10 text-[#08A696]/50 mx-auto mb-3" />
+          <p className="text-textSecondary">No tienes compras aún</p>
+          <Link
+            href="/tienda"
+            className="inline-flex items-center mt-5 px-5 py-2.5 rounded-xl bg-[#08A696]/20 border border-[#08A696]/40 text-[#26FFDF] text-sm font-medium hover:bg-[#08A696]/30 hover:border-[#26FFDF] transition-all"
+          >
+            Ir a la tienda
           </Link>
-        </motion.div>
+        </Panel>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => {
-            const sb = statusBadge[order.status] ?? { color: 'bg-gray-500/20 text-gray-400', label: order.status }
-            const pb = paymentBadge[order.paymentStatus] ?? { color: 'bg-gray-500/20 text-gray-400', label: order.paymentStatus }
+          {orders.map((order, i) => {
+            const s = statusTone[order.status] ?? { tone: 'muted' as Tone, label: order.status }
+            const p = paymentTone[order.paymentStatus] ?? {
+              tone: 'muted' as Tone,
+              label: order.paymentStatus,
+            }
             return (
-              <Card key={order.id} className="bg-background/10 border-[#08A696]/20 backdrop-blur-md rounded-2xl">
-                <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-textPrimary text-lg">{order.orderNumber}</CardTitle>
-                    <p className="text-textSecondary text-xs">
-                      {new Date(order.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                    </p>
+              <motion.div
+                key={order.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <Panel className="p-5 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-4 border-b border-[#08A696]/15">
+                    <div className="min-w-0">
+                      <p className="text-white font-semibold font-mono">{order.orderNumber}</p>
+                      <p className="text-textSecondary text-xs mt-0.5">
+                        {new Date(order.createdAt).toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
+                      <Pill tone={s.tone}>{s.label}</Pill>
+                      <Pill tone={p.tone}>{p.label}</Pill>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={`${sb.color} text-xs backdrop-blur-sm`}>{sb.label}</Badge>
-                    <Badge className={`${pb.color} text-xs backdrop-blur-sm`}>{pb.label}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
+
+                  <div className="space-y-2 py-4">
                     {order.items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm text-textSecondary">
-                        <span>{item.productName} x{item.quantity}</span>
-                        <span>${Number(item.totalPrice).toLocaleString()} COP</span>
+                      <div key={item.id} className="flex justify-between gap-4 text-sm">
+                        <span className="text-textSecondary min-w-0 truncate">
+                          {item.productName} <span className="text-textSecondary/60">×{item.quantity}</span>
+                        </span>
+                        <span className="text-white shrink-0">
+                          ${Number(item.totalPrice).toLocaleString('es-CO')}
+                        </span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 pt-4 border-t border-[#08A696]/20 flex justify-between items-center">
-                    <span className="text-textPrimary font-bold">Total</span>
+
+                  <div className="pt-4 border-t border-[#08A696]/15 flex justify-between items-center">
+                    <span className="text-white font-semibold">Total</span>
                     <span className="text-xl font-bold text-[#26FFDF]">
-                      ${Number(order.total).toLocaleString()} {order.currency}
+                      ${Number(order.total).toLocaleString('es-CO')} {order.currency}
                     </span>
                   </div>
-                </CardContent>
-              </Card>
+                </Panel>
+              </motion.div>
             )
           })}
         </div>
       )}
-    </div>
+    </PanelPage>
   )
 }

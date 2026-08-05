@@ -3,10 +3,11 @@ import { db } from "@/lib/db"
 import { orders, profiles } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { redirect } from "next/navigation"
+import { PanelPage, SectionHeading } from "@/components/shared/panel-ui"
 
 export default async function OrdersPage() {
   const session = await auth()
-  if (!session?.user) redirect("/login")
+  if (!session?.user) {redirect("/login")}
 
   const allOrders = await db
     .select({
@@ -26,12 +27,12 @@ export default async function OrdersPage() {
     .orderBy(desc(orders.createdAt))
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Pedidos</h1>
-      <div className="bg-black/40 backdrop-blur-sm border border-[#08A696]/20 rounded-xl overflow-hidden">
+    <PanelPage>
+      <SectionHeading badge="Tienda" title="Pedidos" subtitle="Compras realizadas en la tienda" />
+      <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[#08A696]/20 text-gray-400">
+            <tr className="border-b border-[#08A696]/20 text-textSecondary">
               <th className="text-left p-4">#</th>
               <th className="text-left p-4">Cliente</th>
               <th className="text-left p-4">Total</th>
@@ -43,9 +44,9 @@ export default async function OrdersPage() {
           </thead>
           <tbody>
             {allOrders.map((o) => (
-              <tr key={o.id} className="border-b border-[#08A696]/10 hover:bg-white/5">
+              <tr key={o.id} className="border-b border-[#08A696]/10 hover:bg-[#02505950]">
                 <td className="p-4 text-white font-mono text-xs">{o.orderNumber}</td>
-                <td className="p-4 text-gray-300">{o.clientEmail ?? "—"}</td>
+                <td className="p-4 text-textSecondary">{o.clientEmail ?? "—"}</td>
                 <td className="p-4 text-white">${o.total} {o.currency}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded-full text-xs ${
@@ -61,16 +62,16 @@ export default async function OrdersPage() {
                     "bg-yellow-500/20 text-yellow-400"
                   }`}>{o.paymentStatus}</span>
                 </td>
-                <td className="p-4 text-gray-400 text-xs">{o.wompiStatus ?? "—"}</td>
-                <td className="p-4 text-gray-400 text-xs">{o.createdAt?.toLocaleDateString()}</td>
+                <td className="p-4 text-textSecondary text-xs">{o.wompiStatus ?? "—"}</td>
+                <td className="p-4 text-textSecondary text-xs">{o.createdAt?.toLocaleDateString()}</td>
               </tr>
             ))}
             {allOrders.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center text-gray-500">No hay pedidos aún</td></tr>
+              <tr><td colSpan={7} className="p-8 text-center text-textSecondary/60">No hay pedidos aún</td></tr>
             )}
           </tbody>
         </table>
       </div>
-    </div>
+    </PanelPage>
   )
 }

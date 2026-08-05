@@ -1,8 +1,24 @@
 import { auth } from "@/auth"
 import { db } from "@/lib/db"
 import { meetingRequests, projects } from "@/lib/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, desc } from "drizzle-orm"
 import { NextResponse } from "next/server"
+
+// Reuniones solicitadas por el cliente autenticado.
+export async function GET() {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  }
+
+  const rows = await db
+    .select()
+    .from(meetingRequests)
+    .where(eq(meetingRequests.profileId, session.user.id))
+    .orderBy(desc(meetingRequests.createdAt))
+
+  return NextResponse.json(rows)
+}
 
 export async function POST(req: Request) {
   const session = await auth()

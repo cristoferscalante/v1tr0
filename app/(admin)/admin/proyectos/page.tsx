@@ -1,123 +1,81 @@
-import { auth } from "@/auth"
 import { db } from "@/lib/db"
 import { projects, projectPhases, phaseTasks, profiles } from "@/lib/db/schema"
-import { eq, desc, asc } from "drizzle-orm"
-import { redirect } from "next/navigation"
-import { CheckCircle2, Circle, Clock } from "lucide-react"
-import type { ReactNode } from "react"
-
-const phaseColors: Record<string, string> = {
-  pending: "border-gray-700 bg-gray-900/50",
-  active: "border-[#26FFDF] bg-[#26FFDF]/5",
-  completed: "border-green-500 bg-green-500/5",
-  cancelled: "border-red-500 bg-red-500/5",
-}
-
-const phaseIcons: Record<string, ReactNode> = {
-  pending: <Circle className="h-5 w-5 text-gray-500" />,
-  active: <Clock className="h-5 w-5 text-[#26FFDF]" />,
-  completed: <CheckCircle2 className="h-5 w-5 text-green-400" />,
-  cancelled: <Circle className="h-5 w-5 text-red-400" />,
-}
+import { eq, desc, inArray } from "drizzle-orm"
+import KanbanBoard from "@/components/admin/KanbanBoard"
+import ProjectEditDialog from "@/components/admin/ProjectEditDialog"
+import { PanelPage, SectionHeading, EmptyState } from "@/components/shared/panel-ui"
+import { FolderKanban } from "lucide-react"
 
 export default async function ProjectsPage() {
-  const session = await auth()
-  if (!session?.user) redirect("/login")
-
   const allProjects = await db
     .select({
       id: projects.id,
       name: projects.name,
-      description: projects.description,
       status: projects.status,
-      createdAt: projects.createdAt,
+      serviceType: projects.serviceType,
+      icon: projects.icon,
+      clientName: profiles.name,
       clientEmail: profiles.email,
     })
     .from(projects)
     .leftJoin(profiles, eq(projects.clientId, profiles.id))
-    .orderBy(desc(projects.createdAt))
+    .orderBy(desc(projects.updatedAt))
 
-  const projectsWithPhases = await Promise.all(
-    allProjects.map(async (p) => {
-      const phases = await db
-        .select()
+  // 2 consultas agrupadas (fases de todos los proyectos, tareas de todas esas
+  // fases) en vez de una por proyecto + una por fase — antes eran decenas de
+  // idas a la base de datos con muchos proyectos, ahora son siempre 2.
+  const projectIds = allProjects.map((p) => p.id)
+  const phases = projectIds.length
+    ? await db
+        .select({ id: projectPhases.id, projectId: projectPhases.projectId })
         .from(projectPhases)
-        .where(eq(projectPhases.projectId, p.id))
-        .orderBy(asc(projectPhases.order))
+        .where(inArray(projectPhases.projectId, projectIds))
+    : []
+  const phaseIds = phases.map((ph) => ph.id)
+  const tasks = phaseIds.length
+    ? await db
+        .select({ phaseId: phaseTasks.phaseId, completed: phaseTasks.completed })
+        .from(phaseTasks)
+        .where(inArray(phaseTasks.phaseId, phaseIds))
+    : []
 
-      const phasesWithTasks = await Promise.all(
-        phases.map(async (ph) => {
-          const tasks = await db
-            .select()
-            .from(phaseTasks)
-            .where(eq(phaseTasks.phaseId, ph.id))
-          return { ...ph, tasks }
-        })
-      )
+  const phaseToProject = new Map(phases.map((ph) => [ph.id, ph.projectId]))
+  const statsByProject = new Map<string, { completed: number; total: number }>()
+  for (const t of tasks) {
+    const projectId = phaseToProject.get(t.phaseId)
+    if (!projectId) {continue}
+    const entry = statsByProject.get(projectId) ?? { completed: 0, total: 0 }
+    entry.total += 1
+    if (t.completed) {entry.completed += 1}
+    statsByProject.set(projectId, entry)
+  }
 
-      return { ...p, phases: phasesWithTasks }
-    })
-  )
+  const withProgress = allProjects.map((p) => {
+    const stat = statsByProject.get(p.id)
+    const progress = stat && stat.total > 0 ? Math.round((stat.completed / stat.total) * 100) : 0
+    return { ...p, status: p.status ?? "planning", progress }
+  })
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Proyectos</h1>
-      <div className="grid gap-8">
-        {projectsWithPhases.map((p) => (
-          <div key={p.id} className="bg-black/40 backdrop-blur-sm border border-[#08A696]/20 rounded-xl p-6">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <h3 className="text-xl font-bold text-white">{p.name}</h3>
-                <p className="text-sm text-gray-400">{p.clientEmail}</p>
-                {p.description && <p className="text-gray-300 text-sm mt-1">{p.description}</p>}
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                p.status === "active" ? "bg-green-500/20 text-green-400" :
-                p.status === "completed" ? "bg-blue-500/20 text-blue-400" :
-                "bg-yellow-500/20 text-yellow-400"
-              }`}>{p.status}</span>
-            </div>
-
-            {/* Timeline */}
-            <div className="relative">
-              <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-800" />
-              <div className="space-y-6">
-                {p.phases.map((ph, i) => (
-                  <div key={ph.id} className="relative pl-10">
-                    <div className="absolute left-2.5 top-1">
-                      {phaseIcons[ph.status] ?? <Circle className="h-5 w-5 text-gray-500" />}
-                    </div>
-                    <div className={`p-4 rounded-xl border ${phaseColors[ph.status] ?? "border-gray-700 bg-gray-900/50"}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-white font-semibold">
-                          {i + 1}. {ph.name}
-                        </h4>
-                        <span className="text-xs text-gray-400">
-                          {ph.startDate ? ph.startDate.toLocaleDateString() : "—"}
-                        </span>
-                      </div>
-                      {ph.description && <p className="text-gray-400 text-sm mb-2">{ph.description}</p>}
-                      {ph.tasks.length > 0 && (
-                        <div className="space-y-1 mt-2">
-                          {ph.tasks.map((t) => (
-                            <div key={t.id} className="flex items-center gap-2 text-sm">
-                              <div className={`w-2 h-2 rounded-full ${t.completed ? "bg-green-400" : "bg-gray-600"}`} />
-                              <span className={t.completed ? "text-green-400 line-through" : "text-gray-300"}>{t.name}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-        {projectsWithPhases.length === 0 && (
-          <p className="text-center text-gray-500 py-12">No hay proyectos aún</p>
-        )}
+    <PanelPage>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <SectionHeading
+          badge="Seguimiento"
+          title="Proyectos"
+          subtitle="Arrastra las tarjetas entre columnas para cambiar la etapa del proyecto"
+        />
+        <ProjectEditDialog />
       </div>
-    </div>
+
+      {withProgress.length === 0 ? (
+        <EmptyState
+          icon={FolderKanban}
+          message="No hay proyectos aún"
+          hint="Crea el primero con el botón «Nuevo proyecto»"
+        />
+      ) : (
+        <KanbanBoard initialProjects={withProgress} />
+      )}
+    </PanelPage>
   )
 }

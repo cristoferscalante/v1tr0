@@ -1,10 +1,30 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { posPlans } from "@/lib/data/posPackageData";
-import { hardwarePlans } from "@/lib/data/hardwarePackageData";
-import { iotPlans } from "@/lib/data/iotPackageData";
 import { PackageFormDialog, Plan } from "@/components/admin/PackageFormDialog";
+
+// Fila cruda de `products` (productType='package') tal como la devuelve /api/admin/packages.
+interface PackageRow {
+  id: string; name: string; price: string; subcategory: string | null
+  features: string[]; isFeatured: boolean; category: string
+  metadata: { folios?: number | null; cta?: string | null } | null
+}
+
+function rowToPlan(row: PackageRow): Plan {
+  return {
+    id: row.id,
+    name: row.name,
+    price: Number(row.price),
+    ...(row.subcategory ? { billingPeriod: row.subcategory } : {}),
+    features: row.features ?? [],
+    ...(row.metadata?.folios !== null && row.metadata?.folios !== undefined
+      ? { folios: row.metadata.folios }
+      : {}),
+    isPopular: row.isFeatured,
+    cta: row.metadata?.cta ?? "Contactar",
+    packageType: row.category as "pos" | "hardware" | "iot",
+  };
+}
 import { useTheme } from "@/components/theme-provider";
 import { toast } from "sonner";
 import {
@@ -59,41 +79,22 @@ export default function PaquetesAdminPage() {
   const [packageToDelete, setPackageToDelete] = useState<Plan | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
 
-  // Cargar paquetes desde localStorage al iniciar
-  useEffect(() => {
-    const savedPackages = localStorage.getItem("v1tr0-packages");
-    if (savedPackages) {
-      try {
-        const parsed = JSON.parse(savedPackages);
-        setPackages(parsed);
-        toast.success("Paquetes cargados desde localStorage");
-      } catch (error) {
-        console.error("Error al cargar paquetes:", error);
-        initializePackages();
-        toast.error("Error al cargar paquetes, usando datos de ejemplo");
-      }
-    } else {
-      initializePackages();
-      toast.info("Usando paquetes de ejemplo");
+  // Cargar paquetes reales desde la base de datos vía la API admin.
+  const loadPackages = async () => {
+    try {
+      const res = await fetch("/api/admin/packages");
+      if (!res.ok) {throw new Error("fetch failed");}
+      const data = await res.json();
+      setPackages((data.packages as PackageRow[]).map(rowToPlan));
+    } catch (error) {
+      console.error("Error al cargar paquetes:", error);
+      toast.error("Error al cargar paquetes");
     }
-  }, []);
-
-  // Inicializar con datos de ejemplo
-  const initializePackages = () => {
-    const allPackages: Plan[] = [
-      ...posPlans.map(p => ({ ...p, packageType: "pos" as const })),
-      ...hardwarePlans.map(p => ({ ...p, packageType: "hardware" as const })),
-      ...iotPlans.map(p => ({ ...p, packageType: "iot" as const })),
-    ];
-    setPackages(allPackages);
   };
 
-  // Guardar en localStorage cuando cambian los paquetes
   useEffect(() => {
-    if (packages.length > 0) {
-      localStorage.setItem("v1tr0-packages", JSON.stringify(packages));
-    }
-  }, [packages]);
+    loadPackages();
+  }, []);
 
   // Filtrado y búsqueda
   const filteredPackages = useMemo(() => {
@@ -124,26 +125,46 @@ export default function PaquetesAdminPage() {
     return { totalPackages, popularPackages, avgPrice, posPkgs, hardwarePkgs, iotPkgs };
   }, [packages]);
 
-  // CRUD Functions
-  const handleCreate = (pkg: Plan) => {
-    setPackages((prev) => [...prev, pkg]);
-    toast.success(`Paquete "${pkg.name}" creado exitosamente`, {
-      description: `ID: ${pkg.id}`,
-    });
+  // CRUD Functions — llaman a /api/admin/packages (Drizzle), no a localStorage.
+  const handleCreate = async (pkg: Plan) => {
+    try {
+      const res = await fetch("/api/admin/packages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pkg),
+      });
+      if (!res.ok) {throw new Error("create failed");}
+      toast.success(`Paquete "${pkg.name}" creado exitosamente`);
+      await loadPackages();
+    } catch {
+      toast.error("Error al crear el paquete");
+    }
   };
 
-  const handleUpdate = (updatedPackage: Plan) => {
-    setPackages((prev) =>
-      prev.map((p) => (p.id === updatedPackage.id ? updatedPackage : p))
-    );
-    toast.success(`Paquete "${updatedPackage.name}" actualizado exitosamente`);
+  const handleUpdate = async (updatedPackage: Plan) => {
+    try {
+      const res = await fetch(`/api/admin/packages/${updatedPackage.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedPackage),
+      });
+      if (!res.ok) {throw new Error("update failed");}
+      toast.success(`Paquete "${updatedPackage.name}" actualizado exitosamente`);
+      await loadPackages();
+    } catch {
+      toast.error("Error al actualizar el paquete");
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const pkg = packages.find((p) => p.id === id);
-    if (pkg) {
-      setPackages((prev) => prev.filter((p) => p.id !== id));
-      toast.success(`Paquete "${pkg.name}" eliminado exitosamente`);
+    try {
+      const res = await fetch(`/api/admin/packages/${id}`, { method: "DELETE" });
+      if (!res.ok) {throw new Error("delete failed");}
+      toast.success(`Paquete "${pkg?.name ?? ""}" eliminado exitosamente`);
+      await loadPackages();
+    } catch {
+      toast.error("Error al eliminar el paquete");
     }
   };
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
+import ClientSidebar from '@/components/client/ClientSidebar'
 
 export default function ClientDashboardLayout({
   children,
@@ -45,9 +46,15 @@ export default function ClientDashboardLayout({
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <BackgroundAnimation />
-      <div className="relative z-10">
+    <div className="min-h-screen relative">
+      {/* Fondo atenuado: mantiene la identidad del home sin competir con los datos */}
+      <BackgroundAnimation density={0.22} intensity={0.55} />
+      <ClientSidebar />
+      {/* El riel flotante arranca en left-12 (48px, alineado con el botón de
+          WhatsApp) y mide 80px colapsado; pl-36 deja el mismo respiro del
+          otro lado. Al expandirse con el cursor queda flotando por encima
+          del contenido (no empuja el layout). */}
+      <div className="relative z-10 lg:pl-36">
         {children}
       </div>
     </div>
