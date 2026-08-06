@@ -644,7 +644,9 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
 
       // console.log('[TaskCard] Perfiles obtenidos:', profilesData);
 
-      const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
+      const profilesMap = new Map<string, { id: string; email: string | null; name: string | null; role: string | null }>(
+        profilesData?.map((p) => [p.id, p]) || []
+      );
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedComments: TaskComment[] = (commentsData || []).map((comment: any) => {
@@ -1180,7 +1182,9 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
 
         // console.log('[MeetingTaskCard] Perfiles obtenidos:', profilesData);
 
-        const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
+        const profilesMap = new Map<string, { id: string; email: string | null; name: string | null; role: string | null }>(
+        profilesData?.map((p) => [p.id, p]) || []
+      );
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formattedComments = commentsData.map((comment: any) => {

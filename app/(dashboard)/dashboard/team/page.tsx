@@ -163,7 +163,7 @@ export default function TeamPage() {
 
         // Contar proyectos por usuario
         const projectCounts: Record<string, number> = {}
-        taskData?.forEach(task => {
+        taskData?.forEach((task: { assigned_to: string | null }) => {
           const assignedTo = task.assigned_to?.toLowerCase() || ''
           if (assignedTo) {
             projectCounts[assignedTo] = (projectCounts[assignedTo] || 0) + 1
@@ -287,7 +287,7 @@ export default function TeamPage() {
           .not('assigned_to', 'is', null)
 
         const projectCounts: Record<string, number> = {}
-        taskData?.forEach(task => {
+        taskData?.forEach((task: { assigned_to: string | null }) => {
           const assignedTo = task.assigned_to?.toLowerCase() || ''
           if (assignedTo) {
             projectCounts[assignedTo] = (projectCounts[assignedTo] || 0) + 1

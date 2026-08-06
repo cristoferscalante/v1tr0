@@ -121,7 +121,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   const renderPaginationButtons = () => {
     if (totalPages <= 1) { return null }
 
-    const buttons = [];
+    const buttons: React.ReactNode[] = [];
     const maxVisibleButtons = 5;
 
     let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));

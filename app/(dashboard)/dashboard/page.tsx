@@ -73,7 +73,7 @@ export default function DashboardPage() {
       
       setStats({
         totalClients: clients?.length || 0,
-        activeClients: clients?.filter(c => c.role === 'client').length || 0,
+        activeClients: clients?.filter((c: { role: string }) => c.role === 'client').length || 0,
         totalProjects: projects.length,
         activeProjects: activeProjects.length,
         totalTasks,

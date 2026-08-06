@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { products } from "@/lib/db/schema"
-import { and, desc, eq, ilike } from "drizzle-orm"
+import { and, desc, eq, ilike, type SQL } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { requireAdminSession, AdminAuthError } from "@/lib/auth/require-admin"
 
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   const category = searchParams.get("category")
   const includeInactive = searchParams.get("includeInactive") === "true"
 
-  const conditions = []
+  const conditions: SQL[] = []
   if (!includeInactive) {conditions.push(eq(products.isActive, true))}
   if (category && category !== "all") {conditions.push(eq(products.category, category))}
   if (q) {conditions.push(ilike(products.name, `%${q}%`))}
