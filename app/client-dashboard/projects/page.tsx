@@ -91,7 +91,6 @@ export default function ProjectsPage() {
                 <ProjectIconCard
                   id={project.id}
                   name={project.name}
-                  description={project.description}
                   status={project.status}
                   serviceType={project.serviceType}
                   icon={project.icon}

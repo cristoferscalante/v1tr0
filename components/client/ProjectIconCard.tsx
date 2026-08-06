@@ -1,10 +1,7 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-import { AnimatePresence, motion } from "framer-motion"
 import { ArrowRight, Calendar, Clock } from "lucide-react"
-import { AnimatedIcon } from "@/components/home/sections/AnimatedIcon"
 import { resolveProjectIconMeta, projectCardTone, PROJECT_CARD_TONE_CLASSES } from "@/components/shared/service-type"
 import { Pill } from "@/components/shared/panel-ui"
 import ProjectPipeline, { type PipelinePhase } from "@/components/client/ProjectPipeline"
@@ -12,7 +9,6 @@ import ProjectPipeline, { type PipelinePhase } from "@/components/client/Project
 interface ProjectIconCardProps {
   id: string
   name: string
-  description: string
   status: string
   serviceType: string
   icon?: string | null | undefined
@@ -33,14 +29,14 @@ function formatDate(value: string) {
 }
 
 /**
- * Tarjeta "tile": el ícono animado en loop hace de imagen. Al tocarla se
- * revela el nombre y la descripción sobre un fondo oscurecido con blur,
- * con un enlace explícito al detalle del proyecto.
+ * Tarjeta de proyecto: el árbol de avance real (mismo árbol del detalle, en
+ * modo no interactivo) es el fondo a toda la tarjeta. En reposo solo se ve
+ * el nombre, muy sutil, abajo; al pasar el cursor se revelan los tags, el
+ * progreso, las fechas y el acceso al detalle. Toda la tarjeta es un enlace.
  */
 export default function ProjectIconCard({
   id,
   name,
-  description,
   status,
   serviceType,
   icon,
@@ -51,92 +47,64 @@ export default function ProjectIconCard({
   statusLabel,
   phases,
 }: ProjectIconCardProps) {
-  const [revealed, setRevealed] = useState(false)
   const meta = resolveProjectIconMeta({ serviceType, icon })
   // Rojo = recién cotizado, verde = ya en marcha, amarillo = mantenimiento.
   const cardToneClass = PROJECT_CARD_TONE_CLASSES[projectCardTone(status)]
 
   return (
-    <div className="relative group h-full">
+    <Link href={`/client-dashboard/projects/${id}`} className="relative group h-full block aspect-[3/2]">
       <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300" />
-      <div className={`relative h-full flex flex-col rounded-2xl border ${cardToneClass} bg-[#02505931] backdrop-blur-sm overflow-hidden transition-all duration-300`}>
-        {/* "Imagen": ícono animado grande + overlay revelable al click/tap */}
-        <button
-          type="button"
-          onClick={() => setRevealed((v) => !v)}
-          aria-expanded={revealed}
-          aria-label={revealed ? `Ocultar detalle de ${name}` : `Ver detalle de ${name}`}
-          className="relative w-full aspect-video overflow-hidden text-left cursor-pointer"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#08A696]/20 via-[#02505960] to-black/40" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <AnimatedIcon kind={meta.kind} icon={meta.icon} active size={56} className="text-[#26FFDF]/80" />
-          </div>
+      <div className={`relative h-full rounded-2xl border ${cardToneClass} bg-black/40 backdrop-blur-sm overflow-hidden transition-all duration-300`}>
+        {/* Árbol de avance real, a toda la tarjeta, como fondo. */}
+        <ProjectPipeline phases={phases} compact interactive={false} fill />
 
-          <AnimatePresence>
-            {revealed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="absolute inset-0 flex flex-col justify-center p-4 bg-black/65 backdrop-blur-sm"
-              >
-                <h3 className="text-white font-bold text-base leading-snug line-clamp-2">{name}</h3>
-                <p className="text-[#e6f7f6]/80 text-xs mt-1.5 line-clamp-3">
-                  {description || "Sin descripción"}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Velo oscuro para legibilidad: sutil en reposo, más marcado al pasar el cursor. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent group-hover:from-black/95 group-hover:via-black/50 group-hover:to-black/10 transition-colors duration-300" />
 
-          <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/50 text-[#e6f7f6]/80 backdrop-blur-sm">
-            {revealed ? "Toca para ocultar" : "Toca para ver"}
-          </span>
-        </button>
+        <div className="absolute inset-x-0 bottom-0 p-4">
+          <h2 className="font-medium text-white/55 truncate transition-all duration-300 text-xs group-hover:text-sm group-hover:text-white">
+            {name}
+          </h2>
 
-        <div className="flex-1 flex flex-col p-5">
-          <div className="flex items-start justify-between gap-3 mb-1">
-            <h2 className="text-white font-bold text-lg leading-snug truncate">{name}</h2>
-            <Pill tone={statusTone}>{statusLabel}</Pill>
-          </div>
-          <p className="text-textSecondary text-[11px] mb-4">{meta.label}</p>
+          <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
+            <div className="overflow-hidden">
+              <div className="flex flex-col gap-3 pt-3">
+                <div className="flex items-center flex-wrap gap-2">
+                  <Pill tone={statusTone}>{statusLabel}</Pill>
+                  <Pill tone="muted" className="!px-2 !py-0.5 !text-[10px]">{meta.label}</Pill>
+                </div>
 
-          <div className="mb-5">
-            <ProjectPipeline phases={phases} compact />
-          </div>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[11px]">
+                    <span className="text-white/60">Progreso</span>
+                    <span className="text-[#26FFDF] font-medium">{progress}%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
 
-          <div className="space-y-2 mb-4">
-            <div className="flex justify-between text-xs">
-              <span className="text-textSecondary">Progreso</span>
-              <span className="text-[#26FFDF] font-medium">{progress}%</span>
+                <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-white/60">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3 text-[#08A696]" /> {formatDate(startDate)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3 text-[#08A696]" /> {formatDate(endDate)}
+                    </span>
+                  </div>
+                  <span className="flex items-center gap-1 text-xs font-medium text-[#26FFDF] shrink-0">
+                    Ver <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="w-full bg-[#02505960] rounded-full h-2 overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-[#08A696] to-[#26FFDF] h-2 rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="mt-auto pt-4 border-t border-[#08A696]/15 flex items-center justify-between gap-3">
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-textSecondary">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-[#08A696]" /> {formatDate(startDate)}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3 text-[#08A696]" /> {formatDate(endDate)}
-              </span>
-            </div>
-            <Link
-              href={`/client-dashboard/projects/${id}`}
-              className="flex items-center gap-1 text-xs font-medium text-[#26FFDF] hover:gap-1.5 transition-all shrink-0"
-            >
-              Ver <ArrowRight className="h-3 w-3" />
-            </Link>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -8,6 +8,7 @@ import {
   BackgroundVariant,
   Handle,
   Position,
+  useNodesState,
   type NodeProps,
   type Node,
   type Edge,
@@ -23,13 +24,14 @@ import {
   Plus,
   Send,
   Loader2,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react"
 import { AnimatedIcon } from "@/components/home/sections/AnimatedIcon"
 import { taskIcon } from "@/components/shared/task-icons"
 import {
   buildProjectGraph,
-  layoutWithDagre,
+  layoutProjectTree,
   PILL_SIZE,
   trackColor,
   hexToRgba,
@@ -82,52 +84,55 @@ function Tooltip({ children, tone = "default" }: { children: React.ReactNode; to
   )
 }
 
-/** Píldora estandarizada: mismo tamaño para la raíz (nombre del proyecto) y
- *  para los 4 caminos — el texto se envuelve/recorta adentro en vez de que
- *  la píldora cambie de tamaño. */
+/** Nodo raíz: el nombre del proyecto, siempre solo y centrado en el medio
+ *  del árbol — rectangular (esquinas apenas redondeadas) en vez de
+ *  píldora, para distinguirlo de un vistazo de los 4 caminos. Tiene dos
+ *  anclas de salida: una hacia arriba (árbol de consultas) y otra hacia
+ *  abajo (los 4 caminos), para que cada rama salga en línea recta hacia su
+ *  lado sin cruzar por encima del propio título. */
 function RootNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "root" }>>>) {
   return (
     <div
       style={PILL_SIZE}
-      className="relative flex items-center justify-center text-center px-3 rounded-2xl bg-gradient-to-br from-[#08A696]/40 to-[#26FFDF]/20 border-2 border-[#26FFDF]/60 shadow-[0_0_20px_-4px_rgba(38,255,223,0.5)]"
+      className="relative flex items-center justify-center text-center px-4 rounded-xl bg-gradient-to-br from-[#08A696]/40 to-[#26FFDF]/20 border-2 border-[#26FFDF]/60 shadow-[0_0_20px_-4px_rgba(38,255,223,0.5)] before:content-[''] before:absolute before:inset-[-7px] before:rounded-[18px] before:border before:border-[#26FFDF]/15"
     >
-      <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
-      <span className="text-xs font-bold text-[#26FFDF] text-center leading-tight line-clamp-3">{data.label}</span>
+      <Handle id="top" type="source" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="bottom" type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
+      {/* Insignia animada en loop: marca el título como el centro vivo del
+          árbol. Vive fuera de la tarjeta (no encima del texto), colgada del
+          borde superior, girando sin parar. */}
+      <motion.div
+        className="absolute -top-9 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-black/70 border border-[#26FFDF]/50 flex items-center justify-center backdrop-blur-sm"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+      >
+        <Sparkles className="w-3.5 h-3.5 text-[#26FFDF]" />
+      </motion.div>
+      <span className="text-sm font-bold text-[#26FFDF] text-center leading-tight line-clamp-3">{data.label}</span>
     </div>
   )
 }
 
-/** Píldora con el nombre completo del camino (Planeación / Desarrollo /
- *  Calidad y entrega / Mantenimiento) — mismo tamaño estandarizado que la
- *  raíz, texto envuelto a 2 líneas si hace falta, color propio por camino. */
+/** Nombre del camino (Planeación / Desarrollo / Calidad y entrega /
+ *  Mantenimiento), estilo árbol de habilidades: texto plano en mayúsculas
+ *  con el color propio del camino, sin píldora ni fondo — igual que en el
+ *  ejemplo de referencia, donde el nombre y el conteo de tareas viven como
+ *  etiqueta suelta, no dentro de un botón. */
 function HeadNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "head" }>>>) {
-  const [open, setOpen] = useState(false)
   const color = trackColor(data.track)
   return (
-    <div className="relative pointer-events-auto">
-      <Handle type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
-      <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
-      <button
-        type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        style={{
-          ...PILL_SIZE,
-          background: hexToRgba(color, 0.16),
-          borderColor: hexToRgba(color, 0.55),
-          color,
-        }}
-        className="nodrag nopan pointer-events-auto flex items-center justify-center text-center px-3 rounded-2xl border text-xs font-bold leading-tight cursor-pointer"
+    <div style={PILL_SIZE} className="relative pointer-events-none flex flex-col items-center justify-center text-center">
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
+      <span
+        className="text-base font-extrabold uppercase tracking-wide leading-tight drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]"
+        style={{ color }}
       >
         {data.label}
-      </button>
-      <AnimatePresence>
-        {open && (
-          <Tooltip>
-            <p className="text-sm font-semibold text-white text-center">{data.label}</p>
-          </Tooltip>
-        )}
-      </AnimatePresence>
+      </span>
+      <span className="mt-1 text-6xl font-black tabular-nums leading-none" style={{ color: hexToRgba(color, 0.85) }}>
+        {data.count}
+      </span>
     </div>
   )
 }
@@ -139,14 +144,14 @@ function TaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "task"
   const lit = data.isCurrent || Boolean(data.task.completed)
   return (
     <div className="relative pointer-events-auto">
-      <Handle type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
-      <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
         onClick={() => setOpen((v) => !v)}
-        className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-12 h-12 rounded-full border transition-all duration-300 cursor-pointer"
+        className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-[60px] h-[60px] rounded-full border transition-all duration-300 cursor-pointer"
         style={{
           background: data.isCurrent ? hexToRgba(color, 0.32) : data.task.completed ? hexToRgba(color, 0.22) : "rgba(0,0,0,0.4)",
           borderColor: lit ? hexToRgba(color, data.isCurrent ? 0.9 : 0.6) : "rgba(255,255,255,0.12)",
@@ -157,6 +162,14 @@ function TaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "task"
             : undefined,
         }}
       >
+        {/* Anillo exterior estático: mismo lenguaje visual en todos los
+            nodos circulares del árbol (tarea/subtarea/hub/ítem), para que
+            se lean como una sola familia de formas. */}
+        <span
+          aria-hidden
+          className="absolute inset-[-6px] rounded-full border pointer-events-none"
+          style={{ borderColor: hexToRgba(color, lit ? 0.3 : 0.12) }}
+        />
         {data.isCurrent && (
           <motion.span
             className="absolute inset-0 rounded-full border"
@@ -171,13 +184,13 @@ function TaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "task"
           kind={meta.kind}
           icon={meta.icon}
           active={lit}
-          size={16}
+          size={22}
           className={lit ? "" : "text-white/35"}
           style={{ color: lit ? color : undefined }}
         />
         {!data.unlocked && (
-          <span className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-black/70 border border-white/10">
-            <Lock className="w-2 h-2 text-white/40" />
+          <span className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center w-4 h-4 rounded-full bg-black/70 border border-white/10">
+            <Lock className="w-2.5 h-2.5 text-white/40" />
           </span>
         )}
       </button>
@@ -202,14 +215,19 @@ function SubtaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "su
   const color = trackColor(data.track)
   return (
     <div className="relative pointer-events-auto">
-      <Handle type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
-      <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
+      {/* Cuatro anclas: arriba/abajo conectan con la tarea vecina de esa
+          columna, izquierda/derecha encadenan con el hermano de al lado
+          — así cada tramo sale recto en su dirección, sin zigzaguear. */}
+      <Handle id="top" type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="bottom" type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="left" type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="right" type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
         onClick={() => setOpen((v) => !v)}
-        className="nodrag nopan pointer-events-auto flex items-center justify-center w-[34px] h-[34px] rounded-full border transition-all duration-300 cursor-pointer"
+        className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-11 h-11 rounded-full border transition-all duration-300 cursor-pointer"
         style={{
           background: done ? hexToRgba(color, 0.28) : "rgba(0,0,0,0.35)",
           borderColor: data.unlocked ? hexToRgba(color, done ? 0.9 : 0.45) : "rgba(255,255,255,0.12)",
@@ -217,7 +235,12 @@ function SubtaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "su
         }}
       >
         <span
-          className="w-2 h-2 rounded-full"
+          aria-hidden
+          className="absolute inset-[-5px] rounded-full border pointer-events-none"
+          style={{ borderColor: hexToRgba(color, done ? 0.22 : 0.1) }}
+        />
+        <span
+          className="w-2.5 h-2.5 rounded-full"
           style={{ background: done ? color : data.unlocked ? hexToRgba(color, 0.7) : "rgba(255,255,255,0.3)" }}
         />
       </button>
@@ -236,22 +259,84 @@ function SubtaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "su
   )
 }
 
+/** Tercer nivel: pasos previos a una subtarea (levantar información,
+ *  requerimientos, inventariar, estandarizar…). Círculo más chico que el
+ *  de la subtarea, con su nombre siempre visible afuera — no hace falta
+ *  pasar el cursor para leerlo, ya que suelen ir varios juntos en abanico.
+ *  Mismo color del camino, para que se lea como parte de la misma rama. */
+function StepNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "step" }>>>) {
+  const [open, setOpen] = useState(false)
+  const done = Boolean(data.step.completed)
+  const meta = taskIcon(data.step.icon)
+  const color = trackColor(data.track)
+  const lit = done || data.unlocked
+  return (
+    <div className="relative pointer-events-auto">
+      <Handle id="top" type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="bottom" type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="left" type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle id="right" type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
+      <button
+        type="button"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onClick={() => setOpen((v) => !v)}
+        className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-11 h-11 rounded-full border transition-all duration-300 cursor-pointer"
+        style={{
+          background: done ? hexToRgba(color, 0.28) : "rgba(0,0,0,0.4)",
+          borderColor: data.unlocked ? hexToRgba(color, done ? 0.85 : 0.5) : "rgba(255,255,255,0.12)",
+          opacity: data.unlocked ? 1 : 0.5,
+        }}
+      >
+        <span
+          aria-hidden
+          className="absolute inset-[-5px] rounded-full border pointer-events-none"
+          style={{ borderColor: hexToRgba(color, done ? 0.2 : 0.1) }}
+        />
+        <AnimatedIcon
+          kind={meta.kind}
+          icon={meta.icon}
+          active={lit}
+          size={18}
+          className={lit ? "" : "text-white/35"}
+          style={{ color: lit ? color : undefined }}
+        />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <Tooltip tone="muted">
+            <p className="text-[11px] uppercase tracking-wider" style={{ color: hexToRgba(color, 0.7) }}>Paso previo</p>
+            <p className="text-sm font-semibold text-white text-center">{data.step.name}</p>
+            {!data.unlocked && (
+              <p className="text-[11px] text-textSecondary text-center mt-0.5">Pendiente · se activa con su subtarea</p>
+            )}
+          </Tooltip>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 function HubNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "hub" }>>>) {
   const [open, setOpen] = useState(false)
   const Icon = FEED_ICON[data.feedType]
   return (
     <div className="relative pointer-events-auto">
-      <Handle type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
-      <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
+      {/* Esta rama crece hacia arriba (el árbol de consultas queda sobre
+          el título), así que las anclas van invertidas: recibe desde
+          abajo y encadena el siguiente nodo hacia arriba. */}
+      <Handle type="target" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="source" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
-        className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-[50px] h-[50px] rounded-full bg-black/30 border border-[#26FFDF]/20 cursor-pointer"
+        className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-16 h-16 rounded-full bg-black/30 border border-[#26FFDF]/20 cursor-pointer"
       >
-        <Icon className="w-[18px] h-[18px] text-[#26FFDF]/80" />
+        <span aria-hidden className="absolute inset-[-6px] rounded-full border border-[#26FFDF]/12 pointer-events-none" />
+        <Icon className="w-6 h-6 text-[#26FFDF]/80" />
         {data.count > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#08A696] text-[10px] font-bold text-black flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#08A696] text-[11px] font-bold text-black flex items-center justify-center">
             {data.count}
           </span>
         )}
@@ -277,18 +362,22 @@ function ItemNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "item"
     (data.feedType === "meetings" && data.item.status === "pending")
   return (
     <div className="relative pointer-events-auto">
-      <Handle type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
-      <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="target" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="source" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
         onClick={() => setOpen((v) => !v)}
-        className={`nodrag nopan pointer-events-auto flex items-center justify-center w-[42px] h-[42px] rounded-full border cursor-pointer transition-colors ${
+        className={`nodrag nopan pointer-events-auto relative flex items-center justify-center w-[52px] h-[52px] rounded-full border cursor-pointer transition-colors ${
           isPending ? "bg-red-500/10 border-red-400/50 text-red-400" : "bg-black/30 border-white/10 text-[#b2fff6]/80"
         }`}
       >
-        <Icon className="w-[18px] h-[18px]" />
+        <span
+          aria-hidden
+          className={`absolute inset-[-5px] rounded-full border pointer-events-none ${isPending ? "border-red-400/20" : "border-white/8"}`}
+        />
+        <Icon className="w-[22px] h-[22px]" />
       </button>
       <AnimatePresence>
         {open && (
@@ -308,14 +397,14 @@ function ItemNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "item"
 function AddNode({ data, onAdd }: NodeProps<Node<Extract<BoardNodeData, { kind: "add" }>>> & { onAdd: (feedType: FeedType) => void }) {
   return (
     <div className="relative pointer-events-auto">
-      <Handle type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
+      <Handle type="target" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
         onClick={() => onAdd(data.feedType)}
         title={data.label}
-        className="nodrag nopan pointer-events-auto flex items-center justify-center w-[42px] h-[42px] rounded-full border border-dashed border-[#26FFDF]/40 text-[#26FFDF]/70 hover:border-[#26FFDF] hover:text-[#26FFDF] transition-colors cursor-pointer"
+        className="nodrag nopan pointer-events-auto flex items-center justify-center w-[52px] h-[52px] rounded-full border border-dashed border-[#26FFDF]/40 text-[#26FFDF]/70 hover:border-[#26FFDF] hover:text-[#26FFDF] transition-colors cursor-pointer"
       >
-        <Plus className="w-[18px] h-[18px]" />
+        <Plus className="w-[22px] h-[22px]" />
       </button>
     </div>
   )
@@ -421,6 +510,46 @@ function AddItemDialog({
   )
 }
 
+// Solo para los proyectos "[PRUEBA] …" (demo/QA, no datos reales de un
+// cliente): muestra un ejemplo del tercer nivel (pasos previos que
+// convergen en una subtarea) en la primera subtarea que encuentre, aunque
+// la base de datos todavía no tenga esa profundidad cargada. No toca nada
+// si el proyecto no es de prueba.
+const DEMO_STEP_NAMES = ["Levantar información", "Requerimientos", "Inventariar", "Estandarizar"]
+
+function withDemoSteps(phases: PipelinePhase[], projectName: string): PipelinePhase[] {
+  if (!projectName.includes("[PRUEBA]")) {return phases}
+
+  let injected = false
+  return phases.map((phase) => ({
+    ...phase,
+    tasks: phase.tasks.map((task) => {
+      if (injected) {return task}
+      const subtasks =
+        task.subtasks && task.subtasks.length > 0
+          ? task.subtasks
+          : [{ id: `demo-sub-${task.id}`, name: "Preparación", completed: false }]
+      const [first, ...rest] = subtasks
+      if (!first) {return task}
+      injected = true
+      return {
+        ...task,
+        subtasks: [
+          {
+            ...first,
+            steps: DEMO_STEP_NAMES.map((name, i) => ({
+              id: `demo-step-${task.id}-${i}`,
+              name,
+              completed: i < 2,
+            })),
+          },
+          ...rest,
+        ],
+      }
+    }),
+  }))
+}
+
 export default function TaskTreeBoard({
   projectId,
   projectName,
@@ -443,37 +572,63 @@ export default function TaskTreeBoard({
   const [addState, setAddState] = useState<AddFormState | null>(null)
   const [saving, setSaving] = useState(false)
 
-  const { nodes, edges } = useMemo(() => {
-    const graph = buildProjectGraph({ projectName, phases, feeds, interactive: true })
-    const positioned = layoutWithDagre(graph.nodes, graph.edges)
+  const { nodes: computedNodes, edges } = useMemo(() => {
+    const graph = buildProjectGraph({ projectName, phases: withDemoSteps(phases, projectName), feeds, interactive: true })
+    const positioned = layoutProjectTree(graph.nodes)
 
     const rfNodes: Node[] = positioned.map((n) => ({
       id: n.id,
       type: n.data.kind,
       position: { x: n.x - n.width / 2, y: n.y - n.height / 2 },
       data: n.data as unknown as Record<string, unknown>,
-      draggable: false,
+      draggable: true,
       connectable: false,
     }))
+    const dataById = new Map(graph.nodes.map((n) => [n.id, n.data]))
     const rfEdges: Edge[] = graph.edges.map((e) => {
       const isSubtaskEdge = e.source.startsWith("sub-") || e.target.startsWith("sub-")
       const color = e.track ? trackColor(e.track) : "#08A696"
+      // Una arista está "muerta" (bloqueada, sin energía) solo cuando lleva
+      // a una tarea/subtarea que todavía no se desbloquea; el resto de la
+      // red (root↔caminos, consultas) siempre está activa.
+      const targetData = dataById.get(e.target)
+      const isLocked =
+        (targetData?.kind === "task" || targetData?.kind === "subtask") && !targetData.unlocked
       return {
         id: e.id,
         source: e.source,
         target: e.target,
-        type: "smoothstep",
+        sourceHandle: e.sourceHandle ?? null,
+        targetHandle: e.targetHandle ?? null,
+        type: "straight",
+        className: isLocked ? "ttb-edge-dead" : "ttb-edge-live",
         style: {
-          stroke: color,
-          strokeOpacity: e.track ? (isSubtaskEdge ? 0.3 : 0.55) : 0.35,
+          stroke: isLocked ? "#ffffff" : color,
+          strokeOpacity: isLocked ? 0.12 : e.track ? (isSubtaskEdge ? 0.4 : 0.65) : 0.4,
           strokeWidth: isSubtaskEdge ? 1 : 1.5,
-          strokeDasharray: isSubtaskEdge ? "3 3" : undefined,
+          strokeDasharray: isLocked ? "2 4" : isSubtaskEdge ? "3 3" : "5 4",
         },
       }
     })
     return { nodes: rfNodes, edges: rfEdges }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectName, JSON.stringify(phases), JSON.stringify(feeds)])
+
+  // Estado local de posiciones: el usuario puede arrastrar los nodos y
+  // reorganizarlos libremente. Cuando llegan datos nuevos (nueva tarea,
+  // sugerencia, etc.) se preserva la posición ya movida de cada nodo
+  // existente; solo los nodos nuevos usan la posición calculada por dagre.
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(computedNodes)
+
+  useEffect(() => {
+    setNodes((current) => {
+      const currentById = new Map(current.map((n) => [n.id, n]))
+      return computedNodes.map((n) => {
+        const prev = currentById.get(n.id)
+        return prev ? { ...n, position: prev.position } : n
+      })
+    })
+  }, [computedNodes, setNodes])
 
   const handleAdd = (feedType: FeedType) => {
     setAddState({ feedType, title: "", description: "", severity: "medium", preferredDate: "" })
@@ -520,6 +675,7 @@ export default function TaskTreeBoard({
       head: HeadNode,
       task: TaskNode,
       subtask: SubtaskNode,
+      step: StepNode,
       hub: HubNode,
       item: ItemNode,
       add: (props: NodeProps<Node<Extract<BoardNodeData, { kind: "add" }>>>) => <AddNode {...props} onAdd={handleAdd} />,
@@ -533,7 +689,7 @@ export default function TaskTreeBoard({
   }
 
   return (
-    <div className="ttb-board relative h-full min-h-[420px] w-full rounded-2xl overflow-hidden border border-white/10 bg-[#141517]">
+    <div className="ttb-board relative h-full min-h-[420px] w-full overflow-hidden border border-white/10 bg-[#0d1210]/55 backdrop-blur-xl">
       {/* React Flow no asigna z-index propio a cada nodo, así que el orden de
           pintado sigue el orden del array (los nodos de ramas posteriores
           quedan por encima). Sin esto, el tooltip de un nodo puede quedar
@@ -543,9 +699,23 @@ export default function TaskTreeBoard({
         .ttb-board .react-flow__node:hover {
           z-index: 1000 !important;
         }
+        /* Energía recorriendo la red: las ramas activas/desbloqueadas
+           llevan un flujo animado de guiones viajando hacia el nodo; las
+           bloqueadas quedan estáticas y apagadas (sin animación). */
+        .ttb-board .ttb-edge-live path {
+          animation: ttb-energy-flow 0.9s linear infinite;
+        }
+        .ttb-board .ttb-edge-dead path {
+          animation: none;
+        }
+        @keyframes ttb-energy-flow {
+          to {
+            stroke-dashoffset: -18;
+          }
+        }
       `}</style>
       {/* Header delgado y sutil, dentro del tablero. */}
-      <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between gap-3 px-3.5 py-2 bg-[#141517]/85 backdrop-blur-sm border-b border-white/5 pointer-events-none">
+      <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between gap-3 px-3.5 py-2 bg-[#0d1210]/70 backdrop-blur-md border-b border-white/5 pointer-events-none">
         <span className="text-sm font-semibold text-white/85 truncate">{projectName}</span>
         {statusLabel && (
           <span className={`shrink-0 text-xs font-semibold tracking-wide ${statusColorClass ?? "text-[#26FFDF]"}`}>
@@ -558,13 +728,14 @@ export default function TaskTreeBoard({
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          onNodesChange={onNodesChange}
           nodeTypes={nodeTypes}
           fitView
-          fitViewOptions={{ padding: { top: "12%", right: "8%", bottom: "8%", left: "8%" } }}
+          fitViewOptions={{ padding: { top: "10%", right: "8%", bottom: "10%", left: "8%" } }}
           minZoom={0.3}
           maxZoom={1.5}
           proOptions={{ hideAttribution: true }}
-          nodesDraggable={false}
+          nodesDraggable
           nodesConnectable={false}
           elementsSelectable={false}
         >

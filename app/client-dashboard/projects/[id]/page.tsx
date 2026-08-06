@@ -47,11 +47,18 @@ const itemVariants = {
 
 function GlassCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className="relative group h-full">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300" />
-      <div className={`relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 h-full ${className}`}>
-        {children}
-      </div>
+    <div
+      className={`relative bg-[#06120f]/60 backdrop-blur-xl border border-[#08A696]/20 h-full ${className}`}
+      style={{
+        backgroundImage:
+          'radial-gradient(circle at 12% 8%, rgba(38,255,223,0.07), transparent 42%),' +
+          'radial-gradient(circle at 88% 92%, rgba(8,166,150,0.09), transparent 45%),' +
+          'linear-gradient(rgba(38,255,223,0.05) 1px, transparent 1px),' +
+          'linear-gradient(90deg, rgba(38,255,223,0.05) 1px, transparent 1px)',
+        backgroundSize: 'auto, auto, 26px 26px, 26px 26px',
+      }}
+    >
+      {children}
     </div>
   )
 }
@@ -88,7 +95,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   if (loading) {return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full blur-xl opacity-30 animate-pulse" />
         <Loader2 className="h-10 w-10 animate-spin text-[#26FFDF]" />
         <p className="text-textSecondary font-bricolage text-sm">Cargando proyecto...</p>
       </div>
@@ -105,23 +111,22 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible"
-      className="h-screen flex flex-col p-4 sm:p-6 lg:p-8 pb-12 font-bricolage max-w-[1680px] mx-auto"
+      className="h-screen flex flex-col font-bricolage"
     >
-      {/* Back */}
-      <button onClick={() => router.push('/client-dashboard/projects')}
-        className="shrink-0 mb-4 flex items-center gap-2 text-textSecondary hover:text-[#26FFDF] transition-colors text-sm"
-      ><ArrowLeft className="h-4 w-4" /> Volver a proyectos</button>
-
       {/* Tablero único: tareas de desarrollo + sugerencias + fallos + reuniones,
           todo como nodos del mismo árbol en vez de pestañas separadas. El
           nombre/estado del proyecto y el progreso general viven como
-          overlays delgados dentro del propio tablero. Ocupa todo el alto
-          restante hasta pb-12, alineado con el botón flotante de WhatsApp. */}
+          overlays delgados dentro del propio tablero. El panel ocupa todo el
+          espacio disponible (arriba/derecha/abajo); a la izquierda el
+          `lg:pl-36` del layout ya deja el respiro del riel flotante. */}
       <motion.div variants={itemVariants} className="flex-1 min-h-0">
-        <GlassCard className="p-4 sm:p-6 flex flex-col">
-          <p className="shrink-0 text-textSecondary text-xs mb-3">
-            Pasa el cursor o toca un nodo para ver el detalle. Usa el + de cada rama para agregar sugerencias, reportes o reuniones.
-          </p>
+        <GlassCard className="flex flex-col overflow-hidden">
+          {/* Back: vive dentro del panel, alineado con el arranque del riel de
+              navegación (que no se toca, sigue flotando aparte). */}
+          <button onClick={() => router.push('/client-dashboard/projects')}
+            className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/5 text-textSecondary hover:text-[#26FFDF] transition-colors text-sm"
+          ><ArrowLeft className="h-4 w-4" /> Volver a proyectos</button>
+
           <div className="flex-1 min-h-0">
             <TaskTreeBoard
               projectId={project.id}

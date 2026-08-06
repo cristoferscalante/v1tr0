@@ -1,6 +1,6 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Lock } from "lucide-react"
 import { AnimatedIcon } from "@/components/home/sections/AnimatedIcon"
@@ -63,9 +63,17 @@ function useBranchPoints(resolved: ResolvedTask[]) {
 export default function ProjectPipeline({
   phases,
   compact = false,
+  interactive = true,
+  fill = false,
 }: {
   phases: PipelinePhase[]
   compact?: boolean
+  /** Falso para las miniaturas de tarjeta: solo dibuja el árbol, sin
+   *  botones ni tooltips (la tarjeta entera ya es un enlace al detalle). */
+  interactive?: boolean
+  /** Ocupa todo el contenedor padre (posición absoluta) en vez de reservar
+   *  su propio alto fijo — para usarlo como fondo de tarjeta. */
+  fill?: boolean
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
@@ -80,8 +88,12 @@ export default function ProjectPipeline({
   const nodeSize = compact ? 16 : 22
 
   return (
-    <div className="relative w-full" style={{ height }}>
-      <svg viewBox="0 0 300 200" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden>
+    <div className={fill ? "absolute inset-0" : "relative w-full"} style={fill ? undefined : { height }}>
+      <svg
+        viewBox="0 0 300 200"
+        className="absolute inset-0 w-full h-full"
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden>
         {BRANCHES.map((branch) => (
           <path
             key={branch.track}
@@ -98,79 +110,96 @@ export default function ProjectPipeline({
       {BRANCHES.map((branch) =>
         (points[branch.track] ?? []).map((node) => {
           const meta = taskIcon(node.task.icon)
-          const isOpen = hoveredId === node.task.id
+          const isOpen = interactive && hoveredId === node.task.id
+          const circleStyle: CSSProperties = {
+            width: nodeSize,
+            height: nodeSize,
+            background: node.isCurrent
+              ? "rgba(13,93,93,0.8)"
+              : node.task.completed
+              ? "rgba(8,166,150,0.28)"
+              : "rgba(0,0,0,0.4)",
+            borderColor: node.isCurrent ? "#26FFDF" : node.task.completed ? "rgba(38,255,223,0.6)" : "rgba(255,255,255,0.12)",
+            boxShadow: node.isCurrent
+              ? "0 0 10px -1px rgba(38,255,223,0.6)"
+              : node.task.completed
+              ? "0 0 6px -2px rgba(38,255,223,0.4)"
+              : undefined,
+          }
+          const circleContent = (
+            <>
+              {node.isCurrent && (
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-[#26FFDF]/60"
+                  animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                />
+              )}
+              {/* El ícono real siempre se ve; solo cambia cuánto "se alumbra". */}
+              <AnimatedIcon
+                kind={meta.kind}
+                icon={meta.icon}
+                active={node.isCurrent || Boolean(node.task.completed)}
+                size={compact ? 9 : 12}
+                className={node.isCurrent ? "text-[#26FFDF]" : node.task.completed ? "text-[#26FFDF]/90" : "text-white/35"}
+              />
+              {!node.unlocked && (
+                <Lock
+                  className="absolute -bottom-0.5 -right-0.5 text-white/40 bg-black/70 rounded-full p-[1px] border border-white/10"
+                  style={{ width: nodeSize * 0.35, height: nodeSize * 0.35 }}
+                />
+              )}
+            </>
+          )
           return (
             <div
               key={node.task.id}
               className="absolute -translate-x-1/2 -translate-y-1/2"
               style={{ left: `${(node.x / 300) * 100}%`, top: `${(node.y / 200) * 100}%` }}
             >
-              <button
-                type="button"
-                onMouseEnter={() => setHoveredId(node.task.id)}
-                onMouseLeave={() => setHoveredId((prev) => (prev === node.task.id ? null : prev))}
-                onClick={() => setHoveredId((prev) => (prev === node.task.id ? null : node.task.id))}
-                className="relative flex items-center justify-center rounded-full border transition-all duration-300"
-                style={{
-                  width: nodeSize,
-                  height: nodeSize,
-                  background: node.isCurrent
-                    ? "rgba(13,93,93,0.8)"
-                    : node.task.completed
-                    ? "rgba(8,166,150,0.28)"
-                    : "rgba(0,0,0,0.4)",
-                  borderColor: node.isCurrent ? "#26FFDF" : node.task.completed ? "rgba(38,255,223,0.6)" : "rgba(255,255,255,0.12)",
-                  boxShadow: node.isCurrent
-                    ? "0 0 10px -1px rgba(38,255,223,0.6)"
-                    : node.task.completed
-                    ? "0 0 6px -2px rgba(38,255,223,0.4)"
-                    : undefined,
-                }}
-              >
-                {node.isCurrent && (
-                  <motion.span
-                    className="absolute inset-0 rounded-full border border-[#26FFDF]/60"
-                    animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
-                  />
-                )}
-                {/* El ícono real siempre se ve; solo cambia cuánto "se alumbra". */}
-                <AnimatedIcon
-                  kind={meta.kind}
-                  icon={meta.icon}
-                  active={node.isCurrent || Boolean(node.task.completed)}
-                  size={compact ? 9 : 12}
-                  className={node.isCurrent ? "text-[#26FFDF]" : node.task.completed ? "text-[#26FFDF]/90" : "text-white/35"}
-                />
-                {!node.unlocked && (
-                  <Lock
-                    className="absolute -bottom-0.5 -right-0.5 text-white/40 bg-black/70 rounded-full p-[1px] border border-white/10"
-                    style={{ width: nodeSize * 0.35, height: nodeSize * 0.35 }}
-                  />
-                )}
-              </button>
+              {interactive ? (
+                <button
+                  type="button"
+                  onMouseEnter={() => setHoveredId(node.task.id)}
+                  onMouseLeave={() => setHoveredId((prev) => (prev === node.task.id ? null : prev))}
+                  onClick={() => setHoveredId((prev) => (prev === node.task.id ? null : node.task.id))}
+                  className="relative flex items-center justify-center rounded-full border transition-all duration-300"
+                  style={circleStyle}
+                >
+                  {circleContent}
+                </button>
+              ) : (
+                <div
+                  className="relative flex items-center justify-center rounded-full border transition-all duration-300"
+                  style={circleStyle}
+                >
+                  {circleContent}
+                </div>
+              )}
 
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-20 w-max max-w-[170px] px-2.5 py-1.5 rounded-lg bg-black/90 border border-[#26FFDF]/20 backdrop-blur-sm shadow-xl pointer-events-none"
-                  >
-                    <p className="text-[9px] uppercase tracking-wider text-[#26FFDF]/70">
-                      {TRACK_LABELS[node.track] ?? node.track}
-                    </p>
-                    <p className="text-[11px] font-medium text-white text-center">{node.task.name}</p>
-                    {!node.unlocked && (
-                      <p className="text-[9px] text-textSecondary text-center mt-0.5">
-                        Pendiente · se activa al completar la anterior
+              {interactive && (
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-20 w-max max-w-[170px] px-2.5 py-1.5 rounded-lg bg-black/90 border border-[#26FFDF]/20 backdrop-blur-sm shadow-xl pointer-events-none"
+                    >
+                      <p className="text-[9px] uppercase tracking-wider text-[#26FFDF]/70">
+                        {TRACK_LABELS[node.track] ?? node.track}
                       </p>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      <p className="text-[11px] font-medium text-white text-center">{node.task.name}</p>
+                      {!node.unlocked && (
+                        <p className="text-[9px] text-textSecondary text-center mt-0.5">
+                          Pendiente · se activa al completar la anterior
+                        </p>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
             </div>
           )
         }),

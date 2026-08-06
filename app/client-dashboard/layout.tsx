@@ -50,11 +50,10 @@ export default function ClientDashboardLayout({
       {/* Fondo atenuado: mantiene la identidad del home sin competir con los datos */}
       <BackgroundAnimation density={0.22} intensity={0.55} />
       <ClientSidebar />
-      {/* El riel flotante arranca en left-12 (48px, alineado con el botón de
-          WhatsApp) y mide 80px colapsado; pl-36 deja el mismo respiro del
-          otro lado. Al expandirse con el cursor queda flotando por encima
-          del contenido (no empuja el layout). */}
-      <div className="relative z-10 lg:pl-36">
+      {/* El riel flotante ahora vive oculto (aparece solo con el cursor
+          encima) y flota por encima del contenido sin reservarle espacio,
+          así el panel ocupa la pantalla completa hasta el borde izquierdo. */}
+      <div className="relative z-10">
         {children}
       </div>
     </div>

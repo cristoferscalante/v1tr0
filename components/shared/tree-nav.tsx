@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { AnimatePresence, motion } from "framer-motion"
+import { motion } from "framer-motion"
 import type { LucideIcon } from "lucide-react"
 import { ChevronDown } from "lucide-react"
 
@@ -52,19 +51,10 @@ export function TreeNav({
     (g) => g.href === pathname || g.children?.some((c) => c.href === pathname),
   )?.id
 
-  const [expandedId, setExpandedId] = useState<string | null>(activeGroupId ?? null)
-
-  // Si la navegación cambia de ruta (click en un hijo, o carga directa de
-  // una URL), la rama correspondiente se expande automáticamente.
-  useEffect(() => {
-    if (activeGroupId) {setExpandedId(activeGroupId)}
-  }, [activeGroupId])
-
   return (
     <div className="space-y-0">
       {groups.map((group, index) => {
         const isActiveGroup = group.id === activeGroupId
-        const isExpanded = expandedId === group.id
         const hasChildren = (group.children?.length ?? 0) > 0
         const GroupIcon = group.icon
 
@@ -72,11 +62,7 @@ export function TreeNav({
           <button
             type="button"
             onClick={() => {
-              if (hasChildren) {
-                setExpandedId((prev) => (prev === group.id ? null : group.id))
-              } else {
-                onNavigate?.()
-              }
+              if (!hasChildren) {onNavigate?.()}
             }}
             className="relative flex items-center w-full py-1.5 group/node text-left"
           >
@@ -120,16 +106,14 @@ export function TreeNav({
 
             {hasChildren && (
               <ChevronDown
-                className={`ml-auto w-4 h-4 shrink-0 overflow-hidden max-w-0 opacity-0 transition-all duration-300 group-hover:max-w-[1rem] group-hover:opacity-100 text-[#08A696]/70 ${
-                  isExpanded ? "rotate-180" : ""
-                }`}
+                className="ml-auto w-4 h-4 shrink-0 overflow-hidden max-w-0 opacity-0 transition-all duration-300 group-hover:max-w-[1rem] group-hover:opacity-100 group-hover/branch:rotate-180 text-[#08A696]/70"
               />
             )}
           </button>
         )
 
         return (
-          <div key={group.id}>
+          <div key={group.id} className="group/branch">
             {index > 0 && <Connector />}
 
             {group.href && !hasChildren ? (
@@ -140,15 +124,9 @@ export function TreeNav({
               nodeButton
             )}
 
-            <AnimatePresence initial={false}>
-              {hasChildren && isExpanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="overflow-hidden"
-                >
+            {hasChildren && (
+              <div className="grid grid-rows-[0fr] group-hover/branch:grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div className="overflow-hidden">
                   <div className="pt-1 pb-1.5 space-y-0.5">
                     {group.children!.map((leaf) => {
                       const LeafIcon = leaf.icon
@@ -161,7 +139,7 @@ export function TreeNav({
                           className="relative flex items-center py-1 rounded-lg transition-colors duration-200 group/leaf"
                         >
                           {/* Rama corta: del tronco (bajo el nodo padre) al nodo hijo */}
-                          <span className="w-11 shrink-0 flex justify-center" aria-hidden>
+                          <span className="w-7 shrink-0 flex justify-center" aria-hidden>
                             <span className="w-px h-6 bg-[#08A696]/25 rounded-full block" />
                           </span>
                           <span
@@ -186,9 +164,9 @@ export function TreeNav({
                       )
                     })}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              </div>
+            )}
           </div>
         )
       })}

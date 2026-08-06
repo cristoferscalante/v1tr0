@@ -126,10 +126,7 @@ export default function ClientDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full blur-xl opacity-30 animate-pulse" />
-            <Loader2 className="h-10 w-10 animate-spin text-[#26FFDF] relative" />
-          </div>
+          <Loader2 className="h-10 w-10 animate-spin text-[#26FFDF]" />
           <p className="text-textSecondary font-bricolage text-sm">Cargando dashboard...</p>
         </div>
       </div>
