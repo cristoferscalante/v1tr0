@@ -61,7 +61,7 @@ export function TechCarousel({
       <ScrollVelocityContainer className="h-full flex items-center">
           {isVisible && (
             <ScrollVelocityRow baseVelocity={speed} className="flex items-center">
-              <div className="flex items-center gap-20">
+              <>
             {/* Primera copia de los iconos */}
             {technologies.map((tech, index) => (
               <div
@@ -102,7 +102,7 @@ export function TechCarousel({
                 </span>
               </div>
             ))}
-         </div>
+              </>
             </ScrollVelocityRow>
           )}
         </ScrollVelocityContainer>

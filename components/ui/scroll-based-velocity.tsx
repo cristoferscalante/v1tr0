@@ -90,22 +90,22 @@ export function ScrollVelocityRow({
       ref={containerRef}
       className={cn("relative w-full overflow-hidden", className)}
     >
-      <div 
+      <div
         ref={contentRef}
-        className="flex whitespace-nowrap will-change-transform"
-        style={{ 
+        className="flex items-center gap-20 whitespace-nowrap will-change-transform"
+        style={{
           transform: "translate3d(0, 0, 0)",
           backfaceVisibility: "hidden"
         }}
       >
         {/* Triple content for seamless loop */}
-        <div className="flex shrink-0">
+        <div className="flex items-center gap-20 shrink-0">
           {children}
         </div>
-        <div className="flex shrink-0">
+        <div className="flex items-center gap-20 shrink-0">
           {children}
         </div>
-        <div className="flex shrink-0">
+        <div className="flex items-center gap-20 shrink-0">
           {children}
         </div>
       </div>

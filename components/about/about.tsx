@@ -9,7 +9,6 @@ import { useScrollSnapEnabled, useDeviceDetection } from "@/hooks/use-device-det
 import TeamMemberProfile, { type TeamMemberProfileProps } from "./TeamMemberProfile"
 import BackgroundAnimation from "../home/animations/BackgroundAnimation"
 import FooterSection from "@/components/global/FooterSection"
-import { useTheme } from "@/components/theme-provider"
 import AnimatedV1tr0Logo from "./AnimatedV1tr0Logo"
 import AboutHero from "./AboutHero"
 
@@ -71,20 +70,6 @@ const About = () => {
   const isAnimatingRef = useRef(false)
   const shouldEnableScrollSnap = useScrollSnapEnabled()
   const { isMobile } = useDeviceDetection()
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
-  // Service card styles
-  const serviceCardBase = "backdrop-blur-sm border rounded-2xl shadow-lg transition-all duration-300 hover:border-[#08A696] hover:shadow-xl hover:shadow-[#08A696]/10"
-  
-  const serviceCardBorder = isDark
-    ? "border-[#08A696]/30"
-    : "border-[#08A696]/60"
-
-  const serviceCardTheme = isDark
-    ? "bg-[#02505931] text-[#26FFDF] hover:bg-[#02505950]"
-    : "bg-white/90 text-[#08A696] hover:bg-[#08A696]/10"
-
   // Initialize GSAP ScrollTrigger and snap functionality (only for desktop)
   useEffect(() => {
     if (!containerRef.current || typeof window === "undefined" || !shouldEnableScrollSnap) { return }
@@ -273,42 +258,11 @@ const About = () => {
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
-        <div className="max-w-5xl mx-auto w-full">
-          <div className={`gap-6 md:gap-10 items-center ${
-            isMobile ? 'flex flex-col space-y-6' : 'grid lg:grid-cols-2'
+        <div className="max-w-5xl mx-auto w-full flex items-center justify-center">
+          <div className={`relative flex items-center justify-center ${
+            isMobile ? 'h-[200px]' : 'h-[250px] md:h-[300px]'
           }`}>
-            <div className={`relative flex items-center justify-center ${
-              isMobile ? 'h-[200px]' : 'h-[250px] md:h-[300px]'
-            }`}>
-              <AnimatedV1tr0Logo />
-            </div>
-
-            <div className={`${serviceCardBase} ${serviceCardBorder} ${serviceCardTheme} ${
-              isMobile ? 'p-4' : 'p-6'
-            }`}>
-              <div className={`text-center ${
-                isMobile ? 'mb-4' : 'mb-6'
-              }`}>
-                <div className="inline-block px-2 py-1 rounded-full bg-custom-1 text-highlight text-xs font-medium mb-3">
-                  Visión
-                </div>
-                <h3 className={`font-bold tracking-tighter text-textPrimary mb-4 ${
-                  isMobile ? 'text-xl' : 'text-2xl md:text-3xl'
-                }`}>
-                  Nuestra Visión
-                </h3>
-              </div>
-              <p className={`text-textMuted leading-relaxed ${
-                isMobile ? 'text-sm' : 'text-base'
-              }`}>
-                En <span className="font-bold text-highlight">V1TR0</span>, creemos en el poder de la tecnología para transformar la manera en que se gestionan los proyectos. Nos enfocamos en brindar soluciones eficientes e inteligentes que potencien la productividad y la toma de decisiones estratégicas.
-              </p>
-              <p className={`text-textMuted leading-relaxed mt-4 ${
-                isMobile ? 'text-sm' : 'text-base'
-              }`}>
-                Nuestro compromiso es innovar continuamente, integrando las últimas tendencias en desarrollo de software, ciencia de datos y metodologías ágiles para impulsar el éxito de nuestros clientes.
-              </p>
-            </div>
+            <AnimatedV1tr0Logo />
           </div>
         </div>
       </section>

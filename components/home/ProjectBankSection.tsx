@@ -109,9 +109,6 @@ export default function ProjectBankSection() {
           <h2 className={`text-xl md:text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-[#08a696]'}`}>
             Banco de Proyectos
           </h2>
-          <p className={`text-xs md:text-sm max-w-2xl mx-auto ${isDark ? 'text-[#a0a0a0]' : 'text-[#6b7280]'}`}>
-            Descubre nuestro trabajo y soluciones tecnológicas desarrolladas
-          </p>
         </motion.div>
 
         {/* Tags de categorías minimalistas */}

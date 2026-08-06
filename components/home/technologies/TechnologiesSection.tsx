@@ -33,7 +33,7 @@ const TechnologiesSection: React.FC = () => {
   });
 
   return (
-    <section ref={sectionRef} className="technologies-section py-16 bg-transparent">
+    <section ref={sectionRef} className="technologies-section w-full py-16 bg-transparent">
       <div className="w-full px-4">
         {/* TechCarousel Component - Organic scroll-based velocity */}
         <div className="tech-carousel-container animate-element bg-transparent w-full">

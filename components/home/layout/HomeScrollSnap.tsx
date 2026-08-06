@@ -137,7 +137,7 @@ export default function HomeScrollSnap({
 
         const direction = e.deltaY > 0 ? 1 : -1
         const nextSection = currentSectionRef.current + direction
-        
+
         console.log('[DEBUG] Wheel event:', { current: currentSectionRef.current, direction, next: nextSection })
         goToSection(nextSection)
       }
@@ -212,7 +212,7 @@ export default function HomeScrollSnap({
     }
 
     const cleanup = setupScrollSnap()
-    
+
     return cleanup
   }, [canScrollVertically, isMobile, shouldEnableScrollSnap])
 
@@ -229,12 +229,21 @@ export default function HomeScrollSnap({
     return (
       <div ref={containerRef} className={`relative ${className}`}>
         {children.map((child, index) => {
+          const isFooterSection = index === children.length - 1 // FooterSection
+          const isTechSection = index === children.length - 2 // TechnologiesSection
+
+          const heightClass = isFooterSection
+            ? ''
+            : isTechSection
+              ? 'min-h-[50vh] flex items-center justify-center'
+              : 'min-h-screen'
+
           return (
-            <section 
+            <section
               key={index}
               role="region"
               aria-label={`Sección ${index + 1}`}
-              className="relative w-full min-h-screen"
+              className={`relative w-full ${heightClass}`}
             >
               {child}
             </section>
@@ -249,21 +258,35 @@ export default function HomeScrollSnap({
     <div ref={containerRef} className={`relative ${className}`}>
       {children.map((child, index) => {
         const isHorizontalSection = index === 1 // PinnedScrollSection
-        const isLastSection = index === children.length - 1 // TechnologiesSection
-        
+        const isFooterSection = index === children.length - 1 // FooterSection
+
+        if (isFooterSection) {
+          return (
+            <section
+              key={index}
+              ref={(el) => addToRefs(el, index)}
+              role="region"
+              aria-label={`Sección ${index + 1}`}
+              className="relative w-screen"
+            >
+              {child}
+            </section>
+          )
+        }
+
         return (
-          <section 
+          <section
             key={index}
             ref={(el) => addToRefs(el, index)}
             role="region"
             aria-label={`Sección ${index + 1}`}
             className={`
               relative w-screen overflow-hidden
-              ${isHorizontalSection ? 'h-screen' : isLastSection ? 'min-h-screen' : 'h-screen'}
+              ${isHorizontalSection ? 'h-screen' : 'h-screen'}
               flex items-center justify-center
             `}
-            style={{ 
-              height: isHorizontalSection ? "100vh" : isLastSection ? "100vh" : "100vh"
+            style={{
+              height: "100vh"
             }}
           >
             {child}

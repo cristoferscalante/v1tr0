@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { BarChartIcon, TrendingUpIcon, SettingsIcon, ShoppingCart, FileText, Smartphone, Globe, Database, Brain, Workflow, Bot, Link as LinkIcon, LayoutGrid, BarChart3, Cpu } from "lucide-react"
 import { AnimatedIcon } from "./AnimatedIcon"
 
-const servicesData = [
+export const servicesData = [
   {
     id: "desarrollo",
     title: "Desarrollo de Software",

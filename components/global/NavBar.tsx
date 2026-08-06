@@ -56,9 +56,12 @@ export default function Navbar() {
               <NavLink href="/tienda">Tienda</NavLink>
               <NavLink href="/blog">Blog</NavLink>
               <div className="relative group">
-                <button className="text-[#26FFDF] hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-300 whitespace-nowrap">
+                <Link
+                  href="/servicios"
+                  className="text-[#26FFDF] hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-300 whitespace-nowrap"
+                >
                   Servicios
-                </button>
+                </Link>
                 <div className="absolute left-0 mt-2 w-56 bg-white/70 dark:bg-[#02505950] backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                   <div className="py-2">
                     <SubNavLink href="/servicios-referentes/dev">Desarrollo de Software</SubNavLink>
@@ -160,10 +163,14 @@ export default function Navbar() {
             {/* Sección de Servicios */}
             <div className="pt-6">
               <div className="mb-3 px-4">
-                <h3 className="text-[#26FFDF] font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                <Link
+                  href="/servicios"
+                  onClick={() => setIsOpen(false)}
+                  className="text-[#26FFDF] font-bold text-sm uppercase tracking-wider flex items-center gap-2"
+                >
                   <div className="w-1 h-4 bg-[#08A696] rounded-full"></div>
                   Servicios
-                </h3>
+                </Link>
               </div>
               <nav className="space-y-2">
                 <MobileNavLink 
