@@ -46,10 +46,10 @@ export const TRACK_LABELS: Record<string, string> = {
   maintenance: "Mantenimiento",
 }
 
-const TRACK_ORDER = ["planning", "development", "quality", "maintenance"] as const
-
 // Un color por camino, reutilizando la misma paleta que ya usa el resto de
-// la app para estos mismos estados (statusConfig en la página de detalle).
+// la app para estos 4 caminos "conocidos" (statusConfig en la página de
+// detalle). Un camino no listado acá (el admin puede crear los que quiera,
+// track es texto libre) cae en la paleta de respaldo de abajo.
 export const TRACK_COLORS: Record<string, string> = {
   planning: "#F2C94C",
   development: "#26FFDF",
@@ -57,8 +57,24 @@ export const TRACK_COLORS: Record<string, string> = {
   maintenance: "#FB923C",
 }
 
+// Paleta de respaldo para caminos personalizados: se elige un color estable
+// por nombre de camino (mismo texto → mismo color siempre) en vez de uno
+// aleatorio en cada render.
+const FALLBACK_TRACK_PALETTE = [
+  "#FF6B9D", "#60A5FA", "#4ADE80", "#EAB308", "#F87171", "#38BDF8", "#C084FC", "#FB7185",
+]
+
+function hashTrackName(track: string): number {
+  let hash = 0
+  for (let i = 0; i < track.length; i++) {
+    hash = (hash * 31 + track.charCodeAt(i)) >>> 0
+  }
+  return hash
+}
+
 export function trackColor(track: string): string {
-  return TRACK_COLORS[track] ?? TRACK_COLORS.development!
+  if (TRACK_COLORS[track]) {return TRACK_COLORS[track]}
+  return FALLBACK_TRACK_PALETTE[hashTrackName(track) % FALLBACK_TRACK_PALETTE.length]!
 }
 
 export function hexToRgba(hex: string, alpha: number): string {
@@ -73,14 +89,15 @@ export function hexToRgba(hex: string, alpha: number): string {
 export interface ResolvedTask {
   task: PipelineTask
   track: string
+  phaseId: string
   unlocked: boolean
   isCurrent: boolean
 }
 
 /**
  * Un solo frente de avance para todo el proyecto (no uno por rama): se
- * aplana el orden fase→tarea de las 3 ramas y solo la primera tarea sin
- * completar de esa secuencia global queda "actual". Todo lo posterior
+ * aplana el orden fase→tarea de todos los caminos y solo la primera tarea
+ * sin completar de esa secuencia global queda "actual". Todo lo posterior
  * queda con candado hasta que le toque, sin importar en qué rama esté.
  * Compartido entre el ProjectPipeline compacto y el TaskTreeBoard interactivo.
  */
@@ -90,7 +107,8 @@ export function resolveGlobalUnlock(phases: PipelinePhase[]): ResolvedTask[] {
     .flatMap((phase) =>
       phase.tasks.map((task) => ({
         task,
-        track: (TRACK_ORDER as readonly string[]).includes(phase.track) ? phase.track : "development",
+        track: phase.track,
+        phaseId: phase.id,
       })),
     )
 
@@ -99,6 +117,7 @@ export function resolveGlobalUnlock(phases: PipelinePhase[]): ResolvedTask[] {
   return flat.map((entry, i) => ({
     task: entry.task,
     track: entry.track,
+    phaseId: entry.phaseId,
     unlocked: Boolean(entry.task.completed) || i === currentIdx,
     isCurrent: i === currentIdx,
   }))
@@ -108,13 +127,15 @@ export function resolveGlobalUnlock(phases: PipelinePhase[]): ResolvedTask[] {
 
 export type BoardNodeData =
   | { kind: "root"; label: string }
-  | { kind: "head"; label: string; track: string; count: number }
+  | { kind: "head"; label: string; track: string; count: number; phaseId: string }
   | { kind: "task"; task: PipelineTask; unlocked: boolean; isCurrent: boolean; track: string }
   | { kind: "subtask"; subtask: PipelineSubtask; unlocked: boolean; track: string }
   | { kind: "step"; step: PipelineStep; unlocked: boolean; track: string }
   | { kind: "hub"; label: string; feedType: FeedType; count: number }
   | { kind: "item"; feedType: FeedType; item: FeedItem }
   | { kind: "add"; feedType: FeedType; label: string }
+  | { kind: "add-task"; track: string; phaseId: string }
+  | { kind: "add-subtask"; taskId: string; track: string }
 
 export type FeedType = "suggestions" | "bugs" | "meetings"
 
@@ -180,6 +201,10 @@ export function buildProjectGraph(input: {
   phases: PipelinePhase[]
   feeds: Record<FeedType, FeedItem[]>
   interactive: boolean
+  /** Modo admin: agrega nodos "+" (add-task/add-subtask) dentro del propio
+   *  árbol, mismo patrón que los "add" de sugerencias/fallos/reuniones. El
+   *  cliente nunca pasa esto, así que su grafo queda idéntico. */
+  editableTasks?: boolean
 }): { nodes: BoardNode[]; edges: BoardEdge[] } {
   const nodes: BoardNode[] = [
     { id: "root", data: { kind: "root", label: input.projectName }, ...PILL_SIZE, group: "root", col: 0, row: 0 },
@@ -187,17 +212,39 @@ export function buildProjectGraph(input: {
   const edges: BoardEdge[] = []
 
   const resolved = resolveGlobalUnlock(input.phases)
-  const byTrack: Record<string, ResolvedTask[]> = { planning: [], development: [], quality: [], maintenance: [] }
+  const byTrack: Record<string, ResolvedTask[]> = {}
   for (const entry of resolved) {
     byTrack[entry.track] = [...(byTrack[entry.track] ?? []), entry]
   }
 
-  const activeTracks = TRACK_ORDER.filter((track) => (byTrack[track]?.length ?? 0) > 0)
+  // Los caminos son texto libre (el admin crea los que quiera, no solo los
+  // 4 predefinidos), así que las columnas se ordenan por la fase más
+  // temprana de cada camino en vez de un enum fijo — el primer camino
+  // creado queda más a la izquierda.
+  const trackAppearance = new Map<string, number>()
+  ;[...input.phases]
+    .sort((a, b) => a.order - b.order)
+    .forEach((phase, i) => {
+      if (!trackAppearance.has(phase.track)) {trackAppearance.set(phase.track, i)}
+    })
+  // En modo admin, un camino recién creado (fase sin tareas aún) también
+  // debe aparecer — con su encabezado y un solo nodo "+" — para poder
+  // arrancarlo desde el propio árbol. En modo lectura se sigue ocultando.
+  const trackCandidates = input.editableTasks
+    ? new Set([...Object.keys(byTrack), ...input.phases.map((p) => p.track)])
+    : new Set(Object.keys(byTrack))
+  const activeTracks = Array.from(trackCandidates)
+    .filter((track) => (byTrack[track]?.length ?? 0) > 0 || input.editableTasks)
+    .sort((a, b) => (trackAppearance.get(a) ?? 0) - (trackAppearance.get(b) ?? 0))
 
   activeTracks.forEach((track, col) => {
     const tasks = byTrack[track] ?? []
+    // "La" fase de este camino para acciones dentro del árbol (editar el
+    // encabezado, agregar la siguiente tarea): la de la última tarea si ya
+    // hay alguna, si no la primera fase que declaró ese camino.
+    const trackPhaseId = tasks[tasks.length - 1]?.phaseId ?? input.phases.find((p) => p.track === track)?.id ?? ""
     const headId = `head-${track}`
-    nodes.push({ id: headId, data: { kind: "head", label: TRACK_LABELS[track]!, track, count: tasks.length }, ...PILL_SIZE, group: "track", col, row: 1 })
+    nodes.push({ id: headId, data: { kind: "head", label: TRACK_LABELS[track] ?? track, track, count: tasks.length, phaseId: trackPhaseId }, ...PILL_SIZE, group: "track", col, row: 1 })
     edges.push({ id: `e-root-${headId}`, source: "root", target: headId, track, sourceHandle: "bottom" })
 
     // Dos columnas combinadas por camino: las tareas grandes forman la
@@ -253,6 +300,13 @@ export function buildProjectGraph(input: {
           })
         }
       }
+      if (input.editableTasks) {
+        ribItems.push({
+          id: `add-sub-${entry.task.id}`,
+          size: SUBTASK_SIZE,
+          data: { kind: "add-subtask", taskId: entry.task.id, track },
+        })
+      }
 
       // Si la tarea tiene subtareas/pasos, son la condición para activar
       // la siguiente tarea grande: la cadena queda literalmente entre las
@@ -289,6 +343,12 @@ export function buildProjectGraph(input: {
         prev = prevSub
         prevIsRib = true
       }
+    }
+
+    if (input.editableTasks) {
+      const addTaskId = `add-task-${track}`
+      nodes.push({ id: addTaskId, data: { kind: "add-task", track, phaseId: trackPhaseId }, ...ITEM_SIZE, group: "track", col, row })
+      edges.push({ id: `e-${prev}-${addTaskId}`, source: prev, target: addTaskId, track, sourceHandle: prevIsRib ? "bottom" : undefined })
     }
   })
 

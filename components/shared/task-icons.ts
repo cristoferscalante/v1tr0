@@ -57,7 +57,7 @@ export interface TaskIconEntry {
 
 /**
  * Librería curada de íconos para tareas individuales (~40), elegida a mano
- * por el admin al crear cada tarea (ver ProjectTaskManager). Reutiliza los
+ * por el admin al crear cada tarea (ver AdminTaskTreeBoard). Reutiliza los
  * 14 "kind" de animación ya implementados en AnimatedIcon — no hay que
  * programar animaciones nuevas.
  */

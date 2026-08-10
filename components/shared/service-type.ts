@@ -28,17 +28,22 @@ export const SERVICE_TYPES = [
 
 export type ServiceType = (typeof SERVICE_TYPES)[number]
 
+// Un color propio por categoría (no el teal único de marca) para que se
+// distinga de un vistazo en el tablero de proyectos — reutiliza los mismos
+// tonos que ya usa el resto de la app para caminos personalizados (ver
+// FALLBACK_TRACK_PALETTE en components/shared/project-tree.ts), así la
+// paleta se siente consistente en vez de inventar colores nuevos.
 export const SERVICE_TYPE_META: Record<
   ServiceType,
-  { label: string; icon: LucideIcon; kind: IconKind }
+  { label: string; icon: LucideIcon; kind: IconKind; color: string }
 > = {
-  landing_page: { label: "Landing Page", icon: Layout, kind: "grid-ripple" },
-  ecommerce: { label: "E-commerce", icon: ShoppingCart, kind: "cart-bounce" },
-  web_app: { label: "Web App", icon: AppWindow, kind: "workflow-cycle" },
-  mobile_app: { label: "App Móvil", icon: Smartphone, kind: "phone-tilt" },
-  branding: { label: "Branding", icon: Palette, kind: "chip-pulse" },
-  maintenance: { label: "Mantenimiento", icon: Wrench, kind: "gear-spin" },
-  other: { label: "Otro", icon: Sparkles, kind: "trend-rise" },
+  landing_page: { label: "Landing Page", icon: Layout, kind: "grid-ripple", color: "#60A5FA" },
+  ecommerce: { label: "E-commerce", icon: ShoppingCart, kind: "cart-bounce", color: "#FB923C" },
+  web_app: { label: "Web App", icon: AppWindow, kind: "workflow-cycle", color: "#26FFDF" },
+  mobile_app: { label: "App Móvil", icon: Smartphone, kind: "phone-tilt", color: "#B794F6" },
+  branding: { label: "Branding", icon: Palette, kind: "chip-pulse", color: "#FF6B9D" },
+  maintenance: { label: "Mantenimiento", icon: Wrench, kind: "gear-spin", color: "#F2C94C" },
+  other: { label: "Otro", icon: Sparkles, kind: "trend-rise", color: "#4ADE80" },
 }
 
 export function serviceTypeMeta(value: string) {

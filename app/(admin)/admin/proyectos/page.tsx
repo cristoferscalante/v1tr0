@@ -14,6 +14,7 @@ export default async function ProjectsPage() {
       status: projects.status,
       serviceType: projects.serviceType,
       icon: projects.icon,
+      images: projects.images,
       clientName: profiles.name,
       clientEmail: profiles.email,
     })
@@ -60,7 +61,6 @@ export default async function ProjectsPage() {
     <PanelPage>
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <SectionHeading
-          badge="Seguimiento"
           title="Proyectos"
           subtitle="Arrastra las tarjetas entre columnas para cambiar la etapa del proyecto"
         />

@@ -43,7 +43,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { name, description, clientId, serviceType, status } = body
+  const { name, description, clientId, serviceType, status, images } = body
 
   if (!name || !clientId) {
     return NextResponse.json({ error: "Faltan campos requeridos (name, clientId)" }, { status: 400 })
@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       clientId,
       serviceType: resolvedServiceType,
       status: status ?? "planning",
+      images: Array.isArray(images) ? images : [],
     })
     .returning()
     .then((r) => r[0])

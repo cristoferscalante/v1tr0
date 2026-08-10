@@ -146,7 +146,7 @@ export default function KanbanBoard({ initialProjects }: { initialProjects: Kanb
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
           {COLUMNS.map((col) => (
             <KanbanColumn
               key={col.status}

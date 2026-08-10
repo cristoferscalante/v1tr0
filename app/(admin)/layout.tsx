@@ -50,12 +50,13 @@ export default function AdminLayout({
 
       <AdminSidebar />
 
-      {/* El riel flotante arranca en left-12 (48px, alineado con el botón de
-          WhatsApp) y mide 80px colapsado; pl-36 deja el mismo respiro del
-          otro lado. Al expandirse con el cursor queda flotando por encima
-          del contenido (no empuja el layout). */}
-      <div className="relative z-10 lg:pl-36 min-h-screen">
-        <main>{children}</main>
+      {/* La barra ahora es horizontal y fija arriba (ver AdminSidebar): ya
+          no flota encima del contenido tapándolo al pasar el cursor cerca
+          del borde izquierdo (ese era el problema con el riel vertical
+          anterior en tableros con tarjetas pegadas a ese borde), así que
+          reserva su propia altura en vez de superponerse. */}
+      <div className="relative z-10 min-h-screen">
+        <main className="pt-16">{children}</main>
       </div>
     </div>
   )
