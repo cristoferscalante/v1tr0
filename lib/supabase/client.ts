@@ -32,7 +32,9 @@ function createSupabaseClient() {
         on: () => ({ subscribe: () => {} }),
         subscribe: () => {},
       }),
-    } as any
+      // Stub mínimo compatible con la superficie de SupabaseClient usada en la app;
+      // implementar el tipo completo no aporta valor para este caso sin configurar.
+    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   return createClient(supabaseUrl, supabaseAnonKey, {

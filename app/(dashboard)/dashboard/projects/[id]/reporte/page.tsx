@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, Clock, CheckCircle2, Circle, Bug, Lightbulb,
-  CalendarPlus, ClipboardList, AlertTriangle, Loader2,
+  CalendarPlus, Loader2,
   ThumbsUp, ThumbsDown, CheckCircle, XCircle,
   User, Mail, BarChart3,
 } from 'lucide-react'
@@ -109,7 +109,7 @@ export default function AdminProjectReportPage({ params }: { params: Promise<{ i
       body: JSON.stringify({ id, status }),
     })
     if (res.ok) { fetchProject(); toast.success('Sugerencia actualizada') }
-    else toast.error('Error al actualizar')
+    else {toast.error('Error al actualizar')}
   }
 
   const updateBug = async (id: string, status: string) => {
@@ -118,7 +118,7 @@ export default function AdminProjectReportPage({ params }: { params: Promise<{ i
       body: JSON.stringify({ id, status }),
     })
     if (res.ok) { fetchProject(); toast.success('Reporte actualizado') }
-    else toast.error('Error al actualizar')
+    else {toast.error('Error al actualizar')}
   }
 
   const updateMeeting = async (id: string, status: string) => {
@@ -127,16 +127,16 @@ export default function AdminProjectReportPage({ params }: { params: Promise<{ i
       body: JSON.stringify({ id, status }),
     })
     if (res.ok) { fetchProject(); toast.success('Reunión actualizada') }
-    else toast.error('Error al actualizar')
+    else {toast.error('Error al actualizar')}
   }
 
-  if (loading) return (
+  if (loading) {return (
     <div className="min-h-screen flex items-center justify-center">
       <Loader2 className="h-10 w-10 animate-spin text-[#26FFDF]" />
     </div>
-  )
+  )}
 
-  if (!project) return null
+  if (!project) {return null}
 
   const statsCards = [
     { label: 'Etapas', value: project.phases.length, icon: Clock, color: 'from-[#08A696] to-[#26FFDF]' },

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { Code2, Database, Server, Smartphone, Terminal } from "lucide-react"
 import { useTheme } from "@/components/theme-provider"
+import { sectionTitle } from "@/components/home/shared/surface"
 
 export default function ModernTechnologiesSection() {
   const { theme } = useTheme()
@@ -69,7 +70,7 @@ export default function ModernTechnologiesSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-6 sm:mb-8 md:mb-10 relative z-10 px-2 pt-8 sm:pt-12 md:pt-16"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-textPrimary mb-2 sm:mb-3">Nuestras Tecnologías</h2>
+          <h2 className={`${sectionTitle} mb-2 sm:mb-3`}>Nuestras Tecnologías</h2>
           <p className="text-textMuted text-sm sm:text-base md:text-lg max-w-xl mx-auto px-2">
             Dominamos las herramientas más potentes para crear soluciones digitales excepcionales
           </p>

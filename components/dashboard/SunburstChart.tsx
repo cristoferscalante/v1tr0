@@ -57,13 +57,13 @@ export default function SunburstChart({ data, size = 260 }: Props) {
   const cy = size / 2
 
   const rings = useMemo(() => {
-    if (total === 0) return null
+    if (total === 0) {return null}
     const r1 = size * 0.2
     const r2 = size * 0.36
     const r3 = size * 0.49
 
     const segments = data.filter((d) => d.value > 0)
-    if (segments.length === 0) return null
+    if (segments.length === 0) {return null}
 
     const anglePerUnit = 360 / total
 

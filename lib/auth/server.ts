@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 export async function getCurrentProfile() {
   const session = await auth()
-  if (!session?.user?.id) return null
+  if (!session?.user?.id) {return null}
 
   const profile = await db
     .select()

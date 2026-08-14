@@ -1,6 +1,5 @@
 import type { ReactNode } from "react"
 import "../../styles/globals.css"
-import { SessionProvider } from "@/components/auth/session-provider"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 
 export default function DashboardLayout({
@@ -9,7 +8,7 @@ export default function DashboardLayout({
   children: ReactNode
 }) {
   return (
-    <SessionProvider>
+    <>
       <BackgroundAnimation />
       <div className="flex min-h-screen flex-col bg-transparent relative">
         {/* Content */}
@@ -17,6 +16,6 @@ export default function DashboardLayout({
           <main className="flex-1 overflow-y-auto bg-transparent backdrop-blur-sm">{children}</main>
         </div>
       </div>
-    </SessionProvider>
+    </>
   )
 }

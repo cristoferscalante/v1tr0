@@ -8,6 +8,7 @@ import { GsapProvider } from "../components/global/GsapProvider"
 
 import ClientCursorWrapper from "../components/ui/ClientCursorWrapper"
 import FloatingSocialButton from "@/components/global/FloatingSocialButton"
+import MatrixPageTransition from "@/components/global/MatrixPageTransition"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({
           <GsapProvider initialDelay={150} maxRetries={5}>
             <Providers>
               {children}
+              <MatrixPageTransition />
               <ClientCursorWrapper />
               <FloatingSocialButton />
             </Providers>

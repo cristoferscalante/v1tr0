@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Evita que Next.js infiera mal el workspace root cuando hay otro
+  // pnpm-lock.yaml en un directorio superior (p. ej. en el $HOME del usuario).
+  outputFileTracingRoot: __dirname,
   eslint: {
     // Errores de ESLint preexistentes en archivos no relacionados no deben
     // bloquear el deploy. El lint sigue corriendo en CI/local normalmente.

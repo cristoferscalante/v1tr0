@@ -60,11 +60,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [fetchCart]);
 
   const addToCart = async (productId: string) => {
-    await fetch("/api/cart", {
+    const res = await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId }),
     });
+    // Sin sesión el carrito vive en el servidor: mandamos a iniciar sesión
+    // en lugar de dejar que el clic no haga nada.
+    if (res.status === 401) {
+      window.location.href = "/login";
+      return;
+    }
     await fetchCart();
   };
 

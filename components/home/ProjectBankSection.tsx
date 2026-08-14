@@ -7,6 +7,7 @@ import { useTheme } from "@/components/theme-provider"
 import useSnapAnimations from '@/hooks/use-snap-animations'
 import { projectsData } from '@/data/projects'
 import Image from 'next/image'
+import { accentText, sectionTitle, surface, surfaceInner, surfaceInnerActive, surfaceInteractive } from '@/components/home/shared/surface'
 
 // Categorías con iconos
 const categories = [
@@ -106,14 +107,14 @@ export default function ProjectBankSection() {
           className="text-center mb-4"
           variants={itemVariants}
         >
-          <h2 className={`text-xl md:text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-[#08a696]'}`}>
+          <h2 className={`${sectionTitle} mb-2`}>
             Banco de Proyectos
           </h2>
         </motion.div>
 
         {/* Tags de categorías minimalistas */}
         <motion.div
-          className="flex flex-wrap gap-2 justify-center mb-6"
+          className="flex flex-wrap gap-2.5 justify-center mb-6"
           variants={itemVariants}
         >
           {categories.map((category) => {
@@ -125,21 +126,17 @@ export default function ProjectBankSection() {
                 key={category.name}
                 onClick={() => toggleCategory(category.name)}
                 className={`
-                  inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
+                  inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
                   transition-all duration-300 border
-                  ${isActive 
-                    ? isDark 
-                      ? 'bg-[#08A696] text-white border-[#08A696]' 
-                      : 'bg-[#08A696] text-white border-[#08A696]'
-                    : isDark
-                      ? 'bg-transparent text-[#26FFDF] border-[#08A696]/30 hover:border-[#08A696] hover:bg-[#08A696]/10'
-                      : 'bg-transparent text-[#08A696] border-[#08A696]/30 hover:border-[#08A696] hover:bg-[#08A696]/10'
+                  ${isActive
+                    ? 'bg-[#c5ebe7] border-[#08A696]/50 text-[#08A696] dark:bg-[#0d5d5d]/60 dark:border-[#26FFDF]/40 dark:text-[#26FFDF]'
+                    : 'bg-white/50 border-[#08A696]/20 text-[#08A696] dark:bg-black/20 dark:border-[#0d3d3d]/60 dark:text-[#26FFDF] hover:border-[#08A696]/50'
                   }
                 `}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon className="w-3 h-3" />
+                <Icon className="w-4 h-4" />
                 <span>{category.name}</span>
               </motion.button>
             )
@@ -160,14 +157,9 @@ export default function ProjectBankSection() {
               className="relative group w-full"
               variants={itemVariants}
             >
-              {/* Gradiente de fondo con blur - igual que CardBanner */}
-              <div
-                className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
-              />
-              
               {/* Card principal - Reducido */}
               <div
-                className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} p-3 rounded-xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} flex flex-col transition-all duration-300 transform scale-95 group-hover:scale-98 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} min-h-[180px] w-full h-full shadow-md group-hover:shadow-lg group-hover:shadow-[#08A696]/10`}
+                className={`relative p-3 flex flex-col min-h-[180px] w-full h-full ${surface} ${surfaceInteractive}`}
               >
                 {/* Header con categoría y año */}
                 <div className="flex items-center justify-between mb-1.5">
@@ -279,8 +271,7 @@ export default function ProjectBankSection() {
               disabled={currentPage === 1}
               className={`relative group inline-flex items-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 ${currentPage === 1 ? 'scale-90' : 'hover:scale-95'}`}
             >
-              <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-lg blur opacity-30 group-hover:opacity-60 transition-all duration-300`} />
-              <div className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} p-1.5 rounded-lg border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-md group-hover:shadow-lg`}>
+              <div className={`relative p-1.5 ${surfaceInner} group-hover:border-[#08A696]/50`}>
                 <ChevronLeft className={`w-4 h-4 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
               </div>
             </button>
@@ -291,29 +282,8 @@ export default function ProjectBankSection() {
                 onClick={() => handlePageChange(page)}
                 className={`relative group inline-flex items-center ${currentPage === page ? 'scale-100' : 'scale-90 hover:scale-95'} transition-all duration-300`}
               >
-                <div className={`absolute -inset-0.5 bg-gradient-to-r ${
-                  currentPage === page 
-                    ? isDark ? "from-[#08a696] to-[#26ffde]" : "from-[#08a696] to-[#08a696]"
-                    : isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"
-                } rounded-lg blur ${
-                  currentPage === page ? 'opacity-60' : 'opacity-30 group-hover:opacity-60'
-                } transition-all duration-300`} />
-                <div className={`relative ${
-                  currentPage === page
-                    ? isDark ? "bg-[#08A696]/20 border-[#08A696]" : "bg-[#c5ebe7] border-[#08A696]"
-                    : isDark ? "bg-[#02505931] backdrop-blur-sm border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border-[#08A696]/30"
-                } px-3 py-1.5 rounded-lg border transition-all duration-300 ${
-                  currentPage === page ? '' : 'group-hover:border-[#08A696]'
-                } ${
-                  currentPage === page 
-                    ? '' 
-                    : isDark ? 'group-hover:bg-[#02505950]' : 'group-hover:bg-[#c5ebe7]'
-                } shadow-md group-hover:shadow-lg`}>
-                  <span className={`text-xs font-semibold ${
-                    currentPage === page
-                      ? isDark ? "text-[#26FFDF]" : "text-[#08A696]"
-                      : isDark ? "text-[#26FFDF]" : "text-[#08A696]"
-                  }`}>
+                <div className={`relative px-3 py-1.5 ${currentPage === page ? surfaceInnerActive : `${surfaceInner} group-hover:border-[#08A696]/50`}`}>
+                  <span className={`text-xs font-semibold ${accentText}`}>
                     {page}
                   </span>
                 </div>
@@ -325,8 +295,7 @@ export default function ProjectBankSection() {
               disabled={currentPage === totalPages}
               className={`relative group inline-flex items-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 ${currentPage === totalPages ? 'scale-90' : 'hover:scale-95'}`}
             >
-              <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-lg blur opacity-30 group-hover:opacity-60 transition-all duration-300`} />
-              <div className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} p-1.5 rounded-lg border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-md group-hover:shadow-lg`}>
+              <div className={`relative p-1.5 ${surfaceInner} group-hover:border-[#08A696]/50`}>
                 <ChevronRight className={`w-4 h-4 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
               </div>
             </button>

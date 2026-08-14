@@ -55,21 +55,7 @@ export default function Navbar() {
               <NavLink href="/about">V1TR0</NavLink>
               <NavLink href="/tienda">Tienda</NavLink>
               <NavLink href="/blog">Blog</NavLink>
-              <div className="relative group">
-                <Link
-                  href="/servicios"
-                  className="text-[#26FFDF] hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-300 whitespace-nowrap"
-                >
-                  Servicios
-                </Link>
-                <div className="absolute left-0 mt-2 w-56 bg-white/70 dark:bg-[#02505950] backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                  <div className="py-2">
-                    <SubNavLink href="/servicios-referentes/dev">Desarrollo de Software</SubNavLink>
-                    <SubNavLink href="/servicios-referentes/pm">Automatización de tareas</SubNavLink>
-                    <SubNavLink href="/servicios-referentes/new">Sistemas de Información</SubNavLink>
-                  </div>
-                </div>
-              </div>
+              <NavLink href="/servicios">Servicios</NavLink>
             </div>
           </nav>
 
@@ -232,22 +218,6 @@ const NavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) 
       href={href}
       prefetch={false}
       className="text-[#26FFDF] hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-300"
-    >
-      {children}
-    </Link>
-  )
-}
-
-// SubNavLink
-const SubNavLink: FC<{ href: string; children: ReactNode }> = ({ href, children }) => {
-  const baseClasses =
-    "block px-4 py-3 text-sm transition-colors duration-300 rounded-xl mx-2 first:mt-0 last:mb-0"
-
-  return (
-    <Link
-      href={href}
-      prefetch={false}
-      className={`${baseClasses} text-[#26FFDF] hover:text-white hover:bg-[#08A696]/20`}
     >
       {children}
     </Link>
