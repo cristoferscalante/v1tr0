@@ -9,7 +9,7 @@ export default function AuthCallback() {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (status === "loading") return
+    if (status === "loading") {return}
 
     if (session?.user) {
       router.push("/client-dashboard")

@@ -5,6 +5,7 @@ import { notFound, useRouter } from "next/navigation"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { getProductBySlug, getRelatedProducts } from "@/lib/data/mockProducts"
 import { ProductGallery } from "@/components/shop/product-detail/ProductGallery"
+import { resolveProductImage } from "@/lib/data/productImages"
 import { ProductInfo } from "@/components/shop/product-detail/ProductInfo"
 import { ProductSpecifications } from "@/components/shop/product-detail/ProductSpecifications"
 import { RelatedProducts } from "@/components/shop/product-detail/RelatedProducts"
@@ -31,19 +32,19 @@ export default function TiendaSlugPage({ params }: PageProps) {
   const product = getProductBySlug(slug)
 
   const handleAddToCart = () => {
-    if (!product) return
+    if (!product) {return}
     addToCart(product.id)
     setShowNotification(true)
   }
 
   useEffect(() => {
-    if (!showNotification) return
+    if (!showNotification) {return}
     const t = setTimeout(() => setShowNotification(false), 2000)
     return () => clearTimeout(t)
   }, [showNotification])
 
   const flatCartItems = cart.map(item => ({
-    id: item.productId,
+    id: item.id,
     name: item.name ?? "Producto",
     quantity: item.quantity,
     price: Number(item.priceSnapshot) || 0,
@@ -58,9 +59,9 @@ export default function TiendaSlugPage({ params }: PageProps) {
     try {
       const res = await fetch("/api/checkout", { method: "POST" })
       if (res.status === 401) { router.push("/login"); return }
-      if (!res.ok) return
+      if (!res.ok) {return}
       const data = await res.json()
-      if (data.wompiUrl) window.location.href = data.wompiUrl
+      if (data.wompiUrl) {window.location.href = data.wompiUrl}
     } catch {
       // silent
     } finally {
@@ -77,7 +78,14 @@ export default function TiendaSlugPage({ params }: PageProps) {
         <div className="min-h-screen relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
-              <ProductGallery images={product.images || [product.image]} productName={product.name} />
+              <ProductGallery
+                images={
+                  product.images?.length
+                    ? product.images
+                    : [resolveProductImage({ image: product.image, slug: product.slug, category: product.category })]
+                }
+                productName={product.name}
+              />
               <ProductInfo product={product} onAddToCart={handleAddToCart} />
             </div>
             {product.specifications && <ProductSpecifications specifications={product.specifications} />}
@@ -91,7 +99,7 @@ export default function TiendaSlugPage({ params }: PageProps) {
             isOpen={isCartOpen}
             onClose={closeCart}
             cartItems={flatCartItems}
-            onUpdateQuantity={(productId, qty) => updateQuantity(productId, qty)}
+            onUpdateQuantity={updateQuantity}
             onRemoveItem={removeItem}
             onCheckout={handleCheckout}
             checkoutLoading={checkingOut}
@@ -171,7 +179,7 @@ export default function TiendaSlugPage({ params }: PageProps) {
             isOpen={isCartOpen}
             onClose={closeCart}
             cartItems={flatCartItems}
-            onUpdateQuantity={(productId, qty) => updateQuantity(productId, qty)}
+            onUpdateQuantity={updateQuantity}
             onRemoveItem={removeItem}
             onCheckout={handleCheckout}
             checkoutLoading={checkingOut}

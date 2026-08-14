@@ -53,14 +53,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#e6f7f6] dark:bg-[#02505931] backdrop-blur-sm border-l border-[#08A696]/60 dark:border-[#08A696]/20 z-[80] transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#f4faf9] dark:bg-[#052a30] border-l border-[#08A696]/25 dark:border-[#08A696]/25 z-[80] transform transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[#08A696]/60 dark:border-[#08A696]/20">
-            <h2 className="text-2xl font-bold text-[#04423c] dark:text-[#26FFDF] flex items-center gap-2">
+          <div className="flex items-center justify-between p-6 border-b border-[#08A696]/20">
+            <h2 className="text-xl font-bold text-[#08A696] dark:text-[#26FFDF] flex items-center gap-2">
               CARRITO
               <span className="text-[#085c54] dark:text-[#b2fff6] text-lg">({cartItems.length} {cartItems.length !== 1 ? 'ARTÍCULOS' : 'ARTÍCULO'})</span>
             </h2>
@@ -75,7 +75,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
           {/* Free Shipping Progress */}
           {remainingForFreeShipping > 0 && (
-            <div className="px-6 py-4 bg-[#c5ebe7] dark:bg-[#02505950] border-b border-[#08A696]/40 dark:border-[#08A696]/20">
+            <div className="px-6 py-4 bg-[#08A696]/5 dark:bg-[#02505950] border-b border-[#08A696]/20">
               <p className="text-sm text-[#04423c] dark:text-[#b2fff6] text-center mb-2">
                 ¡Solo <span className="font-bold text-[#08A696] dark:text-[#26FFDF]">${remainingForFreeShipping.toLocaleString()} COP</span> para envío gratis!
               </p>
@@ -96,7 +96,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <p className="text-[#085c54] dark:text-[#b2fff6] text-lg">Tu carrito está vacío</p>
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 bg-[#08A696] text-white rounded-xl font-semibold hover:scale-105 transition-transform hover:shadow-lg hover:shadow-[#08A696]/20"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-300 bg-[#c5ebe7] text-[#08A696] border-[#08A696]/50 hover:bg-[#b3e4df] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF] dark:border-[#26FFDF]/40 dark:hover:bg-[#0d5d5d]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
                 >
                   Continuar comprando
                 </button>
@@ -107,7 +107,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-4 p-4 bg-white/70 dark:bg-[#02505950] backdrop-blur-sm rounded-2xl border border-[#08A696]/60 dark:border-[#08A696]/30 hover:border-[#08A696] dark:hover:border-[#26FFDF] transition-colors"
+                    className="flex gap-4 p-4 rounded-2xl border transition-all duration-300 bg-white/60 border-[#08A696]/20 hover:border-[#08A696]/60 dark:bg-[#02505920] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/60"
                   >
                     {/* Product Image */}
                     <div className="relative w-24 h-24 flex-shrink-0 bg-white/50 dark:bg-[#025159]/30 rounded-lg overflow-hidden">
@@ -170,57 +170,67 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   </div>
                 ))}
 
-                {/* Recommended Products */}
-                {recommendedProducts && recommendedProducts.length > 0 && (
-                  <div className="pt-6 border-t border-[#08A696]/60 dark:border-[#08A696]/20">
-                    <h3 className="text-[#04423c] dark:text-[#26FFDF] font-semibold mb-4">También te puede gustar:</h3>
-                    <div className="space-y-3">
-                      {recommendedProducts.slice(0, 2).map((product) => (
-                        <div
-                          key={product.id}
-                          className="flex gap-3 p-3 bg-white/50 dark:bg-[#02505950] rounded-lg border border-[#08A696]/40 dark:border-[#08A696]/20 hover:border-[#08A696] dark:hover:border-[#26FFDF] transition-colors"
-                        >
-                          <div className="relative w-20 h-20 flex-shrink-0 bg-white/50 dark:bg-[#025159]/30 rounded-lg overflow-hidden">
-                            <Image
-                              src={product.image || "/imagenes/placeholders/placeholder.jpg"}
-                              alt={product.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-[#04423c] dark:text-[#26FFDF] font-medium text-sm line-clamp-2 mb-2">
-                              {product.name}
-                            </h4>
-                            <div className="flex items-center justify-between">
-                              <span className="text-[#08A696] dark:text-[#26FFDF] font-bold">
-                                {"price" in product ? `$${Number(product.price).toLocaleString()} COP` : ""}
-                              </span>
-                              <button
-                                  onClick={() => onAddRecommended?.(product)}
-                                className="px-3 py-1.5 bg-[#08A696] text-white text-xs font-semibold rounded-lg hover:scale-105 transition-transform hover:shadow-lg hover:shadow-[#08A696]/20"
-                              >
-                                Agregar
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </>
             )}
           </div>
 
+            {/* Recomendados: bloque secundario, con textura rayada para
+                diferenciarlo de los artículos que sí están en el carrito */}
+            {cartItems.length > 0 && recommendedProducts && recommendedProducts.length > 0 && (
+              <div
+                className="mx-6 mb-4 rounded-2xl border border-[#08A696]/20 p-3.5"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(135deg, rgba(8,166,150,0.07) 0px, rgba(8,166,150,0.07) 2px, transparent 2px, transparent 9px)",
+                }}
+              >
+                <h3 className="text-[11px] uppercase tracking-[0.18em] text-[#08A696]/80 dark:text-[#26FFDF]/80 mb-3">
+                  También te puede gustar
+                </h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {recommendedProducts.slice(0, 3).map((product) => (
+                    <div
+                      key={product.id}
+                      className="flex flex-col rounded-xl border p-1.5 transition-all duration-300 bg-white/70 border-[#08A696]/20 hover:border-[#08A696]/60 dark:bg-[#04252b] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/60"
+                    >
+                      <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-[#08A696]/5">
+                        <Image
+                          src={product.image || "/imagenes/placeholders/placeholder.jpg"}
+                          alt={product.name}
+                          fill
+                          sizes="96px"
+                          className="object-cover"
+                        />
+                      </div>
+                      <h4 className="mt-1.5 text-[10px] font-semibold leading-tight line-clamp-2 text-[#04423c] dark:text-[#26FFDF]">
+                        {product.name}
+                      </h4>
+                      <div className="mt-auto pt-1.5 flex items-center justify-between gap-1">
+                        <span className="text-[10px] font-bold text-[#08A696] dark:text-[#26FFDF] truncate">
+                          {"price" in product ? `$${Number(product.price).toLocaleString()}` : ""}
+                        </span>
+                        <button
+                          onClick={() => onAddRecommended?.(product)}
+                          aria-label={`Agregar ${product.name} al carrito`}
+                          className="w-5 h-5 flex-shrink-0 inline-flex items-center justify-center rounded-md border text-xs font-bold transition-all duration-300 bg-[#c5ebe7] text-[#08A696] border-[#08A696]/50 hover:bg-[#b3e4df] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF] dark:border-[#26FFDF]/40 dark:hover:bg-[#0d5d5d]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
           {/* Footer - Totals & Checkout */}
           {cartItems.length > 0 && (
-            <div className="border-t border-[#08A696]/60 dark:border-[#08A696]/20 p-6 space-y-4 bg-[#c5ebe7] dark:bg-[#02505950]">
+            <div className="border-t border-[#08A696]/20 p-6 space-y-4 bg-[#08A696]/5 dark:bg-[#02505950]">
               {/* Total */}
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between">
                   <span className="text-xl font-bold text-[#04423c] dark:text-[#26FFDF]">Total</span>
-                  <span className="text-3xl font-bold text-[#04423c] dark:text-[#26FFDF]">
+                  <span className="text-2xl font-bold text-[#08A696] dark:text-[#26FFDF]">
                     ${subtotal.toLocaleString()} COP
                   </span>
                 </div>
@@ -233,7 +243,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <button
                 onClick={onCheckout}
                 disabled={checkoutLoading}
-                className="w-full py-4 bg-[#08A696] text-white rounded-2xl font-bold text-lg hover:scale-[1.02] hover:shadow-xl hover:shadow-[#08A696]/30 transition-all duration-300 border-2 border-[#08A696] hover:border-[#26FFDF] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 rounded-2xl border text-base font-bold transition-all duration-300 bg-[#c5ebe7] text-[#08A696] border-[#08A696]/50 hover:bg-[#b3e4df] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF] dark:border-[#26FFDF]/40 dark:hover:bg-[#0d5d5d]/80 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
               >
                 {checkoutLoading ? "Procesando..." : "Finalizar compra"}
               </button>

@@ -6,6 +6,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { Package, ShoppingBag, Radio } from "lucide-react";
 import { AnimatedGradientLines } from "@/components/ui/animated-gradient-lines";
+import { motion } from "framer-motion";
+
+// Entrada escalonada de abajo hacia arriba, igual que en el home
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 
 export const ShopHeroCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,27 +103,32 @@ export const ShopHeroCarousel: React.FC = () => {
 
       {/* Grid Container - respeta el header */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
+        <motion.div
+          className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           
           {/* Left Side - Content Minimalista */}
           <div className="space-y-6 md:space-y-8 order-2 lg:order-1">
             {/* Title - Solo título y tagline */}
-            <div className="space-y-3 md:space-y-4">
+            <motion.div className="space-y-3 md:space-y-4" variants={itemVariants}>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white drop-shadow-2xl">
                 {currentPackage.name}
               </h1>
               <p className="text-primary text-lg sm:text-xl md:text-2xl font-medium drop-shadow-lg">
                 {currentPackage.tagline}
               </p>
-            </div>
+            </motion.div>
 
             {/* Description - Corta y puntual */}
-            <p className="text-base md:text-lg text-gray-200 leading-relaxed max-w-xl">
+            <motion.p className="text-base md:text-lg text-gray-200 leading-relaxed max-w-xl" variants={itemVariants}>
               {currentPackage.description}
-            </p>
+            </motion.p>
 
             {/* CTA + Price - Minimalista */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 pt-2 md:pt-4">
+            <motion.div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 pt-2 md:pt-4" variants={itemVariants}>
               <Link
                 href={`/tienda/${currentPackage.slug}`}
                 className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] font-semibold text-base md:text-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-105 inline-flex items-center justify-center gap-2"
@@ -122,11 +142,11 @@ export const ShopHeroCarousel: React.FC = () => {
                   ${currentPackage.price.toLocaleString()}
                 </span>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Side - Solo imagen, sin stats */}
-          <div className="relative order-1 lg:order-2">
+          <motion.div className="relative order-1 lg:order-2" variants={itemVariants}>
             <div className="relative w-full aspect-square max-w-md mx-auto lg:max-w-none">
               {/* Imagen principal con máscara de desvanecimiento */}
               <div 
@@ -147,11 +167,16 @@ export const ShopHeroCarousel: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Navigation - Iconos minimalistas */}
-        <div className="mt-12 md:mt-16 flex items-center justify-center gap-3 md:gap-4">
+        <motion.div
+          className="mt-12 md:mt-16 flex items-center justify-center gap-3 md:gap-4"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
+        >
           {heroPackages.map((pkg, index) => {
             const Icon = index === 0 ? ShoppingBag : index === 1 ? Package : Radio;
             return (
@@ -176,7 +201,7 @@ export const ShopHeroCarousel: React.FC = () => {
               </button>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Auto-play indicator - minimalista */}
         <div className="mt-8 sm:mt-12 text-center">

@@ -17,21 +17,18 @@ const SLIDE_COPY = [
     prefix: "Desarrollo de",
     accent: "Software",
     suffix: "a tu medida.",
-    cardDescription: "Sitios, tiendas y apps a medida, listos para escalar.",
     icon: Network,
   },
   {
     prefix: "Sistemas de",
     accent: "Información",
     suffix: "que iluminan decisiones.",
-    cardDescription: "Datos centralizados en dashboards claros y accionables.",
     icon: LineChart,
   },
   {
     prefix: "",
     accent: "Automatización",
     suffix: "de tareas que libera tiempo.",
-    cardDescription: "Bots y workflows que eliminan el trabajo repetitivo.",
     icon: Bot,
   },
 ] as const
@@ -42,14 +39,16 @@ const SLIDE_COPY = [
 
 const DEV_NODE_ICONS = [ShoppingCart, Globe, Smartphone] as const
 
-function DevIllustration({ isDark }: { isDark: boolean }) {
+export function DevIllustration({ isDark, glow = true }: { isDark: boolean; glow?: boolean }) {
   const stroke = isDark ? "#26FFDF" : "#08A696"
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden">
-      <div
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-2xl pointer-events-none"
-        style={{ backgroundColor: stroke, opacity: isDark ? 0.18 : 0.22 }}
-      />
+      {glow && (
+        <div
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-2xl pointer-events-none"
+          style={{ backgroundColor: stroke, opacity: isDark ? 0.18 : 0.22 }}
+        />
+      )}
       <svg viewBox="0 0 200 100" className="relative w-full h-full">
         {[20, 20, 20].map((_, i) => (
           <line
@@ -92,8 +91,8 @@ function DevIllustration({ isDark }: { isDark: boolean }) {
             </g>
           )
         })}
-        <circle cx="150" cy="50" r="16" fill={stroke} fillOpacity="0.22" stroke={stroke} strokeWidth="1.5" className="dev-hub" style={{ filter: `drop-shadow(0 0 6px ${stroke})` }} />
-        <foreignObject x="142" y="42" width="16" height="16" className="dev-hub-core" style={{ transformOrigin: "150px 50px", filter: `drop-shadow(0 0 4px ${stroke})` }}>
+        <circle cx="150" cy="50" r="16" fill={stroke} fillOpacity="0.22" stroke={stroke} strokeWidth="1.5" className="dev-hub" style={glow ? { filter: `drop-shadow(0 0 6px ${stroke})` } : undefined} />
+        <foreignObject x="142" y="42" width="16" height="16" className="dev-hub-core" style={{ transformOrigin: "150px 50px", ...(glow ? { filter: `drop-shadow(0 0 4px ${stroke})` } : {}) }}>
           <Settings width={16} height={16} color={stroke} strokeWidth={2} />
         </foreignObject>
       </svg>
@@ -145,12 +144,13 @@ function DataIllustration({ isDark }: { isDark: boolean }) {
   const stroke = isDark ? "#26FFDF" : "#08A696"
   const bars = [30, 55, 40, 70, 50, 85]
   return (
-    <div className="relative h-full w-full rounded-xl overflow-hidden">
+    <div className="relative h-full w-full rounded-xl overflow-hidden flex items-center justify-center">
       <div
         className="absolute right-4 top-3 w-16 h-16 rounded-full blur-2xl pointer-events-none"
         style={{ backgroundColor: stroke, opacity: isDark ? 0.18 : 0.22 }}
       />
-      <svg viewBox="0 0 200 100" className="relative w-full h-full" preserveAspectRatio="none">
+      {/* Escala contenida: la gráfica mantiene su proporción en vez de estirarse a toda la tarjeta */}
+      <svg viewBox="0 0 200 100" className="relative w-full h-auto max-h-full" preserveAspectRatio="xMidYMid meet">
         {bars.map((h, i) => (
           <rect
             key={i}
@@ -322,7 +322,7 @@ function AutomationIllustration({ isDark }: { isDark: boolean }) {
 
 const CARD_ILLUSTRATIONS = [DevIllustration, DataIllustration, AutomationIllustration] as const
 
-interface ProjectExample {
+export interface ProjectExample {
   title: string
   description: string
   subcategory: string
@@ -330,7 +330,7 @@ interface ProjectExample {
 
 // Insignia flotante sobre la ilustración, al estilo de la etiqueta "↑32%"
 // del ejemplo de referencia: muestra en loop los proyectos reales del servicio.
-function ServiceProjectsBadge({ examples, isDark }: { examples: ProjectExample[]; isDark: boolean }) {
+export function ServiceProjectsBadge({ examples, isDark }: { examples: ProjectExample[]; isDark: boolean }) {
   const [exampleIndex, setExampleIndex] = useState(0)
 
   useEffect(() => {
@@ -442,7 +442,6 @@ export default function ServiciosHero() {
         {/* Tarjetas de los 3 servicios — cada una con un mini carrusel de proyectos */}
         <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
           {servicesData.map((service, index) => {
-            const copy = SLIDE_COPY[index]!
             const Illustration = CARD_ILLUSTRATIONS[index]!
             const isActive = index === safeIndex
             const examples: ProjectExample[] = service.subcategories.flatMap((sub) =>
@@ -474,11 +473,7 @@ export default function ServiciosHero() {
                   {service.title}
                 </h3>
 
-                <p className={`text-sm leading-relaxed mb-5 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                  {copy.cardDescription}
-                </p>
-
-                <div className="relative flex-1 min-h-[140px]">
+                <div className="relative flex-1 min-h-[140px] mt-3">
                   <Illustration isDark={isDark} />
                   <ServiceProjectsBadge examples={examples} isDark={isDark} />
                 </div>

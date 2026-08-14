@@ -11,12 +11,18 @@ interface SmartSearchBarProps {
   products: Product[];
   onSearch: (query: string) => void;
   searchQuery: string;
+  /** Versión discreta para convivir con los filtros en una misma barra. */
+  compact?: boolean;
+  /** Despliega las sugerencias hacia arriba (barra anclada al pie). */
+  openUpward?: boolean;
 }
 
 export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
   products,
   onSearch,
   searchQuery,
+  compact = false,
+  openUpward = false,
 }) => {
   const { theme } = useTheme()
   const isDark = theme === "dark"
@@ -60,12 +66,12 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
 
   const showSuggestions = isFocused && suggestions.length > 0;
 
-  const inputBg = isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"
+  const inputBg = isDark ? "bg-[#052a30]" : "bg-[#f4faf9]"
   const inputBorder = isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"
   const inputFocusBorder = "focus:border-[#08A696]"
   const inputText = isDark ? "text-white" : "text-[#011c26]"
   const inputPlaceholder = isDark ? "placeholder:text-white/40" : "placeholder:text-[#08A696]/40"
-  const dropdownBg = isDark ? "bg-[#0f0f10]/98" : "bg-[#faf9f7]/98"
+  const dropdownBg = isDark ? "bg-[#052a30]" : "bg-[#f4faf9]"
   const dropdownBorder = isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"
   const suggestionBg = isDark ? "hover:bg-[#08A696]/10" : "hover:bg-[#08A696]/5"
   const suggestionBorder = isDark ? "hover:border-[#08A696]/30" : "hover:border-[#08A696]/20"
@@ -77,28 +83,38 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
   return (
     <div ref={searchRef} className="relative w-full">
       <div className="relative group">
-        <Search className={`absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 transition-all duration-300 group-focus-within:scale-110 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
+        <Search
+          className={`pointer-events-none absolute z-10 top-1/2 -translate-y-1/2 transition-all duration-300 group-focus-within:scale-110 ${
+            compact ? "left-3 w-4 h-4" : "left-5 w-6 h-6"
+          } ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}
+        />
         <input
           type="text"
-          placeholder="Buscar productos por nombre, categoría..."
+          placeholder={compact ? "Buscar productos..." : "Buscar productos por nombre, categoría..."}
           value={searchQuery}
           onChange={(e) => onSearch(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          className={`w-full pl-16 pr-14 py-5 ${inputBg} border-2 ${inputBorder} ${inputFocusBorder} rounded-2xl ${inputText} ${inputPlaceholder} focus:outline-none transition-all duration-300 font-medium text-base shadow-lg ${isDark ? "shadow-[#08A696]/5" : "shadow-[#08A696]/10"} focus:shadow-xl focus:shadow-[#08A696]/10`}
+          className={`w-full ${inputBg} ${inputFocusBorder} ${inputText} ${inputPlaceholder} focus:outline-none transition-all duration-300 font-medium ${
+            compact
+              ? `pl-9 pr-9 py-2 border ${inputBorder} rounded-xl text-sm`
+              : `pl-16 pr-14 py-5 border-2 ${inputBorder} rounded-2xl text-base shadow-lg ${isDark ? "shadow-[#08A696]/5" : "shadow-[#08A696]/10"} focus:shadow-xl focus:shadow-[#08A696]/10`
+          }`}
         />
         {searchQuery && (
           <button
             onClick={handleClear}
-            className={`absolute right-5 top-1/2 -translate-y-1/2 p-2.5 rounded-lg transition-all duration-200 hover:scale-110 ${isDark ? "hover:bg-[#08A696]/10" : "hover:bg-[#08A696]/10"}`}
+            className={`absolute z-10 top-1/2 -translate-y-1/2 rounded-lg transition-all duration-200 hover:scale-110 ${
+              compact ? "right-2 p-1" : "right-5 p-2.5"
+            } ${isDark ? "hover:bg-[#08A696]/10" : "hover:bg-[#08A696]/10"}`}
             aria-label="Limpiar búsqueda"
           >
-            <X className={`w-5 h-5 ${isDark ? "text-white/60 hover:text-white" : "text-[#666666] hover:text-[#08A696]"}`} />
+            <X className={`${compact ? "w-4 h-4" : "w-5 h-5"} ${isDark ? "text-white/60 hover:text-white" : "text-[#666666] hover:text-[#08A696]"}`} />
           </button>
         )}
       </div>
 
       {showSuggestions && (
-        <div className={`absolute top-full left-0 right-0 mt-3 ${dropdownBg} backdrop-blur-xl border-2 ${dropdownBorder} rounded-2xl shadow-xl overflow-hidden z-50 animate-slide-in-down`}>
+        <div className={`absolute ${openUpward ? "bottom-full mb-3" : "top-full mt-3"} ${compact ? "right-0 w-[26rem] max-w-[85vw]" : "left-0 right-0"} ${dropdownBg} border ${dropdownBorder} rounded-2xl shadow-2xl overflow-hidden z-[60] animate-slide-in-down`}>
           <div className="p-2 space-y-1 max-h-[420px] overflow-y-auto custom-scrollbar">
             {suggestions.map((product) => (
               <Link
@@ -110,7 +126,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
                 }}
                 className={`flex items-center gap-4 p-4 rounded-xl ${suggestionBg} transition-all duration-200 group border border-transparent ${suggestionBorder}`}
               >
-                <div className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 ${isDark ? "bg-[#02505931] border-[#08A696]/20" : "bg-[#e6f7f6] border-[#08A696]/30"} group-hover:border-[#08A696]/50 transition-all duration-300`}>
+                <div className={`relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border ${isDark ? "bg-[#02505931] border-[#08A696]/20" : "bg-[#e6f7f6] border-[#08A696]/30"} group-hover:border-[#08A696]/50 transition-all duration-300`}>
                   <Image
                     src={product.image || "/imagenes/placeholders/placeholder.jpg"}
                     alt={product.name}
@@ -149,7 +165,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
             ))}
           </div>
 
-          <div className={`px-5 py-3 ${footerBg} border-t-2 ${footerBorder} backdrop-blur-sm`}>
+          <div className={`px-5 py-3 ${footerBg} border-t ${footerBorder}`}>
             <p className={`text-sm text-center font-medium ${isDark ? "text-white/70" : "text-[#666666]"}`}>
               {suggestions.length} {suggestions.length === 1 ? "resultado encontrado" : "resultados encontrados"}
             </p>

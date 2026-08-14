@@ -71,12 +71,12 @@ export async function createWompiPayment(params: {
 
 export async function verifyWompiTransaction(transactionId: string) {
   const privateKey = getWompiPrivateKey()
-  if (!privateKey) return null
+  if (!privateKey) {return null}
 
   const res = await fetch(`${getWompiApiUrl()}/transactions/${transactionId}`, {
     headers: { Authorization: `Bearer ${privateKey}` },
   })
 
-  if (!res.ok) return null
+  if (!res.ok) {return null}
   return res.json() as Promise<WompiTransactionResponse>
 }

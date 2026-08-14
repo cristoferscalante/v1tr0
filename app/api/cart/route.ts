@@ -10,15 +10,15 @@ async function getCartId(userId: string) {
     .from(carts)
     .where(eq(carts.profileId, userId))
     .then((r) => r[0])
-  if (cart) return cart.id
+  if (cart) {return cart.id}
   const [newCart] = await db.insert(carts).values({ profileId: userId }).returning()
-  if (!newCart) throw new Error("No se pudo crear el carrito")
+  if (!newCart) {throw new Error("No se pudo crear el carrito")}
   return newCart.id
 }
 
 export async function GET() {
   const session = await auth()
-  if (!session?.user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  if (!session?.user?.id) {return NextResponse.json({ error: "No autorizado" }, { status: 401 })}
 
   const cartId = await getCartId(session.user.id)
   const items = await db
@@ -41,10 +41,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const session = await auth()
-  if (!session?.user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  if (!session?.user?.id) {return NextResponse.json({ error: "No autorizado" }, { status: 401 })}
 
   const { productId, quantity = 1 } = await req.json()
-  if (!productId) return NextResponse.json({ error: "Falta productId" }, { status: 400 })
+  if (!productId) {return NextResponse.json({ error: "Falta productId" }, { status: 400 })}
 
   const cartId = await getCartId(session.user.id)
   const product = await db
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     .from(products)
     .where(eq(products.id, productId))
     .then((r) => r[0])
-  if (!product) return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 })
+  if (!product) {return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 })}
 
   const existing = await db
     .select()
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   const session = await auth()
-  if (!session?.user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  if (!session?.user?.id) {return NextResponse.json({ error: "No autorizado" }, { status: 401 })}
 
   const { itemId, quantity } = await req.json()
   if (quantity <= 0) {
@@ -93,7 +93,7 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   const session = await auth()
-  if (!session?.user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  if (!session?.user?.id) {return NextResponse.json({ error: "No autorizado" }, { status: 401 })}
 
   const { searchParams } = new URL(req.url)
   const itemId = searchParams.get("itemId")

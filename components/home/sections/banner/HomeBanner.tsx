@@ -1,13 +1,9 @@
 "use client"
-import CardBanner from "@/components/home/shared/CardBanner"
+import HeroNavCards from "@/components/home/sections/banner/HeroNavCards"
 import { useTheme } from "@/components/theme-provider"
 import { motion } from "framer-motion"
 import TextType from "@/components/home/hero/TextType"
-
-// Rutas a los archivos SVG
-const devSvg = "/imagenes/icons/svg/dev.svg"
-const dataSvg = "/imagenes/icons/svg/data.svg"
-const pmSvg = "/imagenes/icons/svg/pm.svg"
+import Link from "next/link"
 
 // Variantes de animación
 const containerVariants = {
@@ -45,14 +41,14 @@ export default function HomeBanner() {
       <div className="absolute inset-0 z-0" />
 
       <motion.div 
-        className="max-w-6xl mx-auto z-10 flex flex-col items-center text-center w-full"
+        className="max-w-5xl mx-auto z-10 flex flex-col items-center text-center w-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Hero animado con efecto typewriter y color personalizado en la segunda línea */}
         <motion.div
-          className="mb-6 md:mb-8 max-w-5xl px-2 sm:px-4"
+          className="mb-16 md:mb-20 max-w-5xl px-2 sm:px-4"
           variants={itemVariants}
         >
           <TextType
@@ -75,16 +71,19 @@ export default function HomeBanner() {
           />
         </motion.div>
 
+        {/* Tarjetas de navegación: Servicios, Tienda y Blog */}
+        <motion.div className="w-full" variants={itemVariants}>
+          <HeroNavCards />
+        </motion.div>
         {/* Badge */}
-        <motion.div 
-          className="relative group mb-8 md:mb-10 inline-flex items-center mx-2"
-          variants={itemVariants}
+        <motion.div variants={itemVariants} className="mt-8 md:mt-10">
+        <Link
+          href="/about"
+          aria-label="Ir a la página de V1TR0"
+          className="relative group inline-flex items-center mx-2"
         >
-          {/* Gradiente de fondo con blur */}
-          <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`} />
-          
           {/* Badge principal */}
-          <div className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} px-4 sm:px-6 py-2 sm:py-3 rounded-2xl border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"} text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transform group-hover:scale-105`}>
+          <div className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} px-4 sm:px-6 py-2 sm:py-3 rounded-2xl border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"} text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} transform group-hover:scale-[1.03]`}>
             <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-colors duration-300`}>
               V1TR0 Technologies
             </span>
@@ -92,18 +91,7 @@ export default function HomeBanner() {
               →
             </span>
           </div>
-        </motion.div>
-
-
-
-        {/* Tarjetas con servicios */}
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full px-2 sm:px-4"
-          variants={itemVariants}
-        >
-          <CardBanner icon={devSvg} title="Desarrollo de Software" href="/services/new" />
-          <CardBanner icon={dataSvg} title="Sistemas de Información" href="/services/new" />
-          <CardBanner icon={pmSvg} title="Automatización de Tareas" href="/services/pm" />
+        </Link>
         </motion.div>
       </motion.div>
     </section>

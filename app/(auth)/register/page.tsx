@@ -125,7 +125,7 @@ export default function RegisterPage() {
     )
   }
 
-  const signUp = async (_email: string, _password: string, _name: string) => {
+  const signUp = async () => {
     return {
       success: false,
       error: 'Registro con email no disponible',
@@ -158,7 +158,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const result = await signUp(formData.email, formData.password, formData.fullName)
+      const result = await signUp()
 
       if (result.success) {
         setSuccess(true)

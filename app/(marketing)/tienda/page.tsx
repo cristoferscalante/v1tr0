@@ -8,6 +8,8 @@ import { CartDrawer } from "@/components/shop/cart/CartDrawer";
 import { FloatingCartTab } from "@/components/shop/cart/FloatingCartTab";
 import type { Product } from "@/components/shop/products/ProductCard";
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation";
+import { resolveProductImage } from "@/lib/data/productImages";
+import { useCart } from "@/lib/context/CartContext";
 
 interface ProductRow {
   id: string; name: string; slug: string; description: string | null
@@ -23,7 +25,7 @@ function rowToProduct(row: ProductRow): Product {
     description: row.description ?? "",
     price: Number(row.price),
     ...(row.originalPrice ? { originalPrice: Number(row.originalPrice) } : {}),
-    image: row.images?.[0] ?? "/imagenes/placeholders/placeholder.jpg",
+    image: resolveProductImage({ image: row.images?.[0] ?? null, slug: row.slug, category: row.category }),
     category: row.category,
     stock: row.stock,
     featured: row.isFeatured,
@@ -31,22 +33,15 @@ function rowToProduct(row: ProductRow): Product {
   };
 }
 
-interface CartItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  image: string;
-  category?: string;
-}
-
 export default function TiendaPage() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [showCartNotification, setShowCartNotification] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false)
+
+  // Carrito compartido (persistido en el servidor): mismo que usa la ficha
+  // de producto y el que lee /api/checkout.
+  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart } = useCart()
 
   useEffect(() => {
     fetch("/api/products")
@@ -55,46 +50,10 @@ export default function TiendaPage() {
       .catch(() => setProducts([]));
   }, []);
 
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-
-  const handleAddToCart = (product: { id: string }) => {
-    const p = products.find(m => m.id === product.id)
-    if (!p) {return}
-    setCart((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id);
-      
-      if (existingItem) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prev, { id: p.id, name: p.name, quantity: 1, price: p.price, image: p.image, category: p.category }];
-      }
-    });
-
+  const handleAddToCart = async (product: { id: string }) => {
+    await addToCart(product.id)
     setShowCartNotification(true);
-    setTimeout(() => {
-      setShowCartNotification(false);
-    }, 2000);
-  };
-
-  const handleUpdateQuantity = (productId: string, quantity: number) => {
-    if (quantity === 0) {
-      handleRemoveItem(productId);
-      return;
-    }
-
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      )
-    );
-  };
-
-  const handleRemoveItem = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== productId));
+    setTimeout(() => setShowCartNotification(false), 2000);
   };
 
   const handleCheckout = async () => {
@@ -112,9 +71,20 @@ export default function TiendaPage() {
     }
   }
 
-  // Productos recomendados (aleatorios que no están en el carrito)
+  const flatCartItems = cart.map((item) => ({
+    id: item.id,
+    name: item.name ?? "Producto",
+    quantity: item.quantity,
+    price: Number(item.priceSnapshot) || 0,
+    image: resolveProductImage({
+      image: item.image?.[0] ?? null,
+      slug: item.slug ?? undefined,
+    }),
+  }))
+
+  // Recomendados: productos del catálogo que aún no están en el carrito
   const recommendedProducts = products
-    .filter((product) => !cart.find((item) => item.id === product.id))
+    .filter((product) => !cart.some((item) => item.productId === product.id))
     .slice(0, 3);
 
   return (
@@ -135,8 +105,8 @@ export default function TiendaPage() {
       {/* Footer viene del layout, no duplicarlo aquí */}
 
       {/* Floating Cart Tab - Botón desplegable desde la derecha */}
-      <FloatingCartTab 
-        onToggle={setIsCartOpen}
+      <FloatingCartTab
+        onToggle={(open) => (open ? openCart() : closeCart())}
         cartCount={totalItems}
         isCartOpen={isCartOpen}
       />
@@ -144,10 +114,10 @@ export default function TiendaPage() {
       {/* Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cart}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
+        onClose={closeCart}
+        cartItems={flatCartItems}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
         recommendedProducts={recommendedProducts}
         onAddRecommended={handleAddToCart}
         onCheckout={handleCheckout}

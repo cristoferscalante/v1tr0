@@ -47,3 +47,5 @@ coverage/
 .nyc_output/
 tests/screenshots/
 tests/videos/
+# Copias locales de la migración legacy (contienen credenciales)
+backup/

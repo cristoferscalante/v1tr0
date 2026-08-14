@@ -91,7 +91,9 @@ export function PackageFormDialog({
 
    
   const { fields, append, remove } = useFieldArray({
-    control: form.control as any,
+    // Workaround: incompatibilidad de tipos entre react-hook-form y
+    // @hookform/resolvers/zod en esta combinación de versiones.
+    control: form.control as any, // eslint-disable-line @typescript-eslint/no-explicit-any
     name: "features",
   });
 

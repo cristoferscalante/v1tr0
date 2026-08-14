@@ -7,7 +7,7 @@ export const uploadRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 10 } })
     .middleware(async () => {
       const session = await auth();
-      if (!session?.user) throw new Error("Unauthorized");
+      if (!session?.user) {throw new Error("Unauthorized");}
       return { userId: session.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
@@ -17,7 +17,7 @@ export const uploadRouter = {
   productImage: f({ image: { maxFileSize: "8MB", maxFileCount: 5 } })
     .middleware(async () => {
       const session = await auth();
-      if (!session?.user) throw new Error("Unauthorized");
+      if (!session?.user) {throw new Error("Unauthorized");}
       return { userId: session.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {

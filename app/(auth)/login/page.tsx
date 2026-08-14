@@ -69,7 +69,7 @@ export default function LoginPage() {
 
       router.push('/client-dashboard')
       router.refresh()
-    } catch (error) {
+    } catch {
       toast.error('Error al iniciar sesión')
       setIsLoading(false)
     }

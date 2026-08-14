@@ -435,7 +435,7 @@ export const mockProducts: Product[] = [
  */
 export function getProductBySlug(slug: string): ProductDetailed | undefined {
   const detailed = detailedProducts.find((p) => p.slug === slug)
-  if (detailed) return detailed
+  if (detailed) {return detailed}
 
   const basic = mockProducts.find((p) => p.slug === slug)
   if (basic) {
