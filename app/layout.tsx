@@ -1,7 +1,7 @@
 import type React from "react"
 import { Bricolage_Grotesque } from "next/font/google"
 import "../styles/globals.css"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Providers } from "./providers"
 import { GsapErrorBoundary } from "../components/global/GsapErrorBoundary"
 import { GsapProvider } from "../components/global/GsapProvider"
@@ -14,10 +14,20 @@ const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800"],
   variable: "--font-bricolage-grotesque",
+  display: "swap",
 })
 
+// viewportFit: "cover" habilita las env(safe-area-inset-*) usadas por el shell
+// para no quedar bajo el notch ni la home-indicator en iOS.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#020a0c",
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "V1tr0",
   description: "Desarrollo de software a medida",
   generator: 'v0.dev',
@@ -37,17 +47,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`dark ${bricolageGrotesque.variable}`} suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                document.documentElement.classList.add('dark');
-              })();
-            `,
-          }}
-        />
-      </head>
       <body>
         <GsapErrorBoundary>
           <GsapProvider initialDelay={150} maxRetries={5}>
