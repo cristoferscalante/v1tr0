@@ -29,7 +29,7 @@ export default function ProjectIdentityStep({ name, icon, onNameChange, onIconCh
 
       <div>
         <p className="text-sm text-gray-400 mb-2">Elige un ícono para identificarlo</p>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {SERVICE_TYPES.map((key) => {
             const meta = SERVICE_TYPE_META[key]
             const isSelected = icon === key

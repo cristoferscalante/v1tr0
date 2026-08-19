@@ -241,13 +241,13 @@ export default function ServiceBanner({
   const placeholderImage = `/imagenes/icons/svg/placeholder.svg?height=400&width=500&query=${encodeURIComponent(imageAlt)}`
 
   return (
-    <section className="min-h-screen lg:min-h-screen w-full px-3 sm:px-4 py-6 sm:py-8 lg:py-16 flex items-center bg-transparent">
+    <section className="min-h-[100dvh] lg:min-h-[100dvh] w-full px-3 sm:px-4 py-6 sm:py-8 lg:py-16 flex items-center bg-transparent">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 lg:pr-12">
           <h1
             ref={titleRef}
             onClick={() => titleLink && router.push(titleLink)}
-            className={`text-2xl sm:text-3xl md:text-5xl font-bold text-textPrimary mb-4 sm:mb-6 leading-tight transition-all duration-300 hover:text-highlight hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(38,255,223,0.5)] transform-gpu ${
+            className={`text-2xl sm:text-3xl md:text-5xl font-bold text-textPrimary mb-4 sm:mb-6 leading-tight transition-all duration-300 [@media(hover:hover)]:hover:text-highlight [@media(hover:hover)]:hover:scale-105 [@media(hover:hover)]:hover:drop-shadow-[0_0_15px_rgba(38,255,223,0.5)] transform-gpu ${
               titleLink ? 'cursor-pointer' : 'cursor-default'
             }`}
           >

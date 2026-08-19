@@ -143,8 +143,8 @@ export default function ClientSidebar() {
       {/* Riel móvil: cajón deslizable de siempre, abierto con el botón de
           hamburguesa (no participa del revelado por cursor de escritorio). */}
       <aside
-        className={`lg:hidden fixed z-40 top-1/2 -translate-y-1/2 left-4 flex flex-col rounded-[28px] border border-[#26FFDF]/10 bg-black/30 backdrop-blur-xl shadow-2xl shadow-black/50 font-bricolage transition-transform duration-300 ease-out w-64 max-h-[85vh] ${
-          isOpen ? "translate-x-0" : "-translate-x-[calc(100%+2rem)]"
+        className={`lg:hidden fixed z-40 inset-y-0 left-0 h-[100dvh] w-[80vw] max-w-xs flex flex-col border-r border-[#26FFDF]/10 bg-black/60 backdrop-blur-xl shadow-2xl shadow-black/50 font-bricolage transition-transform duration-300 ease-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="p-3">
@@ -166,7 +166,7 @@ export default function ClientSidebar() {
           </div>
         </div>
 
-        <nav className="px-3 pb-1 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 min-h-0 px-3 pb-1 overflow-y-auto overflow-x-hidden">
           <TreeNav groups={treeGroups} onNavigate={() => setIsOpen(false)} />
         </nav>
 

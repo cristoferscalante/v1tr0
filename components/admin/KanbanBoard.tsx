@@ -7,6 +7,7 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   closestCorners,
@@ -35,7 +36,13 @@ export default function KanbanBoard({ initialProjects }: { initialProjects: Kanb
   const [clientFilter, setClientFilter] = useState("all")
   const [serviceFilter, setServiceFilter] = useState("all")
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
+  // Táctil: el pointer sensor por distancia compite con el scroll de la
+  // página en móvil y cancela el arrastre, así que el touch se activa por
+  // pulsación sostenida.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
+  )
   const columnStatuses = new Set(COLUMNS.map((c) => c.status))
 
   const clientOptions = useMemo(() => {

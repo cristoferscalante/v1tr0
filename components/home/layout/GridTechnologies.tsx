@@ -61,7 +61,7 @@ export default function ModernTechnologiesSection() {
   ]
 
   return (
-    <section className="w-full bg-custom-1/20 dark:bg-custom-1/80 min-h-screen py-8 sm:py-12 md:py-16 px-4 font-sans overflow-hidden relative flex flex-col justify-center">
+    <section className="w-full bg-custom-1/20 dark:bg-custom-1/80 min-h-[100dvh] py-8 sm:py-12 md:py-16 px-4 font-sans overflow-hidden relative flex flex-col justify-center">
       <div className="absolute inset-0 bg-grid-pattern opacity-15 dark:opacity-20"></div>
       <div className="max-w-6xl mx-auto relative">
         <motion.div

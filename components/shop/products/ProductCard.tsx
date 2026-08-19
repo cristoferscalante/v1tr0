@@ -68,7 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Card principal con mismo estilo que BlogCard */}
       <article
-        className={`relative h-full flex flex-col ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
+        className={`relative h-full flex flex-col shop-surface backdrop-blur-sm rounded-2xl border shop-border transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] dark:group-hover:border-[#26FFDF]/60 ${isDark ? "group-hover:bg-[#232629]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
       >
         {/* Badge opcional (Featured, Nuevo, etc) */}
         {product.badge && (
@@ -82,7 +82,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Favorite Button */}
         <button
           onClick={handleToggleFavorite}
-          className={`absolute top-2 right-2 md:top-4 md:right-4 z-10 p-1.5 md:p-2.5 rounded-full backdrop-blur-sm border transition-all duration-300 hover:scale-110 ${isDark ? "bg-[#02505931] border-[#08A696]/20 hover:bg-[#02505950] hover:border-[#08A696]" : "bg-[#e6f7f6] border-[#08A696]/30 hover:bg-[#c5ebe7] hover:border-[#08A696]"}`}
+          className={`absolute top-2 right-2 md:top-4 md:right-4 z-10 p-1.5 md:p-2.5 rounded-full backdrop-blur-sm border transition-all duration-300 hover:scale-110 shop-inset shop-border shop-border-hover ${isDark ? "hover:bg-[#2b2e31]" : "hover:bg-[#c5ebe7]"}`}
           aria-label={localFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
           <Heart
@@ -134,7 +134,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </p>
 
             {/* Price and Add to Cart */}
-            <div className={`flex items-center justify-between pt-4 border-t mt-auto ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"}`}>
+            <div className={`flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-0 sm:justify-between pt-4 border-t mt-auto ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"}`}>
               <div className="flex items-baseline gap-2">
                 <span className={`text-xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                   ${product.price.toFixed(2)}
@@ -154,10 +154,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   }
                 }}
                 disabled={isOutOfStock}
-                className={`text-xs font-medium px-3 py-1.5 rounded-full backdrop-blur-sm border transition-all duration-300 ${
+                className={`text-sm sm:text-xs px-4 sm:px-3 py-2.5 sm:py-1.5 min-h-[44px] sm:min-h-0 w-full sm:w-auto rounded-full backdrop-blur-sm ${
                   isOutOfStock
-                    ? `${isDark ? "bg-[#02505931] text-[#a0a0a0] border-[#08A696]/20" : "bg-[#e6f7f6] text-[#666666] border-[#08A696]/30"} cursor-not-allowed`
-                    : `${isDark ? "bg-[#08A696]/10 text-[#26FFDF] border-[#08a696]/50 hover:bg-[#08A696]/20" : "bg-[#08A696]/5 text-[#08a696] border-[#08a696]/30 hover:bg-[#08A696]/10"}`
+                    ? `shop-inset shop-border border font-medium ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"} cursor-not-allowed`
+                    : "shop-btn"
                 }`}
               >
                 {isOutOfStock ? "Sin Stock" : "Agregar"}
@@ -168,7 +168,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Out of Stock Overlay */}
         {isOutOfStock && (
-          <div className={`absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center z-20 ${isDark ? "bg-[#02505980]" : "bg-[#e6f7f680]"}`}>
+          <div className={`absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center z-20 ${isDark ? "bg-[#1e2123]/80" : "bg-[#e6f7f680]"}`}>
             <div className="text-center space-y-1 md:space-y-2">
               <span className={`font-bold text-lg md:text-2xl uppercase tracking-wider ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
                 Agotado

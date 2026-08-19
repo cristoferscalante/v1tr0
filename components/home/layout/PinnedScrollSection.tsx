@@ -210,7 +210,7 @@ export default function PinnedScrollSection({
     <PinnedScrollContext.Provider value={true}>
       <div 
         ref={sectionRef}
-        className={`relative w-full h-screen overflow-hidden ${className} pinned-section-container`}
+        className={`relative w-full h-[100dvh] overflow-hidden ${className} pinned-section-container`}
       >
         {/* Contenedor del carrusel */}
         <div className="relative w-full h-full carousel-content">

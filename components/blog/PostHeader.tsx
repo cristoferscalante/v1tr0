@@ -73,7 +73,7 @@ export default function PostHeader({ title, date, author, coverImage, readingTim
         
         {/* Imagen con glassmorphism */}
         <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100">
-          <Image src={imageToUse} alt={title} fill priority className="object-cover" />
+          <Image src={imageToUse} alt={title} fill priority sizes="(max-width:768px) 100vw, 800px" className="object-cover" />
           <div 
             className="absolute inset-0 transition-opacity duration-500"
             style={{

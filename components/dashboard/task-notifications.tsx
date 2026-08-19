@@ -118,7 +118,7 @@ export function TaskNotifications({ onTaskAssigned }: TaskNotificationsProps) {
 
       <DropdownMenuContent 
         align="end" 
-        className="w-[420px] p-0 bg-background/95 backdrop-blur-xl border-[#08A696]/30 rounded-2xl shadow-2xl"
+        className="w-[min(420px,calc(100vw-2rem))] p-0 bg-background/95 backdrop-blur-xl border-[#08A696]/30 rounded-2xl shadow-2xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[#08A696]/20">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -25,6 +25,8 @@ import {
   Send,
   Loader2,
   Sparkles,
+  ChevronDown,
+  Check,
   type LucideIcon,
 } from "lucide-react"
 import { AnimatedIcon } from "@/components/home/sections/AnimatedIcon"
@@ -32,6 +34,7 @@ import { taskIcon } from "@/components/shared/task-icons"
 import {
   buildProjectGraph,
   layoutProjectTree,
+  resolveGlobalUnlock,
   PILL_SIZE,
   trackColor,
   hexToRgba,
@@ -82,6 +85,47 @@ function Tooltip({ children, tone = "default" }: { children: React.ReactNode; to
       {children}
     </motion.div>
   )
+}
+
+/** ¿El puntero del dispositivo puede hacer hover? En táctil no, y ahí
+ *  onMouseLeave nunca llega: el tooltip abierto por el tap se quedaría
+ *  pegado para siempre. Se resuelve en efecto (no en render) para no
+ *  romper la hidratación. */
+function useCanHover() {
+  const [canHover, setCanHover] = useState(true)
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover)")
+    setCanHover(mq.matches)
+    const onChange = () => setCanHover(mq.matches)
+    mq.addEventListener("change", onChange)
+    return () => mq.removeEventListener("change", onChange)
+  }, [])
+  return canHover
+}
+
+/** Tooltip de nodo: abre con hover solo en dispositivos con hover real, y
+ *  en táctil alterna con el tap y se cierra al tocar fuera. */
+function useNodeTooltip() {
+  const [open, setOpen] = useState(false)
+  const canHover = useCanHover()
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!open) {return}
+    const onPointerDown = (event: PointerEvent) => {
+      if (ref.current && !ref.current.contains(event.target as globalThis.Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown)
+    return () => document.removeEventListener("pointerdown", onPointerDown)
+  }, [open])
+
+  const hoverProps = canHover
+    ? { onMouseEnter: () => setOpen(true), onMouseLeave: () => setOpen(false) }
+    : {}
+
+  return { open, setOpen, ref, hoverProps }
 }
 
 /** Nodo raíz: el nombre del proyecto, siempre solo y centrado en el medio
@@ -138,18 +182,17 @@ function HeadNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "head"
 }
 
 function TaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "task" }>>>) {
-  const [open, setOpen] = useState(false)
+  const { open, setOpen, ref, hoverProps } = useNodeTooltip()
   const meta = taskIcon(data.task.icon)
   const color = trackColor(data.track)
   const lit = data.isCurrent || Boolean(data.task.completed)
   return (
-    <div className="relative pointer-events-auto">
+    <div ref={ref} className="relative pointer-events-auto">
       <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
       <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        {...hoverProps}
         onClick={() => setOpen((v) => !v)}
         className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-[60px] h-[60px] rounded-full border transition-all duration-300 cursor-pointer"
         style={{
@@ -210,11 +253,11 @@ function TaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "task"
 }
 
 function SubtaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "subtask" }>>>) {
-  const [open, setOpen] = useState(false)
+  const { open, setOpen, ref, hoverProps } = useNodeTooltip()
   const done = Boolean(data.subtask.completed)
   const color = trackColor(data.track)
   return (
-    <div className="relative pointer-events-auto">
+    <div ref={ref} className="relative pointer-events-auto">
       {/* Cuatro anclas: arriba/abajo conectan con la tarea vecina de esa
           columna, izquierda/derecha encadenan con el hermano de al lado
           — así cada tramo sale recto en su dirección, sin zigzaguear. */}
@@ -224,8 +267,7 @@ function SubtaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "su
       <Handle id="right" type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        {...hoverProps}
         onClick={() => setOpen((v) => !v)}
         className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-11 h-11 rounded-full border transition-all duration-300 cursor-pointer"
         style={{
@@ -265,21 +307,20 @@ function SubtaskNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "su
  *  pasar el cursor para leerlo, ya que suelen ir varios juntos en abanico.
  *  Mismo color del camino, para que se lea como parte de la misma rama. */
 function StepNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "step" }>>>) {
-  const [open, setOpen] = useState(false)
+  const { open, setOpen, ref, hoverProps } = useNodeTooltip()
   const done = Boolean(data.step.completed)
   const meta = taskIcon(data.step.icon)
   const color = trackColor(data.track)
   const lit = done || data.unlocked
   return (
-    <div className="relative pointer-events-auto">
+    <div ref={ref} className="relative pointer-events-auto">
       <Handle id="top" type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
       <Handle id="bottom" type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
       <Handle id="left" type="target" position={Position.Left} style={{ opacity: 0, pointerEvents: "none" }} />
       <Handle id="right" type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        {...hoverProps}
         onClick={() => setOpen((v) => !v)}
         className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-11 h-11 rounded-full border transition-all duration-300 cursor-pointer"
         style={{
@@ -318,10 +359,10 @@ function StepNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "step"
 }
 
 function HubNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "hub" }>>>) {
-  const [open, setOpen] = useState(false)
+  const { open, setOpen, ref, hoverProps } = useNodeTooltip()
   const Icon = FEED_ICON[data.feedType]
   return (
-    <div className="relative pointer-events-auto">
+    <div ref={ref} className="relative pointer-events-auto">
       {/* Esta rama crece hacia arriba (el árbol de consultas queda sobre
           el título), así que las anclas van invertidas: recibe desde
           abajo y encadena el siguiente nodo hacia arriba. */}
@@ -329,8 +370,8 @@ function HubNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "hub" }
       <Handle type="source" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        {...hoverProps}
+        onClick={() => setOpen((v) => !v)}
         className="nodrag nopan pointer-events-auto relative flex items-center justify-center w-16 h-16 rounded-full bg-black/30 border border-[#26FFDF]/20 cursor-pointer"
       >
         <span aria-hidden className="absolute inset-[-6px] rounded-full border border-[#26FFDF]/12 pointer-events-none" />
@@ -353,7 +394,7 @@ function HubNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "hub" }
 }
 
 function ItemNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "item" }>>>) {
-  const [open, setOpen] = useState(false)
+  const { open, setOpen, ref, hoverProps } = useNodeTooltip()
   const Icon = FEED_ICON[data.feedType]
   // Fallos sin resolver y reuniones aún no confirmadas quedan en rojo, para
   // que salte a la vista lo que el usuario está esperando que se atienda.
@@ -361,13 +402,12 @@ function ItemNode({ data }: NodeProps<Node<Extract<BoardNodeData, { kind: "item"
     (data.feedType === "bugs" && data.item.status !== "resolved") ||
     (data.feedType === "meetings" && data.item.status === "pending")
   return (
-    <div className="relative pointer-events-auto">
+    <div ref={ref} className="relative pointer-events-auto">
       <Handle type="target" position={Position.Bottom} style={{ opacity: 0, pointerEvents: "none" }} />
       <Handle type="source" position={Position.Top} style={{ opacity: 0, pointerEvents: "none" }} />
       <button
         type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        {...hoverProps}
         onClick={() => setOpen((v) => !v)}
         className={`nodrag nopan pointer-events-auto relative flex items-center justify-center w-[52px] h-[52px] rounded-full border cursor-pointer transition-colors ${
           isPending ? "bg-red-500/10 border-red-400/50 text-red-400" : "bg-black/30 border-white/10 text-[#b2fff6]/80"
@@ -402,10 +442,219 @@ function AddNode({ data, onAdd }: NodeProps<Node<Extract<BoardNodeData, { kind: 
         type="button"
         onClick={() => onAdd(data.feedType)}
         title={data.label}
-        className="nodrag nopan pointer-events-auto flex items-center justify-center w-[52px] h-[52px] rounded-full border border-dashed border-[#26FFDF]/40 text-[#26FFDF]/70 hover:border-[#26FFDF] hover:text-[#26FFDF] transition-colors cursor-pointer"
+        className="nodrag nopan pointer-events-auto flex items-center justify-center w-[52px] h-[52px] rounded-full border border-dashed border-[#26FFDF]/40 text-[#26FFDF]/70 [@media(hover:hover)]:hover:border-[#26FFDF] [@media(hover:hover)]:hover:text-[#26FFDF] transition-colors cursor-pointer"
       >
         <Plus className="w-[22px] h-[22px]" />
       </button>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Vista móvil (< md): el lienzo de ReactFlow mide ~830px lógicos, así
+ * que en 320-420px el texto de los nodos quedaría ilegible. Debajo de
+ * `md` se sustituye por esta lista/acordeón con exactamente la misma
+ * información del árbol (fases → tareas → subtareas → pasos, más los
+ * feeds de consultas) y las mismas acciones que existen en el tablero
+ * (agregar sugerencia / fallo / reunión). Desde `md` no se renderiza.
+ * ------------------------------------------------------------------ */
+function MobileTreeList({
+  phases,
+  feeds,
+  onAdd,
+}: {
+  phases: PipelinePhase[]
+  feeds: Record<FeedType, FeedItem[]>
+  onAdd: (feedType: FeedType) => void
+}) {
+  const resolved = resolveGlobalUnlock(phases)
+  const stateByTaskId = useMemo(
+    () => new Map(resolved.map((r) => [r.task.id, r])),
+    [resolved],
+  )
+  const ordered = useMemo(() => [...phases].sort((a, b) => a.order - b.order), [phases])
+  const currentPhaseId = resolved.find((r) => r.isCurrent)?.phaseId
+  const [openPhases, setOpenPhases] = useState<Record<string, boolean>>({})
+  const [openTasks, setOpenTasks] = useState<Record<string, boolean>>({})
+
+  const isPhaseOpen = (id: string) => openPhases[id] ?? id === currentPhaseId
+
+  return (
+    <div className="md:hidden max-h-full overflow-y-auto px-3 pt-12 pb-16 space-y-3">
+      {ordered.map((phase) => {
+        const color = trackColor(phase.track)
+        const done = phase.tasks.filter((t) => t.completed).length
+        const expanded = isPhaseOpen(phase.id)
+        return (
+          <div key={phase.id} className="rounded-xl border border-white/10 bg-black/30 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setOpenPhases((prev) => ({ ...prev, [phase.id]: !expanded }))}
+              aria-expanded={expanded}
+              className="w-full min-h-11 flex items-center justify-between gap-2 px-3 py-2.5 text-left"
+            >
+              <span className="min-w-0">
+                <span
+                  className="block text-[11px] font-bold uppercase tracking-wide"
+                  style={{ color }}
+                >
+                  {TRACK_LABELS[phase.track] ?? phase.track}
+                </span>
+                <span className="block text-sm font-semibold text-white truncate">{phase.name}</span>
+              </span>
+              <span className="shrink-0 flex items-center gap-2">
+                <span className="text-xs tabular-nums text-textSecondary">
+                  {done}/{phase.tasks.length}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-white/50 transition-transform ${expanded ? "rotate-180" : ""}`}
+                />
+              </span>
+            </button>
+
+            {expanded && (
+              <ul className="border-t border-white/5 divide-y divide-white/5">
+                {phase.tasks.map((task) => {
+                  const state = stateByTaskId.get(task.id)
+                  const unlocked = state?.unlocked ?? false
+                  const isCurrent = state?.isCurrent ?? false
+                  const meta = taskIcon(task.icon)
+                  const lit = isCurrent || Boolean(task.completed)
+                  const children = task.subtasks ?? []
+                  const taskExpanded = Boolean(openTasks[task.id])
+                  return (
+                    <li key={task.id}>
+                      <button
+                        type="button"
+                        disabled={children.length === 0}
+                        aria-expanded={children.length > 0 ? taskExpanded : undefined}
+                        onClick={() =>
+                          setOpenTasks((prev) => ({ ...prev, [task.id]: !prev[task.id] }))
+                        }
+                        className="w-full min-h-11 flex items-center gap-3 px-3 py-2.5 text-left disabled:cursor-default"
+                      >
+                        <span
+                          className="shrink-0 flex items-center justify-center w-8 h-8 rounded-full border"
+                          style={{
+                            background: lit ? hexToRgba(color, isCurrent ? 0.32 : 0.22) : "rgba(0,0,0,0.4)",
+                            borderColor: lit ? hexToRgba(color, isCurrent ? 0.9 : 0.6) : "rgba(255,255,255,0.12)",
+                          }}
+                        >
+                          <AnimatedIcon
+                            kind={meta.kind}
+                            icon={meta.icon}
+                            active={lit}
+                            size={16}
+                            className={lit ? "" : "text-white/35"}
+                            style={{ color: lit ? color : undefined }}
+                          />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm text-white leading-snug">{task.name}</span>
+                          <span className="block text-[11px] text-textSecondary">
+                            {task.completed
+                              ? "Completada"
+                              : isCurrent
+                              ? "En curso"
+                              : unlocked
+                              ? "Disponible"
+                              : "Pendiente · se activa al completar la anterior"}
+                          </span>
+                        </span>
+                        {task.completed ? (
+                          <Check className="shrink-0 w-4 h-4" style={{ color }} />
+                        ) : !unlocked ? (
+                          <Lock className="shrink-0 w-3.5 h-3.5 text-white/40" />
+                        ) : null}
+                        {children.length > 0 && (
+                          <ChevronDown
+                            className={`shrink-0 w-4 h-4 text-white/40 transition-transform ${taskExpanded ? "rotate-180" : ""}`}
+                          />
+                        )}
+                      </button>
+
+                      {taskExpanded && children.length > 0 && (
+                        <ul className="pl-14 pr-3 pb-2.5 space-y-1.5">
+                          {children.map((sub) => (
+                            <li key={sub.id}>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="shrink-0 w-2 h-2 rounded-full"
+                                  style={{ background: sub.completed ? color : hexToRgba(color, 0.35) }}
+                                />
+                                <span className="text-[13px] text-white/80 leading-snug">{sub.name}</span>
+                              </div>
+                              {(sub.steps ?? []).length > 0 && (
+                                <ul className="pl-4 mt-1 space-y-1">
+                                  {(sub.steps ?? []).map((step) => (
+                                    <li key={step.id} className="flex items-center gap-2">
+                                      <span
+                                        className="shrink-0 w-1.5 h-1.5 rounded-full"
+                                        style={{ background: step.completed ? color : "rgba(255,255,255,0.25)" }}
+                                      />
+                                      <span className="text-[12px] text-textSecondary leading-snug">{step.name}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  )
+                })}
+                {phase.tasks.length === 0 && (
+                  <li className="px-3 py-2.5 text-[13px] text-textSecondary">Sin tareas en esta fase</li>
+                )}
+              </ul>
+            )}
+          </div>
+        )
+      })}
+
+      {/* Mismas ramas de consultas del árbol, con su acción de alta. */}
+      {(Object.keys(FEED_ICON) as FeedType[]).map((feedType) => {
+        const Icon = FEED_ICON[feedType]
+        const items = feeds[feedType] ?? []
+        return (
+          <div key={feedType} className="rounded-xl border border-white/10 bg-black/30 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 px-3 py-2.5">
+              <span className="flex items-center gap-2 min-w-0">
+                <Icon className="w-4 h-4 text-[#26FFDF]/80 shrink-0" />
+                <span className="text-sm font-semibold text-white truncate">{FEED_TITLES[feedType]}</span>
+                <span className="text-xs text-textSecondary tabular-nums">{items.length}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => onAdd(feedType)}
+                aria-label={FEED_TITLES[feedType]}
+                className="shrink-0 flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-[#26FFDF]/80"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
+            {items.length > 0 && (
+              <ul className="border-t border-white/5 divide-y divide-white/5">
+                {items.map((item) => {
+                  const isPending =
+                    (feedType === "bugs" && item.status !== "resolved") ||
+                    (feedType === "meetings" && item.status === "pending")
+                  return (
+                    <li key={item.id} className="px-3 py-2.5">
+                      <p className="text-[13px] text-white leading-snug">{item.title}</p>
+                      <p className={`text-[11px] mt-0.5 ${isPending ? "text-red-400" : "text-textSecondary"}`}>
+                        {STATUS_LABEL[item.status] ?? item.status}
+                        {item.severity ? ` · ${item.severity}` : ""}
+                      </p>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -696,7 +945,14 @@ export default function TaskTreeBoard({
           debajo de los nodos de la siguiente columna. Al pasar el cursor,
           ese nodo (con su tooltip) sube por encima de todos los demás. */}
       <style jsx global>{`
-        .ttb-board .react-flow__node:hover {
+        @media (hover: hover) {
+          .ttb-board .react-flow__node:hover {
+            z-index: 1000 !important;
+          }
+        }
+        /* En táctil el tooltip se abre con el tap, así que el nodo activo
+           sube de capa al recibir foco/estar activo, no al pasar el cursor. */
+        .ttb-board .react-flow__node:focus-within {
           z-index: 1000 !important;
         }
         /* Energía recorriendo la red: las ramas activas/desbloqueadas
@@ -724,6 +980,10 @@ export default function TaskTreeBoard({
         )}
       </div>
 
+      {/* Debajo de md: lista/acordeón legible. Desde md: el lienzo intacto. */}
+      <MobileTreeList phases={withDemoSteps(phases, projectName)} feeds={feeds} onAdd={handleAdd} />
+
+      <div className="hidden md:block h-full w-full">
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
@@ -732,7 +992,7 @@ export default function TaskTreeBoard({
           nodeTypes={nodeTypes}
           fitView
           fitViewOptions={{ padding: { top: "10%", right: "8%", bottom: "10%", left: "8%" } }}
-          minZoom={0.3}
+          minZoom={0.15}
           maxZoom={1.5}
           proOptions={{ hideAttribution: true }}
           nodesDraggable
@@ -742,6 +1002,7 @@ export default function TaskTreeBoard({
           <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#ffffff12" />
         </ReactFlow>
       </ReactFlowProvider>
+      </div>
 
       {/* Progreso flotante, chiquito, dentro del propio tablero. */}
       <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-black/70 border border-[#08A696]/25 backdrop-blur-sm pointer-events-none">

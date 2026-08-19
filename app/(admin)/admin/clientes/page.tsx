@@ -37,7 +37,7 @@ export default async function ClientesPage({
 
       <Panel className="p-4">
         <form className="flex flex-wrap gap-3">
-          <div className="flex-1 min-w-[220px] relative">
+          <div className="w-full sm:flex-1 sm:min-w-[220px] relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary" />
             <input
               type="text"
@@ -50,7 +50,7 @@ export default async function ClientesPage({
           <select
             name="status"
             defaultValue={status ?? ""}
-            className="bg-[#02505950] border border-[#08A696]/20 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#26FFDF] transition-colors"
+            className="w-full sm:w-auto bg-[#02505950] border border-[#08A696]/20 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#26FFDF] transition-colors"
           >
             <option value="">Todos los estados</option>
             <option value="active">Activo</option>
@@ -58,7 +58,7 @@ export default async function ClientesPage({
           </select>
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-xl bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/40 text-sm font-medium hover:bg-[#08A696]/30 hover:border-[#26FFDF] transition-all"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#08A696]/20 text-[#26FFDF] border border-[#08A696]/40 text-sm font-medium hover:bg-[#08A696]/30 hover:border-[#26FFDF] transition-all"
           >
             Filtrar
           </button>
@@ -74,7 +74,7 @@ export default async function ClientesPage({
       ) : (
         <Panel className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[720px] md:min-w-0 text-sm">
               <thead>
                 <tr className="border-b border-[#08A696]/20 text-textSecondary">
                   <th className="text-left p-4 font-medium">Nombre</th>

@@ -173,7 +173,7 @@ export default function AdminSidebar() {
           {/* Botón móvil */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2.5 rounded-xl bg-black/40 border border-[#26FFDF]/15 text-[#26FFDF] transition-all duration-300 hover:border-[#26FFDF]/50"
+            className="lg:hidden p-3 min-w-11 min-h-11 flex items-center justify-center rounded-xl bg-black/40 border border-[#26FFDF]/15 text-[#26FFDF] transition-all duration-300 hover:border-[#26FFDF]/50"
             aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
           >
             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -197,7 +197,7 @@ export default function AdminSidebar() {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="lg:hidden fixed inset-x-0 z-40 mx-3 rounded-2xl border border-[#26FFDF]/10 bg-[#0a1614]/95 backdrop-blur-xl shadow-2xl shadow-black/50 p-2 max-h-[70vh] overflow-y-auto"
+              className="lg:hidden fixed inset-x-0 z-40 mx-3 rounded-2xl border border-[#26FFDF]/10 bg-[#0a1614]/95 backdrop-blur-xl shadow-2xl shadow-black/50 p-2 max-h-[70dvh] overflow-y-auto"
               style={{ top: ADMIN_NAVBAR_HEIGHT + 8 }}
             >
               {treeGroups.map((group) => {

@@ -659,8 +659,8 @@ export function ProjectLegal({}: ProjectLegalProps) {
       {/* Pestañas principales */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="documents">Documentos Legales</TabsTrigger>
-          <TabsTrigger value="compliance">Cumplimiento</TabsTrigger>
+          <TabsTrigger value="documents" className="min-h-11">Documentos Legales</TabsTrigger>
+          <TabsTrigger value="compliance" className="min-h-11">Cumplimiento</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documents" className="space-y-6">

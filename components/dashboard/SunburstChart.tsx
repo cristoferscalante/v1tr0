@@ -78,7 +78,7 @@ export default function SunburstChart({ data, size = 260 }: Props) {
 
   if (!rings) {
     return (
-      <div className="flex items-center justify-center" style={{ height: size }}>
+      <div className="flex items-center justify-center w-full aspect-square max-w-[260px] mx-auto">
         <p className="text-textSecondary text-xs">Sin datos</p>
       </div>
     )
@@ -86,7 +86,7 @@ export default function SunburstChart({ data, size = 260 }: Props) {
 
   return (
     <div className="flex flex-col items-center">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-auto max-w-[260px]">
         {/* Inner circle - total */}
         <circle cx={cx} cy={cy} r={rings.innerR} fill="#08A69630" stroke="#08A69650" strokeWidth={1} />
         <text x={cx} y={cy - 3} textAnchor="middle" fill="#fff" fontSize={11} fontWeight={700}>

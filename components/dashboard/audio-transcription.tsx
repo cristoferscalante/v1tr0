@@ -147,10 +147,10 @@ export default function AudioTranscription({
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="transcript" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="transcript">Transcripción</TabsTrigger>
-                      <TabsTrigger value="summary">Resumen</TabsTrigger>
-                      <TabsTrigger value="details">Detalles</TabsTrigger>
+                    <TabsList className="flex w-full overflow-x-auto snap-x md:grid md:grid-cols-3">
+                      <TabsTrigger value="transcript" className="shrink-0 snap-start min-h-11 md:min-h-0">Transcripción</TabsTrigger>
+                      <TabsTrigger value="summary" className="shrink-0 snap-start min-h-11 md:min-h-0">Resumen</TabsTrigger>
+                      <TabsTrigger value="details" className="shrink-0 snap-start min-h-11 md:min-h-0">Detalles</TabsTrigger>
                     </TabsList>
                     
                     <TabsContent value="transcript" className="mt-4">
@@ -208,7 +208,7 @@ export default function AudioTranscription({
                     
                     <TabsContent value="details" className="mt-4">
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <h4 className="font-medium mb-2">Estado</h4>
                             <Badge variant={selectedTranscription.processing_status === 'completed' ? 'default' : 'secondary'}>

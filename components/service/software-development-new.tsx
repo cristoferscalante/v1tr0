@@ -155,11 +155,11 @@ export default function SoftwareDevelopment() {
     <section className="relative">
       <CharacterBackground />
       
-      <div className="snap-container h-screen overflow-y-auto">
+      <div className="snap-container h-auto overflow-visible snap-none md:h-screen md:overflow-y-auto">
         {/* Section 1: Hero - Desarrollo de Software */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background"
         >
           <div className="container mx-auto px-4 py-20">
             <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -167,7 +167,7 @@ export default function SoftwareDevelopment() {
                 <div className="inline-block px-4 py-2 bg-highlight/20 text-highlight rounded-full text-sm font-medium border border-highlight/30">
                   Desarrollo de Software
                 </div>
-                <h1 className="text-5xl md:text-7xl font-bold text-textPrimary leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold text-textPrimary leading-tight">
                   Soluciones digitales a la medida
                 </h1>
                 <div className="space-y-4">
@@ -194,7 +194,7 @@ export default function SoftwareDevelopment() {
         {/* Section 2: Interactive Projects Panel */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background"
         >
           <div className="container mx-auto px-4 py-20">
             <div className="max-w-6xl mx-auto">
@@ -337,7 +337,7 @@ export default function SoftwareDevelopment() {
         {/* Section 3: Footer integrado con snap */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background"
         >
           <FooterSection />
         </div>

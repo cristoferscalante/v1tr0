@@ -188,7 +188,7 @@ function HeroNavCard({ card, isDark }: { card: HeroCard; isDark: boolean }) {
       aria-label={title}
       onMouseMove={handlePointerMove}
       onMouseLeave={handlePointerLeave}
-      className={`relative flex flex-col min-h-[400px] text-left rounded-3xl border p-6 transition-all duration-300 ${
+      className={`relative flex flex-col min-h-[260px] sm:min-h-[400px] text-left rounded-3xl border p-4 sm:p-6 transition-all duration-300 ${
         isDark
           ? "bg-[#02505920] border-[#08A696]/15 hover:bg-[#02505950] hover:border-[#26FFDF]/60 hover:shadow-lg hover:shadow-[#08A696]/20"
           : "bg-white/60 border-[#08A696]/20 hover:bg-[#c5ebe7] hover:border-[#08A696]/60 hover:shadow-lg hover:shadow-[#08A696]/20"

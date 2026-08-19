@@ -89,7 +89,7 @@ export default function ProjectManagement() {
   }
 
   return (
-    <section className="w-full py-24 font-sans relative">
+    <section className="w-full py-12 md:py-24 font-sans relative">
       <BokehBackground style={{ zIndex: -1 }} />
       <div className="container px-4 md:px-6 mx-auto">
         {/* Encabezado de sección */}
@@ -117,7 +117,7 @@ export default function ProjectManagement() {
           <div className="text-2xl text-primary mb-10">01</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Gestión y Administración</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-16">
             <div>
               <p className="text-textMuted text-lg mb-8">
                 Implementamos procesos estructurados para planificar, ejecutar y controlar proyectos tecnológicos
@@ -190,7 +190,7 @@ export default function ProjectManagement() {
           <div className="text-2xl text-primary mb-10">02</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Implementación y Construcción</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-16">
             <div>
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/5.Implementaci%C3%B3n%20y%20Construcci%C3%B3n-XU7vx6pK0Db2AtJM9LYdgRiw9RCRmN.png"
@@ -262,7 +262,7 @@ export default function ProjectManagement() {
           <div className="text-2xl text-primary mb-10">03</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Investigación e Innovación</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-16">
             <div>
               <p className="text-textMuted text-lg mb-8">
                 Impulsamos la innovación mediante procesos estructurados de investigación y experimentación. Nuestro
@@ -320,7 +320,7 @@ export default function ProjectManagement() {
           <div className="text-2xl text-primary mb-10">04</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Consultoría Estratégica</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-16">
             <div>
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/10.%20Consultor%C3%ADa%20Estrat%C3%A9gica-Yz6QndJVgiLx2MFSC6T8OWxut93Kjs.png"
@@ -390,7 +390,7 @@ export default function ProjectManagement() {
           <div className="text-2xl text-primary mb-10">05</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Tendencias Actuales en Gestión de Proyectos</h3>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-10">
             <div>
               <div className="w-16 h-16 rounded-full bg-custom-2 flex items-center justify-center mb-6">
                 <span className="text-highlight text-2xl font-bold">1</span>
@@ -436,7 +436,7 @@ export default function ProjectManagement() {
             proyectos, desde la planificación hasta la entrega y análisis.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             <div className="p-6 bg-custom-1 border border-custom-2 rounded-lg text-center">
               <h4 className="text-lg font-bold text-textPrimary mb-2">Jira</h4>
               <p className="text-textMuted">Gestión ágil de proyectos</p>

@@ -72,7 +72,8 @@ export default function KanbanCard({ project }: { project: KanbanProject }) {
         {...attributes}
         {...listeners}
         aria-label={`Mover ${project.name}`}
-        className="absolute top-2 right-2 z-20 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity touch-none"
+        style={{ touchAction: "none" }}
+        className="absolute top-2 right-2 z-20 cursor-grab active:cursor-grabbing opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity touch-none"
       >
         <GripVertical className="h-3.5 w-3.5 text-white/80 drop-shadow" />
       </button>

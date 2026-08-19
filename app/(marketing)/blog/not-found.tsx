@@ -3,7 +3,7 @@ import { FileQuestionIcon } from "@/lib/icons"
 
 export default function BlogNotFound() {
   return (
-    <div className="container mx-auto px-4 py-24 text-center">
+    <div className="container mx-auto px-4 py-12 md:py-24 text-center">
       <div className="max-w-md mx-auto">
         <div className="inline-flex items-center justify-center p-4 bg-custom-2/20 rounded-full mb-6">
           <FileQuestionIcon className="w-10 h-10 text-highlight" />

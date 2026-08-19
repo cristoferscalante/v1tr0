@@ -67,7 +67,7 @@ export function PackagePromotion({
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#04423c] dark:text-[#26FFDF] mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#04423c] dark:text-[#26FFDF] mb-4">
             {title}
           </h2>
           <p className="text-lg md:text-xl text-[#085c54] dark:text-[#b2fff6] max-w-3xl mx-auto">

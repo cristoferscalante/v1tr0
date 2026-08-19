@@ -35,7 +35,7 @@ export default function HomeScrollSnap({
   const isAnimatingRef = useRef(false)
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const shouldEnableScrollSnap = useScrollSnapEnabled()
-  const { isMobile } = useDeviceDetection()
+  const { isMobile, isReady } = useDeviceDetection()
   const { canScrollVertically } = useScrollContext()
   // const { isHorizontalScrollActive, horizontalScrollPosition } = useScrollContext() // No utilizadas
 
@@ -224,8 +224,10 @@ export default function HomeScrollSnap({
     }
   }
 
-  // Renderizado responsive - scroll normal para móviles y tablets
-  if (!shouldEnableScrollSnap) {
+  // Renderizado responsive - scroll normal para móviles y tablets.
+  // Mientras la detección no haya resuelto (`isReady`) se usa esta rama para no
+  // montar el layout de escritorio en móvil durante el primer render.
+  if (!isReady || !shouldEnableScrollSnap) {
     return (
       <div ref={containerRef} className={`relative ${className}`}>
         {children.map((child, index) => {
@@ -236,7 +238,7 @@ export default function HomeScrollSnap({
             ? ''
             : isTechSection
               ? 'min-h-[50vh] flex items-center justify-center'
-              : 'min-h-screen'
+              : 'min-h-[100dvh]'
 
           return (
             <section
@@ -267,7 +269,7 @@ export default function HomeScrollSnap({
               ref={(el) => addToRefs(el, index)}
               role="region"
               aria-label={`Sección ${index + 1}`}
-              className="relative w-screen"
+              className="relative w-full"
             >
               {child}
             </section>
@@ -281,12 +283,12 @@ export default function HomeScrollSnap({
             role="region"
             aria-label={`Sección ${index + 1}`}
             className={`
-              relative w-screen overflow-hidden
-              ${isHorizontalSection ? 'h-screen' : 'h-screen'}
+              relative w-full overflow-hidden
+              ${isHorizontalSection ? 'h-[100dvh]' : 'h-[100dvh]'}
               flex items-center justify-center
             `}
             style={{
-              height: "100vh"
+              height: "100dvh"
             }}
           >
             {child}

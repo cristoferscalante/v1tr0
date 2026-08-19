@@ -193,7 +193,7 @@ export default function DashboardPage() {
         transition={{ duration: 0.4 }}
       >
         <div className="text-center space-y-4">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-[#08A696] via-[#26FFDF] to-[#08A696] bg-clip-text text-transparent font-bricolage">
+          <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold bg-gradient-to-r from-[#08A696] via-[#26FFDF] to-[#08A696] bg-clip-text text-transparent font-bricolage">
             Panel de Administración
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">

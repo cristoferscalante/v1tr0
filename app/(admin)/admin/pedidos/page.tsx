@@ -30,7 +30,8 @@ export default async function OrdersPage() {
     <PanelPage>
       <SectionHeading badge="Tienda" title="Pedidos" subtitle="Compras realizadas en la tienda" />
       <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+        <table className="w-full min-w-[720px] md:min-w-0 text-sm">
           <thead>
             <tr className="border-b border-[#08A696]/20 text-textSecondary">
               <th className="text-left p-4">#</th>
@@ -71,6 +72,7 @@ export default async function OrdersPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </PanelPage>
   )

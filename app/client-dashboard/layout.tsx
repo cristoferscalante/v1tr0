@@ -53,7 +53,10 @@ export default function ClientDashboardLayout({
       {/* El riel flotante ahora vive oculto (aparece solo con el cursor
           encima) y flota por encima del contenido sin reservarle espacio,
           así el panel ocupa la pantalla completa hasta el borde izquierdo. */}
-      <div className="relative z-10">
+      {/* El botón de hamburguesa flota en `fixed top-4 left-4` bajo lg, así
+          que el contenido reserva ese espacio arriba; desde lg el riel se
+          revela con el cursor y no ocupa lugar. */}
+      <div className="relative z-10 pt-16 lg:pt-0">
         {children}
       </div>
     </div>

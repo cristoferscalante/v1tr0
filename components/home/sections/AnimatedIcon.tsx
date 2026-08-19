@@ -54,7 +54,7 @@ export function AnimatedIcon({ kind, icon: Icon, active = false, size = 20, clas
 
   return (
     <span
-      className={`relative inline-flex items-center justify-center flex-shrink-0 ${className}`}
+      className={`relative inline-flex items-center justify-center flex-shrink-0 max-w-full ${className}`}
       style={{ width: size, height: size, ...style }}
     >
       {kind === "grid-ripple" && (

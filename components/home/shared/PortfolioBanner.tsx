@@ -81,7 +81,7 @@ export default function PortfolioBanner({
 
   return (
     <section
-      className="py-24 relative overflow-hidden"
+      className="py-12 md:py-24 relative overflow-hidden"
       style={{
         background: "transparent", // Cambiado a transparente
       }}

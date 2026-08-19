@@ -251,7 +251,7 @@ export default function ServicesTabSection() {
   }, [isDropdownOpen])
 
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-14 pt-12 pb-8 xl:pt-10 xl:pb-6 snap-start">
+    <section className="relative min-h-[100dvh] w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-14 pt-12 pb-8 xl:pt-10 xl:pb-6 snap-start">
       <div className="max-w-[90rem] 2xl:max-w-[100rem] mx-auto w-full">
 
         {/* Encabezado de sección: da contexto antes del bento */}
@@ -275,7 +275,7 @@ export default function ServicesTabSection() {
                     aria-pressed={isActive}
                     aria-expanded={isActive ? isDropdownOpen : false}
                     className={`
-                      relative group flex items-center gap-2 px-4 py-2 rounded-full
+                      relative group flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full
                       text-sm font-medium overflow-hidden
                       transition-all duration-300
                       ${isActive
@@ -325,7 +325,7 @@ export default function ServicesTabSection() {
                   transition={{ duration: 0.25, ease: "easeOut" }}
                   className="absolute top-full mt-3 left-0 z-50"
                 >
-                  <div className="flex flex-col gap-0 rounded-3xl overflow-hidden backdrop-blur-md border min-w-[280px] bg-white/80 border-[#08A696]/20 dark:bg-[#02505950] dark:border-[#08A696]/15">
+                  <div className="flex flex-col gap-0 rounded-3xl overflow-hidden backdrop-blur-md border min-w-0 w-[calc(100vw-2rem)] max-w-[320px] md:min-w-[280px] md:w-auto bg-white/80 border-[#08A696]/20 dark:bg-[#02505950] dark:border-[#08A696]/15">
                     {activeService.subcategories.map((subcat, index) => {
                       const IconComponent = subcat.icon
                       return (
@@ -373,7 +373,7 @@ export default function ServicesTabSection() {
                       key={service.id}
                       onClick={() => handleDesktopTabChange(index)}
                       aria-pressed={isActive}
-                      className={`w-full text-left flex items-center gap-2 px-3 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 ${
+                      className={`w-full text-left flex items-center gap-2 px-3 py-2.5 min-h-[44px] text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 ${
                         isActive ? surfaceInnerActive : `${surfaceInner} text-textMuted hover:text-textPrimary hover:border-[#08A696]/40`
                       }`}
                     >
@@ -447,7 +447,6 @@ export default function ServicesTabSection() {
                     fill
                     sizes="320px"
                     className="object-contain"
-                    priority
                   />
                 </motion.div>
               </motion.div>
@@ -465,7 +464,7 @@ export default function ServicesTabSection() {
 
               {/* Proyectos de la subcategoría activa: cambian con categoría y subcategoría */}
               <div className="relative mt-2">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {activeSubcat.examples.map((example) => (
                   <Link
                     key={example.title}

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Heart, ShoppingCart } from "lucide-react";
 import type { Product } from "./ProductCard";
-import { accentText, surface } from "@/components/home/shared/surface";
+import { accentText } from "@/components/home/shared/surface";
 
 interface ProductBrowserProps {
   products: Product[];
@@ -56,7 +56,7 @@ export const ProductBrowser: React.FC<ProductBrowserProps> = ({
       : null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
       {/* Vista previa: fija en escritorio, arriba de todo en móvil */}
       <div className="order-1 lg:order-2 lg:col-span-4 lg:sticky lg:top-28" ref={previewRef}>
         <motion.div
@@ -64,9 +64,9 @@ export const ProductBrowser: React.FC<ProductBrowserProps> = ({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className={`p-4 sm:p-5 ${surface}`}
+          className="p-6 sm:p-8 shop-panel"
         >
-          <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#08A696]/5">
+          <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shop-inset">
             <Image
               src={selected.image}
               alt={selected.name}
@@ -76,7 +76,7 @@ export const ProductBrowser: React.FC<ProductBrowserProps> = ({
               priority
             />
             {selected.badge && (
-              <span className="absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] font-semibold bg-[#c5ebe7] text-[#08A696] dark:bg-[#0d5d5d]/80 dark:text-[#26FFDF]">
+              <span className="absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] font-semibold bg-[#c5ebe7] text-[#08A696] dark:bg-[#2b2e31] dark:text-[#26FFDF]">
                 {selected.badge}
               </span>
             )}
@@ -133,7 +133,7 @@ export const ProductBrowser: React.FC<ProductBrowserProps> = ({
                 type="button"
                 onClick={() => onAddToCart(selected)}
                 disabled={selected.stock === 0}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 bg-[#c5ebe7] text-[#08A696] border border-[#08A696]/50 hover:bg-[#b3e4df] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF] dark:border-[#26FFDF]/40 dark:hover:bg-[#0d5d5d]/80 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+                className="shop-btn flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm"
               >
                 <ShoppingCart className="w-4 h-4" />
                 {selected.stock === 0 ? "Sin stock" : "Agregar al carrito"}
@@ -152,7 +152,7 @@ export const ProductBrowser: React.FC<ProductBrowserProps> = ({
 
       {/* Cuadrícula compacta de selección */}
       <div
-        className="order-2 lg:order-1 lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3"
+        className="order-2 lg:order-1 lg:col-span-8 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5"
         role="listbox"
         aria-label="Productos"
       >
@@ -169,13 +169,13 @@ export const ProductBrowser: React.FC<ProductBrowserProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.4, ease: "easeOut", delay: (index % 3) * 0.06 }}
-              className={`group text-left rounded-2xl border p-2 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 ${
+              className={`group text-left rounded-2xl border p-3 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 ${
                 isSelected
-                  ? "bg-[#c5ebe7] border-[#08A696]/50 dark:bg-[#02505950] dark:border-[#26FFDF]/60"
-                  : "bg-white/60 border-[#08A696]/20 hover:border-[#08A696]/50 dark:bg-[#02505920] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/40"
+                  ? "bg-[#c5ebe7] border-[#08A696]/50 dark:bg-[#232629] dark:border-[#26FFDF]/60"
+                  : "shop-surface shop-border shop-border-hover"
               }`}
             >
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#08A696]/5">
+              <div className="relative w-full aspect-square rounded-xl overflow-hidden shop-inset">
                 <Image
                   src={product.image}
                   alt={product.name}
