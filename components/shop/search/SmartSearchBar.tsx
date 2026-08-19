@@ -15,6 +15,8 @@ interface SmartSearchBarProps {
   compact?: boolean;
   /** Despliega las sugerencias hacia arriba (barra anclada al pie). */
   openUpward?: boolean;
+  /** Enfoca el campo al montar (buscador desplegado desde la lupa del header). */
+  autoFocus?: boolean;
 }
 
 export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
@@ -23,6 +25,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
   searchQuery,
   compact = false,
   openUpward = false,
+  autoFocus = false,
 }) => {
   const { theme } = useTheme()
   const isDark = theme === "dark"
@@ -66,12 +69,12 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
 
   const showSuggestions = isFocused && suggestions.length > 0;
 
-  const inputBg = isDark ? "bg-[#052a30]" : "bg-[#f4faf9]"
+  const inputBg = isDark ? "bg-[#232629]" : "bg-[#f4faf9]"
   const inputBorder = isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"
   const inputFocusBorder = "focus:border-[#08A696]"
   const inputText = isDark ? "text-white" : "text-[#011c26]"
   const inputPlaceholder = isDark ? "placeholder:text-white/40" : "placeholder:text-[#08A696]/40"
-  const dropdownBg = isDark ? "bg-[#052a30]" : "bg-[#f4faf9]"
+  const dropdownBg = isDark ? "bg-[#1e2123]" : "bg-[#f4faf9]"
   const dropdownBorder = isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"
   const suggestionBg = isDark ? "hover:bg-[#08A696]/10" : "hover:bg-[#08A696]/5"
   const suggestionBorder = isDark ? "hover:border-[#08A696]/30" : "hover:border-[#08A696]/20"
@@ -94,10 +97,11 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
           value={searchQuery}
           onChange={(e) => onSearch(e.target.value)}
           onFocus={() => setIsFocused(true)}
+          autoFocus={autoFocus}
           className={`w-full ${inputBg} ${inputFocusBorder} ${inputText} ${inputPlaceholder} focus:outline-none transition-all duration-300 font-medium ${
             compact
               ? `pl-9 pr-9 py-2 border ${inputBorder} rounded-xl text-sm`
-              : `pl-16 pr-14 py-5 border-2 ${inputBorder} rounded-2xl text-base shadow-lg ${isDark ? "shadow-[#08A696]/5" : "shadow-[#08A696]/10"} focus:shadow-xl focus:shadow-[#08A696]/10`
+              : `pl-12 sm:pl-16 pr-12 sm:pr-14 py-3.5 sm:py-5 border-2 ${inputBorder} rounded-2xl text-base shadow-lg ${isDark ? "shadow-[#08A696]/5" : "shadow-[#08A696]/10"} focus:shadow-xl focus:shadow-[#08A696]/10`
           }`}
         />
         {searchQuery && (
@@ -126,7 +130,7 @@ export const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
                 }}
                 className={`flex items-center gap-4 p-4 rounded-xl ${suggestionBg} transition-all duration-200 group border border-transparent ${suggestionBorder}`}
               >
-                <div className={`relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border ${isDark ? "bg-[#02505931] border-[#08A696]/20" : "bg-[#e6f7f6] border-[#08A696]/30"} group-hover:border-[#08A696]/50 transition-all duration-300`}>
+                <div className={`relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border ${isDark ? "bg-[#232629] border-[#08A696]/15" : "bg-[#e6f7f6] border-[#08A696]/30"} group-hover:border-[#08A696]/50 transition-all duration-300`}>
                   <Image
                     src={product.image || "/imagenes/placeholders/placeholder.jpg"}
                     alt={product.name}

@@ -108,7 +108,8 @@ const socialLinks = [
 const FloatingSocialButton: React.FC = () => {
   const [hovered, setHovered] = useState<number | null>(null);
   return (
-  <div className="fixed z-50 bottom-12 left-12">
+  // En móvil se acerca al borde y respeta la home-indicator de iOS vía safe-area.
+  <div className="fixed z-50 left-4 md:left-12 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] md:bottom-12">
       <div className="tooltip-container relative group">
         <a
           href="https://wa.me/573222237026?text=Hola%20V1TR0%2C%20quiero%20agendar%20una%20reuni%C3%B3n%20o%20saber%20m%C3%A1s%20sobre%20sus%20servicios."

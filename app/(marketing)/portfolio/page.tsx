@@ -140,7 +140,7 @@ export default function PortfolioPage() {
   return (
     <>
       <BackgroundAnimation />
-      <div className="min-h-screen pt-24 pb-16 px-4 relative">
+      <div className="min-h-[100dvh] pt-16 md:pt-24 pb-16 px-4 relative">
         <div className="max-w-7xl mx-auto">
           {/* Encabezado */}
           <motion.div
@@ -190,7 +190,7 @@ export default function PortfolioPage() {
           </motion.div>
 
           {/* Grid de proyectos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}

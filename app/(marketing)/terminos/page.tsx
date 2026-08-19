@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export default function TerminosPage() {
   return (
-    <div className="container mx-auto px-4 py-24 max-w-4xl">
+    <div className="container mx-auto px-4 py-12 md:py-24 max-w-4xl">
       <div className="mb-8">
         <Link href="/" className="inline-flex items-center text-textMuted hover:text-highlight transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />

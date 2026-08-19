@@ -155,18 +155,33 @@ export default function ProjectPipeline({
             <div
               key={node.task.id}
               className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${(node.x / 300) * 100}%`, top: `${(node.y / 200) * 100}%` }}
+              style={{
+                left: `${(node.x / 300) * 100}%`,
+                top: `${(node.y / 200) * 100}%`,
+                width: nodeSize,
+                height: nodeSize,
+              }}
             >
               {interactive ? (
+                /* Área táctil de 44px alrededor del nodo: el círculo visible
+                   sigue midiendo 16/22px, pero el botón que lo contiene
+                   cumple el mínimo táctil sin alterar el diseño. */
                 <button
                   type="button"
                   onMouseEnter={() => setHoveredId(node.task.id)}
                   onMouseLeave={() => setHoveredId((prev) => (prev === node.task.id ? null : prev))}
                   onClick={() => setHoveredId((prev) => (prev === node.task.id ? null : node.task.id))}
-                  className="relative flex items-center justify-center rounded-full border transition-all duration-300"
-                  style={circleStyle}
+                  onFocus={() => setHoveredId(node.task.id)}
+                  onBlur={() => setHoveredId((prev) => (prev === node.task.id ? null : prev))}
+                  aria-label={node.task.name}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-11 h-11 bg-transparent"
                 >
-                  {circleContent}
+                  <span
+                    className="relative flex items-center justify-center rounded-full border transition-all duration-300"
+                    style={circleStyle}
+                  >
+                    {circleContent}
+                  </span>
                 </button>
               ) : (
                 <div

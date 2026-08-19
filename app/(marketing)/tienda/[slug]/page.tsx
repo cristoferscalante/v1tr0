@@ -4,6 +4,7 @@ import { use, useState, useEffect } from "react"
 import { notFound, useRouter } from "next/navigation"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { getProductBySlug, getRelatedProducts } from "@/lib/data/mockProducts"
+import type { ProductDetailed } from "@/lib/data/mockProducts"
 import { ProductGallery } from "@/components/shop/product-detail/ProductGallery"
 import { resolveProductImage } from "@/lib/data/productImages"
 import { ProductInfo } from "@/components/shop/product-detail/ProductInfo"
@@ -24,12 +25,103 @@ interface PageProps {
   }>
 }
 
+/** Promociones de paquete servidas por slug (no viven en la tabla products). */
+const PACKAGE_PROMOTIONS: Record<
+  string,
+  {
+    title: string
+    subtitle: string
+    heroImage: string
+    plans: Plan[]
+    products: PackageProduct[]
+    folioRecharges?: FolioRecharge[]
+  }
+> = {
+  "sistema-pos-gestion-negocio": {
+    title: "Sistema POS para tu Negocio",
+    subtitle: "Planes flexibles adaptados a tus necesidades, desde pruebas gratuitas hasta facturación electrónica completa",
+    heroImage: "/imagenes/tienda/pos.png",
+    plans: posPlans,
+    products: posProducts,
+    folioRecharges: folioRecharges,
+  },
+  "hardware-v1tr0-pro": {
+    title: "Hardware V1TR0 Profesional",
+    subtitle: "Kits especializados para desarrollo IoT, ciberseguridad y proyectos avanzados",
+    heroImage: "/imagenes/home/carrusel/desarrollo_web_end_backup.webp",
+    plans: hardwarePlans,
+    products: hardwareProducts,
+  },
+  "sistemas-comunicacion-iot": {
+    title: "Sistemas de Comunicación IoT",
+    subtitle: "Soluciones de conectividad de largo alcance con LoRa, WiFi y redes mesh",
+    heroImage: "/imagenes/tienda/heltec-duo-con-efecto.png",
+    plans: iotPlans,
+    products: iotProducts,
+  },
+}
+
+/** Fila pública de la tabla products (misma forma que usa /tienda). */
+interface ProductRow {
+  id: string; name: string; slug: string; description: string | null
+  price: string; originalPrice: string | null; category: string
+  stock: number; images: string[] | null; isFeatured: boolean; badge: string | null
+}
+
+function rowToDetailedProduct(row: ProductRow): ProductDetailed {
+  const images = (row.images ?? []).filter(Boolean)
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description ?? "",
+    price: Number(row.price),
+    ...(row.originalPrice ? { originalPrice: Number(row.originalPrice) } : {}),
+    image: resolveProductImage({ image: images[0] ?? null, slug: row.slug, category: row.category }),
+    category: row.category,
+    stock: row.stock,
+    featured: row.isFeatured,
+    ...(row.badge ? { badge: row.badge } : {}),
+    ...(images.length ? { images } : {}),
+  }
+}
+
 export default function TiendaSlugPage({ params }: PageProps) {
   const { slug } = use(params)
   const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart } = useCart()
   const [showNotification, setShowNotification] = useState(false)
 
-  const product = getProductBySlug(slug)
+  // El catálogo real (/api/products) y el catálogo mock conviven: primero se
+  // busca en el mock y, si no está, se pide la ficha a la base de datos.
+  const mockProduct = getProductBySlug(slug)
+  const isPackageSlug = slug in PACKAGE_PROMOTIONS
+  const [dbProduct, setDbProduct] = useState<ProductDetailed | null>(null)
+  const [dbState, setDbState] = useState<"idle" | "loading" | "missing">(
+    mockProduct || isPackageSlug ? "idle" : "loading"
+  )
+
+  useEffect(() => {
+    if (mockProduct || isPackageSlug) { return undefined }
+
+    let cancelled = false
+    setDbState("loading")
+
+    fetch(`/api/products/${slug}`)
+      .then(async (res) => {
+        if (!res.ok) { throw new Error("not found") }
+        const data = await res.json()
+        if (cancelled) { return }
+        setDbProduct(rowToDetailedProduct(data.product as ProductRow))
+        setDbState("idle")
+      })
+      .catch(() => {
+        if (!cancelled) { setDbState("missing") }
+      })
+
+    return () => { cancelled = true }
+  }, [slug, mockProduct, isPackageSlug])
+
+  const product = mockProduct ?? dbProduct
 
   const handleAddToCart = () => {
     if (!product) {return}
@@ -69,15 +161,28 @@ export default function TiendaSlugPage({ params }: PageProps) {
     }
   }
 
+  // Ficha del catálogo real todavía en vuelo: nada que decidir aún.
+  if (dbState === "loading") {
+    return (
+      <>
+        <BackgroundAnimation />
+        <div className="min-h-screen relative flex items-center justify-center">
+          <p className="text-textMuted text-sm">Cargando producto…</p>
+        </div>
+      </>
+    )
+  }
+
   if (product) {
-    const related = getRelatedProducts(product.id)
+    // Los relacionados sólo existen en el catálogo mock.
+    const related = mockProduct ? getRelatedProducts(product.id) : []
 
     return (
       <>
         <BackgroundAnimation />
         <div className="min-h-screen relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-8 lg:mb-16">
               <ProductGallery
                 images={
                   product.images?.length
@@ -106,7 +211,7 @@ export default function TiendaSlugPage({ params }: PageProps) {
           />
 
           {showNotification && (
-            <div className="fixed top-24 right-8 z-50 animate-slide-in-down">
+            <div className="fixed top-20 inset-x-4 sm:inset-x-auto sm:right-8 sm:top-24 max-w-sm z-50 animate-slide-in-down">
               <div className="bg-primary text-background px-6 py-4 rounded-xl shadow-glow flex items-center gap-3">
                 <div className="w-10 h-10 bg-background/20 rounded-full flex items-center justify-center">
                   <span className="text-2xl">✓</span>
@@ -125,54 +230,20 @@ export default function TiendaSlugPage({ params }: PageProps) {
     )
   }
 
-  let title = ""
-  let subtitle = ""
-  let heroImage = ""
-  let plans: Plan[] = []
-  let pkgProducts: PackageProduct[] = []
-  let folios: FolioRecharge[] | undefined = undefined
-
-  switch (slug) {
-    case "sistema-pos-gestion-negocio":
-      title = "Sistema POS para tu Negocio"
-      subtitle = "Planes flexibles adaptados a tus necesidades, desde pruebas gratuitas hasta facturación electrónica completa"
-      heroImage = "/imagenes/tienda/pos.png"
-      plans = posPlans
-      pkgProducts = posProducts
-      folios = folioRecharges
-      break
-
-    case "hardware-v1tr0-pro":
-      title = "Hardware V1TR0 Profesional"
-      subtitle = "Kits especializados para desarrollo IoT, ciberseguridad y proyectos avanzados"
-      heroImage = "/imagenes/home/carrusel/desarrollo_web_end_backup.webp"
-      plans = hardwarePlans
-      pkgProducts = hardwareProducts
-      break
-
-    case "sistemas-comunicacion-iot":
-      title = "Sistemas de Comunicación IoT"
-      subtitle = "Soluciones de conectividad de largo alcance con LoRa, WiFi y redes mesh"
-      heroImage = "/imagenes/tienda/heltec-duo-con-efecto.png"
-      plans = iotPlans
-      pkgProducts = iotProducts
-      break
-
-    default:
-      notFound()
-  }
+  const promotion = PACKAGE_PROMOTIONS[slug]
+  if (!promotion) { notFound() }
 
   return (
     <>
       <BackgroundAnimation />
       <div className="min-h-screen relative">
         <PackagePromotion
-          title={title}
-          subtitle={subtitle}
-          heroImage={heroImage}
-          plans={plans}
-          products={pkgProducts}
-          {...(folios && { folioRecharges: folios })}
+          title={promotion.title}
+          subtitle={promotion.subtitle}
+          heroImage={promotion.heroImage}
+          plans={promotion.plans}
+          products={promotion.products}
+          {...(promotion.folioRecharges && { folioRecharges: promotion.folioRecharges })}
         />
         <FloatingCartTab onToggle={openCart} cartCount={totalItems} isCartOpen={isCartOpen} />
         <CartDrawer

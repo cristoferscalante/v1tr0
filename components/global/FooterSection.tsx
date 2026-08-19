@@ -6,6 +6,7 @@ import { useTheme } from "@/components/theme-provider"
 import { CodeIcon, PaletteIcon, LightbulbIcon, GitHubIcon } from "@/lib/icons"
 import Link from "next/link"
 import useSnapAnimations from '@/hooks/use-snap-animations'
+import { usePathname } from "next/navigation"
 
 import {
   LinkedInIcon,
@@ -52,6 +53,9 @@ interface FooterSectionProps {
 const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
   const { theme } = useTheme()
   const isDark = theme === "dark"
+  // La tienda usa su propio sistema de superficies (ver .shop-* en globals.css)
+  const pathname = usePathname()
+  const isShop = pathname?.startsWith("/tienda") ?? false
   const sectionRef = useRef<HTMLDivElement>(null)
   
   // Configurar animaciones de entrada para esta sección
@@ -69,7 +73,13 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
     <footer
       ref={sectionRef}
       role="contentinfo"
-  className={`footer-section w-full min-h-screen ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans relative flex items-center justify-center`}
+  className={`footer-section w-full min-h-screen ${
+    isShop
+      // En la tienda el footer toma el gris neutro del carrito para no
+      // romper con el resto de superficies de esa sección.
+      ? (isDark ? "bg-[#1e2123]" : "bg-[#e6f7f6] backdrop-blur-sm")
+      : (isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm")
+  } pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans relative flex items-center justify-center`}
       aria-label="Pie de página V1TR0"
     >
   <div className="max-w-7xl mx-auto w-full">

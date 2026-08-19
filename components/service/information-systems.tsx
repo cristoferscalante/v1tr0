@@ -166,12 +166,12 @@ export default function InformationSystems() {
     <section className="w-full font-sans relative">
       <div 
         ref={containerRef}
-        className="min-h-screen"
+        className="min-h-[100dvh]"
       >
         {/* Section 1: Sistemas de Información */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start relative overflow-hidden pt-24 mt-8"
+          className="min-h-[100dvh] flex items-center justify-center snap-start relative overflow-hidden pt-16 md:pt-24 mt-0 md:mt-8"
         >
           <CharacterBackground />
         </div>
@@ -181,7 +181,7 @@ export default function InformationSystems() {
         {/* Section 3: Footer integrado con snap */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background"
         >
           <FooterSection />
         </div>

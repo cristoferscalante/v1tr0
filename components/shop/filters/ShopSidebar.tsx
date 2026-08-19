@@ -82,10 +82,10 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
   return (
     <aside className="w-full space-y-4">
       {/* Search Section */}
-      <div className="bg-[#2d2640]/40 backdrop-blur-md rounded-xl border border-[#6b5b95]/20 overflow-hidden">
+      <div className="shop-surface backdrop-blur-md rounded-xl border shop-border overflow-hidden">
         <button
           onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-          className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#3a3050]/30 transition-colors"
+          className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] transition-colors"
         >
           <div className="flex items-center gap-3">
             <Search className="w-5 h-5 text-[#a89dd8]" />
@@ -106,13 +106,13 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
                 placeholder="Buscar productos..."
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
-                className="w-full px-4 py-2.5 pl-10 bg-[#1a1625]/60 border border-[#6b5b95]/30 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#8b7bc5]/60 transition-colors"
+                className="w-full px-4 py-2.5 pl-10 shop-inset border shop-border rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-[#08A696] dark:focus:border-[#26FFDF]/60 transition-colors"
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
               {searchQuery && (
                 <button
                   onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-[#8b7bc5]/20 rounded-md transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-[#08A696]/15 rounded-md transition-colors"
                   aria-label="Limpiar búsqueda"
                 >
                   <X className="w-4 h-4 text-white/60" />
@@ -124,10 +124,10 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
       </div>
 
       {/* Categories Section */}
-      <div className="bg-[#2d2640]/40 backdrop-blur-md rounded-xl border border-[#6b5b95]/20 overflow-hidden">
+      <div className="shop-surface backdrop-blur-md rounded-xl border shop-border overflow-hidden">
         <button
           onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
-          className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#3a3050]/30 transition-colors"
+          className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] transition-colors"
         >
           <div className="flex items-center gap-3">
             <SlidersHorizontal className="w-5 h-5 text-[#a89dd8]" />
@@ -148,8 +148,8 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
                 onClick={() => onCategoryChange(category.id)}
                 className={`w-full text-left px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-between ${
                   activeCategory === category.id
-                    ? "bg-[#8b7bc5]/20 text-white border border-[#8b7bc5]/40"
-                    : "bg-transparent text-white/70 hover:bg-[#3a3050]/30 hover:text-white border border-transparent"
+                    ? "bg-[#08A696]/15 text-[#08A696] dark:text-[#26FFDF] border border-[#08A696]/40 dark:border-[#26FFDF]/40"
+                    : "bg-transparent text-white/70 hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] hover:text-white border border-transparent"
                 }`}
               >
                 <span>{category.label}</span>
@@ -157,8 +157,8 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
                   <span
                     className={`text-xs px-2 py-1 rounded-md ${
                       activeCategory === category.id
-                        ? "bg-[#8b7bc5]/30 text-white"
-                        : "bg-[#1a1625]/60 text-white/50"
+                        ? "bg-[#08A696]/25 text-[#08A696] dark:text-[#26FFDF]"
+                        : "shop-inset text-white/50"
                     }`}
                   >
                     {category.count}
@@ -171,10 +171,10 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
       </div>
 
       {/* Price Range Filter */}
-      <div className="bg-[#2d2640]/40 backdrop-blur-md rounded-xl border border-[#6b5b95]/20 overflow-hidden">
+      <div className="shop-surface backdrop-blur-md rounded-xl border shop-border overflow-hidden">
         <button
           onClick={() => setIsPriceExpanded(!isPriceExpanded)}
-          className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#3a3050]/30 transition-colors"
+          className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] transition-colors"
         >
           <div className="flex items-center gap-3">
             <span className="text-[#a89dd8] text-xl">$</span>
@@ -199,7 +199,7 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
                   max={maxPrice}
                   value={localMinPrice}
                   onChange={(e) => setLocalMinPrice(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-[#1a1625]/60 border border-[#6b5b95]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#8b7bc5]/60 transition-colors"
+                  className="w-full px-3 py-2 shop-inset border shop-border rounded-lg text-white text-base sm:text-sm focus:outline-none focus:border-[#08A696] dark:focus:border-[#26FFDF]/60 transition-colors"
                 />
               </div>
               <div>
@@ -210,16 +210,16 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
                   max={maxPrice}
                   value={localMaxPrice}
                   onChange={(e) => setLocalMaxPrice(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-[#1a1625]/60 border border-[#6b5b95]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#8b7bc5]/60 transition-colors"
+                  className="w-full px-3 py-2 shop-inset border shop-border rounded-lg text-white text-base sm:text-sm focus:outline-none focus:border-[#08A696] dark:focus:border-[#26FFDF]/60 transition-colors"
                 />
               </div>
             </div>
 
             {/* Range Slider - Dual Handle */}
             <div className="space-y-2">
-              <div className="relative h-2 bg-[#1a1625]/60 rounded-full">
+              <div className="relative h-2 shop-inset rounded-full">
                 <div
-                  className="absolute h-full bg-gradient-to-r from-[#8b7bc5] to-[#a89dd8] rounded-full"
+                  className="absolute h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full"
                   style={{
                     left: `${((localMinPrice - minPrice) / (maxPrice - minPrice)) * 100}%`,
                     right: `${100 - ((localMaxPrice - minPrice) / (maxPrice - minPrice)) * 100}%`,
@@ -236,13 +236,13 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
             <div className="flex gap-2">
               <button
                 onClick={handleApplyPriceFilter}
-                className="flex-1 px-4 py-2 bg-transparent border-2 border-[#8b7bc5]/60 text-white rounded-lg font-semibold text-sm hover:bg-[#8b7bc5]/20 transition-all duration-200"
+                className="flex-1 px-4 py-2 bg-transparent border-2 border-[#08A696]/60 dark:border-[#26FFDF]/50 text-white rounded-lg font-semibold text-sm hover:bg-[#08A696]/15 transition-all duration-200"
               >
                 Aplicar
               </button>
               <button
                 onClick={handleResetPriceFilter}
-                className="px-4 py-2 bg-[#1a1625]/60 border border-[#6b5b95]/30 text-white/70 rounded-lg font-medium text-sm hover:bg-[#3a3050]/30 transition-all duration-200"
+                className="px-4 py-2 shop-inset border shop-border text-white/70 rounded-lg font-medium text-sm hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] transition-all duration-200"
               >
                 Reset
               </button>
@@ -253,10 +253,10 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
 
       {/* Related Products (opcional) */}
       {relatedProducts.length > 0 && (
-        <div className="bg-[#2d2640]/40 backdrop-blur-md rounded-xl border border-[#6b5b95]/20 overflow-hidden">
+        <div className="shop-surface backdrop-blur-md rounded-xl border shop-border overflow-hidden">
           <button
             onClick={() => setIsRelatedExpanded(!isRelatedExpanded)}
-            className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#3a3050]/30 transition-colors"
+            className="w-full px-5 py-4 flex items-center justify-between text-white hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] transition-colors"
           >
             <span className="font-semibold uppercase tracking-wide text-sm">Productos Destacados</span>
             {isRelatedExpanded ? (
@@ -271,9 +271,9 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({
               {relatedProducts.slice(0, 3).map((product) => (
                 <div
                   key={product.id}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#3a3050]/30 transition-colors cursor-pointer"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#08A696]/5 dark:hover:bg-[#2b2e31] transition-colors cursor-pointer"
                 >
-                  <div className="w-12 h-12 bg-[#1a1625]/60 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="w-12 h-12 shop-inset rounded-lg overflow-hidden flex-shrink-0">
                     <img
                       src={product.image}
                       alt={product.name}

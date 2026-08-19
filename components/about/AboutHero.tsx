@@ -4,7 +4,8 @@ import dynamic from "next/dynamic"
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsMobile, useIsConfirmedDesktop } from "@/hooks/use-mobile"
+import LogoPlaceholder from "@/components/3d/LogoPlaceholder"
 
 // 3D model — sin SSR
 const VtrLogoPerfect3D = dynamic(
@@ -255,9 +256,9 @@ function MobileHero({
       <StoryTabs active={activeStory} onChange={setActiveStory} isDark={isDark} />
       <StoryContent story={story} isDark={isDark} />
 
-      {/* Modelo centrado en mobile */}
+      {/* En móvil se usa el sustituto estático: evita descargar el chunk 3D */}
       <div className="w-full h-64 rounded-2xl overflow-hidden border border-[#08A696]/20 bg-black/20">
-        <VtrLogoPerfect3D className="w-full h-full" />
+        <LogoPlaceholder className="w-full h-full" />
       </div>
 
       <CTAButtons isDark={isDark} />
@@ -273,6 +274,7 @@ export default function AboutHero() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
   const isMobile = useIsMobile()
+  const isConfirmedDesktop = useIsConfirmedDesktop()
   const [activeStory, setActiveStory] = useState<StoryId>("origen")
 
   const handleStoryChange = useCallback((id: StoryId) => {
@@ -347,7 +349,13 @@ export default function AboutHero() {
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
         className="absolute right-0 top-0 w-[62%] h-full"
       >
-        <VtrLogoPerfect3D className="w-full h-full" />
+        {/* Solo se monta con certeza de escritorio: mientras la detección no ha
+            resuelto, el placeholder evita pedir el chunk 3D en un teléfono. */}
+        {isConfirmedDesktop ? (
+          <VtrLogoPerfect3D className="w-full h-full" />
+        ) : (
+          <LogoPlaceholder className="w-full h-full" />
+        )}
       </motion.div>
     </div>
   )

@@ -20,6 +20,24 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
     setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  // Swipe táctil: en móvil las flechas no bastan y arrastrar es lo esperado.
+  // Se implementa con eventos touch para no alterar el layout de escritorio.
+  const touchStartX = React.useRef<number | null>(null);
+
+  const handleTouchStart = (event: React.TouchEvent) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    const startX = touchStartX.current;
+    touchStartX.current = null;
+    if (startX === null || images.length < 2) { return }
+    const endX = event.changedTouches[0]?.clientX ?? startX;
+    const deltaX = endX - startX;
+    if (Math.abs(deltaX) < 40) { return }
+    if (deltaX < 0) { goToNext() } else { goToPrev() }
+  };
+
   // Si no hay imágenes, mostrar placeholder
   if (!images || images.length === 0) {
     return (
@@ -37,11 +55,11 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         </div>
 
         {/* Thumbnails Placeholder */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="aspect-square rounded-xl bg-backgroundSecondary/50 border border-primary/20"
+              className="aspect-square rounded-xl shop-surface border shop-border"
             />
           ))}
         </div>
@@ -52,7 +70,11 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
   return (
     <div className="w-full space-y-4">
       {/* Main Image */}
-      <div className="relative aspect-square rounded-2xl overflow-hidden bg-backgroundSecondary border border-primary/20 group cursor-zoom-in">
+      <div
+        className="relative aspect-square rounded-2xl overflow-hidden shop-surface border shop-border group cursor-zoom-in touch-pan-y"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <div className="relative w-full h-full overflow-hidden">
           <Image
             src={images[selectedImage] || "/imagenes/placeholder.jpg"}
@@ -68,7 +90,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
           <>
             <button
               onClick={goToPrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:border-primary z-10"
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:border-primary z-10"
               aria-label="Previous image"
             >
               <ChevronLeft className="w-6 h-6" />
@@ -76,7 +98,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:border-primary z-10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:border-primary z-10"
               aria-label="Next image"
             >
               <ChevronRight className="w-6 h-6" />
@@ -94,7 +116,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 
       {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {images.map((image, index) => (
             <button
               key={index}

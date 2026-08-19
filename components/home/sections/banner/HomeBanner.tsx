@@ -36,7 +36,7 @@ export default function HomeBanner() {
   const isDark = theme === "dark"
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex flex-col justify-center items-center px-4 py-8 md:py-0">
+    <section className="relative min-h-[100dvh] w-full overflow-hidden flex flex-col justify-center items-center px-4 py-8 md:py-0">
       {/* Fondo con gradiente */}
       <div className="absolute inset-0 z-0" />
 

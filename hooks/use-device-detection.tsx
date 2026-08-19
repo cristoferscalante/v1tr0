@@ -10,6 +10,16 @@ interface DeviceInfo {
   screenHeight: number
   isTouchDevice: boolean
   devicePixelRatio: number
+  /**
+   * false hasta que la detección real corre en el cliente.
+   *
+   * El estado inicial asume desktop 1920px porque el servidor no conoce el
+   * viewport, así que el primer render en un móvil monta igualmente la rama
+   * desktop. Consumidores que alternen layout deben esperar a `isReady` (o
+   * resolver la variación con breakpoints CSS) para no pintar un layout de
+   * escritorio en un teléfono durante la hidratación.
+   */
+  isReady: boolean
 }
 
 /**
@@ -32,7 +42,8 @@ export function useDeviceDetection(): DeviceInfo {
     screenWidth: 1920,
     screenHeight: 1080,
     isTouchDevice: false,
-    devicePixelRatio: 1
+    devicePixelRatio: 1,
+    isReady: false
   })
 
   useEffect(() => {
@@ -90,7 +101,8 @@ export function useDeviceDetection(): DeviceInfo {
         screenWidth: width,
         screenHeight: height,
         isTouchDevice,
-        devicePixelRatio: pixelRatio
+        devicePixelRatio: pixelRatio,
+        isReady: true
       })
     }
 

@@ -203,7 +203,7 @@ const About = () => {
         role="region"
         aria-label="Presentación de V1TR0"
         className={`relative overflow-hidden ${
-          isMobile ? 'min-h-screen' : 'h-screen w-screen'
+          isMobile ? 'min-h-[100dvh]' : 'h-[100dvh] w-full'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
@@ -216,7 +216,7 @@ const About = () => {
         role="region"
         aria-label="CEO"
         className={`relative flex items-center justify-center overflow-x-hidden ${
-          isMobile ? 'py-12 px-2 sm:px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
+          isMobile ? 'py-12 px-2 sm:px-4' : 'h-[100dvh] w-full px-4 sm:px-6 lg:px-8'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
@@ -235,7 +235,7 @@ const About = () => {
         role="region"
         aria-label="CTO"
         className={`relative flex items-center justify-center overflow-x-hidden ${
-          isMobile ? 'py-16 px-2 sm:px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
+          isMobile ? 'py-16 px-2 sm:px-4' : 'h-[100dvh] w-full px-4 sm:px-6 lg:px-8'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
@@ -254,7 +254,7 @@ const About = () => {
         role="region"
         aria-label="Nuestra visión"
         className={`relative flex items-center justify-center overflow-hidden ${
-          isMobile ? 'py-16 px-4' : 'h-screen w-screen px-4 sm:px-6 lg:px-8'
+          isMobile ? 'py-16 px-4' : 'h-[100dvh] w-full px-4 sm:px-6 lg:px-8'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >
@@ -273,7 +273,7 @@ const About = () => {
         role="region"
         aria-label="Footer"
         className={`relative flex items-center justify-center overflow-hidden ${
-          isMobile ? 'py-0' : 'h-screen w-screen'
+          isMobile ? 'py-0' : 'h-[100dvh] w-full'
         }`}
         style={!isMobile ? { height: "100svh" } : undefined}
       >

@@ -141,7 +141,7 @@ export default async function PostPage(props: PageProps) {
   return (
     <>
       <BackgroundAnimation />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-32">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-16 md:py-32">
         <div className="mb-8">
           <Link href="/blog" className="inline-flex items-center text-textMuted hover:text-highlight transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" />

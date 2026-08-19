@@ -122,7 +122,7 @@ export default function BlogCard({ post }: BlogCardProps) {
             className={`flex items-center pt-4 border-t mt-auto ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"}`}
           >
             <div className={`relative w-10 h-10 rounded-full overflow-hidden border-2 ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"}`}>
-              <Image src={authorImage || "/imagenes/icons/svg/placeholder.svg"} alt={post.meta.author} fill className="object-cover" />
+              <Image src={authorImage || "/imagenes/icons/svg/placeholder.svg"} alt={post.meta.author} fill sizes="(max-width:768px) 100vw, 800px" className="object-cover" />
             </div>
             <div className="ml-3">
               <p className={`text-sm font-medium ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>{post.meta.author}</p>

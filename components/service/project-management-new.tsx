@@ -126,11 +126,11 @@ export default function ProjectManagement() {
     <section className="relative">
       <CharacterBackground />
       
-      <div className="snap-container h-screen overflow-y-auto">
+      <div className="snap-container h-auto overflow-visible snap-none md:h-screen md:overflow-y-auto">
         {/* Section 1: Hero - Gestión de Proyectos */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background pt-24 mt-8"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background pt-16 md:pt-24 mt-0 md:mt-8"
         >
           <div className="container mx-auto px-4 py-20">
             <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -165,7 +165,7 @@ export default function ProjectManagement() {
         {/* Section 2: Interactive Projects Panel */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background pt-24 mt-8"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background pt-16 md:pt-24 mt-0 md:mt-8"
         >
           <div className="container mx-auto px-4 py-20">
             <div className="max-w-6xl mx-auto">
@@ -300,7 +300,7 @@ export default function ProjectManagement() {
         {/* Section 3: Footer integrado con snap */}
         <div 
           ref={addToRefs}
-          className="min-h-screen flex items-center justify-center snap-start bg-background"
+          className="min-h-[100dvh] flex items-center justify-center snap-start bg-background"
         >
           <FooterSection />
         </div>

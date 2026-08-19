@@ -196,12 +196,12 @@ export default function AdminProjectReportPage({ params }: { params: Promise<{ i
       </motion.div>
 
       {/* Stats */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-4">
         {statsCards.map((s) => {
           const Icon = s.icon
           return (
             <GlassCard key={s.label}>
-              <div className="p-5 flex items-center gap-4">
+              <div className="p-3 sm:p-5 flex items-center gap-4">
                 <div className={`p-3 rounded-xl bg-gradient-to-br ${s.color}`}>
                   <Icon className="h-5 w-5 text-white" />
                 </div>

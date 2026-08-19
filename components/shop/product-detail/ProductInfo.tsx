@@ -31,7 +31,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
     <div className="space-y-8">
       {/* Category & Badge */}
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="px-3 py-1 bg-backgroundSecondary border border-primary/30 rounded-full text-primary text-xs font-semibold uppercase tracking-wide">
+        <span className="px-3 py-1 shop-inset border shop-border rounded-full text-primary text-xs font-semibold uppercase tracking-wide">
           {product.category}
         </span>
         {product.badge && (
@@ -43,7 +43,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
 
       {/* Title */}
       <div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
           {product.name}
         </h1>
         <p className="text-lg text-textSecondary leading-relaxed">
@@ -53,8 +53,8 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
 
       {/* Price */}
       <div className="py-6 border-y border-primary/20">
-        <div className="flex items-baseline gap-4">
-          <span className="text-5xl font-bold text-white">
+        <div className="flex flex-wrap items-baseline gap-2 sm:gap-4">
+          <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
             {formatCurrency(currentPrice)}
           </span>
           {product.originalPrice && (
@@ -83,7 +83,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
                 className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
                   selectedVariant?.id === variant.id
                     ? "border-primary bg-primary/10 scale-95"
-                    : "border-primary/20 bg-backgroundSecondary/50 hover:border-primary/50"
+                    : "border-primary/20 shop-inset shop-border-hover"
                 }`}
               >
                 <p className="text-white font-semibold">{variant.name}</p>
@@ -99,21 +99,21 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
       {/* Quantity */}
       <div className="space-y-3">
         <label className="text-white font-semibold">Cantidad:</label>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center border border-primary/30 rounded-xl overflow-hidden">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="px-4 py-3 bg-backgroundSecondary hover:bg-primary/10 text-white transition-colors"
+              className="px-4 py-3 shop-inset hover:bg-[#08A696]/10 text-white transition-colors"
               disabled={isOutOfStock}
             >
               −
             </button>
-            <span className="px-6 py-3 bg-backgroundSecondary text-white font-semibold min-w-[60px] text-center">
+            <span className="px-6 py-3 shop-inset text-white font-semibold min-w-[60px] text-center">
               {quantity}
             </span>
             <button
               onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
-              className="px-4 py-3 bg-backgroundSecondary hover:bg-primary/10 text-white transition-colors"
+              className="px-4 py-3 shop-inset hover:bg-[#08A696]/10 text-white transition-colors"
               disabled={isOutOfStock}
             >
               +
@@ -135,11 +135,11 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
       </div>
 
       {/* Actions */}
-      <div className="flex gap-4">
+      <div className="sticky bottom-0 z-40 -mx-4 px-4 py-3 bg-background/90 backdrop-blur border-t border-primary/20 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex flex-col sm:flex-row gap-3 sm:gap-4 md:static md:mx-0 md:p-0 md:bg-transparent md:border-0 md:backdrop-blur-none">
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock}
-          className={`flex-1 flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
+          className={`flex-1 flex items-center justify-center gap-3 px-4 sm:px-8 py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 ${
             isOutOfStock
               ? "bg-gray-600 cursor-not-allowed opacity-50"
               : "bg-primary text-background hover:scale-105 hover:shadow-glow"
@@ -151,7 +151,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
 
         <button
           onClick={() => setIsFavorite(!isFavorite)}
-          className="p-4 rounded-xl border-2 border-primary/30 hover:border-primary transition-all duration-300"
+          className="flex items-center justify-center p-4 rounded-xl border-2 border-primary/30 hover:border-primary transition-all duration-300"
           aria-label="Add to favorites"
         >
           <Heart
@@ -164,7 +164,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
 
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
-        <div className="flex items-start gap-3 p-4 bg-backgroundSecondary/50 rounded-xl border border-primary/20">
+        <div className="flex items-start gap-3 p-4 shop-surface rounded-xl border shop-border">
           <Package className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
           <div>
             <p className="text-white font-semibold text-sm">En Stock</p>
@@ -172,7 +172,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
           </div>
         </div>
 
-        <div className="flex items-start gap-3 p-4 bg-backgroundSecondary/50 rounded-xl border border-primary/20">
+        <div className="flex items-start gap-3 p-4 shop-surface rounded-xl border shop-border">
           <Truck className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
           <div>
             <p className="text-white font-semibold text-sm">Envío Gratis</p>
@@ -180,7 +180,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
           </div>
         </div>
 
-        <div className="flex items-start gap-3 p-4 bg-backgroundSecondary/50 rounded-xl border border-primary/20">
+        <div className="flex items-start gap-3 p-4 shop-surface rounded-xl border shop-border">
           <Shield className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
           <div>
             <p className="text-white font-semibold text-sm">Garantía</p>

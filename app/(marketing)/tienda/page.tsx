@@ -126,7 +126,7 @@ export default function TiendaPage() {
 
       {/* Cart Notification Toast */}
       {showCartNotification && (
-        <div className="fixed top-24 right-8 z-50 animate-slide-in-down">
+        <div className="fixed top-20 inset-x-4 sm:inset-x-auto sm:right-8 sm:top-24 max-w-sm z-50 animate-slide-in-down">
           <div className="bg-primary text-background px-6 py-4 rounded-xl shadow-glow flex items-center gap-3">
             <div className="w-10 h-10 bg-background/20 rounded-full flex items-center justify-center">
               <span className="text-2xl">✓</span>

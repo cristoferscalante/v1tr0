@@ -111,7 +111,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible"
-      className="h-screen flex flex-col font-bricolage"
+      className="min-h-[calc(100dvh-4rem)] md:h-[calc(100dvh-4rem)] lg:h-screen flex flex-col font-bricolage"
     >
       {/* Tablero único: tareas de desarrollo + sugerencias + fallos + reuniones,
           todo como nodos del mismo árbol en vez de pestañas separadas. El

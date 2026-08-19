@@ -59,7 +59,7 @@ function FilterSelect({
   }, [isOpen]);
 
   return (
-    <div className="relative flex items-center gap-2 min-w-0" ref={containerRef}>
+    <div className="relative flex w-full sm:w-auto items-center gap-2 min-w-0" ref={containerRef}>
       <span className="text-xs font-semibold uppercase tracking-wider text-textMuted whitespace-nowrap">
         {label}
       </span>
@@ -69,7 +69,7 @@ function FilterSelect({
         onClick={() => setIsOpen((open) => !open)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className="inline-flex items-center justify-between gap-2 min-w-[11rem] rounded-xl border px-3 py-2 text-sm font-medium transition-all duration-300 bg-[#f4faf9] border-[#08A696]/25 text-[#08A696] hover:border-[#08A696]/50 dark:bg-[#052a30] dark:border-[#08A696]/25 dark:text-[#26FFDF] dark:hover:border-[#26FFDF]/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+        className="inline-flex flex-1 sm:flex-none items-center justify-between gap-2 min-h-[44px] sm:min-h-0 min-w-0 sm:min-w-[11rem] rounded-xl border px-3 py-2 text-sm font-medium transition-all duration-300 shop-inset shop-border shop-border-hover text-[#08A696] dark:text-[#26FFDF] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
       >
         <span className="truncate">
           {selected?.label}
@@ -93,7 +93,7 @@ function FilterSelect({
             transition={{ duration: 0.2, ease: "easeOut" }}
             // Panel sólido: sobre la cuadrícula de productos, un fondo
             // translúcido dejaba ver las tarjetas y se volvía ilegible.
-            className={`absolute left-auto right-0 ${openUpward ? "bottom-full mb-2" : "top-full mt-2"} z-[60] w-60 max-h-72 overflow-y-auto p-1.5 rounded-2xl border shadow-xl bg-[#f4faf9] border-[#08A696]/25 dark:bg-[#052a30] dark:border-[#08A696]/30`}
+            className={`absolute left-auto right-0 ${openUpward ? "bottom-full mb-2" : "top-full mt-2"} z-[60] w-60 max-h-72 overflow-y-auto p-1.5 rounded-2xl border shadow-xl shop-surface shop-border backdrop-blur-sm`}
           >
             {options.map((option) => {
               const isSelected = option.id === value;
@@ -109,7 +109,7 @@ function FilterSelect({
                     }}
                     className={`w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-left transition-colors duration-200 ${
                       isSelected
-                        ? "bg-[#c5ebe7] text-[#08A696] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF]"
+                        ? "bg-[#c5ebe7] text-[#08A696] dark:bg-[#2b2e31] dark:text-[#26FFDF]"
                         : "text-textMuted hover:bg-[#08A696]/10 hover:text-textPrimary"
                     }`}
                   >

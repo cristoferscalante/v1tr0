@@ -4,6 +4,8 @@ import dynamic from "next/dynamic"
 import CardBanner from "@/components/home/shared/CardBanner"
 import { useTheme } from "@/components/theme-provider"
 import { motion } from "framer-motion"
+import { useIsConfirmedDesktop } from "@/hooks/use-mobile"
+import LogoPlaceholder from "@/components/3d/LogoPlaceholder"
 
 // Rutas a los archivos SVG
 const devSvg = "/imagenes/icons/svg/dev.svg"
@@ -40,9 +42,10 @@ const itemVariants = {
 export default function HomeBanner() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
+  const isConfirmedDesktop = useIsConfirmedDesktop()
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between items-center px-4 py-10 md:py-14">
+    <section className="relative min-h-[100dvh] w-full overflow-hidden flex flex-col justify-between items-center px-4 py-10 md:py-14">
       {/* Fondo con gradiente */}
       <div className="absolute inset-0 z-0" />
 
@@ -95,7 +98,13 @@ export default function HomeBanner() {
           style={{ height: "clamp(240px, 42vh, 480px)" }}
           variants={itemVariants}
         >
-          <VtrLogoPerfect3D className="w-full h-full max-w-2xl mx-auto" />
+          {/* Solo se monta con certeza de escritorio: mientras la detección no
+              ha resuelto, el placeholder evita pedir el chunk 3D en móvil. */}
+          {isConfirmedDesktop ? (
+            <VtrLogoPerfect3D className="w-full h-full max-w-2xl mx-auto" />
+          ) : (
+            <LogoPlaceholder className="w-full h-full max-w-2xl mx-auto" />
+          )}
         </motion.div>
 
         {/* ---- Tarjetas con servicios ---- */}

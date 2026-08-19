@@ -18,7 +18,7 @@ import {
 import "@xyflow/react/dist/style.css"
 import { AnimatePresence, motion } from "framer-motion"
 import { toast } from "sonner"
-import { ArrowLeft, Pencil, Plus, Trash2, Loader2, Check, X, Sparkles } from "lucide-react"
+import { ArrowLeft, ChevronRight, Pencil, Plus, Trash2, Loader2, Check, X, Sparkles } from "lucide-react"
 import { AnimatedIcon } from "@/components/home/sections/AnimatedIcon"
 import { TASK_ICONS, taskIcon } from "@/components/shared/task-icons"
 import {
@@ -41,7 +41,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import PhaseEditDialog from "@/components/admin/PhaseEditDialog"
+import PhaseEditDialog, { STATUS_OPTIONS } from "@/components/admin/PhaseEditDialog"
+
+const PHASE_STATUS_LABELS: Record<string, string> = Object.fromEntries(
+  STATUS_OPTIONS.map((o) => [o.value, o.label]),
+)
 
 interface TeamMember {
   id: string
@@ -298,6 +302,14 @@ export default function AdminTaskTreeBoard({
   const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null)
   const [addSubtaskTaskId, setAddSubtaskTaskId] = useState<string | null>(null)
   const [phaseDialog, setPhaseDialog] = useState<{ mode: "create" } | { mode: "edit"; phaseId: string } | null>(null)
+  // Fases desplegadas en la vista de lista móvil (bajo `md`).
+  const [openPhases, setOpenPhases] = useState<Set<string>>(() => new Set(phases[0] ? [phases[0].id] : []))
+  const togglePhase = (phaseId: string) =>
+    setOpenPhases((prev) => {
+      const next = new Set(prev)
+      if (next.has(phaseId)) {next.delete(phaseId)} else {next.add(phaseId)}
+      return next
+    })
 
   const existingTracks = useMemo(() => Array.from(new Set(phases.map((ph) => ph.track))), [phases])
 
@@ -477,7 +489,7 @@ export default function AdminTaskTreeBoard({
     phaseDialog?.mode === "edit" ? phases.find((ph) => ph.id === phaseDialog.phaseId) : undefined
 
   return (
-    <div className="ttb-board relative h-[calc(100vh-6rem)] w-full flex flex-col overflow-hidden border border-white/10 bg-[#0d1210]/55 backdrop-blur-xl">
+    <div className="ttb-board relative h-[calc(100dvh-6rem)] w-full flex flex-col overflow-hidden border border-white/10 bg-[#0d1210]/55 backdrop-blur-xl">
       <style jsx global>{`
         .ttb-board .react-flow__node:hover { z-index: 1000 !important; }
         .ttb-board .ttb-edge-live path { animation: ttb-energy-flow 0.9s linear infinite; }
@@ -488,8 +500,8 @@ export default function AdminTaskTreeBoard({
       {/* Toda la navegación/gestión del proyecto vive dentro de este mismo
           panel: la barra superior (nombre, cliente, estado y volver) flota
           dentro del propio canvas, no aparte. */}
-      <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between gap-3 px-3.5 py-2 bg-[#0d1210]/70 backdrop-blur-md border-b border-white/5 pointer-events-none">
-        <span className="flex items-baseline gap-2 min-w-0">
+      <div className="absolute top-0 inset-x-0 z-20 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between px-3.5 py-2 bg-[#0d1210]/70 backdrop-blur-md border-b border-white/5 pointer-events-none">
+        <span className="flex items-baseline gap-2 min-w-0 max-w-full">
           <span className="text-sm font-semibold text-white/85 truncate">{projectName}</span>
           {clientLabel && clientHref && (
             <Link href={clientHref} className="pointer-events-auto shrink-0 text-xs text-textSecondary hover:text-[#26FFDF] no-underline hover:no-underline transition-colors truncate">
@@ -508,7 +520,7 @@ export default function AdminTaskTreeBoard({
             className="group/back pointer-events-auto relative flex items-center pl-1.5 pr-1.5 py-1 rounded-2xl bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] no-underline hover:no-underline shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
-            <span className="overflow-hidden whitespace-nowrap max-w-0 opacity-0 group-hover/back:max-w-[8rem] group-hover/back:opacity-100 group-hover/back:ml-1.5 transition-all duration-300 text-xs">
+            <span className="overflow-hidden whitespace-nowrap max-w-[8rem] opacity-100 ml-1.5 sm:max-w-0 sm:opacity-0 sm:ml-0 group-hover/back:max-w-[8rem] group-hover/back:opacity-100 group-hover/back:ml-1.5 transition-all duration-300 text-xs">
               Volver a proyectos
             </span>
           </Link>
@@ -525,6 +537,127 @@ export default function AdminTaskTreeBoard({
           </div>
         ) : (
           <>
+            {/* Móvil: el canvas de ReactFlow mide ~830px lógicos, así que a
+                320px el texto de los nodos queda ilegible. Bajo `md` se
+                sustituye por un acordeón fase -> tarea -> subtarea con los
+                mismos handlers de edición; desde `md` el canvas es idéntico
+                al de antes. */}
+            <div className="md:hidden h-full overflow-y-auto px-3 pt-16 pb-20 space-y-2">
+              {phases.map((ph) => {
+                const color = trackColor(ph.track)
+                const expanded = openPhases.has(ph.id)
+                const done = ph.tasks.filter((t) => t.completed).length
+                return (
+                  <div key={ph.id} className="rounded-xl border border-white/10 bg-black/30 overflow-hidden">
+                    <div className="flex items-center gap-2 px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => togglePhase(ph.id)}
+                        aria-expanded={expanded}
+                        className="flex flex-1 min-w-0 items-center gap-2 text-left min-h-11"
+                      >
+                        <ChevronRight className={`h-4 w-4 shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`} style={{ color }} />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-bold uppercase tracking-wide truncate" style={{ color }}>
+                            {ph.name}
+                          </span>
+                          <span className="block text-[11px] text-textSecondary">
+                            {PHASE_STATUS_LABELS[ph.status] ?? ph.status} · {done}/{ph.tasks.length} tareas
+                          </span>
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleEditPhase(ph.id)}
+                        aria-label={`Editar fase ${ph.name}`}
+                        className="shrink-0 flex items-center justify-center min-w-11 min-h-11 rounded-lg text-[#26FFDF]/80"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {expanded && (
+                      <div className="border-t border-white/5 px-3 py-2 space-y-1.5">
+                        {ph.tasks.length === 0 && (
+                          <p className="text-textSecondary/50 text-xs py-1">Sin tareas</p>
+                        )}
+                        {ph.tasks.map((t) => {
+                          const meta = taskIcon(t.icon)
+                          const subDone = t.subtasks.filter((s) => s.completed).length
+                          return (
+                            <div key={t.id} className="rounded-lg border border-white/5 bg-black/20">
+                              <button
+                                type="button"
+                                onClick={() => setEditingTaskId(t.id)}
+                                className="flex w-full items-center gap-2 px-2 py-2 min-h-11 text-left"
+                              >
+                                <AnimatedIcon
+                                  kind={meta.kind}
+                                  icon={meta.icon}
+                                  active={Boolean(t.completed)}
+                                  size={18}
+                                  className={t.completed ? "" : "text-white/35"}
+                                  style={{ color: t.completed ? color : undefined }}
+                                />
+                                <span className="min-w-0 flex-1">
+                                  <span className={`block text-sm truncate ${t.completed ? "text-[#26FFDF]" : "text-white/85"}`}>
+                                    {t.name}
+                                  </span>
+                                  <span className="block text-[11px] text-textSecondary">
+                                    {t.completed ? "Completada" : "Pendiente"}
+                                    {t.subtasks.length > 0 && ` · ${subDone}/${t.subtasks.length} subtareas`}
+                                  </span>
+                                </span>
+                                <Pencil className="h-3.5 w-3.5 shrink-0 text-white/40" />
+                              </button>
+                              {t.subtasks.length > 0 && (
+                                <div className="border-t border-white/5 px-2 py-1">
+                                  {t.subtasks.map((s) => (
+                                    <button
+                                      key={s.id}
+                                      type="button"
+                                      onClick={() => setEditingSubtaskId(s.id)}
+                                      className="flex w-full items-center gap-2 py-1.5 min-h-11 text-left"
+                                    >
+                                      <span
+                                        className="shrink-0 w-2.5 h-2.5 rounded-full"
+                                        style={{ background: s.completed ? color : hexToRgba(color, 0.35) }}
+                                      />
+                                      <span className={`flex-1 truncate text-xs ${s.completed ? "text-[#26FFDF] line-through" : "text-textSecondary"}`}>
+                                        {s.name}
+                                      </span>
+                                      <Pencil className="h-3 w-3 shrink-0 text-white/30" />
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="border-t border-white/5 px-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setAddSubtaskTaskId(t.id)}
+                                  className="flex items-center gap-1 min-h-11 text-[11px] text-[#26FFDF]/70"
+                                >
+                                  <Plus className="h-3 w-3" /> Agregar subtarea
+                                </button>
+                              </div>
+                            </div>
+                          )
+                        })}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenCreateTask(ph.id)}
+                          className="flex items-center gap-1.5 min-h-11 text-xs text-[#26FFDF]/80"
+                        >
+                          <Plus className="h-3.5 w-3.5" /> Agregar tarea
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="hidden md:block h-full w-full">
             <ReactFlowProvider>
               <ReactFlow
                 nodes={nodes}
@@ -533,7 +666,7 @@ export default function AdminTaskTreeBoard({
                 nodeTypes={nodeTypes}
                 fitView
                 fitViewOptions={{ padding: { top: "10%", right: "8%", bottom: "10%", left: "8%" } }}
-                minZoom={0.3}
+                minZoom={0.15}
                 maxZoom={1.5}
                 proOptions={{ hideAttribution: true }}
                 nodesDraggable
@@ -543,6 +676,7 @@ export default function AdminTaskTreeBoard({
                 <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#ffffff12" />
               </ReactFlow>
             </ReactFlowProvider>
+            </div>
 
             <button
               type="button"
@@ -624,7 +758,7 @@ export default function AdminTaskTreeBoard({
             </div>
             <div>
               <Label>Ícono</Label>
-              <div className="grid grid-cols-8 gap-1.5 max-h-40 overflow-y-auto p-1">
+              <div className="grid grid-cols-5 sm:grid-cols-8 gap-1.5 max-h-40 overflow-y-auto p-1">
                 {TASK_ICONS.map((entry) => {
                   const isSelected = createForm.icon === entry.key
                   return (
@@ -633,7 +767,7 @@ export default function AdminTaskTreeBoard({
                       type="button"
                       title={entry.label}
                       onClick={() => setCreateForm({ ...createForm, icon: entry.key })}
-                      className={`flex items-center justify-center aspect-square rounded-lg border transition-all ${
+                      className={`flex items-center justify-center aspect-square min-h-11 rounded-lg border transition-all ${
                         isSelected ? "bg-[#0d5d5d]/70 border-[#26FFDF]" : "bg-gray-900/50 border-gray-700 hover:border-[#08A696]/60"
                       }`}
                     >

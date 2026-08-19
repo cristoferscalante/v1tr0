@@ -458,7 +458,7 @@ export default function PaquetesAdminPage() {
           className="w-full"
         >
           <TabsList
-            className={`grid w-full grid-cols-4 ${
+            className={`flex w-full overflow-x-auto snap-x md:grid md:grid-cols-4 ${
               isDark
                 ? "bg-[#02505931] border border-[#08A696]/20"
                 : "bg-[#e6f7f6] border border-[#08A696]/60"
@@ -466,7 +466,7 @@ export default function PaquetesAdminPage() {
           >
             <TabsTrigger
               value="all"
-              className={`${
+              className={`shrink-0 snap-start md:shrink ${
                 isDark
                   ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
                   : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
@@ -476,7 +476,7 @@ export default function PaquetesAdminPage() {
             </TabsTrigger>
             <TabsTrigger
               value="pos"
-              className={`${
+              className={`shrink-0 snap-start md:shrink ${
                 isDark
                   ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
                   : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
@@ -486,7 +486,7 @@ export default function PaquetesAdminPage() {
             </TabsTrigger>
             <TabsTrigger
               value="hardware"
-              className={`${
+              className={`shrink-0 snap-start md:shrink ${
                 isDark
                   ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
                   : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
@@ -496,7 +496,7 @@ export default function PaquetesAdminPage() {
             </TabsTrigger>
             <TabsTrigger
               value="iot"
-              className={`${
+              className={`shrink-0 snap-start md:shrink ${
                 isDark
                   ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
                   : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"

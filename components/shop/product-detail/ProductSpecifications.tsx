@@ -36,10 +36,10 @@ export const ProductSpecifications: React.FC<ProductSpecificationsProps> = ({ sp
         {Object.entries(specifications).map(([key, value]) => (
           <div
             key={key}
-            className="flex items-start sm:items-center gap-4 p-4 bg-backgroundSecondary/50 rounded-xl border border-primary/20"
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 p-4 shop-surface rounded-xl border shop-border"
           >
-            <dt className="text-textSecondary font-semibold min-w-[150px]">{key}:</dt>
-            <dd className="text-white">{value}</dd>
+            <dt className="text-textSecondary font-semibold w-full sm:w-auto sm:min-w-[150px]">{key}:</dt>
+            <dd className="text-white break-words min-w-0">{value}</dd>
           </div>
         ))}
       </div>

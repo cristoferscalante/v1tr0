@@ -28,7 +28,7 @@ interface Phase {
   endDate: string | Date | null
 }
 
-const STATUS_OPTIONS = [
+export const STATUS_OPTIONS = [
   { value: "pending", label: "Pendiente" },
   { value: "active", label: "Activa" },
   { value: "in_progress", label: "En progreso" },
@@ -152,7 +152,7 @@ export default function PhaseEditDialog({
               className={inputClass}
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label htmlFor="phaseTrack">Camino</Label>
               <Input
@@ -185,7 +185,7 @@ export default function PhaseEditDialog({
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label htmlFor="phaseStart">Inicio</Label>
               <Input

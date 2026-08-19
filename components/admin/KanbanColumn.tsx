@@ -40,9 +40,9 @@ export default function KanbanColumn({
           lista, con más se aglutinan en vez de estirar la columna hacia
           abajo. */}
       <SortableContext items={projects.map((p) => p.id)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-3 gap-1.5 p-2 min-h-[70px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 p-2 min-h-[70px]">
           {projects.length === 0 ? (
-            <p className="col-span-3 text-textSecondary/50 text-xs text-center py-4">Suelta un proyecto aquí</p>
+            <p className="col-span-full text-textSecondary/50 text-xs text-center py-4">Suelta un proyecto aquí</p>
           ) : (
             projects.map((p) => <KanbanCard key={p.id} project={p} />)
           )}

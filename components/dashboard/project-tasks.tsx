@@ -382,9 +382,9 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Nombre */}
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <label className="text-sm font-medium text-slate-300 mb-2 block">
                   Nombre de la Tarea *
                 </label>
@@ -398,7 +398,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
               </div>
 
               {/* Descripción */}
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <label className="text-sm font-medium text-slate-300 mb-2 block">
                   Descripción
                 </label>
@@ -473,7 +473,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
               </div>
 
               {/* Fecha Final */}
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <label className="text-sm font-medium text-slate-300 mb-2 block">
                   Fecha Final
                 </label>
@@ -486,7 +486,7 @@ export function ProjectTasks({ projectId, onTaskUpdate }: ProjectTasksProps) {
               </div>
 
               {/* Observaciones */}
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <label className="text-sm font-medium text-slate-300 mb-2 block">
                   Observaciones
                 </label>
@@ -790,7 +790,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
     >
       <Card className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/20 rounded-xl overflow-hidden hover:border-[#08A696]/40 transition-all">
         <div className="p-4">
-          <div className="flex items-start justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-4 sm:gap-6">
             <div className="flex-1 space-y-3 min-w-0 pr-4">
               {/* Título */}
               <div className="flex items-center gap-3">
@@ -835,7 +835,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                 /* MODO EDICIÓN - Formulario completo */
                 <div className="space-y-3 p-4 bg-slate-900/30 rounded-lg border border-[#08A696]/20">
                   {/* Fila 1: Estado, Prioridad, Categoría */}
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs text-slate-400 mb-1.5 block font-medium">Estado *</label>
                       <Select
@@ -892,7 +892,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
                   </div>
 
                   {/* Fila 2: Fechas */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs text-slate-400 mb-1.5 block font-medium">📅 Fecha Inicio</label>
                       <input
@@ -982,7 +982,7 @@ function TaskCard({ task, onStatusChange, canEdit }: TaskCardProps) {
               )}
             </div>
 
-            <div className="flex flex-col gap-3 shrink-0 min-w-[140px]">
+            <div className="flex flex-col gap-3 shrink-0 w-full sm:min-w-[140px] sm:w-auto">
               {/* BOTONES PRINCIPALES: Editar/Asignar o Guardar/Cancelar */}
               {canEdit && (
                 <div className="flex flex-col gap-2">
@@ -1358,7 +1358,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
     >
       <Card className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/20 rounded-xl overflow-hidden hover:border-[#08A696]/40 transition-all">
         <div className="p-4">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-4">
             <div className="flex-1 space-y-3">
               {/* TÍTULO Y DESCRIPCIÓN - EDITABLES */}
               {isEditing ? (
@@ -1381,7 +1381,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                       className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#26FFDF] resize-none"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs text-slate-400 mb-1 block">Prioridad</label>
                       <Select value={editedTask.priority} onValueChange={(value) => setEditedTask({ ...editedTask, priority: value as 'high' | 'medium' | 'low' })}>
@@ -1404,7 +1404,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
                         className="w-full px-3 py-2 bg-[#025059]/50 border border-[#08A696]/30 rounded-lg text-white text-sm focus:outline-none focus:border-[#26FFDF]"
                       />
                     </div>
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                       <label className="text-xs text-slate-400 mb-1 block">Fecha de Vencimiento</label>
                       <input
                         type="date"
@@ -1468,7 +1468,7 @@ function MeetingTaskCard({ task, onStatusChange, canEdit, onTaskUpdate }: Meetin
             </div>
 
             {/* COLUMNA DERECHA: Selector de Estado + Botones */}
-            <div className="flex flex-col gap-3 shrink-0 min-w-[140px]">
+            <div className="flex flex-col gap-3 shrink-0 w-full sm:min-w-[140px] sm:w-auto">
               {/* Selector de Estado */}
               <Select
                 value={task.status}

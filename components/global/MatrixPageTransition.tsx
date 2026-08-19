@@ -101,12 +101,18 @@ export default function MatrixPageTransition() {
   const [prefersReduced, setPrefersReduced] = useState(false)
   const { theme } = useTheme()
 
+  // Además de reduced-motion, se desactiva en dispositivos táctiles: el canvas
+  // full-screen a devicePixelRatio compite con el hilo ya ocupado por la
+  // navegación y penaliza justo a las GPUs más débiles.
   useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const sync = () => setPrefersReduced(query.matches)
+    const queries = [
+      window.matchMedia("(prefers-reduced-motion: reduce)"),
+      window.matchMedia("(pointer: coarse)"),
+    ]
+    const sync = () => setPrefersReduced(queries.some((query) => query.matches))
     sync()
-    query.addEventListener("change", sync)
-    return () => query.removeEventListener("change", sync)
+    queries.forEach((query) => query.addEventListener("change", sync))
+    return () => queries.forEach((query) => query.removeEventListener("change", sync))
   }, [])
 
   // Arranca en el clic, antes de que Next resuelva la ruta

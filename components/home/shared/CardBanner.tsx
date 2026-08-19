@@ -30,7 +30,7 @@ export default function CardBanner({ icon, title, onClick, href }: CardBannerPro
             <Image src={icon || "/imagenes/icons/svg/placeholder.svg"} alt="" height={40} width={40} className="transition-transform duration-300 group-hover:rotate-3" />
           </div>
         </div>
-        <h3 className={`flex-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-base leading-tight transition-all duration-300 group-hover:text-[#08A696] ${isDark ? "group-hover:text-[#26FFDF]" : ""} text-left whitespace-nowrap overflow-hidden text-ellipsis group-hover:scale-105 group-hover:drop-shadow-[0_0_10px_rgba(38,255,223,0.4)] transform-gpu`}>
+        <h3 className={`flex-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-base leading-tight transition-all duration-300 group-hover:text-[#08A696] ${isDark ? "group-hover:text-[#26FFDF]" : ""} text-left line-clamp-2 overflow-hidden group-hover:scale-105 group-hover:drop-shadow-[0_0_10px_rgba(38,255,223,0.4)] transform-gpu`}>
           {title}
         </h3>
       </div>

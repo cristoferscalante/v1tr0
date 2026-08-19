@@ -291,7 +291,7 @@ export function ProjectTeam({}: ProjectTeamProps) {
                       </div>
                       
                       {/* Métricas */}
-                      <div className="mt-4 grid grid-cols-2 gap-4">
+                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm font-medium text-gray-700">Carga de Trabajo</p>
                           <div className="flex items-center gap-2 mt-1">

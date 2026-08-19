@@ -82,7 +82,18 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
   // Estado para controlar errores de video
   const [videoErrors, setVideoErrors] = useState<{ [key: number]: boolean }>({})
-  
+
+  // Detección de móvil: bajo md el slider se degrada a lista vertical con scroll nativo
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width:767px)')
+    const update = () => setIsMobile(mql.matches)
+    update()
+    mql.addEventListener('change', update)
+    return () => mql.removeEventListener('change', update)
+  }, [])
+
   // Función para gestionar la carga optimizada de videos
   const updateVideoLoading = useCallback((activeIndex: number) => {
     videoRefs.current.forEach((video, index) => {
@@ -191,6 +202,9 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
   // Configuración del Observer para la navegación
   useEffect(() => {
+    // En móvil no se crea el Observer: secuestraría el scroll táctil de toda la página
+    if (isMobile) { return }
+
     let observer: Observer | null = null
 
     const initObserver = () => {
@@ -211,10 +225,12 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
       clearTimeout(timer)
       if (observer) { observer.kill() }
     }
-  }, [currentIndex, gotoSection])
+  }, [currentIndex, gotoSection, isMobile])
 
   // Navegación por teclado
   useEffect(() => {
+    if (isMobile) { return }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" || e.key === " " || e.key === "Enter") {
         e.preventDefault()
@@ -227,7 +243,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [currentIndex, gotoSection])
+  }, [currentIndex, gotoSection, isMobile])
 
   // Inicializar la carga optimizada de videos al montar el componente
   useEffect(() => {
@@ -239,26 +255,37 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
     return () => clearTimeout(timer)
   }, [currentIndex, updateVideoLoading])
 
+  // Al pasar a móvil se limpian los estilos inline que GSAP pudo dejar sobre las secciones
+  useEffect(() => {
+    if (!isMobile) { return }
+    const targets = sectionsRef.current.filter(Boolean) as HTMLElement[]
+    if (targets.length) { gsap.set(targets, { clearProps: "all" }) }
+  }, [isMobile])
+
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className={isMobile ? "relative w-full" : "relative w-full min-h-[100dvh] overflow-hidden"}>
       {/* Slides */}
       {slides.map((slide, index) => (
         <section
           key={index}
           ref={(el) => { sectionsRef.current[index] = el }}
-          className={`slide fixed top-0 left-0 w-full h-full ${index === 0 ? 'visible' : 'invisible'}`}
-          style={{ zIndex: index === 0 ? 1 : 0 }}
+          className={
+            isMobile
+              ? "slide relative w-full min-h-[100dvh] visible"
+              : `slide fixed top-0 left-0 w-full h-full ${index === 0 ? 'visible' : 'invisible'}`
+          }
+          style={isMobile ? undefined : { zIndex: index === 0 ? 1 : 0 }}
         >
-          <div 
+          <div
             ref={(el) => { outerWrappersRef.current[index] = el }}
             className="slide__outer w-full h-full"
           >
-            <div 
+            <div
               ref={(el) => { innerWrappersRef.current[index] = el }}
               className="slide__inner w-full h-full"
             >
-              <div 
-                className="slide__content w-full h-full flex items-center justify-center relative"
+              <div
+                className="slide__content w-full min-h-[100dvh] md:min-h-0 md:h-full flex items-center justify-center relative"
                 style={{ backgroundColor: slide.bgColor }}
               >
                 {index === 0 && <BackgroundAnimation />}
@@ -365,7 +392,7 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                         {/* Título con más espacio */}
                         <div className="text-center mb-16">
                           <h2 
-                            className="slide__heading text-5xl md:text-7xl font-bold text-white relative z-10"
+                            className="slide__heading text-2xl sm:text-4xl md:text-7xl font-bold text-white relative z-10 break-words"
                             style={{ '--width': '200px' } as React.CSSProperties}
                           >
                             {slide.title}
@@ -385,14 +412,14 @@ export default function GsapSlider({ title = "Portafolio", examples = defaultExa
                   )}
                   {!slide.video && (
                     <h2 
-                      className="slide__heading text-6xl md:text-8xl font-bold text-white mb-8 relative z-10"
+                      className="slide__heading text-3xl sm:text-5xl md:text-8xl font-bold text-white mb-8 relative z-10 break-words"
                       style={{ '--width': '200px' } as React.CSSProperties}
                     >
                       {slide.title}
                     </h2>
                   )}
                   {slide.url && (
-                    <div className="fixed bottom-8 right-8 z-50">
+                    <div className={isMobile ? "relative mt-8 flex justify-center z-50" : "fixed bottom-8 right-8 z-50"}>
                       <a 
                         href={slide.url}
                         className="group relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#26FFDF]/20 transition-all duration-300 hover:border-[#26FFDF] hover:bg-[#02505950] inline-flex items-center px-8 py-4 text-lg font-semibold hover:scale-105 shadow-[0_0_30px_rgba(38,255,223,0.3)] hover:shadow-[0_0_40px_rgba(38,255,223,0.5)]"

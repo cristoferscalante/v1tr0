@@ -93,7 +93,7 @@ export default function ProjectBankSection() {
   return (
     <section 
       ref={sectionRef} 
-      className="project-bank-section relative min-h-screen w-full flex items-center justify-center py-8 px-4"
+      className="project-bank-section relative min-h-[100dvh] w-full flex items-center justify-center py-8 px-4"
     >
       <motion.div 
         className="max-w-6xl mx-auto z-10 flex flex-col items-center w-full scale-90"
@@ -229,13 +229,13 @@ export default function ProjectBankSection() {
                 </div>
                 
                 {/* Botones de acción - Más pequeños */}
-                <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
+                      className={`flex-1 flex items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] md:px-1.5 md:py-1 md:min-h-0 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink className="w-2.5 h-2.5" />
@@ -247,7 +247,7 @@ export default function ProjectBankSection() {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
+                      className={`flex-1 flex items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] md:px-1.5 md:py-1 md:min-h-0 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Github className="w-2.5 h-2.5" />

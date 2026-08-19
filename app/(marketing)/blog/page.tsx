@@ -69,7 +69,7 @@ export default function BlogPage() {
   return (
     <>
       <BackgroundAnimation />
-      <div className="container mx-auto px-8 sm:px-6 lg:px-8 max-w-6xl py-32">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl py-16 md:py-32">
         <header className="mb-16 text-center">
           <div className="inline-flex items-center justify-center p-2 bg-custom-2/20 rounded-full mb-4">
             <BookOpenIcon className="w-6 h-6 text-highlight" />

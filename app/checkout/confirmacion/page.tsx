@@ -41,7 +41,7 @@ export default function ConfirmacionPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0A1A1A] to-[#001F1F] p-4">
-      <div className="bg-black/40 backdrop-blur-xl border border-[#08A696]/20 rounded-2xl p-8 max-w-md w-full text-center">
+      <div className="bg-black/40 backdrop-blur-xl border border-[#08A696]/20 rounded-2xl p-5 sm:p-8 max-w-md w-full text-center">
         {status === "loading" && (
           <>
             <Loader2 className="h-16 w-16 text-[#26FFDF] mx-auto mb-4 animate-spin" />
@@ -56,7 +56,7 @@ export default function ConfirmacionPage() {
             <p className="text-gray-400 mb-6">{message}</p>
             <button
               onClick={() => router.push("/client-dashboard")}
-              className="px-6 py-3 bg-gradient-to-r from-[#08A696] to-[#26FFDF] text-black font-semibold rounded-xl"
+              className="w-full sm:w-auto min-h-[44px] px-6 py-3 bg-gradient-to-r from-[#08A696] to-[#26FFDF] text-black font-semibold rounded-xl"
             >
               Ir a mi dashboard
             </button>
@@ -69,7 +69,7 @@ export default function ConfirmacionPage() {
             <p className="text-gray-400 mb-6">{message}</p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-3 bg-[#08A696]/20 text-[#26FFDF] rounded-xl hover:bg-[#08A696]/30 transition-colors"
+              className="w-full sm:w-auto min-h-[44px] px-6 py-3 bg-[#08A696]/20 text-[#26FFDF] rounded-xl hover:bg-[#08A696]/30 transition-colors"
             >
               Volver al inicio
             </button>

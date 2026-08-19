@@ -3,6 +3,20 @@ const nextConfig = {
   // Evita que Next.js infiera mal el workspace root cuando hay otro
   // pnpm-lock.yaml en un directorio superior (p. ej. en el $HOME del usuario).
   outputFileTracingRoot: __dirname,
+  reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+    // Recorta el JS enviado al cliente en librerías con barrel files grandes.
+    // Impacto directo en el peso de la primera carga móvil.
+    optimizePackageImports: [
+      '@headlessui/react',
+      '@radix-ui/react-icons',
+      'lucide-react',
+      'framer-motion',
+    ],
+  },
   eslint: {
     // Errores de ESLint preexistentes en archivos no relacionados no deben
     // bloquear el deploy. El lint sigue corriendo en CI/local normalmente.

@@ -53,7 +53,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#f4faf9] dark:bg-[#052a30] border-l border-[#08A696]/25 dark:border-[#08A696]/25 z-[80] transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 h-[100dvh] w-full sm:w-[480px] bg-[#f4faf9] dark:bg-[#17191b] border-l border-[#08A696]/25 dark:border-[#08A696]/25 z-[80] transform transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -75,11 +75,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
           {/* Free Shipping Progress */}
           {remainingForFreeShipping > 0 && (
-            <div className="px-6 py-4 bg-[#08A696]/5 dark:bg-[#02505950] border-b border-[#08A696]/20">
+            <div className="px-6 py-4 bg-[#08A696]/5 dark:bg-[#202325] border-b border-[#08A696]/20">
               <p className="text-sm text-[#04423c] dark:text-[#b2fff6] text-center mb-2">
                 ¡Solo <span className="font-bold text-[#08A696] dark:text-[#26FFDF]">${remainingForFreeShipping.toLocaleString()} COP</span> para envío gratis!
               </p>
-              <div className="w-full h-2 bg-white/50 dark:bg-[#025159]/50 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-white/50 dark:bg-[#2b2e31] rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] transition-all duration-500"
                   style={{ width: `${progressPercentage}%` }}
@@ -96,7 +96,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <p className="text-[#085c54] dark:text-[#b2fff6] text-lg">Tu carrito está vacío</p>
                 <button
                   onClick={onClose}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-300 bg-[#c5ebe7] text-[#08A696] border-[#08A696]/50 hover:bg-[#b3e4df] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF] dark:border-[#26FFDF]/40 dark:hover:bg-[#0d5d5d]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+                  className="shop-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm"
                 >
                   Continuar comprando
                 </button>
@@ -107,10 +107,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-4 p-4 rounded-2xl border transition-all duration-300 bg-white/60 border-[#08A696]/20 hover:border-[#08A696]/60 dark:bg-[#02505920] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/60"
+                    className="flex gap-4 p-4 rounded-2xl border transition-all duration-300 bg-white/60 border-[#08A696]/20 hover:border-[#08A696]/60 dark:bg-[#1e2123] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/60"
                   >
                     {/* Product Image */}
-                    <div className="relative w-24 h-24 flex-shrink-0 bg-white/50 dark:bg-[#025159]/30 rounded-lg overflow-hidden">
+                    <div className="relative w-16 h-16 sm:w-24 sm:h-24 flex-shrink-0 bg-white/50 dark:bg-[#232629] rounded-lg overflow-hidden">
                       <Image
                         src={item.image || "/imagenes/placeholders/placeholder.jpg"}
                         alt={item.name ?? "Producto"}
@@ -127,7 +127,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         </h3>
                         <button
                           onClick={() => onRemoveItem(item.id)}
-                          className="text-[#085c54] dark:text-[#b2fff6] hover:text-red-500 dark:hover:text-red-400 transition-colors flex-shrink-0"
+                          className="p-2.5 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#085c54] dark:text-[#b2fff6] hover:text-red-500 dark:hover:text-red-400 transition-colors flex-shrink-0"
                           aria-label="Eliminar producto"
                         >
                           <X className="w-5 h-5" />
@@ -140,16 +140,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       </p>
 
                       {/* Price & Quantity */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#04423c] dark:text-[#26FFDF] font-bold text-lg">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <span className="text-[#04423c] dark:text-[#26FFDF] font-bold text-base sm:text-lg">
                           ${item.price.toLocaleString()} COP
                         </span>
 
                         {/* Quantity Controls */}
-                        <div className="flex items-center gap-2 bg-white/50 dark:bg-[#025159]/30 rounded-lg p-1">
+                        <div className="flex items-center gap-2 self-start sm:self-auto bg-white/50 dark:bg-[#232629] rounded-lg p-1">
                           <button
                             onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                            className="p-1.5 hover:bg-[#08A696]/20 dark:hover:bg-[#08A696]/30 rounded transition-colors"
+                            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[#08A696]/20 dark:hover:bg-[#08A696]/30 rounded transition-colors"
                             aria-label="Disminuir cantidad"
                           >
                             <Minus className="w-4 h-4 text-[#08A696] dark:text-[#26FFDF]" />
@@ -159,7 +159,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           </span>
                           <button
                             onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                            className="p-1.5 hover:bg-[#08A696]/20 dark:hover:bg-[#08A696]/30 rounded transition-colors"
+                            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[#08A696]/20 dark:hover:bg-[#08A696]/30 rounded transition-colors"
                             aria-label="Aumentar cantidad"
                           >
                             <Plus className="w-4 h-4 text-[#08A696] dark:text-[#26FFDF]" />
@@ -191,7 +191,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   {recommendedProducts.slice(0, 3).map((product) => (
                     <div
                       key={product.id}
-                      className="flex flex-col rounded-xl border p-1.5 transition-all duration-300 bg-white/70 border-[#08A696]/20 hover:border-[#08A696]/60 dark:bg-[#04252b] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/60"
+                      className="flex flex-col rounded-xl border p-1.5 transition-all duration-300 bg-white/70 border-[#08A696]/20 hover:border-[#08A696]/60 dark:bg-[#1e2123] dark:border-[#08A696]/15 dark:hover:border-[#26FFDF]/60"
                     >
                       <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-[#08A696]/5">
                         <Image
@@ -225,7 +225,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
           {/* Footer - Totals & Checkout */}
           {cartItems.length > 0 && (
-            <div className="border-t border-[#08A696]/20 p-6 space-y-4 bg-[#08A696]/5 dark:bg-[#02505950]">
+            <div className="border-t border-[#08A696]/20 p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] space-y-4 bg-[#08A696]/5 dark:bg-[#202325]">
               {/* Total */}
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between">
@@ -243,7 +243,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <button
                 onClick={onCheckout}
                 disabled={checkoutLoading}
-                className="w-full py-3.5 rounded-2xl border text-base font-bold transition-all duration-300 bg-[#c5ebe7] text-[#08A696] border-[#08A696]/50 hover:bg-[#b3e4df] dark:bg-[#0d5d5d]/60 dark:text-[#26FFDF] dark:border-[#26FFDF]/40 dark:hover:bg-[#0d5d5d]/80 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+                className="shop-btn w-full py-3.5 rounded-2xl text-base font-bold"
               >
                 {checkoutLoading ? "Procesando..." : "Finalizar compra"}
               </button>

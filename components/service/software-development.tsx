@@ -78,7 +78,7 @@ export default function SoftwareDevelopment() {
   }
 
   return (
-    <section className="w-full py-24 font-sans relative">
+    <section className="w-full py-12 md:py-24 font-sans relative">
       <BokehBackground style={{ zIndex: -1 }} />
       <div className="container px-4 md:px-6 mx-auto">
         {/* Encabezado de sección */}
@@ -217,7 +217,7 @@ export default function SoftwareDevelopment() {
           <div className="text-2xl text-primary mb-10">02</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Tecnologías de vanguardia</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-16">
             <div>
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/5.Tecnolog%C3%ADas%20de%20vanguardia-GdVjQ7jR4EPoONqDpQbB56vZReTvZN.png"
@@ -240,7 +240,7 @@ export default function SoftwareDevelopment() {
                 más avanzados para crear soluciones robustas, escalables y preparadas para el futuro.
               </p>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-primary">
                     <Code size={20} />
@@ -298,7 +298,7 @@ export default function SoftwareDevelopment() {
           <div className="text-2xl text-primary mb-10">03</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Desarrollo a medida</h3>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-16">
             <div>
               <p className="text-textMuted text-lg mb-8">
                 Creamos soluciones personalizadas que se adaptan perfectamente a tus necesidades específicas, procesos
@@ -356,7 +356,7 @@ export default function SoftwareDevelopment() {
           <div className="text-2xl text-primary mb-10">04</div>
           <h3 className="text-3xl font-bold text-textPrimary mb-10">Nuestra metodología</h3>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-10">
             <div>
               <div className="w-16 h-16 rounded-full bg-custom-2 flex items-center justify-center mb-6">
                 <span className="text-highlight text-2xl font-bold">1</span>
