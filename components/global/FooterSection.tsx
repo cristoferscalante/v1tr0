@@ -46,6 +46,12 @@ const footerSections = [
   },
 ]
 
+/** Las dos rutas de entrada del home, repetidas en el pie para que existan en todas las páginas. */
+const footerPaths = [
+  { href: "/contratar-software", label: "Contratar software" },
+  { href: "/hardware-iot", label: "Hardware e IoT" },
+]
+
 interface FooterSectionProps {
   className?: string;
 }
@@ -115,6 +121,30 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             </div>
           ))}
         </div>
+
+  {/* Rutas de entrada: las dos páginas que explican cómo se contrata */}
+        <nav
+          aria-label="Cómo trabajamos"
+          className="footer-paths animate-element relative z-10 mb-8 flex flex-col items-center gap-3 px-2 sm:flex-row sm:justify-center sm:gap-4 sm:px-0"
+        >
+          <span className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-[#26FFDF]/70" : "text-[#085c54]/80"}`}>
+            Cómo trabajamos
+          </span>
+          {footerPaths.map((path) => (
+            <Link
+              key={path.href}
+              href={path.href}
+              prefetch={false}
+              className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 ${
+                isDark
+                  ? "border-[#08A696]/50 bg-[#08A696]/20 text-[#26FFDF] hover:border-[#26FFDF] hover:bg-[#08A696]/30"
+                  : "border-[#08A696]/80 bg-white/70 text-[#085c54] hover:border-[#08A696] hover:bg-[#08A696]/10"
+              }`}
+            >
+              {path.label}
+            </Link>
+          ))}
+        </nav>
 
   <div className="footer-bottom animate-element flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0 w-full">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left flex-shrink-0">

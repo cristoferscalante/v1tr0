@@ -159,6 +159,20 @@ export default function Navbar() {
                 </Link>
               </div>
               <nav className="space-y-2">
+                <MobileNavLink
+                  href="/contratar-software"
+                  onClick={() => setIsOpen(false)}
+                  isService
+                >
+                  Contratar software
+                </MobileNavLink>
+                <MobileNavLink
+                  href="/hardware-iot"
+                  onClick={() => setIsOpen(false)}
+                  isService
+                >
+                  Hardware e IoT
+                </MobileNavLink>
                 <MobileNavLink 
                   href="/servicios-referentes/dev" 
                   onClick={() => setIsOpen(false)} 
