@@ -68,6 +68,16 @@ const nextConfig = {
       },
     ]
   },
+  // Las rutas públicas son en español. Los duplicados en inglés se conservan
+  // solo como redirección permanente para no perder enlaces ni repartir el
+  // posicionamiento entre dos URLs con el mismo contenido.
+  async redirects() {
+    return [
+      { source: '/services/:path*', destination: '/servicios-referentes/:path*', permanent: true },
+      { source: '/shop', destination: '/tienda', permanent: true },
+      { source: '/shop/:path*', destination: '/tienda/:path*', permanent: true },
+    ]
+  },
 }
 
 module.exports = nextConfig

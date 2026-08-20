@@ -7,6 +7,11 @@ import Link from "next/link"
 import { BarChartIcon, TrendingUpIcon, SettingsIcon, ShoppingCart, FileText, Smartphone, Globe, Database, Brain, Workflow, Bot, Link as LinkIcon, LayoutGrid, BarChart3, Cpu } from "lucide-react"
 import { AnimatedIcon } from "./AnimatedIcon"
 import { accentText, eyebrow, sectionTitle, surface, surfaceInner, surfaceInnerActive, surfaceInteractive } from "@/components/home/shared/surface"
+import { subcategoryPageSlugById } from "@/lib/data/servicios"
+
+function exampleHref(example: { href?: string }) {
+  return example.href
+}
 
 export const servicesData = [
   {
@@ -24,9 +29,9 @@ export const servicesData = [
         description: "Tiendas online completas con pasarelas de pago, gestión de inventario y experiencia de compra optimizada.",
         features: [],
         examples: [
-          { title: "Tienda de Moda", description: "Plataforma con carrito y pagos.", image: "/imagenes/proyectos/ecommerce.jpg" },
-          { title: "Marketplace Local", description: "Gestión de múltiples vendedores.", image: "/imagenes/proyectos/retail.jpg" },
-          { title: "Suscripciones", description: "Modelo recurrente automatizado.", image: "/imagenes/proyectos/payments.jpg" },
+          { title: "Pet Gourmet", description: "Tienda de alimento natural para mascotas.", image: "/imagenes/proyectos/petgourmet.png", href: "https://www.petgourmet.mx/" },
+          { title: "Mister LYA", description: "E-commerce de marca con catálogo y pagos.", image: "/imagenes/proyectos/misterlya.png", href: "https://www.misterlya.com/" },
+          { title: "Casa de Fiestas", description: "Catálogo y pedidos para eventos.", image: "/imagenes/proyectos/casadefiesta.png", href: "http://casadefiesta.co/" },
         ],
       },
       {
@@ -37,9 +42,7 @@ export const servicesData = [
         description: "Páginas de aterrizaje de alto impacto diseñadas para convertir visitantes en clientes.",
         features: [],
         examples: [
-          { title: "Landing de Lanzamiento", description: "Campaña de producto nuevo.", image: "/imagenes/proyectos/landing.jpg" },
-          { title: "Captación de Leads", description: "Página de registro optimizada.", image: "/imagenes/proyectos/leads.jpg" },
-          { title: "Landing de Evento", description: "Inscripción y gestión de asistentes.", image: "/imagenes/proyectos/code.jpg" },
+          { title: "Portafolio", description: "Sitio personal con identidad y 3D.", image: "/imagenes/proyectos/portafolio.png", href: "https://efren-portafolio.v1tr0.com/" },
         ],
       },
       {
@@ -50,9 +53,6 @@ export const servicesData = [
         description: "Aplicaciones web robustas y escalables para gestionar tu negocio de manera eficiente.",
         features: [],
         examples: [
-          { title: "Gestión Interna", description: "Dashboard de operaciones.", image: "/imagenes/proyectos/webapp.jpg" },
-          { title: "Portal de Clientes", description: "Área privada de usuario.", image: "/imagenes/proyectos/code.jpg" },
-          { title: "App de Reservas", description: "Gestión de citas profesional.", image: "/imagenes/proyectos/integration.jpg" },
         ],
       },
       {
@@ -63,9 +63,6 @@ export const servicesData = [
         description: "Aplicaciones móviles nativas para iOS y Android con experiencia de usuario excepcional.",
         features: [],
         examples: [
-          { title: "App de Delivery", description: "Pedidos en tiempo real.", image: "/imagenes/proyectos/mobile.jpg" },
-          { title: "App de Fitness", description: "Seguimiento de entrenamientos.", image: "/imagenes/proyectos/webapp.jpg" },
-          { title: "App Social", description: "Comunidad y chat en vivo.", image: "/imagenes/proyectos/landing.jpg" },
         ],
       },
     ],
@@ -88,9 +85,6 @@ export const servicesData = [
         description: "Paneles interactivos que transforman tus datos en información visual clara y accionable.",
         features: [],
         examples: [
-          { title: "Dashboard Financiero", description: "Visualización de flujo de caja y rentabilidad.", image: "/imagenes/proyectos/analytics.jpg" },
-          { title: "Monitor de Ventas", description: "Seguimiento de KPIs en tiempo real.", image: "/imagenes/proyectos/webapp.jpg" },
-          { title: "Reporte de Marketing", description: "Análisis de conversión y ROI.", image: "/imagenes/proyectos/leads.jpg" },
         ],
       },
       {
@@ -101,9 +95,6 @@ export const servicesData = [
         description: "Centraliza y organiza toda tu información empresarial en sistemas seguros y eficientes.",
         features: [],
         examples: [
-          { title: "CRM Centralizado", description: "Gestión de base de clientes y prospectos.", image: "/imagenes/proyectos/integration.jpg" },
-          { title: "Data Warehouse", description: "Consolidación de datos de múltiples fuentes.", image: "/imagenes/proyectos/data.jpg" },
-          { title: "Migración de Datos", description: "Traslado seguro a nuevas plataformas.", image: "/imagenes/proyectos/bi.jpg" },
         ],
       },
       {
@@ -114,9 +105,6 @@ export const servicesData = [
         description: "Análisis profundo de datos para descubrir patrones, tendencias y oportunidades de negocio.",
         features: [],
         examples: [
-          { title: "Análisis Predictivo", description: "Pronóstico de demanda y ventas.", image: "/imagenes/proyectos/data.jpg" },
-          { title: "Segmentación de Clientes", description: "Agrupación basada en comportamiento.", image: "/imagenes/proyectos/analytics.jpg" },
-          { title: "Estudio de Mercado", description: "Análisis de tendencias de industria.", image: "/imagenes/proyectos/dashboard.jpg" },
         ],
       },
       {
@@ -127,9 +115,6 @@ export const servicesData = [
         description: "Soluciones inteligentes que convierten datos complejos en estrategias de negocio efectivas.",
         features: [],
         examples: [
-          { title: "Tablero Estratégico", description: "Vista global del rendimiento empresarial.", image: "/imagenes/proyectos/bi.jpg" },
-          { title: "Alertas de Riesgo", description: "Notificaciones proactivas de desviaciones.", image: "/imagenes/proyectos/dashboard.jpg" },
-          { title: "Informe de Eficiencia", description: "Optimización de procesos internos.", image: "/imagenes/proyectos/analytics.jpg" },
         ],
       },
     ],
@@ -152,9 +137,6 @@ export const servicesData = [
         description: "Agentes inteligentes que automatizan tareas repetitivas y mejoran la eficiencia operativa.",
         features: [],
         examples: [
-          { title: "Chatbot de Soporte", description: "Atención al cliente 24/7.", image: "/imagenes/proyectos/bot.jpg" },
-          { title: "Agente de Ventas", description: "Cualificación de leads.", image: "/imagenes/proyectos/ai.jpg" },
-          { title: "Asistente de Tareas", description: "Agente de productividad.", image: "/imagenes/proyectos/code.jpg" },
         ],
       },
       {
@@ -165,9 +147,6 @@ export const servicesData = [
         description: "Flujos de trabajo automatizados que conectan tus sistemas y eliminan tareas manuales.",
         features: [],
         examples: [
-          { title: "Gestión de Emails", description: "Clasificación automática.", image: "/imagenes/proyectos/workflow.jpg" },
-          { title: "Carga de Datos", description: "Sincronización entre CRM y ERP.", image: "/imagenes/proyectos/integration.jpg" },
-          { title: "Automatización de Facturas", description: "Procesamiento y envío.", image: "/imagenes/proyectos/data.jpg" },
         ],
       },
       {
@@ -178,9 +157,6 @@ export const servicesData = [
         description: "Conecta todas tus aplicaciones y servicios para que trabajen juntos sin fricción.",
         features: [],
         examples: [
-          { title: "Sincronización ERP-Tienda", description: "Inventario unificado.", image: "/imagenes/proyectos/integration.jpg" },
-          { title: "Conector API", description: "Pasarelas personalizadas.", image: "/imagenes/proyectos/workflow.jpg" },
-          { title: "Integración CRM", description: "Datos unificados de clientes.", image: "/imagenes/proyectos/payments.jpg" },
         ],
       },
       {
@@ -191,9 +167,6 @@ export const servicesData = [
         description: "Mejora continua de procesos para maximizar productividad y reducir costos operativos.",
         features: [],
         examples: [
-          { title: "Auditoría de Procesos", description: "Identificación de cuellos de botella.", image: "/imagenes/proyectos/dashboard.jpg" },
-          { title: "Reducción de Costos", description: "Automatización de tareas caras.", image: "/imagenes/proyectos/workflow.jpg" },
-          { title: "Mejora de Productividad", description: "Optimización de tiempo de equipo.", image: "/imagenes/proyectos/bi.jpg" },
         ],
       },
     ],
@@ -462,21 +435,40 @@ export default function ServicesTabSection() {
                 {activeSubcat.description}
               </p>
 
+              {/* Solo las subcategorías que ya tienen página de detalle publicada muestran el botón */}
+              {subcategoryPageSlugById[activeSubcat.id] && (
+                <Link
+                  href={`/servicios/${subcategoryPageSlugById[activeSubcat.id]}`}
+                  className={`group/detail mt-1 inline-flex w-fit items-center gap-1.5 text-sm font-semibold ${accentText} focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 rounded-md`}
+                >
+                  Ver cómo funciona
+                  <span aria-hidden="true" className="transition-transform duration-300 group-hover/detail:translate-x-1">
+                    →
+                  </span>
+                </Link>
+              )}
+
               {/* Proyectos de la subcategoría activa: cambian con categoría y subcategoría */}
+              {activeSubcat.examples.length > 0 && (
               <div className="relative mt-2">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {activeSubcat.examples.map((example) => (
+              {/* Móvil: carrusel horizontal con snap; desde sm vuelve a la grilla de 3 */}
+              <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-1 -mx-6 px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-3 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0">
+                {activeSubcat.examples.map((example) => {
+                  const externalHref = exampleHref(example)
+                  return (
                   <Link
                     key={example.title}
-                    href={activeService.link}
-                    className={`group/proj relative flex flex-col overflow-hidden ${surface} ${surfaceInteractive}`}
+                    href={externalHref ?? activeService.link}
+                    target={externalHref ? "_blank" : undefined}
+                    rel={externalHref ? "noopener noreferrer" : undefined}
+                    className={`group/proj relative flex w-[70%] shrink-0 snap-start flex-col overflow-hidden sm:w-auto sm:shrink ${surface} ${surfaceInteractive}`}
                   >
-                    <div className="relative aspect-[5/4] w-full overflow-hidden">
+                    <div className="relative aspect-video w-full overflow-hidden">
                       <Image
                         src={example.image}
                         alt={example.title}
                         fill
-                        sizes="(max-width: 1024px) 33vw, 280px"
+                        sizes="(max-width: 640px) 70vw, (max-width: 1024px) 33vw, 320px"
                         className="object-cover transition-transform duration-500 group-hover/proj:scale-110"
                       />
                     </div>
@@ -489,9 +481,11 @@ export default function ServicesTabSection() {
                       </p>
                     </div>
                   </Link>
-                ))}
+                  )
+                })}
               </div>
               </div>
+              )}
             </motion.div>
           </AnimatePresence>
 
