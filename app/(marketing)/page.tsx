@@ -5,7 +5,7 @@ import BackgroundAnimation from "@/components/home/animations/BackgroundAnimatio
 import HomeBanner from "@/components/home/sections/banner/HomeBanner"
 import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
 import ServicesTabSection from "@/components/home/sections/ServicesTabSection"
-import ProjectBankSection from "@/components/home/ProjectBankSection"
+import PathChoiceSection from "@/components/home/sections/PathChoiceSection"
 
 import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
@@ -27,8 +27,8 @@ export default function Home() {
         {/* Sección 2: Servicios con Tabs */}
         <ServicesTabSection />
         
-        {/* Sección 3: Banco de Proyectos */}
-        <ProjectBankSection />
+        {/* Sección 3: Bifurcación software / hardware */}
+        <PathChoiceSection />
         
         {/* Sección 4: Tecnologías */}
         <TechnologiesSection />
