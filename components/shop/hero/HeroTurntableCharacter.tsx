@@ -10,8 +10,6 @@ interface HeroTurntableCharacterProps {
   frontIndex: number;
   alt: string;
   className?: string;
-  /** Inclinación vertical máxima en grados, para el eje que el video no cubre. */
-  maxTilt?: number;
 }
 
 /**
@@ -26,23 +24,21 @@ interface HeroTurntableCharacterProps {
  * reparte su propio tramo. Con un mapeo lineal, el personaje quedaría de tres
  * cuartos con el cursor en el centro.
  *
- * El eje vertical no existe en el video, así que ahí sí se usa una inclinación
- * 3D suave: el personaje levanta o baja la mirada acompañando al cursor.
+ * Solo reacciona al eje horizontal. El vertical se probó con una inclinación
+ * 3D, pero deformaba la figura: al no haber fotogramas para ese eje, lo único
+ * que se puede hacer es estirarla, y se nota.
  */
 export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
   frames,
   frontIndex,
   alt,
   className = "",
-  maxTilt = 7,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState(frontIndex);
 
   useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage || frames.length === 0) {
+    if (frames.length === 0) {
       return;
     }
 
@@ -54,21 +50,18 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
     }
 
     // target: a dónde apunta el cursor. current: dónde está el modelo ahora.
-    const target = { x: 0.5, y: 0 };
-    const current = { x: 0.5, y: 0 };
+    const target = { x: 0.5 };
+    const current = { x: 0.5 };
     let raf = 0;
 
     const tick = () => {
       current.x += (target.x - current.x) * 0.12;
-      current.y += (target.y - current.y) * 0.1;
 
       const index =
         current.x <= 0.5
           ? Math.round((current.x / 0.5) * frontIndex)
           : Math.round(frontIndex + ((current.x - 0.5) / 0.5) * (frames.length - 1 - frontIndex));
       setFrame((prev) => (prev === index ? prev : index));
-
-      stage.style.transform = `perspective(1200px) rotateX(${-current.y * maxTilt}deg)`;
 
       raf = requestAnimationFrame(tick);
     };
@@ -82,12 +75,10 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
       // personaje reacciona aunque el cursor esté sobre el texto.
       const area = (host.closest("section") ?? host).getBoundingClientRect();
       target.x = Math.min(1, Math.max(0, (event.clientX - area.left) / area.width));
-      target.y = Math.min(1, Math.max(-1, ((event.clientY - area.top) / area.height) * 2 - 1));
     };
 
     const onPointerLeave = () => {
       target.x = 0.5;
-      target.y = 0;
     };
 
     raf = requestAnimationFrame(tick);
@@ -99,7 +90,7 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeave);
     };
-  }, [frames.length, frontIndex, maxTilt]);
+  }, [frames.length, frontIndex]);
 
   if (frames.length === 0) {
     return null;
@@ -107,7 +98,7 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
-      <div ref={stageRef} className="relative h-full w-full" style={{ willChange: "transform" }}>
+      <div className="relative h-full w-full">
         {frames.map((src, i) => (
           <Image
             key={src}

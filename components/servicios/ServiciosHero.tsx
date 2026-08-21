@@ -343,6 +343,12 @@ export function ServiceProjectsBadge({ examples, isDark }: { examples: ProjectEx
     return () => clearInterval(interval)
   }, [examples.length])
 
+  // Un servicio puede no tener proyectos publicados todavía: sin ejemplos no
+  // hay insignia que mostrar.
+  if (examples.length === 0) {
+    return null
+  }
+
   const example = examples[exampleIndex % examples.length]!
 
   return (

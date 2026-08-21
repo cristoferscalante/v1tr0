@@ -121,7 +121,7 @@ export const ShopHeroCarousel: React.FC = () => {
   const currentColorScheme = colorSchemes[safeIndex]!;
 
   return (
-    <section className="relative min-h-[calc(100dvh-80px)] flex items-center pt-24 sm:pt-32 md:pt-48 pb-10 md:pb-16 overflow-hidden">
+    <section className="relative min-h-[calc(100dvh-80px)] flex items-center pt-[calc(var(--header-safe)+2.75rem)] sm:pt-32 md:pt-48 pb-10 md:pb-16 overflow-hidden">
       {/* Circuit Network Background - trazas PCB con pulsos de datos */}
       <div className="absolute inset-0 z-0">
         <CircuitNetworkBackground
@@ -160,7 +160,7 @@ export const ShopHeroCarousel: React.FC = () => {
         <AnimatePresence mode="wait" custom={direction} initial={false}>
         <motion.div
           key={currentIndex}
-          className="w-full grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center"
+          className="w-full grid lg:grid-cols-2 gap-10 sm:gap-8 md:gap-12 lg:gap-16 items-center"
           custom={direction}
           variants={containerVariants}
           initial="hidden"
@@ -199,7 +199,7 @@ export const ShopHeroCarousel: React.FC = () => {
 
           {/* Right Side - Solo imagen, sin stats */}
           <motion.div className="relative order-1 lg:order-2" custom={direction} variants={imageVariants}>
-            <div className="relative w-full aspect-square max-w-md mx-auto lg:max-w-none">
+            <div className="relative w-full aspect-square max-w-sm sm:max-w-md mx-auto mt-2 sm:mt-0 lg:max-w-none">
               {/* Imagen principal con máscara de desvanecimiento */}
               <div 
                 className="relative w-full h-full"

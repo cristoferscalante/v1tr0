@@ -36,19 +36,24 @@ export default function HomeBanner() {
   const isDark = theme === "dark"
 
   return (
-    <section className="relative min-h-[100dvh] w-full overflow-hidden flex flex-col justify-center items-center px-4 py-8 md:py-0">
+    <section
+      className="relative min-h-[100svh] md:min-h-[100dvh] w-full overflow-hidden grid grid-rows-[var(--header-safe)_1fr] px-4 sm:px-6 pb-10 md:pb-12"
+    >
       {/* Fondo con gradiente */}
       <div className="absolute inset-0 z-0" />
 
-      <motion.div 
-        className="max-w-5xl mx-auto z-10 flex flex-col items-center text-center w-full"
+      {/* Fila 1 del grid: espacio reservado para el header flotante. */}
+      <div aria-hidden="true" className="row-start-1" />
+
+      <motion.div
+        className="row-start-2 max-w-5xl mx-auto z-10 grid content-center justify-items-center gap-8 sm:gap-10 md:gap-12 text-center w-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Hero animado con efecto typewriter y color personalizado en la segunda línea */}
         <motion.div
-          className="mb-16 md:mb-20 max-w-5xl px-2 sm:px-4"
+          className="w-full max-w-5xl px-2 sm:px-4"
           variants={itemVariants}
         >
           <TextType
@@ -67,7 +72,7 @@ export default function HomeBanner() {
             typingSpeed={60}
             pauseDuration={1500}
             deletingSpeed={10}
-            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-center min-h-[2.5em] ${isDark ? 'text-white' : 'text-[#08a696]'}`}
+            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug md:leading-tight text-center min-h-[4em] sm:min-h-[3em] md:min-h-[2.5em] ${isDark ? 'text-white' : 'text-[#08a696]'}`}
           />
         </motion.div>
 
@@ -76,7 +81,7 @@ export default function HomeBanner() {
           <HeroNavCards />
         </motion.div>
         {/* Badge */}
-        <motion.div variants={itemVariants} className="mt-8 md:mt-10">
+        <motion.div variants={itemVariants}>
         <Link
           href="/about"
           aria-label="Ir a la página de V1TR0"

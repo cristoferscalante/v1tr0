@@ -45,16 +45,27 @@ export default function HomeScrollSnap({
       return
     }
 
-    // En móviles y tablets, permitir scroll normal sin GSAP
-    // Solo aplicar scroll snap en desktop
-    if (!shouldEnableScrollSnap) {
+    // En móviles y tablets, permitir scroll normal sin GSAP.
+    // Solo aplicar scroll snap en desktop, y solo cuando la detección de
+    // dispositivo ya resolvió: hasta entonces se renderiza la rama sin snap,
+    // que no registra las secciones en `sectionsRef`. Si se montara el snap
+    // antes, se bloquearía el scroll del documento sin ninguna sección a la
+    // que navegar y solo se vería la primera.
+    if (!isReady || !shouldEnableScrollSnap) {
       document.body.style.overflow = "auto"
       document.documentElement.style.overflow = "auto"
       return
     }
 
-    const sections = sectionsRef.current
+    const sections = sectionsRef.current.filter(Boolean)
     const totalSections = sections.length
+
+    // Red de seguridad: sin secciones registradas no se toca el overflow.
+    if (totalSections === 0) {
+      document.body.style.overflow = "auto"
+      document.documentElement.style.overflow = "auto"
+      return
+    }
 
     console.log('[DEBUG] Total sections:', totalSections, sections)
 
@@ -214,7 +225,7 @@ export default function HomeScrollSnap({
     const cleanup = setupScrollSnap()
 
     return cleanup
-  }, [canScrollVertically, isMobile, shouldEnableScrollSnap])
+  }, [canScrollVertically, isMobile, isReady, shouldEnableScrollSnap])
 
   // Agregar sección a refs manteniendo el orden por índice
   const addToRefs = (el: HTMLElement | null, index: number) => {
