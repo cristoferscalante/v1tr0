@@ -79,15 +79,19 @@ export async function buildWompiCheckoutUrl(params: {
  * Wompi no manda un header con el secreto: firma el cuerpo con SHA256 sobre
  * los valores de `signature.properties` + timestamp + secreto de eventos.
  */
-export async function verifyWompiEventSignature(body: {
-  signature?: { checksum?: string; properties?: string[] }
-  timestamp?: number
-  data?: unknown
-}) {
+export async function verifyWompiEventSignature(
+  body: {
+    signature?: { checksum?: string; properties?: string[] }
+    timestamp?: number
+    data?: unknown
+  },
+  // Wompi publica el mismo checksum en el cuerpo y en esta cabecera.
+  headerChecksum?: string | null
+) {
   const secret = getWompiEventSecret()
   if (!secret) {return false}
 
-  const checksum = body.signature?.checksum
+  const checksum = body.signature?.checksum ?? headerChecksum
   const properties = body.signature?.properties
   if (!checksum || !Array.isArray(properties) || body.timestamp === undefined) {return false}
 
@@ -159,12 +163,20 @@ export async function createWompiPayment(params: {
   return res.json() as Promise<WompiTransactionResponse>
 }
 
+/**
+ * Consulta el estado real de una transacción.
+ *
+ * La documentación indica que GET /v1/transactions/{id} se autentica con la
+ * llave PÚBLICA, no la privada. Usar la privada además hacía que la función
+ * devolviera null cuando solo estaba configurada la pública, y entonces el
+ * webhook rechazaba eventos legítimos con un 500.
+ */
 export async function verifyWompiTransaction(transactionId: string) {
-  const privateKey = getWompiPrivateKey()
-  if (!privateKey) {return null}
+  const publicKey = getWompiPublicKey()
+  if (!publicKey) {return null}
 
   const res = await fetch(`${getWompiApiUrl()}/transactions/${transactionId}`, {
-    headers: { Authorization: `Bearer ${privateKey}` },
+    headers: { Authorization: `Bearer ${publicKey}` },
   })
 
   if (!res.ok) {return null}

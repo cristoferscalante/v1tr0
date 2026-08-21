@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   if (!getWompiEventSecret()) {
     return NextResponse.json({ error: "Webhook no configurado" }, { status: 503 })
   }
-  if (!(await verifyWompiEventSignature(body))) {
+  if (!(await verifyWompiEventSignature(body, req.headers.get("x-event-checksum")))) {
     return NextResponse.json({ error: "Firma inválida" }, { status: 401 })
   }
 
