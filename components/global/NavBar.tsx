@@ -1,6 +1,7 @@
 "use client"
 
 import { type ReactNode, type FC, useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import Link from "next/link"
 import { X, LogIn } from "lucide-react"
 import Image from "next/image"
@@ -9,6 +10,14 @@ import { motion } from "framer-motion"
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // El overlay se monta en <body> con un portal: dentro de FloatingHeader (z-40)
+  // quedaba atrapado en su stacking context y la barra de promo de la tienda
+  // (z-60) y el carrito flotante (z-75) se dibujaban encima.
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,7 +109,7 @@ export default function Navbar() {
     </motion.nav>
     
     {/* Mobile menu - Overlay mejorado con animaciones */}
-    {isOpen && (
+    {isOpen && mounted && createPortal(
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -219,7 +228,8 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </motion.div>,
+      document.body
     )}
   </>
   )

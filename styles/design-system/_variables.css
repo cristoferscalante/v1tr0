@@ -6,6 +6,10 @@
  */
 
 :root {
+  /* ===== LAYOUT: espacio reservado para el header flotante ===== */
+  /* NavBar (~64px) + pt-4 del FloatingHeader (16px) + respiro */
+  --header-safe: 8.5rem;
+
   /* ===== COLORES PRIMARIOS ===== */
   --color-primary: #08a696;
   --color-primary-hover: #06877a;
@@ -176,4 +180,9 @@
     --color-border: #2d3748;
     --color-border-hover: #4a5568;
   }
+}
+
+/* El header flotante crece y se separa mas en pantallas grandes */
+@media (min-width: 640px) {
+  :root { --header-safe: 7.5rem; }
 }

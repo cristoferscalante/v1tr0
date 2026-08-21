@@ -224,12 +224,14 @@ export default function ServicesTabSection() {
   }, [isDropdownOpen])
 
   return (
-    <section className="relative min-h-[100dvh] w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-14 pt-12 pb-8 xl:pt-10 xl:pb-6 snap-start">
-      <div className="max-w-[90rem] 2xl:max-w-[100rem] mx-auto w-full">
+    <section className="relative min-h-[100svh] lg:min-h-[100dvh] w-full grid grid-rows-[var(--header-safe)_1fr] px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-14 pb-10 lg:pb-8 xl:pb-6 snap-start">
+      {/* Fila 1: espacio reservado para el header flotante */}
+      <div aria-hidden="true" className="row-start-1" />
+      <div className="row-start-2 max-w-[90rem] 2xl:max-w-[100rem] mx-auto w-full self-start lg:self-center">
 
         {/* Encabezado de sección: da contexto antes del bento */}
-        <div className="mb-6 xl:mb-8 text-center">
-          <h2 className={sectionTitle}>Servicios que se adaptan a tu operación</h2>
+        <div className="mb-5 sm:mb-6 xl:mb-8 text-center px-2">
+          <h2 className={`${sectionTitle} text-balance`}>Servicios que se adaptan a tu operación</h2>
         </div>
 
         {/* BENTO GRID LAYOUT */}
@@ -237,7 +239,7 @@ export default function ServicesTabSection() {
 
           {/* BENTO 1: TABS PILLS (móvil) */}
           <div className="md:col-span-2 lg:hidden relative" ref={dropdownRef}>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-nowrap gap-2 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:justify-center sm:overflow-visible sm:mx-0 sm:px-0">
               {servicesData.map((service, index) => {
                 const TabIcon = service.tabIcon
                 const isActive = activeTab === index
@@ -248,8 +250,8 @@ export default function ServicesTabSection() {
                     aria-pressed={isActive}
                     aria-expanded={isActive ? isDropdownOpen : false}
                     className={`
-                      relative group flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full
-                      text-sm font-medium overflow-hidden
+                      relative group flex shrink-0 snap-start items-center gap-2 px-4 py-2 min-h-[44px] rounded-full
+                      text-sm font-medium overflow-hidden whitespace-nowrap
                       transition-all duration-300
                       ${isActive
                         ? "text-[#26FFDF] scale-100"
@@ -296,7 +298,7 @@ export default function ServicesTabSection() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="absolute top-full mt-3 left-0 z-50"
+                  className="absolute top-full mt-3 left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 z-50"
                 >
                   <div className="flex flex-col gap-0 rounded-3xl overflow-hidden backdrop-blur-md border min-w-0 w-[calc(100vw-2rem)] max-w-[320px] md:min-w-[280px] md:w-auto bg-white/80 border-[#08A696]/20 dark:bg-[#02505950] dark:border-[#08A696]/15">
                     {activeService.subcategories.map((subcat, index) => {
@@ -399,7 +401,7 @@ export default function ServicesTabSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className={`relative md:col-span-2 lg:col-span-9 lg:min-h-[36rem] pt-8 px-6 pb-6 md:pt-10 md:px-8 md:pb-8 xl:pt-10 xl:px-6 xl:pb-6 2xl:pt-12 2xl:px-8 2xl:pb-8 flex flex-col justify-center gap-3 min-w-0 ${surface}`}
+              className={`relative md:col-span-2 lg:col-span-9 lg:min-h-[36rem] pt-6 px-4 pb-5 sm:pt-8 sm:px-6 sm:pb-6 md:pt-10 md:px-8 md:pb-8 xl:pt-10 xl:px-6 xl:pb-6 2xl:pt-12 2xl:px-8 2xl:pb-8 flex flex-col justify-center gap-3 min-w-0 ${surface}`}
             >
               {/* Figura flotante: se sale del panel por la esquina superior derecha */}
               <motion.div
@@ -451,8 +453,8 @@ export default function ServicesTabSection() {
               {/* Proyectos de la subcategoría activa: cambian con categoría y subcategoría */}
               {activeSubcat.examples.length > 0 && (
               <div className="relative mt-2">
-              {/* Móvil: carrusel horizontal con snap; desde sm vuelve a la grilla de 3 */}
-              <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-1 -mx-6 px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-3 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0">
+              {/* Móvil: tarjetas apiladas en vertical; desde sm vuelve a la grilla de 3 */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {activeSubcat.examples.map((example) => {
                   const externalHref = exampleHref(example)
                   return (
@@ -461,22 +463,22 @@ export default function ServicesTabSection() {
                     href={externalHref ?? activeService.link}
                     target={externalHref ? "_blank" : undefined}
                     rel={externalHref ? "noopener noreferrer" : undefined}
-                    className={`group/proj relative flex w-[70%] shrink-0 snap-start flex-col overflow-hidden sm:w-auto sm:shrink ${surface} ${surfaceInteractive}`}
+                    className={`group/proj relative flex w-full flex-row items-stretch gap-3.5 overflow-hidden sm:flex-col sm:gap-0 ${surface} ${surfaceInteractive}`}
                   >
-                    <div className="relative aspect-video w-full overflow-hidden">
+                    <div className="relative w-[44%] max-w-[11rem] shrink-0 self-stretch overflow-hidden sm:w-full sm:max-w-none sm:aspect-video">
                       <Image
                         src={example.image}
                         alt={example.title}
                         fill
-                        sizes="(max-width: 640px) 70vw, (max-width: 1024px) 33vw, 320px"
+                        sizes="(max-width: 640px) 44vw, (max-width: 1024px) 33vw, 320px"
                         className="object-cover transition-transform duration-500 group-hover/proj:scale-110"
                       />
                     </div>
-                    <div className="p-2.5">
-                      <p className={`text-xs font-semibold leading-tight break-words line-clamp-2 ${accentText}`}>
+                    <div className="min-w-0 flex-1 flex flex-col justify-center py-4 pr-4 sm:justify-start sm:p-2.5">
+                      <p className={`text-sm sm:text-xs font-semibold leading-tight break-words line-clamp-2 ${accentText}`}>
                         {example.title}
                       </p>
-                      <p className="mt-1 text-textMuted text-[11px] leading-snug break-words line-clamp-2">
+                      <p className="mt-1.5 sm:mt-1 text-textMuted text-xs sm:text-[11px] leading-snug break-words line-clamp-3 sm:line-clamp-2">
                         {example.description}
                       </p>
                     </div>
