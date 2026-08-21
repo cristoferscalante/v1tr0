@@ -41,6 +41,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
+  globalSetup: "./e2e/global-setup.ts",
   globalTeardown: "./e2e/global-teardown.ts",
   // El dev server de Next compila bajo demanda: la primera visita a una ruta
   // puede tardar bastante más que un build ya calentado.

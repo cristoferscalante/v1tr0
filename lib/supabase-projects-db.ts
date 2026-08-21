@@ -1,9 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Se reutiliza el cliente compartido en vez de crear uno propio.
+//
+// Aquí se llamaba a createClient() en el ámbito del módulo con `!` sobre
+// NEXT_PUBLIC_SUPABASE_URL / _ANON_KEY. Cuando esas variables no están
+// definidas, la llamada lanza "supabaseUrl is required" al cargar el módulo,
+// y como /dashboard se prerenderiza, eso rompía `next build` entero.
+// El cliente de lib/supabase/client.ts devuelve un stub inerte en ese caso.
+import { supabase } from '@/lib/supabase/client';
 
 // ============================================================
 // TIPOS
