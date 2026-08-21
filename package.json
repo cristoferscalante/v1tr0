@@ -12,7 +12,9 @@
     "od:prototype": "od generate prototype --design-system ./DESIGN.md",
     "od:asset": "od generate image --design-system ./DESIGN.md",
     "od:mcp": "od mcp install opencode",
-    "od:server": "od daemon start"
+    "od:server": "od daemon start",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
@@ -107,6 +109,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.33.0",
+    "@playwright/test": "^1.62.1",
     "@types/dagre": "^0.7.54",
     "@types/node": "^22",
     "@types/nodemailer": "^8.0.1",

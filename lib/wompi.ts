@@ -20,6 +20,96 @@ export function getWompiEventSecret() {
   return process.env.WOMPI_EVENT_SECRET ?? ""
 }
 
+/**
+ * Firma de integridad del Widget/Web Checkout.
+ *
+ * Wompi la exige para aceptar el link: es SHA256 de
+ * `<referencia><monto en centavos><moneda><secreto de integridad>`.
+ * Sin ella el checkout rechaza la transacción.
+ * https://docs.wompi.co/docs/colombia/widget-checkout-web/
+ */
+export async function buildWompiIntegritySignature(params: {
+  reference: string
+  amountInCents: number
+  currency: string
+}) {
+  const secret = getWompiIntegrityKey()
+  if (!secret) {throw new Error("WOMPI_INTEGRITY_KEY no configurada")}
+  const payload = `${params.reference}${params.amountInCents}${params.currency}${secret}`
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(payload))
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+}
+
+/**
+ * URL del Web Checkout alojado por Wompi.
+ *
+ * Requiere llave pública, monto, moneda y firma; con solo la referencia
+ * el checkout abre vacío y no se puede pagar.
+ */
+export async function buildWompiCheckoutUrl(params: {
+  reference: string
+  amountInCents: number
+  currency: string
+  redirectUrl: string
+  customerEmail?: string
+}) {
+  const publicKey = getWompiPublicKey()
+  if (!publicKey) {throw new Error("WOMPI_PUBLIC_KEY no configurada")}
+
+  const signature = await buildWompiIntegritySignature(params)
+  const query = new URLSearchParams({
+    "public-key": publicKey,
+    currency: params.currency,
+    "amount-in-cents": String(params.amountInCents),
+    reference: params.reference,
+    "signature:integrity": signature,
+    "redirect-url": params.redirectUrl,
+  })
+  if (params.customerEmail) {
+    query.set("customer-data:email", params.customerEmail)
+  }
+  return `https://checkout.wompi.co/p/?${query.toString()}`
+}
+
+/**
+ * Verifica el evento del webhook.
+ *
+ * Wompi no manda un header con el secreto: firma el cuerpo con SHA256 sobre
+ * los valores de `signature.properties` + timestamp + secreto de eventos.
+ */
+export async function verifyWompiEventSignature(body: {
+  signature?: { checksum?: string; properties?: string[] }
+  timestamp?: number
+  data?: unknown
+}) {
+  const secret = getWompiEventSecret()
+  if (!secret) {return false}
+
+  const checksum = body.signature?.checksum
+  const properties = body.signature?.properties
+  if (!checksum || !Array.isArray(properties) || body.timestamp === undefined) {return false}
+
+  const concatenated = properties
+    .map((path) =>
+      path.split(".").reduce<unknown>(
+        (acc, key) => (acc && typeof acc === "object" ? (acc as Record<string, unknown>)[key] : undefined),
+        body.data
+      )
+    )
+    .map((value) => (value === undefined || value === null ? "" : String(value)))
+    .join("")
+
+  const payload = `${concatenated}${body.timestamp}${secret}`
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(payload))
+  const computed = Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+
+  return computed.toLowerCase() === checksum.toLowerCase()
+}
+
 interface WompiTransactionResponse {
   data: {
     id: string

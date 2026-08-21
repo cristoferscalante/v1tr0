@@ -37,11 +37,11 @@ export default function TiendaPage() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([]);
   const [showCartNotification, setShowCartNotification] = useState(false);
-  const [checkingOut, setCheckingOut] = useState(false)
 
   // Carrito compartido (persistido en el servidor): mismo que usa la ficha
   // de producto y el que lee /api/checkout.
-  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart } = useCart()
+  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart,
+          checkout, checkingOut, checkoutError, dismissCheckoutError } = useCart()
 
   useEffect(() => {
     fetch("/api/products")
@@ -55,21 +55,6 @@ export default function TiendaPage() {
     setShowCartNotification(true);
     setTimeout(() => setShowCartNotification(false), 2000);
   };
-
-  const handleCheckout = async () => {
-    setCheckingOut(true)
-    try {
-      const res = await fetch("/api/checkout", { method: "POST" })
-      if (res.status === 401) { router.push("/login"); return }
-      if (!res.ok) {return}
-      const data = await res.json()
-      if (data.wompiUrl) {window.location.href = data.wompiUrl}
-    } catch {
-      // silent
-    } finally {
-      setCheckingOut(false)
-    }
-  }
 
   const flatCartItems = cart.map((item) => ({
     id: item.id,
@@ -120,8 +105,10 @@ export default function TiendaPage() {
         onRemoveItem={removeItem}
         recommendedProducts={recommendedProducts}
         onAddRecommended={handleAddToCart}
-        onCheckout={handleCheckout}
+        onCheckout={checkout}
         checkoutLoading={checkingOut}
+            checkoutError={checkoutError}
+            onDismissCheckoutError={dismissCheckoutError}
       />
 
       {/* Cart Notification Toast */}

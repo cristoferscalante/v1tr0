@@ -88,7 +88,8 @@ function rowToDetailedProduct(row: ProductRow): ProductDetailed {
 
 export default function TiendaSlugPage({ params }: PageProps) {
   const { slug } = use(params)
-  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart } = useCart()
+  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart,
+          checkout, checkingOut, checkoutError, dismissCheckoutError } = useCart()
   const [showNotification, setShowNotification] = useState(false)
 
   // El catálogo real (/api/products) y el catálogo mock conviven: primero se
@@ -144,22 +145,6 @@ export default function TiendaSlugPage({ params }: PageProps) {
   }))
 
   const router = useRouter()
-  const [checkingOut, setCheckingOut] = useState(false)
-
-  const handleCheckout = async () => {
-    setCheckingOut(true)
-    try {
-      const res = await fetch("/api/checkout", { method: "POST" })
-      if (res.status === 401) { router.push("/login"); return }
-      if (!res.ok) {return}
-      const data = await res.json()
-      if (data.wompiUrl) {window.location.href = data.wompiUrl}
-    } catch {
-      // silent
-    } finally {
-      setCheckingOut(false)
-    }
-  }
 
   // Ficha del catálogo real todavía en vuelo: nada que decidir aún.
   if (dbState === "loading") {
@@ -206,8 +191,10 @@ export default function TiendaSlugPage({ params }: PageProps) {
             cartItems={flatCartItems}
             onUpdateQuantity={updateQuantity}
             onRemoveItem={removeItem}
-            onCheckout={handleCheckout}
+            onCheckout={checkout}
             checkoutLoading={checkingOut}
+            checkoutError={checkoutError}
+            onDismissCheckoutError={dismissCheckoutError}
           />
 
           {showNotification && (
@@ -252,8 +239,10 @@ export default function TiendaSlugPage({ params }: PageProps) {
             cartItems={flatCartItems}
             onUpdateQuantity={updateQuantity}
             onRemoveItem={removeItem}
-            onCheckout={handleCheckout}
+            onCheckout={checkout}
             checkoutLoading={checkingOut}
+            checkoutError={checkoutError}
+            onDismissCheckoutError={dismissCheckoutError}
           />
       </div>
     </>

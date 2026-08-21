@@ -53,3 +53,8 @@ backup/
 # Video fuente de la secuencia del hero: solo se usa para generar los
 # fotogramas de public/imagenes/tienda/pos-turn/, no hace falta versionarlo.
 public/imagenes/tienda/hvide.mp4
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/
