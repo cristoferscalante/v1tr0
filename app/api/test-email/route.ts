@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { AdminAuthError, requireAdminSession } from '@/lib/auth/require-admin'
 
+// Diagnóstico de SMTP. Estaba abierto a cualquiera: un POST sin sesión
+// disparaba un envío por el servidor SMTP del proyecto, así que era un canal
+// de abuso gratuito. Ahora exige sesión admin/team como el resto de /api/admin.
 export async function POST() {
   try {
+    await requireAdminSession()
     // Configuración SMTP cargada desde variables de entorno
 
     // Configurar el transportador SMTP
@@ -151,6 +156,8 @@ export async function POST() {
     })
 
   } catch (error) {
+    if (error instanceof AdminAuthError) {return error.response}
+
     console.error('Error al enviar correo de prueba:', error)
     
     return NextResponse.json(
@@ -164,7 +171,5 @@ export async function POST() {
   }
 }
 
-// También permitir GET para pruebas rápidas desde el navegador
-export async function GET() {
-  return POST()
-}
+// GET queda fuera a propósito: un endpoint que envía correo alcanzable con
+// solo abrir la URL se dispara desde cualquier <img> o prefetch.
