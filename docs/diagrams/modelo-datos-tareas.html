@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelo de datos — V1TR0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #1e2123; --ink: #e6f7f6; --muted: #8fa8a5; --soft: #6a8a87; --accent: #08A696;
+      --font-sans: 'Bricolage Grotesque', sans-serif; --font-mono: 'Geist Mono', monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow { font-family: var(--font-mono); font-size: .66rem; font-weight: 500;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+    h1 { font-size: clamp(1.5rem, 2.4vw + .75rem, 2rem); font-weight: 800;
+      letter-spacing: -.03em; line-height: 1.15; margin-bottom: .5rem; }
+    .sub { color: var(--muted); font-size: .9rem; max-width: 64ch; margin-bottom: 1.75rem; }
+    .scroll { overflow-x: auto; }
+    svg { width: 100%; min-width: 880px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Modelo de datos</p>
+    <h1>Gestión de tareas</h1>
+    <p class="sub">El proyecto es la raíz: todo cuelga de él. `phase_tasks.status` es la
+      fuente de verdad del estado; `completed` se conserva como espejo porque el árbol del
+      cliente ya lo lee en todas partes.</p>
+
+    <div class="scroll">
+    <svg viewBox="0 0 960 720" role="img" aria-labelledby="er-title er-desc"
+         xmlns="http://www.w3.org/2000/svg">
+      <title id="er-title">Modelo de datos de gestión de tareas en V1TR0</title>
+      <desc id="er-desc">Diagrama entidad-relación de ocho tablas alrededor de projects como
+        raíz del agregado: perfiles, miembros de proyecto, fases, tareas, comentarios,
+        bitácora y notificaciones, con su cardinalidad.</desc>
+
+      <rect width="100%" height="100%" fill="#1e2123"/>
+
+      <line x1="280" y1="148" x2="380" y2="148" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="292" y="144" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="368" y="144" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <line x1="580" y1="148" x2="680" y2="148" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="592" y="144" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="668" y="144" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <path d="M 400,216 V 240 Q 400,248 392,248 H 188 Q 180,248 180,256 V 276" fill="none" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="412" y="232" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="192" y="270" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <line x1="480" y1="216" x2="480" y2="280" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="492" y="232" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="492" y="274" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <path d="M 560,216 V 240 Q 560,248 568,248 H 772 Q 780,248 780,256 V 276" fill="none" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="548" y="232" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="768" y="270" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <line x1="480" y1="400" x2="480" y2="464" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="492" y="416" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="492" y="458" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <line x1="580" y1="520" x2="680" y2="520" stroke="#8fa8a5" stroke-width="1.2"/>
+      <text x="592" y="516" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <text x="668" y="516" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+
+      <rect x="80" y="96" width="200" height="104" rx="6" fill="#1e2123"/>
+      <rect x="80" y="96" width="200" height="104" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="80" y1="124" x2="280" y2="124" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="88" y="104" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="108" y="113" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="272" y="115" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">profiles</text>
+      <text x="88" y="136" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="88" y="152" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">email</text>
+      <text x="88" y="168" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">name</text>
+      <text x="88" y="184" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">role</text>
+      <rect x="380" y="96" width="200" height="120" rx="6" fill="#1e2123"/>
+      <rect x="380" y="96" width="200" height="120" rx="6" fill="rgba(8,166,150,0.14)" stroke="#08A696" stroke-width="1"/>
+      <line x1="380" y1="124" x2="580" y2="124" stroke="#08A696" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="388" y="104" width="40" height="12" rx="2" fill="transparent" stroke="#08A696" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="408" y="113" fill="#08A696" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="572" y="115" fill="#08A696" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">projects</text>
+      <text x="388" y="136" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="388" y="152" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">name</text>
+      <text x="388" y="168" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">status</text>
+      <text x="388" y="184" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">service_type</text>
+      <text x="388" y="200" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ client_id</text>
+      <rect x="680" y="96" width="200" height="136" rx="6" fill="#1e2123"/>
+      <rect x="680" y="96" width="200" height="136" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="680" y1="124" x2="880" y2="124" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="688" y="104" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="708" y="113" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="872" y="115" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">activity_log</text>
+      <text x="688" y="136" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="688" y="152" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="688" y="168" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ actor_id</text>
+      <text x="688" y="184" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">action</text>
+      <text x="688" y="200" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">summary</text>
+      <text x="688" y="216" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">visible_to_client</text>
+      <rect x="80" y="280" width="200" height="104" rx="6" fill="#1e2123"/>
+      <rect x="80" y="280" width="200" height="104" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="80" y1="308" x2="280" y2="308" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="88" y="288" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="108" y="297" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="272" y="299" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">project_members</text>
+      <text x="88" y="320" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="88" y="336" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="88" y="352" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ profile_id</text>
+      <text x="88" y="368" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">role</text>
+      <rect x="380" y="280" width="200" height="120" rx="6" fill="#1e2123"/>
+      <rect x="380" y="280" width="200" height="120" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="380" y1="308" x2="580" y2="308" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="388" y="288" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="408" y="297" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="572" y="299" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">project_phases</text>
+      <text x="388" y="320" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="388" y="336" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="388" y="352" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">name</text>
+      <text x="388" y="368" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">order</text>
+      <text x="388" y="384" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">track</text>
+      <rect x="680" y="280" width="200" height="120" rx="6" fill="#1e2123"/>
+      <rect x="680" y="280" width="200" height="120" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="680" y1="308" x2="880" y2="308" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="688" y="288" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="708" y="297" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="872" y="299" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">notifications</text>
+      <text x="688" y="320" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="688" y="336" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ profile_id</text>
+      <text x="688" y="352" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="688" y="368" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">title</text>
+      <text x="688" y="384" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">read_at</text>
+      <rect x="380" y="464" width="200" height="152" rx="6" fill="#1e2123"/>
+      <rect x="380" y="464" width="200" height="152" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="380" y1="492" x2="580" y2="492" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="388" y="472" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="408" y="481" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="572" y="483" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">phase_tasks</text>
+      <text x="388" y="504" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="388" y="520" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ phase_id</text>
+      <text x="388" y="536" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">name</text>
+      <text x="388" y="552" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">status</text>
+      <text x="388" y="568" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">priority</text>
+      <text x="388" y="584" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">order</text>
+      <text x="388" y="600" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ assigned_to</text>
+      <rect x="680" y="464" width="200" height="120" rx="6" fill="#1e2123"/>
+      <rect x="680" y="464" width="200" height="120" rx="6" fill="rgba(230,247,246,0.05)" stroke="#8fa8a5" stroke-width="1"/>
+      <line x1="680" y1="492" x2="880" y2="492" stroke="#8fa8a5" stroke-width="0.8" stroke-opacity="0.4"/>
+      <rect x="688" y="472" width="40" height="12" rx="2" fill="transparent" stroke="#8fa8a5" stroke-opacity="0.4" stroke-width="0.8"/>
+      <text x="708" y="481" fill="#8fa8a5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TABLA</text>
+      <text x="872" y="483" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="end">task_comments</text>
+      <text x="688" y="504" fill="#e6f7f6" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="688" y="520" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ task_id</text>
+      <text x="688" y="536" fill="#6a8a87" font-size="9" font-family="'Geist Mono', monospace">→ author_id</text>
+      <text x="688" y="552" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">body</text>
+      <text x="688" y="568" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">visible_to_client</text>
+
+      <line x1="80" y1="644" x2="880" y2="644" stroke="rgba(230,247,246,0.12)" stroke-width="0.8"/>
+      <text x="80" y="664" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEYENDA</text>
+      <text x="176" y="664" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace"># clave primaria</text>
+      <text x="336" y="664" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">→ clave foránea</text>
+      <rect x="496" y="654" width="24" height="14" rx="3" fill="rgba(8,166,150,0.14)" stroke="#08A696" stroke-width="1"/>
+      <text x="532" y="664" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">raíz del agregado</text>
+
+    </svg>
+    </div>
+  </div>
+</body>
+</html>

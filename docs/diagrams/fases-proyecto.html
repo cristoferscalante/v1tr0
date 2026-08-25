@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan de fases — V1TR0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #1e2123; --ink: #e6f7f6; --muted: #8fa8a5; --soft: #6a8a87;
+      --accent: #08A696; --rule: rgba(230,247,246,0.12);
+      --font-sans: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans); background: var(--paper); color: var(--ink);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1040px; width: 100%; }
+    .eyebrow { font-family: var(--font-mono); font-size: .66rem; font-weight: 500;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+    h1 { font-size: clamp(1.5rem, 2.4vw + .75rem, 2rem); font-weight: 800;
+      letter-spacing: -.03em; line-height: 1.15; margin-bottom: .5rem; }
+    .sub { color: var(--muted); font-size: .9rem; max-width: 62ch; margin-bottom: 1.75rem; }
+    .scroll { overflow-x: auto; }
+    svg { width: 100%; min-width: 900px; display: block; }
+    .pie { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--rule);
+      font-family: var(--font-mono); font-size: .7rem; color: var(--soft); }
+
+    /* Impresión: el informe se entrega en papel, así que el fondo oscuro se
+       invierte a tinta sobre blanco en vez de gastar tóner en un rectángulo. */
+    @media print {
+      @page { size: A4 landscape; margin: 12mm; }
+      body { background: #fff; color: #011c26; padding: 0; display: block; }
+      .sub, .pie { color: #4a6b6a; }
+      .eyebrow { color: #4a6b6a; }
+      svg { min-width: 0; }
+      svg .lienzo { fill: #fff; }
+      svg .txt-ink { fill: #011c26 !important; }
+      svg .txt-muted { fill: #4a6b6a !important; }
+      svg .zona { fill: rgba(1,28,38,0.03); stroke: rgba(1,28,38,0.10); }
+      svg .regla { stroke: rgba(1,28,38,0.15); }
+      svg .barra { fill: rgba(2,81,89,0.12); stroke: #025159; }
+      svg .barra-focal { fill: rgba(8,166,150,0.15); stroke: #08A696; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Informe de proyecto</p>
+    <h1>Plan de fases</h1>
+    <p class="sub">Las cuatro ramas de un proyecto y sus entregas, semana a semana.
+      Desarrollo es la fase más larga y la que sostiene todo lo demás.</p>
+
+    <div class="scroll">
+    <svg viewBox="0 0 1000 652" role="img" aria-labelledby="fases-title fases-desc"
+         xmlns="http://www.w3.org/2000/svg">
+      <title id="fases-title">Plan de fases de un proyecto V1TR0</title>
+      <desc id="fases-desc">Diagrama de Gantt de once tareas agrupadas en cuatro fases —
+        planeación, desarrollo, calidad y entrega, y mantenimiento — a lo largo de dieciséis
+        semanas. La construcción del backend es la tarea crítica.</desc>
+
+      <rect class="lienzo" width="100%" height="100%" fill="#1e2123"/>
+
+      <text class="txt-muted" x="200" y="56" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.10em">S1</text>
+      <text class="txt-muted" x="390" y="56" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.10em">S5</text>
+      <text class="txt-muted" x="580" y="56" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.10em">S9</text>
+      <text class="txt-muted" x="770" y="56" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.10em">S13</text>
+      <text class="txt-muted" x="944" y="56" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.10em">S16</text>
+      <line class="regla" x1="20" y1="64" x2="980" y2="64" stroke="rgba(230,247,246,0.12)" stroke-width="0.8"/>
+
+      <rect class="zona" x="20" y="72" width="960" height="144" rx="6" fill="rgba(230,247,246,0.02)" stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <text class="txt-muted" x="28" y="88" fill="#6a8a87" font-size="7" font-family="'Geist Mono', monospace" letter-spacing="0.18em">PLANEACIÓN</text>
+      <text class="txt-ink" x="28" y="121" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Reunión de arranque</text>
+      <rect class="barra" x="200" y="104" width="48" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <text class="txt-ink" x="28" y="161" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Investigación y wireframes</text>
+      <rect class="barra" x="248" y="144" width="96" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <text class="txt-ink" x="28" y="201" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Copy y contenidos</text>
+      <rect class="barra" x="296" y="184" width="96" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <rect class="zona" x="20" y="224" width="960" height="184" rx="6" fill="rgba(230,247,246,0.02)" stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <text class="txt-muted" x="28" y="240" fill="#6a8a87" font-size="7" font-family="'Geist Mono', monospace" letter-spacing="0.18em">DESARROLLO</text>
+      <text class="txt-ink" x="28" y="273" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Diseño de interfaz</text>
+      <rect class="barra" x="344" y="256" width="96" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <text class="txt-ink" x="28" y="313" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Construcción del backend</text>
+      <rect class="barra-focal" x="392" y="296" width="240" height="24" rx="4" fill="rgba(8,166,150,0.14)" stroke="#08A696" stroke-width="1"/>
+      <text x="400" y="313" fill="#08A696" font-size="10" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">ruta crítica</text>
+      <text class="txt-ink" x="28" y="353" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Maquetación responsive</text>
+      <rect class="barra" x="440" y="336" width="144" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <text class="txt-ink" x="28" y="393" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Integraciones y pagos</text>
+      <rect class="barra" x="536" y="376" width="144" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <rect class="zona" x="20" y="416" width="960" height="104" rx="6" fill="rgba(230,247,246,0.02)" stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <text class="txt-muted" x="28" y="432" fill="#6a8a87" font-size="7" font-family="'Geist Mono', monospace" letter-spacing="0.18em">CALIDAD Y ENTREGA</text>
+      <text class="txt-ink" x="28" y="465" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Pruebas y revisión</text>
+      <rect class="barra" x="632" y="448" width="96" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <text class="txt-ink" x="28" y="505" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Publicación</text>
+      <rect class="barra" x="728" y="488" width="48" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <rect class="zona" x="20" y="528" width="960" height="104" rx="6" fill="rgba(230,247,246,0.02)" stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <text class="txt-muted" x="28" y="544" fill="#6a8a87" font-size="7" font-family="'Geist Mono', monospace" letter-spacing="0.18em">MANTENIMIENTO</text>
+      <text class="txt-ink" x="28" y="577" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Monitoreo y respaldo</text>
+      <rect class="barra" x="776" y="560" width="192" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+      <text class="txt-ink" x="28" y="617" fill="#e6f7f6" font-size="11" font-weight="600" font-family="'Bricolage Grotesque', sans-serif">Soporte post-lanzamiento</text>
+      <rect class="barra" x="776" y="600" width="192" height="24" rx="4" fill="rgba(143,168,165,0.15)" stroke="#8fa8a5" stroke-width="1"/>
+    </svg>
+    </div>
+
+    <p class="pie">11 tareas · 16 semanas · las fechas reales de cada proyecto viven en el portal del cliente</p>
+  </div>
+</body>
+</html>

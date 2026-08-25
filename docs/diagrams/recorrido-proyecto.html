@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recorrido del proyecto — V1TR0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper:  #1e2123;
+      --ink:    #e6f7f6;
+      --muted:  #8fa8a5;
+      --soft:   #6a8a87;
+      --accent: #08A696;
+      --rule:   rgba(230,247,246,0.12);
+      --font-sans: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1240px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-sans); font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.5rem;
+    }
+    .sub { color: var(--muted); font-size: 0.9rem; max-width: 62ch; margin-bottom: 1.75rem; }
+    .scroll { overflow-x: auto; }
+    svg { width: 100%; min-width: 1000px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Portal del cliente</p>
+    <h1>Del primer contacto a la entrega</h1>
+    <p class="sub">Cómo vive el cliente un proyecto de software a medida. El ánimo cae en
+      desarrollo — la etapa más larga y la única sin nada que mostrar.</p>
+
+    <div class="scroll">
+    <svg viewBox="0 0 1224 484" role="img" aria-labelledby="recorrido-title recorrido-desc"
+         xmlns="http://www.w3.org/2000/svg">
+      <title id="recorrido-title">Recorrido del cliente en un proyecto V1TR0</title>
+      <desc id="recorrido-desc">Mapa de recorrido de cinco etapas — cotización, arranque, desarrollo,
+        revisión y entrega — con la curva de ánimo del cliente. El punto más bajo es desarrollo, donde
+        el cliente pasa semanas sin novedades y sin saber qué sigue.</desc>
+
+      <rect width="100%" height="100%" fill="#1e2123"/>
+
+      <!-- ═══ Encabezados de etapa ═══ -->
+      <text x="164" y="16" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">ETAPA 1</text>
+      <text x="164" y="36" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Cotización</text>
+      <text x="388" y="16" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">ETAPA 2</text>
+      <text x="388" y="36" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Arranque</text>
+      <text x="612" y="16" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">ETAPA 3</text>
+      <text x="612" y="36" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Desarrollo</text>
+      <text x="836" y="16" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">ETAPA 4</text>
+      <text x="836" y="36" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Revisión</text>
+      <text x="1060" y="16" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">ETAPA 5</text>
+      <text x="1060" y="36" fill="#e6f7f6" font-size="12" font-weight="600" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Entrega</text>
+
+      <!-- ═══ Banda de ánimo ═══ -->
+      <line x1="64" y1="64"  x2="1160" y2="64"  stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <line x1="64" y1="144" x2="1160" y2="144" stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <line x1="64" y1="224" x2="1160" y2="224" stroke="rgba(230,247,246,0.10)" stroke-width="0.8"/>
+      <text x="56" y="68"  fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">ALTO</text>
+      <text x="56" y="148" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">NEUTRO</text>
+      <text x="56" y="228" fill="#8fa8a5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">BAJO</text>
+
+      <!-- Curva: neutro → medio-alto → medio-bajo (valle) → medio-alto → alto -->
+      <polyline points="164,144 388,104 612,184" fill="none" stroke="#8fa8a5" stroke-width="1.5" stroke-linejoin="round"/>
+      <!-- El segmento que entra al valle va en acento: es el hallazgo -->
+      <polyline points="388,104 612,184" fill="none" stroke="#08A696" stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="612,184 836,104 1060,64" fill="none" stroke="#8fa8a5" stroke-width="1.5" stroke-linejoin="round"/>
+
+      <circle cx="164"  cy="144" r="5" fill="#1e2123" stroke="#8fa8a5" stroke-width="1.5"/>
+      <circle cx="388"  cy="104" r="5" fill="#1e2123" stroke="#8fa8a5" stroke-width="1.5"/>
+      <circle cx="612"  cy="184" r="5" fill="#08A696" stroke="#08A696" stroke-width="1.5"/>
+      <circle cx="836"  cy="104" r="5" fill="#1e2123" stroke="#8fa8a5" stroke-width="1.5"/>
+      <circle cx="1060" cy="64"  r="5" fill="#1e2123" stroke="#8fa8a5" stroke-width="1.5"/>
+
+      <!-- ═══ Fila: acciones ═══ -->
+      <line x1="64" y1="248" x2="1160" y2="248" stroke="rgba(230,247,246,0.12)" stroke-width="0.8"/>
+      <text x="56" y="272" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.14em">HACE</text>
+      <text x="164"  y="272" fill="#e6f7f6" font-size="12" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Describe lo que necesita</text>
+      <text x="388"  y="272" fill="#e6f7f6" font-size="12" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Aprueba alcance y fases</text>
+      <text x="612"  y="272" fill="#e6f7f6" font-size="12" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Espera</text>
+      <text x="836"  y="272" fill="#e6f7f6" font-size="12" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Prueba y comenta</text>
+      <text x="1060" y="272" fill="#e6f7f6" font-size="12" font-family="'Bricolage Grotesque', sans-serif" text-anchor="middle">Recibe y publica</text>
+
+      <!-- Marcadores de fricción: solo en el valle -->
+      <rect x="512" y="288" width="200" height="16" rx="2" fill="rgba(8,166,150,0.10)" stroke="rgba(8,166,150,0.50)" stroke-width="0.8" stroke-dasharray="3,3"/>
+      <text x="612" y="300" fill="#08A696" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SEMANAS SIN NOVEDADES</text>
+      <rect x="512" y="308" width="200" height="16" rx="2" fill="rgba(8,166,150,0.10)" stroke="rgba(8,166,150,0.50)" stroke-width="0.8" stroke-dasharray="3,3"/>
+      <text x="612" y="320" fill="#08A696" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NO SABE QUÉ SIGUE</text>
+
+      <!-- ═══ Fila: dónde ocurre ═══ -->
+      <line x1="64" y1="340" x2="1160" y2="340" stroke="rgba(230,247,246,0.12)" stroke-width="0.8"/>
+      <text x="56" y="364" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.14em">DÓNDE</text>
+      <text x="164"  y="364" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">formulario web</text>
+      <text x="388"  y="364" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">reunión + portal</text>
+      <text x="612"  y="364" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">correo suelto</text>
+      <text x="836"  y="364" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">portal + comentarios</text>
+      <text x="1060" y="364" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">entrega + soporte</text>
+
+      <!-- ═══ Fila: qué lo sostiene en el producto ═══ -->
+      <line x1="64" y1="384" x2="1160" y2="384" stroke="rgba(230,247,246,0.12)" stroke-width="0.8"/>
+      <text x="56" y="408" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.14em">PANEL</text>
+      <text x="164"  y="408" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">cotizaciones</text>
+      <text x="388"  y="408" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">árbol de fases</text>
+      <text x="612"  y="408" fill="#08A696" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">resumen + bitácora</text>
+      <text x="836"  y="408" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">sugerencias y fallos</text>
+      <text x="1060" y="408" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">proyecto cerrado</text>
+
+      <!-- ═══ Leyenda ═══ -->
+      <line x1="64" y1="432" x2="1160" y2="432" stroke="rgba(230,247,246,0.12)" stroke-width="0.8"/>
+      <text x="64" y="452" fill="#6a8a87" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEYENDA</text>
+      <line x1="160" y1="448" x2="188" y2="448" stroke="#8fa8a5" stroke-width="1.5"/>
+      <circle cx="174" cy="448" r="4" fill="#1e2123" stroke="#8fa8a5" stroke-width="1.5"/>
+      <text x="196" y="452" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">ánimo del cliente</text>
+      <line x1="360" y1="448" x2="388" y2="448" stroke="#08A696" stroke-width="1.5"/>
+      <circle cx="374" cy="448" r="4" fill="#08A696" stroke="#08A696" stroke-width="1.5"/>
+      <text x="396" y="452" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">punto más bajo</text>
+      <rect x="552" y="440" width="24" height="14" rx="2" fill="rgba(8,166,150,0.10)" stroke="rgba(8,166,150,0.50)" stroke-width="0.8" stroke-dasharray="3,3"/>
+      <text x="588" y="452" fill="#8fa8a5" font-size="9" font-family="'Geist Mono', monospace">fricción concreta</text>
+    </svg>
+    </div>
+  </div>
+</body>
+</html>
