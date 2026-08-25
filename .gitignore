@@ -58,3 +58,7 @@ public/imagenes/tienda/hvide.mp4
 test-results/
 playwright-report/
 .playwright/
+
+# Skills de Claude Code instaladas localmente (herramientas de terceros, no
+# código del producto). Ver CLAUDE.md para cómo instalarlas.
+.claude/skills/

@@ -36,7 +36,19 @@ checkout, verificación de orden y webhook. Espera un servidor ya levantado en
 - **security-review** (alta): correr antes de cada deploy o al tocar `auth.ts`, rutas `/api`, o la bóveda de credenciales cifrada de clientes (`SECRETS_ENCRYPTION_KEY`).
 - **code-review** (alta): usar antes de mergear PRs a `main`.
 - **run** (alta): usar para levantar el dev server y verificar cambios de UI/funcionalidad antes de reportarlos como completos.
-- **supabase-postgres-best-practices** (media): consultar al escribir u optimizar queries de Drizzle o cambios en `lib/db/schema.ts`.
+- **supabase-postgres-best-practices** (media): consultar al escribir u optimizar queries de Drizzle o cambios en `lib/db/schema.ts`. Pese al nombre, es
+  asesoría de Postgres genérica y aplica igual sobre Neon — este proyecto ya no usa Supabase.
 - **dataviz** (media): usar si se agregan gráficos o paneles al dashboard de cliente/admin.
+
+## Skills instaladas localmente
+
+`.claude/skills/` está en `.gitignore`: son herramientas de terceros, no código
+del producto. Para instalar `diagram-design` (diagramas editoriales en HTML+SVG,
+y la gramática visual que siguen los tableros de tareas):
+
+```bash
+git clone --depth 1 https://github.com/cathrynlavery/diagram-design.git /tmp/dd \
+  && mkdir -p .claude/skills && cp -r /tmp/dd/skills/diagram-design .claude/skills/
+```
 
 `codebase-memory` no está indexado para este proyecto (se usa otra herramienta externa para ese propósito).
