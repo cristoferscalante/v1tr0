@@ -22,7 +22,7 @@ export default function ProjectServiceBadge({
     <span
       className={
         className ??
-        "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-[#02505950] border border-[#08A696]/20 text-textSecondary"
+        "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-[#232629] border border-[#08A696]/20 text-textSecondary"
       }
     >
       <AnimatedIcon kind={meta.kind} icon={meta.icon} active size={13} />

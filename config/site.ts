@@ -41,23 +41,48 @@ export const siteConfig = {
     name: 'V1TR0',
     legalName: 'V1TR0 SAS',
     email: 'buzon@v1tr0.com',
-    phone: '+57 XXX XXX XXXX',
+    /** Debe escribirse idéntico aquí, en Google Business Profile y en el footer. */
+    phone: '+57 315 817 3818',
+    /** Mismo número en formato E.164, para `tel:` y para los datos estructurados. */
+    phoneE164: '+573158173818',
+    /**
+     * Ficha NAP (Name-Address-Phone). Es la fuente única del `LocalBusiness`
+     * de `lib/seo/site-graph.ts`: Google y los motores de respuesta cruzan
+     * estos datos con el directorio de Google Business Profile, así que
+     * cualquier diferencia de escritura debilita la señal local.
+     */
     address: {
-      city: 'Bogotá',
+      street: 'Av. 3 # 18-21 Sur',
+      city: 'Pitalito',
+      region: 'Huila',
+      postalCode: '417020',
       country: 'Colombia',
       countryCode: 'CO',
     },
+    /** Coordenadas del casco urbano de Pitalito; ajustar a la puerta de la oficina. */
+    geo: { latitude: 1.8539, longitude: -76.0513 },
+    foundingDate: '2023',
+    /** Radio de atención presencial; el resto del país se atiende en remoto. */
+    areaServed: ['Pitalito', 'Huila', 'Colombia'],
+    openingHours: 'Mo-Fr 08:00-18:00',
   },
 
   /**
    * Redes sociales
    */
+  /**
+   * Perfiles reales y verificables.
+   *
+   * Estos valores salen tal cual a `sameAs` en los datos estructurados, que es
+   * como Google y los motores de respuesta confirman que la entidad "V1TR0"
+   * del sitio y la de cada red son la misma. Un perfil inventado o muerto no
+   * es neutro: rompe la verificación y debilita toda la ficha. Si un perfil no
+   * existe todavía, se omite en lugar de anticiparlo.
+   */
   social: {
-    twitter: 'https://twitter.com/v1tr0',
-    github: 'https://github.com/v1tr0',
-    linkedin: 'https://linkedin.com/company/v1tr0',
-    instagram: 'https://instagram.com/v1tr0',
-    facebook: 'https://facebook.com/v1tr0',
+    github: 'https://github.com/v1tr0tech',
+    linkedin: 'https://www.linkedin.com/company/v1tr0/',
+    tiktok: 'https://www.tiktok.com/@v1tr0_tech',
   },
 
   /**

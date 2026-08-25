@@ -3,53 +3,63 @@
 import { forwardRef, useRef } from "react"
 import { motion } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
-import { CodeIcon, PaletteIcon, LightbulbIcon, GitHubIcon } from "@/lib/icons"
+import { GitHubIcon } from "@/lib/icons"
+import Image from "next/image"
 import Link from "next/link"
 import useSnapAnimations from '@/hooks/use-snap-animations'
 import { usePathname } from "next/navigation"
+import { siteConfig } from "@/config/site"
+import { ubicacionPages } from "@/lib/data/ubicaciones"
 
 import {
   LinkedInIcon,
   EmailIcon,
   TikTokIcon,
-// ...existing code...
 } from "@/lib/icons"
 
+/**
+ * Pie de página del sitio.
+ *
+ * Es un mapa del sitio, no un espacio publicitario. Antes vivían aquí tres
+ * tarjetas decorativas ("Desarrollo", "Diseño", "Innovación") que ocupaban un
+ * tercio del alto y no enlazaban a ninguna parte: en un pie, cada bloque que
+ * no es un enlace es autoridad interna que se deja de repartir a las páginas
+ * que sí interesa posicionar.
+ *
+ * Todos los datos salen de `config/site.ts`. Eso no es preferencia de estilo:
+ * la ficha de contacto de aquí abajo y el `LocalBusiness` de los datos
+ * estructurados tienen que decir exactamente lo mismo, porque Google contrasta
+ * uno contra otro. Con una sola fuente, no pueden discrepar.
+ */
+
 const socialLinks = [
-  { icon: <GitHubIcon className="w-6 h-6" />, href: "https://github.com/v1tr0tech" },
-  { icon: <LinkedInIcon className="w-6 h-6" />, href: "https://www.linkedin.com/company/v1tr0/?viewAsMember=true" },
-  { icon: <TikTokIcon className="w-6 h-6" />, href: "https://www.tiktok.com/@v1tr0_tech" },
-  { icon: <EmailIcon className="w-6 h-6" />, href: "mailto:vtr.techh@gmail.com" },
+  { icon: <GitHubIcon className="w-5 h-5" />, href: siteConfig.social.github, label: "GitHub V1TR0" },
+  { icon: <LinkedInIcon className="w-5 h-5" />, href: siteConfig.social.linkedin, label: "LinkedIn V1TR0" },
+  { icon: <TikTokIcon className="w-5 h-5" />, href: siteConfig.social.tiktok, label: "TikTok V1TR0" },
+  { icon: <EmailIcon className="w-5 h-5" />, href: `mailto:${siteConfig.company.email}`, label: "Enviar correo a V1TR0" },
 ]
 
-const footerSections = [
-  {
-    id: 1,
-    icon: <CodeIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: "Desarrollo",
-    content: "Creamos soluciones basadas en codigo para darle vida a infraestructuras digitales de vanguardia.",
-    color: "from-custom-3 to-custom-4",
-  },
-  {
-    id: 2,
-    icon: <PaletteIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: "Diseño",
-    content: "Diseñamos experiencias visuales que renuevan la experiencia de usuario, para optimizar la navegación & la gestión.",
-    color: "from-custom-2 to-custom-3",
-  },
-  {
-    id: 3,
-    icon: <LightbulbIcon className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: "Innovación",
-    content: "Implementamos tecnologias de vanguardia para automatizar procesos & mejorar la eficiencia.",
-    color: "from-custom-1 to-custom-2",
-  },
-]
-
-/** Las dos rutas de entrada del home, repetidas en el pie para que existan en todas las páginas. */
-const footerPaths = [
+/** Columna de servicios: las rutas por las que entra un cliente que ya decidió. */
+const serviciosLinks = [
   { href: "/contratar-software", label: "Contratar software" },
   { href: "/hardware-iot", label: "Hardware e IoT" },
+  { href: "/servicios/ecommerce", label: "Comercio electrónico" },
+  { href: "/servicios/landing-pages", label: "Landing pages" },
+  { href: "/tienda", label: "Tienda" },
+]
+
+/** Columna de empresa: lo que se consulta antes de decidir. */
+const empresaLinks = [
+  { href: "/about", label: "Nosotros" },
+  { href: "/portfolio", label: "Portafolio" },
+  { href: "/blog", label: "Blog" },
+  { href: "/servicios", label: "Todos los servicios" },
+]
+
+const legalLinks = [
+  { href: "/terminos", label: "Términos" },
+  { href: "/privacidad", label: "Privacidad" },
+  { href: "/cookies", label: "Cookies" },
 ]
 
 interface FooterSectionProps {
@@ -63,8 +73,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
   const pathname = usePathname()
   const isShop = pathname?.startsWith("/tienda") ?? false
   const sectionRef = useRef<HTMLDivElement>(null)
-  
-  // Configurar animaciones de entrada para esta sección
+
   useSnapAnimations({
     sections: ['.footer-section'],
     duration: 0.8,
@@ -75,132 +84,180 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
     }
   })
 
+  const tituloColumna = `text-xs font-semibold uppercase tracking-wider mb-4 ${
+    isDark ? "text-[#26FFDF]/70" : "text-[#085c54]/80"
+  }`
+
+  const enlaceColumna =
+    "text-sm text-[#04423c] dark:text-[#b2fff6] transition-colors duration-200 hover:text-[#08A696] dark:hover:text-[#26FFDF]"
+
   return (
     <footer
       ref={sectionRef}
       role="contentinfo"
-  className={`footer-section w-full min-h-screen ${
-    isShop
-      // En la tienda el footer toma el gris neutro del carrito para no
-      // romper con el resto de superficies de esa sección.
-      ? (isDark ? "bg-[#1e2123]" : "bg-[#e6f7f6] backdrop-blur-sm")
-      : (isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm")
-  } pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 font-sans relative flex items-center justify-center`}
+      /*
+        Altura natural, no `min-h-screen`.
+        Con alto de pantalla forzado y contenido centrado verticalmente, todo
+        lo que excede el viewport se recorta por arriba y por abajo a la vez
+        —los legales desaparecían en pantallas cortas—. Un pie debe medir lo
+        que mide su contenido.
+      */
+      className={`footer-section w-full ${
+        isShop
+          ? (isDark ? "bg-[#1e2123]" : "bg-[#e6f7f6] backdrop-blur-sm")
+          : (isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm")
+      } pt-16 sm:pt-20 pb-24 sm:pb-12 px-4 sm:px-6 font-sans relative`}
       aria-label="Pie de página V1TR0"
     >
-  <div className="max-w-7xl mx-auto w-full">
-        <div className="footer-header animate-element text-center mb-8 sm:mb-12 md:mb-16 relative z-10 px-2">
-          <div className={`inline-block px-3 sm:px-4 py-2 rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"} text-xs sm:text-sm font-semibold mb-3 sm:mb-4`}>
-            <span className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}>
-              V1TR0 Technologies
-            </span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-[#04423c] dark:text-[#26FFDF]">Impulsando tu Éxito Digital</h2>
-          <div className={`w-16 sm:w-20 md:w-24 h-1 ${isDark ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]" : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"} mx-auto mt-6 sm:mt-8 rounded-full`}></div>
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="footer-header animate-element text-center mb-12 sm:mb-14 relative z-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#04423c] dark:text-[#26FFDF]">
+            Impulsando tu Éxito Digital
+          </h2>
+          <div
+            className={`w-16 sm:w-20 h-1 ${
+              isDark
+                ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]"
+                : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"
+            } mx-auto mt-5 rounded-full`}
+          />
         </div>
 
-        <div className="footer-sections animate-element grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative z-10 mb-8 sm:mb-12 md:mb-16 px-2 sm:px-0">
-          {footerSections.map((section) => (
-            <div
-              key={section.id}
-              className={`overflow-hidden rounded-2xl ${isDark ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20" : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"} transition-all duration-300 group hover:border-[#08A696] hover:shadow-lg`}
-            >
-              <div className="p-3 sm:p-4 md:p-5 h-full flex flex-col min-h-[180px]">
-                <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                  <div className={`p-1.5 sm:p-2 rounded-xl ${isDark ? "bg-[#02505950] border border-[#08A696]/20" : "bg-[#c5ebe7] border border-[#08A696]/40"} group-hover:scale-110 transition-transform duration-300`}>
-                    <div className={`${isDark ? "text-[#26FFDF]" : "text-[#085c54]"}`}>
-                      {section.icon}
-                    </div>
-                  </div>
-                  <h3 className={`text-base sm:text-lg md:text-xl font-semibold ${isDark ? "text-[#26FFDF] group-hover:text-[#26FFDF]" : "text-[#085c54] group-hover:text-[#04423c]"} transition-colors duration-300`}>
-                    {section.title}
-                  </h3>
-                </div>
-                <p className="text-[#04423c] dark:text-[#b2fff6] text-xs sm:text-sm opacity-90 font-medium">{section.content}</p>
-              </div>
+        {/*
+          Cuatro columnas en escritorio, dos en tableta, una en celular.
+          La de marca va primera porque es la que carga la ficha NAP: si el
+          espacio obliga a apilar, el dato de contacto queda arriba.
+        */}
+        <div className="footer-grid animate-element relative z-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          <address className="not-italic">
+            {/*
+              El isotipo tiene dos versiones: la de modo claro lleva el trazo
+              en verde oscuro para que contraste sobre fondo blanco. Va marcado
+              como decorativo porque la razón social lo acompaña justo debajo.
+            */}
+            <Image
+              src={isDark ? "/imagenes/logos/v1tr0-logo.svg" : "/imagenes/logos/Imagotipo%20%20modo%20claro5.svg"}
+              alt=""
+              aria-hidden="true"
+              width={56}
+              height={48}
+              className="mb-4 h-12 w-auto"
+              priority={false}
+            />
+            <p className="text-lg font-bold text-[#04423c] dark:text-[#26FFDF]">{siteConfig.company.legalName}</p>
+            <p className="mt-2 max-w-xs text-sm leading-relaxed text-[#04423c]/80 dark:text-[#b2fff6]/80">
+              Software a medida, hardware e IoT desde {siteConfig.company.address.city}, {siteConfig.company.address.region}.
+            </p>
+            <div className="mt-5 space-y-1.5 text-sm text-[#04423c] dark:text-[#b2fff6]">
+              <p>{siteConfig.company.address.street}</p>
+              <p>
+                {siteConfig.company.address.city}, {siteConfig.company.address.region}, {siteConfig.company.address.country}
+              </p>
+              <p>
+                <a
+                  href={`tel:${siteConfig.company.phoneE164}`}
+                  className="font-semibold text-[#085c54] transition-colors hover:text-[#08A696] dark:text-[#26FFDF] dark:hover:text-[#b2fff6]"
+                >
+                  {siteConfig.company.phone}
+                </a>
+              </p>
+              <p>
+                <a href={`mailto:${siteConfig.company.email}`} className={enlaceColumna}>
+                  {siteConfig.company.email}
+                </a>
+              </p>
+              <p className="text-[#04423c]/60 dark:text-[#b2fff6]/60">Lunes a viernes, 8:00 a 18:00</p>
             </div>
-          ))}
+          </address>
+
+          <nav aria-label="Servicios">
+            <h3 className={tituloColumna}>Servicios</h3>
+            <ul className="space-y-2.5">
+              {serviciosLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} prefetch={false} className={enlaceColumna}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Cobertura">
+            <h3 className={tituloColumna}>Cobertura</h3>
+            {/*
+              Sin estos enlaces las páginas por ubicación serían huérfanas:
+              alcanzables solo desde el sitemap, sin autoridad interna que las
+              respalde. El pie las conecta con todas las páginas del sitio.
+            */}
+            <ul className="space-y-2.5">
+              {ubicacionPages.map((page) => (
+                <li key={page.slug}>
+                  <Link href={`/${page.slug}`} prefetch={false} className={enlaceColumna}>
+                    Software en {page.lugar}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Empresa">
+            <h3 className={tituloColumna}>Empresa</h3>
+            <ul className="space-y-2.5">
+              {empresaLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} prefetch={false} className={enlaceColumna}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
-  {/* Rutas de entrada: las dos páginas que explican cómo se contrata */}
-        <nav
-          aria-label="Cómo trabajamos"
-          className="footer-paths animate-element relative z-10 mb-8 flex flex-col items-center gap-3 px-2 sm:flex-row sm:justify-center sm:gap-4 sm:px-0"
+        <div
+          /*
+            El sangrado izquierdo en escritorio y el respiro inferior en móvil
+            dejan libre la esquina donde vive el botón flotante de WhatsApp,
+            que es `fixed` y por tanto se monta sobre lo que quede al final del
+            scroll: sin esto, tapaba el aviso de copyright.
+          */
+          className={`footer-bottom animate-element relative z-10 mt-12 flex flex-col items-center gap-6 border-t pt-8 sm:mt-14 md:flex-row md:justify-between md:pl-20 ${
+            isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"
+          }`}
         >
-          <span className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-[#26FFDF]/70" : "text-[#085c54]/80"}`}>
-            Cómo trabajamos
-          </span>
-          {footerPaths.map((path) => (
-            <Link
-              key={path.href}
-              href={path.href}
-              prefetch={false}
-              className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 ${
-                isDark
-                  ? "border-[#08A696]/50 bg-[#08A696]/20 text-[#26FFDF] hover:border-[#26FFDF] hover:bg-[#08A696]/30"
-                  : "border-[#08A696]/80 bg-white/70 text-[#085c54] hover:border-[#08A696] hover:bg-[#08A696]/10"
-              }`}
-            >
-              {path.label}
-            </Link>
-          ))}
-        </nav>
-
-  <div className="footer-bottom animate-element flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 sm:pt-8 mt-4 sm:mt-6 px-2 sm:px-0 w-full">
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left flex-shrink-0">
-            <p className="text-[#04423c] dark:text-[#b2fff6] text-sm sm:text-base font-medium">&copy; {new Date().getFullYear()} V1TR0</p>
-            <span className={`hidden sm:block ${isDark ? "text-[#26FFDF]" : "text-[#085c54]"}`}>•</span>
-            <nav className="flex gap-3 sm:gap-4" aria-label="Navegación legal">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <Link href="/terminos" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
-                  Términos
+          <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-5 sm:text-left">
+            <p className="text-sm font-medium text-[#04423c] dark:text-[#b2fff6]">
+              &copy; {new Date().getFullYear()} {siteConfig.name}
+            </p>
+            <nav className="flex gap-4" aria-label="Navegación legal">
+              {legalLinks.map((link) => (
+                <Link key={link.href} href={link.href} prefetch={false} className={enlaceColumna}>
+                  {link.label}
                 </Link>
-              </div>
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <Link href="/privacidad" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
-                  Privacidad
-                </Link>
-              </div>
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <Link href="/cookies" prefetch={false} className={`relative px-3 py-2 text-sm sm:text-base bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-xl text-[#085c54] dark:text-[#26FFDF] font-semibold transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-md hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 block`}>
-                  Cookies
-                </Link>
-              </div>
+              ))}
             </nav>
           </div>
-          <div className="flex gap-4 sm:gap-6" aria-label="Redes sociales">
-            {socialLinks.map((link, index) => (
-              <div key={index} className="relative group">
-                {/* Gradiente de fondo con blur - similar al botón de login */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] dark:from-[#08a6961e] dark:to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                <motion.a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={
-                    link.href.includes('github') ? 'GitHub V1TR0' :
-                    link.href.includes('linkedin') ? 'LinkedIn V1TR0' :
-                    link.href.includes('tiktok') ? 'TikTok V1TR0' :
-                    link.href.includes('mailto') ? 'Enviar correo a V1TR0' :
-                    'Red social V1TR0'
-                  }
-                  className={`relative flex items-center justify-center p-3 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-110`}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="w-5 h-5 sm:w-6 sm:h-6">
-                    {link.icon}
-                  </div>
-                </motion.a>
-              </div>
+
+          <div className="flex gap-3" aria-label="Redes sociales">
+            {socialLinks.map((link) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                aria-label={link.label}
+                className="flex items-center justify-center rounded-xl border border-[#08A696]/60 bg-white/70 p-2.5 text-[#085c54] transition-colors duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:border-[#08A696]/40 dark:bg-[#08A696]/15 dark:text-[#26FFDF] dark:hover:border-[#26FFDF] dark:hover:bg-[#08A696]/30"
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {link.icon}
+              </motion.a>
             ))}
           </div>
         </div>
       </div>
-  </footer>
+    </footer>
   )
 })
 
