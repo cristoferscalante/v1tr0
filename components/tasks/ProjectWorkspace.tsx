@@ -8,6 +8,7 @@ import ActivityFeed from "./ActivityFeed"
 import ProjectTeamPanel from "./ProjectTeamPanel"
 import TaskDetailDrawer from "./TaskDetailDrawer"
 import TaskKanban from "./TaskKanban"
+import { Panel } from "@/components/shared/panel-ui"
 import type { BoardMember, BoardPhase, BoardTask } from "./types"
 
 type Tab = "arbol" | "tablero" | "equipo" | "actividad"
@@ -80,8 +81,12 @@ export default function ProjectWorkspace({
         <AdminTaskTreeBoard {...treeProps} />
       </div>
 
+      {/* El árbol va a sangre porque es un lienzo de React Flow y necesita
+          todo el ancho; las demás pestañas sí viven dentro de una superficie,
+          como el resto de páginas del panel. */}
       {tab === "tablero" && (
         <div className="px-4 pb-8 lg:px-8">
+          <Panel className="p-4">
           <TaskKanban
             projectId={projectId}
             initialTasks={tasks}
@@ -89,18 +94,23 @@ export default function ProjectWorkspace({
             members={members}
             onOpenTask={setOpenTask}
           />
+          </Panel>
         </div>
       )}
 
       {/* El panel de equipo se mantiene montado aunque no sea la pestaña
           activa: es quien alimenta la lista de responsables del tablero. */}
       <div className={cn("px-4 pb-8 lg:px-8", tab === "equipo" ? "block" : "hidden")}>
-        <ProjectTeamPanel projectId={projectId} onMembersChange={handleMembers} />
+        <Panel className="p-5">
+          <ProjectTeamPanel projectId={projectId} onMembersChange={handleMembers} />
+        </Panel>
       </div>
 
       {tab === "actividad" && (
         <div className="max-w-2xl px-4 pb-8 lg:px-8">
-          <ActivityFeed projectId={projectId} scope="admin" />
+          <Panel className="p-5">
+            <ActivityFeed projectId={projectId} scope="admin" />
+          </Panel>
         </div>
       )}
 

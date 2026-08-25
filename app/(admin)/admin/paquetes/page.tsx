@@ -25,7 +25,6 @@ function rowToPlan(row: PackageRow): Plan {
     packageType: row.category as "pos" | "hardware" | "iot",
   };
 }
-import { useTheme } from "@/components/theme-provider";
 import { toast } from "sonner";
 import {
   Plus,
@@ -64,10 +63,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { PanelPage, SectionHeading } from "@/components/shared/panel-ui";
 
 export default function PaquetesAdminPage() {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
 
   // Estados
   const [packages, setPackages] = useState<Plan[]>([]);
@@ -216,197 +214,126 @@ export default function PaquetesAdminPage() {
   };
 
   return (
-    <div
-      className={`min-h-screen ${
-        isDark ? "bg-[#1e2123]" : "bg-[#e6f7f6]"
-      } p-4 sm:p-6 lg:p-8`}
-    >
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1
-              className={`text-3xl font-bold ${
-                isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-              }`}
-            >
-              Gestión de Paquetes
-            </h1>
-            <p className={`${isDark ? "text-[#b2fff6]" : "text-[#085c54]"} mt-1`}>
-              Administra los paquetes de POS, Hardware e IoT
-            </p>
-          </div>
+    <PanelPage>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <SectionHeading badge="Tienda" title="Gestión de Paquetes" subtitle="Administra los paquetes de POS, Hardware e IoT" />
 
-          <Button
-            onClick={openCreateDialog}
-            className="bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/50 text-[#26FFDF] hover:bg-[#08A696]/30 hover:border-[#26FFDF] hover:shadow-lg hover:shadow-[#26FFDF]/20 transition-all duration-300"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Agregar Paquete
-          </Button>
-        </div>
+        <Button
+          onClick={openCreateDialog}
+          className="shrink-0 border border-[#08A696]/50 bg-[#08A696]/15 text-[#26FFDF] transition-colors hover:border-[#26FFDF] hover:bg-[#08A696]/25"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Agregar Paquete
+        </Button>
+      </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Total Paquetes
                 </p>
                 <p
-                  className={`text-2xl font-bold ${
-                    isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                  } mt-1`}
+                  className="text-2xl font-bold text-[#26FFDF] mt-1"
                 >
                   {stats.totalPackages}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#232629] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <Package
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
           </div>
 
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Paquetes Populares
                 </p>
                 <p
-                  className={`text-2xl font-bold ${
-                    isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                  } mt-1`}
+                  className="text-2xl font-bold text-[#26FFDF] mt-1"
                 >
                   {stats.popularPackages}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#232629] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <Star
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
           </div>
 
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Precio Promedio
                 </p>
                 <p
-                  className={`text-2xl font-bold ${
-                    isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                  } mt-1`}
+                  className="text-2xl font-bold text-[#26FFDF] mt-1"
                 >
                   ${stats.avgPrice.toLocaleString()}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#232629] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <DollarSign
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
           </div>
 
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Por Tipo
                 </p>
                 <div className="flex gap-2 mt-1">
-                  <span className={`text-sm font-semibold ${isDark ? "text-blue-400" : "text-blue-600"}`}>
+                  <span className="text-sm font-semibold text-blue-400">
                     POS: {stats.posPkgs}
                   </span>
-                  <span className={`text-sm font-semibold ${isDark ? "text-purple-400" : "text-purple-600"}`}>
+                  <span className="text-sm font-semibold text-purple-400">
                     HW: {stats.hardwarePkgs}
                   </span>
-                  <span className={`text-sm font-semibold ${isDark ? "text-green-400" : "text-green-600"}`}>
+                  <span className="text-sm font-semibold text-green-400">
                     IoT: {stats.iotPkgs}
                   </span>
                 </div>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#232629] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <TrendingUp
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
@@ -415,36 +342,26 @@ export default function PaquetesAdminPage() {
 
         {/* Search and Filters */}
         <div
-          className={`rounded-xl ${
-            isDark
-              ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
-              : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-          } p-6`}
+          className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
               <Search
-                className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${
-                  isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                }`}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#b2fff6]"
               />
               <Input
                 placeholder="Buscar por nombre, ID o CTA..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`pl-10 ${
-                  isDark
-                    ? "bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50"
-                    : "bg-white border-[#08A696]/60 text-[#04423c] placeholder:text-[#085c54]/50"
-                } focus:border-[#26FFDF]`}
+                className="pl-10 bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
               />
             </div>
           </div>
 
           {/* Results count */}
           <div className="mt-4">
-            <p className={`text-sm ${isDark ? "text-[#b2fff6]" : "text-[#085c54]"}`}>
+            <p className="text-sm text-[#b2fff6]">
               Mostrando {filteredPackages.length} de {packages.length} paquetes
             </p>
           </div>
@@ -458,49 +375,29 @@ export default function PaquetesAdminPage() {
           className="w-full"
         >
           <TabsList
-            className={`flex w-full overflow-x-auto snap-x md:grid md:grid-cols-4 ${
-              isDark
-                ? "bg-[#1e2123] border border-[#08A696]/20"
-                : "bg-[#e6f7f6] border border-[#08A696]/60"
-            }`}
+            className="flex w-full overflow-x-auto snap-x md:grid md:grid-cols-4 bg-[#1e2123] border border-[#08A696]/20"
           >
             <TabsTrigger
               value="all"
-              className={`shrink-0 snap-start md:shrink ${
-                isDark
-                  ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
-                  : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
-              }`}
+              className="shrink-0 snap-start md:shrink data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
             >
               Todos
             </TabsTrigger>
             <TabsTrigger
               value="pos"
-              className={`shrink-0 snap-start md:shrink ${
-                isDark
-                  ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
-                  : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
-              }`}
+              className="shrink-0 snap-start md:shrink data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
             >
               POS
             </TabsTrigger>
             <TabsTrigger
               value="hardware"
-              className={`shrink-0 snap-start md:shrink ${
-                isDark
-                  ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
-                  : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
-              }`}
+              className="shrink-0 snap-start md:shrink data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
             >
               Hardware
             </TabsTrigger>
             <TabsTrigger
               value="iot"
-              className={`shrink-0 snap-start md:shrink ${
-                isDark
-                  ? "data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
-                  : "data-[state=active]:bg-[#08A696]/20 data-[state=active]:text-[#04423c]"
-              }`}
+              className="shrink-0 snap-start md:shrink data-[state=active]:bg-[#08A696]/30 data-[state=active]:text-[#26FFDF]"
             >
               IoT
             </TabsTrigger>
@@ -509,51 +406,41 @@ export default function PaquetesAdminPage() {
           <TabsContent value={packageTypeFilter} className="mt-6">
             {/* Packages Table */}
             <div
-              className={`rounded-xl ${
-                isDark
-                  ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
-                  : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-              } overflow-hidden`}
+              className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 overflow-hidden"
             >
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow
-                      className={`${
-                        isDark
-                          ? "border-[#08A696]/20 hover:bg-white/[0.04]"
-                          : "border-[#08A696]/60 hover:bg-[#c5ebe7]"
-                      }`}
+                      className="border-[#08A696]/20 hover:bg-white/[0.04]"
                     >
                       <TableHead
-                        className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                        className="text-[#26FFDF]"
                       >
                         Paquete
                       </TableHead>
                       <TableHead
-                        className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                        className="text-[#26FFDF]"
                       >
                         Tipo
                       </TableHead>
                       <TableHead
-                        className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                        className="text-[#26FFDF]"
                       >
                         Precio
                       </TableHead>
                       <TableHead
-                        className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                        className="text-[#26FFDF]"
                       >
                         Características
                       </TableHead>
                       <TableHead
-                        className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                        className="text-[#26FFDF]"
                       >
                         Estado
                       </TableHead>
                       <TableHead
-                        className={`text-right ${
-                          isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                        }`}
+                        className="text-right text-[#26FFDF]"
                       >
                         Acciones
                       </TableHead>
@@ -564,9 +451,7 @@ export default function PaquetesAdminPage() {
                       <TableRow>
                         <TableCell
                           colSpan={6}
-                          className={`text-center py-12 ${
-                            isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                          }`}
+                          className="text-center py-12 text-[#b2fff6]"
                         >
                           No se encontraron paquetes
                         </TableCell>
@@ -575,32 +460,22 @@ export default function PaquetesAdminPage() {
                       filteredPackages.map((pkg) => (
                         <TableRow
                           key={pkg.id}
-                          className={`${
-                            isDark
-                              ? "border-[#08A696]/20 hover:bg-white/[0.04]"
-                              : "border-[#08A696]/60 hover:bg-[#c5ebe7]"
-                          } transition-colors`}
+                          className="border-[#08A696]/20 hover:bg-white/[0.04] transition-colors"
                         >
                           <TableCell>
                             <div>
                               <p
-                                className={`font-semibold ${
-                                  isDark ? "text-white" : "text-[#04423c]"
-                                }`}
+                                className="font-semibold text-white"
                               >
                                 {pkg.name}
                               </p>
                               <p
-                                className={`text-xs ${
-                                  isDark ? "text-[#b2fff6]/70" : "text-[#085c54]/70"
-                                }`}
+                                className="text-xs text-[#b2fff6]/70"
                               >
                                 ID: {pkg.id}
                               </p>
                               <p
-                                className={`text-xs ${
-                                  isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                                }`}
+                                className="text-xs text-[#b2fff6]"
                               >
                                 CTA: {pkg.cta}
                               </p>
@@ -617,26 +492,20 @@ export default function PaquetesAdminPage() {
                           <TableCell>
                             <div>
                               <p
-                                className={`font-bold ${
-                                  isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                                }`}
+                                className="font-bold text-[#26FFDF]"
                               >
                                 ${pkg.price.toLocaleString()}
                               </p>
                               {pkg.billingPeriod && (
                                 <p
-                                  className={`text-sm ${
-                                    isDark ? "text-[#b2fff6]/70" : "text-[#085c54]/70"
-                                  }`}
+                                  className="text-sm text-[#b2fff6]/70"
                                 >
                                   / {pkg.billingPeriod}
                                 </p>
                               )}
                               {pkg.folios && pkg.folios > 0 && (
                                 <p
-                                  className={`text-xs ${
-                                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                                  }`}
+                                  className="text-xs text-[#b2fff6]"
                                 >
                                   {pkg.folios} folios
                                 </p>
@@ -645,9 +514,7 @@ export default function PaquetesAdminPage() {
                           </TableCell>
                           <TableCell>
                             <p
-                              className={`text-sm ${
-                                isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                              }`}
+                              className="text-sm text-[#b2fff6]"
                             >
                               {pkg.features.length} características
                             </p>
@@ -666,11 +533,7 @@ export default function PaquetesAdminPage() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => openEditDialog(pkg)}
-                                className={`${
-                                  isDark
-                                    ? "text-[#26FFDF] hover:bg-[#08A696]/20"
-                                    : "text-[#085c54] hover:bg-[#08A696]/10"
-                                }`}
+                                className="text-[#26FFDF] hover:bg-[#08A696]/20"
                               >
                                 <Edit className="w-4 h-4" />
                               </Button>
@@ -693,7 +556,6 @@ export default function PaquetesAdminPage() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
 
       {/* Package Form Dialog */}
       <PackageFormDialog
@@ -730,6 +592,6 @@ export default function PaquetesAdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PanelPage>
   );
 }

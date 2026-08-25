@@ -5,6 +5,7 @@ import Link from "next/link"
 import { CalendarClock, Inbox, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { TASK_PRIORITY_META, TASK_STATUS_META, taskRef, type TaskPriority, type TaskStatus } from "@/components/shared/task-status"
+import { EmptyState, PanelPage, Pill, SectionHeading } from "@/components/shared/panel-ui"
 
 interface MyTask {
   id: string
@@ -37,13 +38,12 @@ export default function MyTasksPage() {
   }, {})
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 lg:px-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">Mis tareas</h1>
-        <p className="mt-1 text-sm text-white/45">
-          Todo lo que tienes asignado y sigue abierto, de todos los proyectos.
-        </p>
-      </header>
+    <PanelPage className="max-w-3xl">
+      <SectionHeading
+        badge="Equipo"
+        title="Mis tareas"
+        subtitle="Todo lo que tienes asignado y sigue abierto, de todos los proyectos."
+      />
 
       {loading && (
         <div className="flex items-center gap-2 py-12 text-white/40">
@@ -53,10 +53,11 @@ export default function MyTasksPage() {
       )}
 
       {!loading && tasks.length === 0 && (
-        <div className="flex flex-col items-center gap-2 py-16 text-white/30">
-          <Inbox className="h-6 w-6" />
-          <p className="font-mono text-[11px]">no tienes tareas abiertas asignadas</p>
-        </div>
+        <EmptyState
+          icon={<Inbox />}
+          message="No tienes tareas abiertas asignadas"
+          hint="Aparecerán aquí en cuanto alguien del equipo te asigne una"
+        />
       )}
 
       <div className="space-y-6">
@@ -82,14 +83,9 @@ export default function MyTasksPage() {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-[13px] font-semibold leading-snug text-white/90">{t.name}</p>
-                      <span
-                        className={cn(
-                          "shrink-0 rounded-[2px] border px-1.5 py-px font-mono text-[9px] uppercase tracking-wider",
-                          TASK_PRIORITY_META[t.priority].chip,
-                        )}
-                      >
+                      <Pill className={cn("shrink-0", TASK_PRIORITY_META[t.priority].chip)}>
                         {TASK_PRIORITY_META[t.priority].label}
-                      </span>
+                      </Pill>
                     </div>
                     <p className="mt-1.5 flex flex-wrap items-center gap-x-2 font-mono text-[10px] text-white/35">
                       <span>{taskRef(t.id)} · {t.phaseName.toLowerCase()}</span>
@@ -109,6 +105,6 @@ export default function MyTasksPage() {
           </section>
         ))}
       </div>
-    </div>
+    </PanelPage>
   )
 }

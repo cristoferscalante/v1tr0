@@ -20,14 +20,15 @@ export default function AdminLoginPage() {
   }, [session, status, router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0A1A1A] to-[#001F1F]">
+    // Pantalla de tránsito, no de contenido: no usa PanelPage a propósito.
+    <div className="flex min-h-screen items-center justify-center bg-[#1e2123]">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="text-center"
       >
-        <ShieldCheckIcon className="w-16 h-16 text-[#26FFDF] mx-auto mb-4 animate-pulse" />
-        <p className="text-[#26FFDF] text-lg">Redirigiendo...</p>
+        <ShieldCheckIcon className="mx-auto mb-4 h-12 w-12 animate-pulse text-[#08A696]" />
+        <p className="font-mono text-xs uppercase tracking-wider text-white/45">Redirigiendo…</p>
       </motion.div>
     </div>
   )

@@ -6,6 +6,8 @@ import { motion } from 'framer-motion'
 import { Activity, ArrowLeft, GitBranch, Loader2 } from 'lucide-react'
 import TaskTreeBoard from '@/components/client/TaskTreeBoard'
 import ActivityFeed from '@/components/tasks/ActivityFeed'
+import { Panel } from '@/components/shared/panel-ui'
+import ProjectSummaryStrip from '@/components/client/ProjectSummaryStrip'
 import type { FeedType } from '@/components/shared/project-tree'
 
 interface Phase {
@@ -44,24 +46,6 @@ const containerVariants = {
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
-}
-
-function GlassCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div
-      className={`relative bg-[#06120f]/60 backdrop-blur-xl border border-[#08A696]/20 h-full ${className}`}
-      style={{
-        backgroundImage:
-          'radial-gradient(circle at 12% 8%, rgba(38,255,223,0.07), transparent 42%),' +
-          'radial-gradient(circle at 88% 92%, rgba(8,166,150,0.09), transparent 45%),' +
-          'linear-gradient(rgba(38,255,223,0.05) 1px, transparent 1px),' +
-          'linear-gradient(90deg, rgba(38,255,223,0.05) 1px, transparent 1px)',
-        backgroundSize: 'auto, auto, 26px 26px, 26px 26px',
-      }}
-    >
-      {children}
-    </div>
-  )
 }
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
@@ -125,7 +109,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           espacio disponible (arriba/derecha/abajo); a la izquierda el
           `lg:pl-36` del layout ya deja el respiro del riel flotante. */}
       <motion.div variants={itemVariants} className="flex-1 min-h-0">
-        <GlassCard className="flex flex-col overflow-hidden">
+        <Panel className="flex h-full flex-col overflow-hidden">
           {/* Back: vive dentro del panel, alineado con el arranque del riel de
               navegación (que no se toca, sigue flotando aparte). */}
           <div className="shrink-0 flex items-center gap-1 border-b border-white/5 px-4 py-2">
@@ -153,6 +137,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
+          <ProjectSummaryStrip
+            projectId={project.id}
+            phases={project.phases}
+            progress={project.progress}
+          />
+
           {view === 'actividad' ? (
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5">
               <div className="mx-auto max-w-2xl">
@@ -173,7 +163,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             />
           </div>
           )}
-        </GlassCard>
+        </Panel>
       </motion.div>
     </motion.div>
   )
