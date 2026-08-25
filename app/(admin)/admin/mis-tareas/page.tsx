@@ -65,7 +65,7 @@ export default function MyTasksPage() {
           <section key={projectId}>
             <Link
               href={`/admin/proyectos/${projectId}`}
-              className="text-xs font-semibold uppercase tracking-wide text-[#26FFDE] hover:underline"
+              className="text-xs font-semibold uppercase tracking-wide text-[#26FFDF] hover:underline"
             >
               {list[0]!.projectName}
             </Link>

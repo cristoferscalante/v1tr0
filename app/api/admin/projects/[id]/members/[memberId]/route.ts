@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { phaseTasks, profiles, projectMembers, projectPhases, PROJECT_MEMBER_ROLES } from "@/lib/db/schema"
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { requireAdminSession, AdminAuthError } from "@/lib/auth/require-admin"
 import { logActivity } from "@/lib/activity"
@@ -68,15 +68,31 @@ export async function DELETE(
     .where(eq(projectPhases.projectId, projectId))
     .then((r) => r.map((x) => x.id))
 
-  await db.transaction(async (tx) => {
-    if (phaseIds.length > 0) {
-      await tx
-        .update(phaseTasks)
-        .set({ assignedTo: null, updatedAt: new Date() })
-        .where(and(eq(phaseTasks.assignedTo, member.m.profileId), inArray(phaseTasks.phaseId, phaseIds)))
-    }
-    await tx.delete(projectMembers).where(eq(projectMembers.id, memberId))
-  })
+  // Liberar tareas y quitar al miembro tienen que pasar juntos: si solo se
+  // borra la fila, sus tareas quedan asignadas a alguien que ya no las ve.
+  // El driver neon-http no soporta transacciones, así que van en una sola
+  // sentencia con un CTE que modifica datos — atómica igual.
+  if (phaseIds.length > 0) {
+    // `ARRAY[...]` construido a mano: pasar el arreglo de JS como un solo
+    // parámetro lo expande como `record` y Postgres no lo puede convertir a
+    // uuid[].
+    const idsFases = sql.join(
+      phaseIds.map((id) => sql`${id}::uuid`),
+      sql`, `,
+    )
+    await db.execute(sql`
+      WITH liberadas AS (
+        UPDATE ${phaseTasks}
+           SET assigned_to = NULL, updated_at = now()
+         WHERE assigned_to = ${member.m.profileId}
+           AND phase_id = ANY(ARRAY[${idsFases}])
+        RETURNING 1
+      )
+      DELETE FROM ${projectMembers} WHERE id = ${memberId}::uuid
+    `)
+  } else {
+    await db.delete(projectMembers).where(eq(projectMembers.id, memberId))
+  }
 
   await logActivity({
     projectId,

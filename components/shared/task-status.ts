@@ -49,11 +49,22 @@ export const TASK_STATUS_META: Record<
   },
 }
 
+/**
+ * Prioridad: color solo en el texto, borde siempre neutro.
+ *
+ * El borde ámbar se reserva para el estado de bloqueo y para el chip de una
+ * columna pasada de su límite WIP — los dos elementos focales que permite la
+ * gramática. Cuando la prioridad urgente también traía borde ámbar, el
+ * tablero mostraba diez elementos en acento a la vez y ninguno destacaba:
+ * "una columna llena de acento se lee como ruido y borra la regla focal".
+ *
+ * Prioridad y bloqueo son ejes distintos; no deben pelear por el mismo color.
+ */
 export const TASK_PRIORITY_META: Record<TaskPriority, { label: string; chip: string }> = {
-  low: { label: "Baja", chip: "text-white/40 border-white/15" },
-  medium: { label: "Media", chip: "text-white/60 border-white/20" },
-  high: { label: "Alta", chip: "text-[#26FFDE] border-[#08A696]/50" },
-  urgent: { label: "Urgente", chip: "text-amber-300 border-amber-400/60" },
+  low: { label: "Baja", chip: "text-white/35 border-white/10" },
+  medium: { label: "Media", chip: "text-white/50 border-white/10" },
+  high: { label: "Alta", chip: "text-[#26FFDF] border-white/10" },
+  urgent: { label: "Urgente", chip: "text-amber-300 border-white/10" },
 }
 
 /** Orden en que se pintan las columnas del tablero. */

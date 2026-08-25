@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { phaseTasks, projectPhases, TASK_STATUSES, type TaskStatus } from "@/lib/db/schema"
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray, sql } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { requireAdminSession, AdminAuthError } from "@/lib/auth/require-admin"
 import { logActivity } from "@/lib/activity"
@@ -58,21 +58,28 @@ export async function PATCH(
     return NextResponse.json({ error: "Tarea ajena al proyecto" }, { status: 403 })
   }
 
-  await db.transaction(async (tx) => {
-    for (const m of moves) {
-      await tx
-        .update(phaseTasks)
-        .set({
-          phaseId: m.phaseId,
-          status: m.status,
-          order: m.order,
-          completed: m.status === "done",
-          completedAt: m.status === "done" ? new Date() : null,
-          updatedAt: new Date(),
-        })
-        .where(eq(phaseTasks.id, m.taskId))
-    }
-  })
+  // Una sola sentencia, no N updates ni una transacción: el driver neon-http
+  // no soporta transacciones interactivas, y de todos modos aplicar el
+  // arreglo entero de una vez es lo correcto — un tablero a medio reordenar
+  // es peor que uno sin reordenar.
+  const valores = sql.join(
+    moves.map(
+      (m) => sql`(${m.taskId}::uuid, ${m.phaseId}::uuid, ${m.status}, ${m.order}::int)`,
+    ),
+    sql`, `,
+  )
+
+  await db.execute(sql`
+    UPDATE ${phaseTasks} AS t
+       SET phase_id     = v.phase_id,
+           status       = v.status,
+           "order"      = v."order",
+           completed    = (v.status = 'done'),
+           completed_at = CASE WHEN v.status = 'done' THEN COALESCE(t.completed_at, now()) END,
+           updated_at   = now()
+      FROM (VALUES ${valores}) AS v(task_id, phase_id, status, "order")
+     WHERE t.id = v.task_id
+  `)
 
   await logActivity({
     projectId,

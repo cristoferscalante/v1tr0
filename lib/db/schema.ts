@@ -6,7 +6,7 @@ export const users = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   email: text("email").unique(),
-  emailVerified: timestamp("email_verified", { mode: "date" }),
+  emailVerified: timestamp("email_verified", { mode: "date", withTimezone: true }),
   image: text("image"),
 });
 
@@ -33,7 +33,12 @@ export const accounts = pgTable(
 export const sessions = pgTable("sessions", {
   sessionToken: text("session_token").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
+  // `withTimezone` importa aquí: sin él Postgres guarda un instante naive y
+  // el driver lo reinterpreta en la zona del proceso. Con TZ=America/Bogota
+  // (UTC-5) las sesiones caducaban 5 horas antes de tiempo y NextAuth las
+  // borraba al primer acceso. En Vercel no se veía porque allí el proceso
+  // corre en UTC. Las demás columnas del esquema ya lo llevan.
+  expires: timestamp("expires", { mode: "date", withTimezone: true }).notNull(),
 });
 
 export const verificationTokens = pgTable(
@@ -41,7 +46,7 @@ export const verificationTokens = pgTable(
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
+    expires: timestamp("expires", { mode: "date", withTimezone: true }).notNull(),
   },
   (vt) => ({
     compositePk: primaryKey({ columns: [vt.identifier, vt.token] }),
