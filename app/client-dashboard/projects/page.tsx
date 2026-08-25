@@ -72,7 +72,7 @@ export default function ProjectsPage() {
 
       {projects.length === 0 ? (
         <EmptyState
-          icon={FolderOpen}
+          icon={<FolderOpen />}
           message="No tienes proyectos asignados aún"
           hint="Aparecerán aquí en cuanto el equipo cree el primero"
         />

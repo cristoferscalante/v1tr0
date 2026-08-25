@@ -236,7 +236,7 @@ export default function ProductosAdminPage() {
   return (
     <div
       className={`min-h-screen ${
-        isDark ? "bg-[#02505931]" : "bg-[#e6f7f6]"
+        isDark ? "bg-[#1e2123]" : "bg-[#e6f7f6]"
       } p-4 sm:p-6 lg:p-8`}
     >
       <div className="max-w-7xl mx-auto space-y-6">
@@ -269,7 +269,7 @@ export default function ProductosAdminPage() {
           <div
             className={`rounded-xl ${
               isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
                 : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
             } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
           >
@@ -293,7 +293,7 @@ export default function ProductosAdminPage() {
               <div
                 className={`p-3 rounded-xl ${
                   isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
+                    ? "bg-[#232629] border border-[#08A696]/20"
                     : "bg-[#c5ebe7] border border-[#08A696]/40"
                 }`}
               >
@@ -309,7 +309,7 @@ export default function ProductosAdminPage() {
           <div
             className={`rounded-xl ${
               isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
                 : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
             } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
           >
@@ -333,7 +333,7 @@ export default function ProductosAdminPage() {
               <div
                 className={`p-3 rounded-xl ${
                   isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
+                    ? "bg-[#232629] border border-[#08A696]/20"
                     : "bg-[#c5ebe7] border border-[#08A696]/40"
                 }`}
               >
@@ -349,7 +349,7 @@ export default function ProductosAdminPage() {
           <div
             className={`rounded-xl ${
               isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
                 : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
             } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
           >
@@ -373,7 +373,7 @@ export default function ProductosAdminPage() {
               <div
                 className={`p-3 rounded-xl ${
                   isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
+                    ? "bg-[#232629] border border-[#08A696]/20"
                     : "bg-[#c5ebe7] border border-[#08A696]/40"
                 }`}
               >
@@ -389,7 +389,7 @@ export default function ProductosAdminPage() {
           <div
             className={`rounded-xl ${
               isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+                ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
                 : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
             } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
           >
@@ -413,7 +413,7 @@ export default function ProductosAdminPage() {
               <div
                 className={`p-3 rounded-xl ${
                   isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
+                    ? "bg-[#232629] border border-[#08A696]/20"
                     : "bg-[#c5ebe7] border border-[#08A696]/40"
                 }`}
               >
@@ -431,7 +431,7 @@ export default function ProductosAdminPage() {
         <div
           className={`rounded-xl ${
             isDark
-              ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+              ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
               : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
           } p-6`}
         >
@@ -449,7 +449,7 @@ export default function ProductosAdminPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`pl-10 ${
                   isDark
-                    ? "bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50"
+                    ? "bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50"
                     : "bg-white border-[#08A696]/60 text-[#04423c] placeholder:text-[#085c54]/50"
                 } focus:border-[#26FFDF]`}
               />
@@ -461,7 +461,7 @@ export default function ProductosAdminPage() {
                 <SelectTrigger
                   className={`${
                     isDark
-                      ? "bg-[#02505950] border-[#08A696]/20 text-white"
+                      ? "bg-[#232629] border-[#08A696]/20 text-white"
                       : "bg-white border-[#08A696]/60 text-[#04423c]"
                   } focus:border-[#26FFDF]`}
                 >
@@ -471,7 +471,7 @@ export default function ProductosAdminPage() {
                 <SelectContent
                   className={`${
                     isDark
-                      ? "bg-[#02505931] backdrop-blur-sm border-[#08A696]/20"
+                      ? "bg-[#1e2123] backdrop-blur-sm border-[#08A696]/20"
                       : "bg-white border-[#08A696]/60"
                   }`}
                 >
@@ -524,7 +524,7 @@ export default function ProductosAdminPage() {
         <div
           className={`rounded-xl ${
             isDark
-              ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+              ? "bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20"
               : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
           } overflow-hidden`}
         >
@@ -534,7 +534,7 @@ export default function ProductosAdminPage() {
                 <TableRow
                   className={`${
                     isDark
-                      ? "border-[#08A696]/20 hover:bg-[#02505950]"
+                      ? "border-[#08A696]/20 hover:bg-white/[0.04]"
                       : "border-[#08A696]/60 hover:bg-[#c5ebe7]"
                   }`}
                 >
@@ -595,7 +595,7 @@ export default function ProductosAdminPage() {
                       key={product.id}
                       className={`${
                         isDark
-                          ? "border-[#08A696]/20 hover:bg-[#02505950]"
+                          ? "border-[#08A696]/20 hover:bg-white/[0.04]"
                           : "border-[#08A696]/60 hover:bg-[#c5ebe7]"
                       } transition-colors`}
                     >
@@ -747,7 +747,7 @@ export default function ProductosAdminPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20">
+        <AlertDialogContent className="bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-[#26FFDF] text-xl">
               ¿Estás seguro?

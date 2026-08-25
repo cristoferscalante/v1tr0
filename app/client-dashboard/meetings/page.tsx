@@ -52,7 +52,7 @@ export default function MeetingsPage() {
 
       {meetings.length === 0 ? (
         <EmptyState
-          icon={CalendarClock}
+          icon={<CalendarClock />}
           message="Aún no has solicitado ninguna reunión"
           hint="Entra a un proyecto y usa la pestaña «Agendar»"
         />

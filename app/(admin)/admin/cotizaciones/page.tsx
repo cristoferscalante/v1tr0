@@ -29,7 +29,7 @@ export default async function QuotesPage() {
       <SectionHeading badge="Ventas" title="Cotizaciones" subtitle="Solicitudes de presupuesto recibidas de tus clientes" />
       <div className="grid gap-4">
         {allQuotes.map((q) => (
-          <div key={q.id} className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl p-6">
+          <div key={q.id} className="bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold text-white">{q.projectType}</h3>

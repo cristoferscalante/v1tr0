@@ -44,13 +44,13 @@ export default async function ClientesPage({
               name="q"
               defaultValue={q}
               placeholder="Buscar por nombre o email..."
-              className="w-full bg-[#02505950] border border-[#08A696]/20 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm placeholder:text-textSecondary/60 focus:outline-none focus:border-[#26FFDF] transition-colors"
+              className="w-full bg-[#232629] border border-[#08A696]/20 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm placeholder:text-textSecondary/60 focus:outline-none focus:border-[#26FFDF] transition-colors"
             />
           </div>
           <select
             name="status"
             defaultValue={status ?? ""}
-            className="w-full sm:w-auto bg-[#02505950] border border-[#08A696]/20 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#26FFDF] transition-colors"
+            className="w-full sm:w-auto bg-[#232629] border border-[#08A696]/20 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#26FFDF] transition-colors"
           >
             <option value="">Todos los estados</option>
             <option value="active">Activo</option>
@@ -67,7 +67,7 @@ export default async function ClientesPage({
 
       {filtered.length === 0 ? (
         <EmptyState
-          icon={Users}
+          icon={<Users />}
           message="No hay clientes que coincidan con el filtro"
           hint="Los clientes aparecen automáticamente al iniciar sesión por primera vez"
         />
@@ -89,7 +89,7 @@ export default async function ClientesPage({
                 {filtered.map((c) => (
                   <tr
                     key={c.id}
-                    className="border-b border-[#08A696]/10 last:border-0 hover:bg-[#02505950] transition-colors"
+                    className="border-b border-[#08A696]/10 last:border-0 hover:bg-white/[0.04] transition-colors"
                   >
                     <td className="p-4">
                       <Link

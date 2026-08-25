@@ -184,7 +184,7 @@ export default function ClientSecretsVault({ clientId }: { clientId: string }) {
       ) : (
         <div className="space-y-2">
           {secrets.map((s) => (
-            <div key={s.id} className="rounded-xl border border-[#08A696]/15 bg-[#02505931] p-3">
+            <div key={s.id} className="rounded-xl border border-[#08A696]/15 bg-[#1e2123] p-3">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-white text-sm font-medium truncate">{s.label}</p>

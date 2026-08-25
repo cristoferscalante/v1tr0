@@ -60,7 +60,7 @@ export default function KanbanCard({ project }: { project: KanbanProject }) {
       style={style}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`group relative aspect-square rounded-xl border overflow-hidden bg-[#02505950] transition-colors duration-200 ${
+      className={`group relative aspect-square rounded-xl border overflow-hidden bg-[#232629] transition-colors duration-200 ${
         isDragging ? "border-[#26FFDF]" : "border-[#08A696]/20 hover:border-[#08A696]/60"
       }`}
     >

@@ -29,7 +29,7 @@ export default async function OrdersPage() {
   return (
     <PanelPage>
       <SectionHeading badge="Tienda" title="Pedidos" subtitle="Compras realizadas en la tienda" />
-      <div className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl overflow-hidden">
+      <div className="bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
         <table className="w-full min-w-[720px] md:min-w-0 text-sm">
           <thead>
@@ -45,7 +45,7 @@ export default async function OrdersPage() {
           </thead>
           <tbody>
             {allOrders.map((o) => (
-              <tr key={o.id} className="border-b border-[#08A696]/10 hover:bg-[#02505950]">
+              <tr key={o.id} className="border-b border-[#08A696]/10 hover:bg-white/[0.04]">
                 <td className="p-4 text-white font-mono text-xs">{o.orderNumber}</td>
                 <td className="p-4 text-textSecondary">{o.clientEmail ?? "—"}</td>
                 <td className="p-4 text-white">${o.total} {o.currency}</td>

@@ -80,7 +80,7 @@ export const designTokens = {
   typography: {
     fontFamily: {
       sans: 'var(--font-bricolage-grotesque), ui-sans-serif, system-ui, sans-serif',
-      mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+      mono: 'var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
     },
     fontSize: {
       xs: '0.75rem',      // 12px

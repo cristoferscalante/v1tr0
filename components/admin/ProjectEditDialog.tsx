@@ -84,7 +84,7 @@ export default function ProjectEditDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="group relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] rounded-2xl shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10">
+        <Button className="group relative bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] rounded-2xl shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[#08A696]/10">
           <Plus className="h-4 w-4 mr-2" /> Nuevo proyecto
         </Button>
       </DialogTrigger>
@@ -99,7 +99,7 @@ export default function ProjectEditDialog() {
           <div>
             <Label>Logo / banner</Label>
             <div className="mt-1.5 flex items-center gap-4">
-              <div className="relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-[#08A696]/30 bg-[#02505950] flex items-center justify-center">
+              <div className="relative shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-[#08A696]/30 bg-[#232629] flex items-center justify-center">
                 {form.coverImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={form.coverImage} alt="" className="w-full h-full object-cover" />
@@ -127,7 +127,7 @@ export default function ProjectEditDialog() {
                   onUploadError={(e) => { toast.error(e.message) }}
                   appearance={{
                     button:
-                      "relative bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] rounded-xl text-xs font-medium shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 after:hidden",
+                      "relative bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] rounded-xl text-xs font-medium shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[#08A696]/10 after:hidden",
                     allowedContent: "text-[10px] text-textSecondary/60 mt-1",
                   }}
                   content={{ button: form.coverImage ? "Cambiar imagen" : "Subir imagen" }}
@@ -198,7 +198,7 @@ export default function ProjectEditDialog() {
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="relative w-full sm:w-auto bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] rounded-2xl font-semibold shadow-lg transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-[#02505950] group-hover:shadow-xl group-hover:shadow-[#08A696]/10"
+              className="relative w-full sm:w-auto bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] rounded-2xl font-semibold shadow-lg transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-white/[0.04] group-hover:shadow-xl group-hover:shadow-[#08A696]/10"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Crear proyecto
