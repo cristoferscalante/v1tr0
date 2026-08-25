@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useTheme } from "@/components/theme-provider"
 import Image from "next/image"
 import { motion, useMotionValue, useSpring } from "framer-motion"
 import { DevIllustration } from "@/components/servicios/ServiciosHero"
@@ -15,8 +14,8 @@ import { accentText } from "@/components/home/shared/surface"
 // ============================================================================
 
 /** Tienda: vitrina de productos que respira. */
-function TiendaIllustration({ isDark }: { isDark: boolean; glow?: boolean }) {
-  const stroke = isDark ? "#26FFDF" : "#08A696"
+function TiendaIllustration({ }: { glow?: boolean }) {
+  const stroke = "#26FFDF"
   const tiles = [
     { x: 20, y: 18 },
     { x: 76, y: 18 },
@@ -71,8 +70,8 @@ function TiendaIllustration({ isDark }: { isDark: boolean; glow?: boolean }) {
 }
 
 /** Blog: artículo con líneas de texto que se van escribiendo. */
-function BlogIllustration({ isDark }: { isDark: boolean; glow?: boolean }) {
-  const stroke = isDark ? "#26FFDF" : "#08A696"
+function BlogIllustration({ }: { glow?: boolean }) {
+  const stroke = "#26FFDF"
   const lines = [96, 76, 88, 60]
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden">
@@ -164,7 +163,7 @@ type HeroCard = (typeof CARDS)[number]
  * Tarjeta del hero. La figura reacciona al cursor: crece un poco y se inclina
  * hacia el lado donde está el puntero dentro de la tarjeta.
  */
-function HeroNavCard({ card, isDark }: { card: HeroCard; isDark: boolean }) {
+function HeroNavCard({ card }: { card: HeroCard }) {
   const { href, title, Illustration, figure } = card
 
   // La figura sólo crece: no se desplaza, para que siga centrada.
@@ -188,11 +187,7 @@ function HeroNavCard({ card, isDark }: { card: HeroCard; isDark: boolean }) {
       aria-label={title}
       onMouseMove={handlePointerMove}
       onMouseLeave={handlePointerLeave}
-      className={`relative flex flex-col min-h-[260px] sm:min-h-[400px] text-left rounded-3xl border p-4 sm:p-6 transition-all duration-300 ${
-        isDark
-          ? "bg-[#02505920] border-[#08A696]/15 hover:bg-[#02505950] hover:border-[#26FFDF]/60 hover:shadow-lg hover:shadow-[#08A696]/20"
-          : "bg-white/60 border-[#08A696]/20 hover:bg-[#c5ebe7] hover:border-[#08A696]/60 hover:shadow-lg hover:shadow-[#08A696]/20"
-      } focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60`}
+      className={`relative flex flex-col min-h-[260px] sm:min-h-[400px] text-left rounded-3xl border p-4 sm:p-6 transition-all duration-300 bg-[#02505920] border-[#08A696]/15 hover:bg-[#02505950] hover:border-[#26FFDF]/60 hover:shadow-lg hover:shadow-[#08A696]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60`}
     >
       {/* Figura de la categoría: centrada, 85% dentro de la tarjeta y 15% asomando.
           El contenedor posiciona con clases y el transform de motion va dentro:
@@ -219,7 +214,7 @@ function HeroNavCard({ card, isDark }: { card: HeroCard; isDark: boolean }) {
       {/* La animación baja del centro y queda bajo la figura */}
       <div className="relative flex-1 mt-3 flex items-end justify-center">
         <div className="w-full max-w-[280px] aspect-[2/1]">
-          <Illustration isDark={isDark} glow={false} />
+          <Illustration glow={false} />
         </div>
       </div>
 
@@ -230,13 +225,11 @@ function HeroNavCard({ card, isDark }: { card: HeroCard; isDark: boolean }) {
 }
 
 export default function HeroNavCards() {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
       {CARDS.map((card) => (
-        <HeroNavCard key={card.href} card={card} isDark={isDark} />
+        <HeroNavCard key={card.href} card={card} />
       ))}
     </div>
   )

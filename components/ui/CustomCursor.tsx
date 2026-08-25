@@ -14,7 +14,7 @@ export default function CustomCursor() {
   const [showClickText, setShowClickText] = useState(false)
   
   // Color principal según el tema
-  const cursorColor = isDark ? "#26FFDF" : "#08A696"
+  const cursorColor = "#26FFDF"
 
   useEffect(() => {
     const cursor = cursorRef.current

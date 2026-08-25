@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
 
 export interface Product {
   id: string;
@@ -34,8 +33,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onToggleFavorite,
   isFavorite = false,
 }) => {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   const isOutOfStock = product.stock === 0;
   const [localFavorite, setLocalFavorite] = useState(isFavorite);
 
@@ -63,17 +60,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <div className="relative group w-full h-full text-left focus:outline-none focus:ring-2 focus:ring-[#08A696] focus:ring-opacity-50 focus:ring-offset-2 rounded-2xl block transition-all duration-300 hover:transform hover:-translate-y-1">
       {/* Gradiente exterior - mismo estilo que BlogCard */}
       <div
-        className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
+        className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
       ></div>
 
       {/* Card principal con mismo estilo que BlogCard */}
       <article
-        className={`relative h-full flex flex-col shop-surface backdrop-blur-sm rounded-2xl border shop-border transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] dark:group-hover:border-[#26FFDF]/60 ${isDark ? "group-hover:bg-[#232629]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
+        className={`relative h-full flex flex-col shop-surface backdrop-blur-sm rounded-2xl border shop-border transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] dark:group-hover:border-[#26FFDF]/60 group-hover:bg-[#232629] shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
       >
         {/* Badge opcional (Featured, Nuevo, etc) */}
         {product.badge && (
           <div className="absolute top-2 left-2 md:top-4 md:left-4 z-10">
-            <span className={`text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-300 ${isDark ? "bg-[#08A696]/10 text-[#26FFDF] border-[#08a696]/50" : "bg-[#08A696]/5 text-[#08a696] border-[#08a696]/30"} border`}>
+            <span className={`text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-300 bg-[#08A696]/10 text-[#26FFDF] border-[#08a696]/50 border`}>
               {product.badge}
             </span>
           </div>
@@ -82,14 +79,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Favorite Button */}
         <button
           onClick={handleToggleFavorite}
-          className={`absolute top-2 right-2 md:top-4 md:right-4 z-10 p-1.5 md:p-2.5 rounded-full backdrop-blur-sm border transition-all duration-300 hover:scale-110 shop-inset shop-border shop-border-hover ${isDark ? "hover:bg-[#2b2e31]" : "hover:bg-[#c5ebe7]"}`}
+          className={`absolute top-2 right-2 md:top-4 md:right-4 z-10 p-1.5 md:p-2.5 rounded-full backdrop-blur-sm border transition-all duration-300 hover:scale-110 shop-inset shop-border shop-border-hover hover:bg-[#2b2e31]`}
           aria-label={localFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
           <Heart
             className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${
               localFavorite
                 ? "fill-primary text-primary"
-                : isDark ? "text-[#a0a0a0] hover:text-[#26FFDF]" : "text-[#666666] hover:text-[#08A696]"
+                : "text-[#a0a0a0] hover:text-[#26FFDF]"
             }`}
           />
         </button>
@@ -111,10 +108,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex-1 flex flex-col p-4 md:p-6">
             {/* Product Name + Likes */}
             <div className="flex items-center justify-between gap-2 mb-3">
-              <h3 className={`text-lg md:text-xl font-bold line-clamp-1 transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+              <h3 className={`text-lg md:text-xl font-bold line-clamp-1 transition-colors duration-300 text-[#26FFDF]`}>
                 {product.name}
               </h3>
-              <div className={`flex items-center gap-1 text-xs ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>
+              <div className={`flex items-center gap-1 text-xs text-[#a0a0a0]`}>
                 <Heart className={`w-3 h-3 ${localFavorite ? "fill-primary text-primary" : ""}`} />
                 <span className="font-medium">{formatLikes(productLikes)}</span>
               </div>
@@ -122,7 +119,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
             {/* Description */}
             <p
-              className={`text-sm mb-4 flex-1 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}
+              className={`text-sm mb-4 flex-1 text-[#a0a0a0]`}
               style={{
                 lineHeight: '1.5rem',
                 minHeight: '3rem',
@@ -134,13 +131,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </p>
 
             {/* Price and Add to Cart */}
-            <div className={`flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-0 sm:justify-between pt-4 border-t mt-auto ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"}`}>
+            <div className={`flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-0 sm:justify-between pt-4 border-t mt-auto border-[#08A696]/20`}>
               <div className="flex items-baseline gap-2">
-                <span className={`text-xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                <span className={`text-xl font-bold text-[#26FFDF]`}>
                   ${product.price.toFixed(2)}
                 </span>
                 {product.originalPrice && (
-                  <span className={`text-sm line-through ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>
+                  <span className={`text-sm line-through text-[#a0a0a0]`}>
                     ${product.originalPrice.toFixed(2)}
                   </span>
                 )}
@@ -156,7 +153,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 disabled={isOutOfStock}
                 className={`text-sm sm:text-xs px-4 sm:px-3 py-2.5 sm:py-1.5 min-h-[44px] sm:min-h-0 w-full sm:w-auto rounded-full backdrop-blur-sm ${
                   isOutOfStock
-                    ? `shop-inset shop-border border font-medium ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"} cursor-not-allowed`
+                    ? `shop-inset shop-border border font-medium text-[#a0a0a0] cursor-not-allowed`
                     : "shop-btn"
                 }`}
               >
@@ -168,12 +165,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Out of Stock Overlay */}
         {isOutOfStock && (
-          <div className={`absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center z-20 ${isDark ? "bg-[#1e2123]/80" : "bg-[#e6f7f680]"}`}>
+          <div className={`absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center z-20 bg-[#1e2123]/80`}>
             <div className="text-center space-y-1 md:space-y-2">
-              <span className={`font-bold text-lg md:text-2xl uppercase tracking-wider ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+              <span className={`font-bold text-lg md:text-2xl uppercase tracking-wider text-[#26FFDF]`}>
                 Agotado
               </span>
-              <p className={`text-xs md:text-sm ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>Próximamente disponible</p>
+              <p className={`text-xs md:text-sm text-[#a0a0a0]`}>Próximamente disponible</p>
             </div>
           </div>
         )}

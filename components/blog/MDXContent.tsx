@@ -11,7 +11,6 @@ import Image, { type ImageProps } from "next/image"
 import Link from "next/link"
 import { Copy, Check } from "lucide-react"
 import { slugify } from "@/lib/utils"
-import { useTheme } from "@/components/theme-provider"
 
 interface MDXContentProps {
   content: string
@@ -19,8 +18,6 @@ interface MDXContentProps {
 
 function CopyButton({ text }: { text: string }) {
   const [isCopied, setIsCopied] = useState(false)
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   const copy = async () => {
     try {
@@ -35,11 +32,11 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={copy}
-      className={`absolute top-3 right-3 p-2 rounded-md transition-all duration-300 z-10 ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 border border-[#08A696]/30" : "bg-[#08A696]/5 hover:bg-[#08A696]/10 border border-[#08A696]/20"} backdrop-blur-sm`}
+      className={`absolute top-3 right-3 p-2 rounded-md transition-all duration-300 z-10 bg-[#08A696]/10 hover:bg-[#08A696]/20 border border-[#08A696]/30 backdrop-blur-sm`}
       aria-label="Copiar código"
       title="Copiar código"
     >
-      {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className={`h-4 w-4 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />}
+      {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className={`h-4 w-4 text-[#26FFDF]`} />}
     </button>
   )
 }
@@ -62,12 +59,10 @@ interface CodeBlockProps extends HTMLAttributes<HTMLElement> {
 const CodeBlock: FC<CodeBlockProps> = ({ inline, className, children, ...props }) => {
   const match = /language-(\w+)/.exec(className || "")
   const language = match ? match[1] : ""
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   
   if (inline) {
     return (
-      <code className={`rounded px-1.5 py-0.5 font-mono text-sm backdrop-blur-sm transition-all duration-300 ${isDark ? "bg-[#08A696]/10 text-[#26FFDF] border border-[#08a696]/30" : "bg-[#08A696]/5 text-[#08a696] border border-[#08a696]/20"}`} {...props}>
+      <code className={`rounded px-1.5 py-0.5 font-mono text-sm backdrop-blur-sm transition-all duration-300 bg-[#08A696]/10 text-[#26FFDF] border border-[#08a696]/30`} {...props}>
         {children}
       </code>
     )
@@ -77,15 +72,15 @@ const CodeBlock: FC<CodeBlockProps> = ({ inline, className, children, ...props }
     <div className="relative group mb-6">
       {/* Gradiente exterior igual a las cards */}
       <div
-        className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
+        className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
       ></div>
       
       {/* Container del código con glassmorphism */}
       <div 
-        className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
+        className={`relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] group-hover:bg-[#02505950] shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
       >
         {language && (
-          <div className={`absolute top-3 left-4 text-xs px-3 py-1.5 rounded-full z-10 backdrop-blur-sm transition-all duration-300 ${isDark ? "bg-[#08A696]/10 text-[#26FFDF] border border-[#08a696]/50" : "bg-[#08A696]/5 text-[#08a696] border border-[#08a696]/30"}`}>
+          <div className={`absolute top-3 left-4 text-xs px-3 py-1.5 rounded-full z-10 backdrop-blur-sm transition-all duration-300 bg-[#08A696]/10 text-[#26FFDF] border border-[#08a696]/50`}>
             {language}
           </div>
         )}
@@ -112,8 +107,6 @@ const CodeBlock: FC<CodeBlockProps> = ({ inline, className, children, ...props }
 }
 
 export function MDXContent({ content }: MDXContentProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   
   return (
     <ReactMarkdown
@@ -128,7 +121,7 @@ export function MDXContent({ content }: MDXContentProps) {
             <h1
               id={id}
               data-section="1"
-              className={`mt-10 mb-6 text-3xl font-bold scroll-mt-20 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}
+              className={`mt-10 mb-6 text-3xl font-bold scroll-mt-20 text-[#26FFDF]`}
               {...props}
             >
               {children}
@@ -143,7 +136,7 @@ export function MDXContent({ content }: MDXContentProps) {
             <h2
               id={id}
               data-section="2"
-              className={`mt-8 mb-4 text-2xl font-bold scroll-mt-20 pb-2 ${isDark ? "text-[#26FFDF] border-b border-[#08A696]/20" : "text-[#08A696] border-b border-[#08A696]/30"}`}
+              className={`mt-8 mb-4 text-2xl font-bold scroll-mt-20 pb-2 text-[#26FFDF] border-b border-[#08A696]/20`}
               {...props}
             >
               {children}
@@ -155,7 +148,7 @@ export function MDXContent({ content }: MDXContentProps) {
           const id = slugify(text)
 
           return (
-            <h3 id={id} data-section="3" className={`mt-6 mb-4 text-xl font-bold scroll-mt-20 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} {...props}>
+            <h3 id={id} data-section="3" className={`mt-6 mb-4 text-xl font-bold scroll-mt-20 text-[#26FFDF]`} {...props}>
               {children}
             </h3>
           )
@@ -165,7 +158,7 @@ export function MDXContent({ content }: MDXContentProps) {
           const id = slugify(text)
 
           return (
-            <h4 id={id} data-section="4" className={`mt-6 mb-4 text-lg font-bold scroll-mt-20 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} {...props}>
+            <h4 id={id} data-section="4" className={`mt-6 mb-4 text-lg font-bold scroll-mt-20 text-[#26FFDF]`} {...props}>
               {children}
             </h4>
           )
@@ -186,7 +179,7 @@ export function MDXContent({ content }: MDXContentProps) {
               <figure className="my-8 relative group">
                 {/* Gradiente exterior para la imagen */}
                 <div
-                  className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
+                  className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
                 ></div>
                 
                 <div className="relative overflow-hidden rounded-2xl shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100">
@@ -198,13 +191,13 @@ export function MDXContent({ content }: MDXContentProps) {
                     className="w-full h-auto transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
-                {alt && <figcaption className={`mt-2 text-center text-sm ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>{alt}</figcaption>}
+                {alt && <figcaption className={`mt-2 text-center text-sm text-[#a0a0a0]`}>{alt}</figcaption>}
               </figure>
             )
           }
 
           return (
-            <p className={`mb-6 leading-relaxed ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`} {...props}>
+            <p className={`mb-6 leading-relaxed text-[#a0a0a0]`} {...props}>
               {children}
             </p>
           )
@@ -217,17 +210,17 @@ export function MDXContent({ content }: MDXContentProps) {
           return (
             <Link
               href={href || "#"}
-              className={`font-medium transition-all duration-300 hover:underline decoration-2 underline-offset-2 ${isDark ? "text-[#26FFDF] hover:text-[#08A696]" : "text-[#08A696] hover:text-[#025159]"}`}
+              className={`font-medium transition-all duration-300 hover:underline decoration-2 underline-offset-2 text-[#26FFDF] hover:text-[#08A696]`}
               {...filteredProps}
             />
           )
         },
-        ul: ({ ...props }) => <ul className={`mb-6 ml-6 list-disc space-y-2 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`} {...props} />,
-        ol: ({ ...props }) => <ol className={`mb-6 ml-6 list-decimal space-y-2 ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`} {...props} />,
+        ul: ({ ...props }) => <ul className={`mb-6 ml-6 list-disc space-y-2 text-[#a0a0a0]`} {...props} />,
+        ol: ({ ...props }) => <ol className={`mb-6 ml-6 list-decimal space-y-2 text-[#a0a0a0]`} {...props} />,
         li: ({ ...props }) => <li className="mb-1" {...props} />,
         blockquote: ({ ...props }) => (
           <blockquote
-            className={`mb-6 pl-6 py-4 pr-4 italic relative rounded-r-2xl backdrop-blur-sm transition-all duration-300 ${isDark ? "border-l-4 border-[#08A696] bg-[#08A696]/10 text-[#a0a0a0]" : "border-l-4 border-[#08A696] bg-[#08A696]/5 text-[#666666]"}`}
+            className={`mb-6 pl-6 py-4 pr-4 italic relative rounded-r-2xl backdrop-blur-sm transition-all duration-300 border-l-4 border-[#08A696] bg-[#08A696]/10 text-[#a0a0a0]`}
             {...props}
           />
         ),

@@ -2,7 +2,6 @@
 
 import { forwardRef, useRef } from "react"
 import { motion } from "framer-motion"
-import { useTheme } from "@/components/theme-provider"
 import { GitHubIcon } from "@/lib/icons"
 import Image from "next/image"
 import Link from "next/link"
@@ -67,8 +66,6 @@ interface FooterSectionProps {
 }
 
 const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   // La tienda usa su propio sistema de superficies (ver .shop-* en globals.css)
   const pathname = usePathname()
   const isShop = pathname?.startsWith("/tienda") ?? false
@@ -84,9 +81,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
     }
   })
 
-  const tituloColumna = `text-xs font-semibold uppercase tracking-wider mb-4 ${
-    isDark ? "text-[#26FFDF]/70" : "text-[#085c54]/80"
-  }`
+  const tituloColumna = `text-xs font-semibold uppercase tracking-wider mb-4 text-[#26FFDF]/70`
 
   const enlaceColumna =
     "text-sm text-[#04423c] dark:text-[#b2fff6] transition-colors duration-200 hover:text-[#08A696] dark:hover:text-[#26FFDF]"
@@ -104,8 +99,8 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
       */
       className={`footer-section w-full ${
         isShop
-          ? (isDark ? "bg-[#1e2123]" : "bg-[#e6f7f6] backdrop-blur-sm")
-          : (isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm")
+          ? ("bg-[#1e2123]")
+          : ("bg-[#02505931] backdrop-blur-sm")
       } pt-16 sm:pt-20 pb-24 sm:pb-12 px-4 sm:px-6 font-sans relative`}
       aria-label="Pie de página V1TR0"
     >
@@ -115,11 +110,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             Impulsando tu Éxito Digital
           </h2>
           <div
-            className={`w-16 sm:w-20 h-1 ${
-              isDark
-                ? "bg-gradient-to-r from-[#08A696] to-[#26FFDF]"
-                : "bg-gradient-to-r from-[#08A696] to-[#1e7d7d]"
-            } mx-auto mt-5 rounded-full`}
+            className={`w-16 sm:w-20 h-1 bg-gradient-to-r from-[#08A696] to-[#26FFDF] mx-auto mt-5 rounded-full`}
           />
         </div>
 
@@ -136,7 +127,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
               como decorativo porque la razón social lo acompaña justo debajo.
             */}
             <Image
-              src={isDark ? "/imagenes/logos/v1tr0-logo.svg" : "/imagenes/logos/Imagotipo%20%20modo%20claro5.svg"}
+              src={"/imagenes/logos/v1tr0-logo.svg"}
               alt=""
               aria-hidden="true"
               width={56}
@@ -222,9 +213,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             que es `fixed` y por tanto se monta sobre lo que quede al final del
             scroll: sin esto, tapaba el aviso de copyright.
           */
-          className={`footer-bottom animate-element relative z-10 mt-12 flex flex-col items-center gap-6 border-t pt-8 sm:mt-14 md:flex-row md:justify-between md:pl-20 ${
-            isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"
-          }`}
+          className={`footer-bottom animate-element relative z-10 mt-12 flex flex-col items-center gap-6 border-t pt-8 sm:mt-14 md:flex-row md:justify-between md:pl-20 border-[#08A696]/20`}
         >
           <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-5 sm:text-left">
             <p className="text-sm font-medium text-[#04423c] dark:text-[#b2fff6]">

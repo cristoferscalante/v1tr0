@@ -6,7 +6,6 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { ArrowRight, GitBranch } from "lucide-react" // Importamos directamente de lucide-react
-import { useTheme } from "@/components/theme-provider"
 import Link from "next/link"
 
 // 1) Define la interfaz de cada proyecto
@@ -34,8 +33,6 @@ export default function PortfolioBanner({
   // gradientStyle = "from-custom-3/30 via-custom-2/20 to-custom-4/30",
 }: PortfolioBannerProps) {
   // const [hoveredProject, setHoveredProject] = useState<number | null>(null)
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   // Añadir este estado para controlar qué imagen está brillando
   const [glowingProjectId, setGlowingProjectId] = useState<number | null>(null)
@@ -72,12 +69,12 @@ export default function PortfolioBanner({
   //   : lightGradientMap[gradientStyle] || lightGradientMap["default"]
 
   // Colores base según el tema
-  // const baseBackground = isDark ? "#050505" : "#f5f5f5" // Gris muy claro para modo claro
-  const textColor = isDark ? "#ffffff" : "#333333" // Texto más oscuro para modo claro
-  const mutedTextColor = isDark ? "#a0a0a0" : "#666666" // Texto secundario para modo claro
-  const highlightColor = isDark ? "#26ffdf" : "#08a696" // Mantener el color de acento
-  const borderColor = isDark ? "#02515950" : "#d0d0d080" // Borde gris para modo claro
-  const cardBackground = isDark ? "#07070780" : "#ffffff80" // Fondo de tarjeta
+  // const baseBackground = "#050505" // Gris muy claro para modo claro
+  const textColor = "#ffffff" // Texto más oscuro para modo claro
+  const mutedTextColor = "#a0a0a0" // Texto secundario para modo claro
+  const highlightColor = "#26ffdf" // Mantener el color de acento
+  const borderColor = "#02515950" // Borde gris para modo claro
+  const cardBackground = "#07070780" // Fondo de tarjeta
 
   return (
     <section
@@ -108,7 +105,7 @@ export default function PortfolioBanner({
           <span
             className="inline-block px-4 py-1.5 rounded-full backdrop-blur-sm text-sm font-medium mb-4"
             style={{
-              background: isDark ? "#07070780" : "#e0e0e080",
+              background: "#07070780",
               color: highlightColor,
             }}
           >
@@ -120,7 +117,7 @@ export default function PortfolioBanner({
           <div
             className="w-24 h-1.5 rounded-full mx-auto"
             style={{
-              background: `linear-gradient(to right, ${isDark ? "#08a696" : "#08a696"}, ${isDark ? "#26ffdf" : "#1e7d7d"})`,
+              background: `linear-gradient(to right, #08a696, #26ffdf)`,
             }}
           ></div>
         </motion.div>
@@ -145,7 +142,7 @@ export default function PortfolioBanner({
                   borderWidth: "1px",
                   borderStyle: "solid",
                   borderColor: borderColor,
-                  boxShadow: isDark ? "0 10px 30px rgba(0, 0, 0, 0.2)" : "0 10px 30px rgba(0, 0, 0, 0.05)",
+                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
                 }}
               >
                 {/* Hacer toda la tarjeta clickable */}
@@ -176,9 +173,7 @@ export default function PortfolioBanner({
                   <div
                     className="absolute inset-0 z-[5]"
                     style={{
-                      background: isDark
-                        ? "linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%)"
-                        : "linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0) 100%)",
+                      background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%)",
                       pointerEvents: "none",
                     }}
                   ></div>
@@ -247,7 +242,7 @@ export default function PortfolioBanner({
                     <div
                       className="w-6 h-6 rounded-full flex items-center justify-center transition-colors"
                       style={{
-                        background: isDark ? "#02515950" : "#d8d8d880",
+                        background: "#02515950",
                       }}
                     >
                       <ArrowRight className="w-3 h-3" />
@@ -268,10 +263,10 @@ export default function PortfolioBanner({
         >
           <Link
             href="/portfolio"
-            className={`inline-flex items-center gap-2 px-8 py-4 ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} font-medium transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] ${isDark ? "hover:bg-[#02505950]" : "hover:bg-[#c5ebe7]"}`}
+            className={`inline-flex items-center gap-2 px-8 py-4 bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 font-medium transition-all duration-300 transform scale-95 hover:scale-100 hover:border-[#08A696] hover:bg-[#02505950]`}
           >
-            <GitBranch className={`w-5 h-5 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
-            <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-colors duration-300`}>
+            <GitBranch className={`w-5 h-5 text-[#26FFDF]`} />
+            <span className={`text-[#26FFDF] transition-colors duration-300`}>
               Explorar todos los proyectos
             </span>
           </Link>

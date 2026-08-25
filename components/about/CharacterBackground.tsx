@@ -57,8 +57,8 @@ const CharacterBackground = ({ style = undefined }: CharacterBackgroundProps) =>
         svg.innerHTML = `
           <defs>
             <radialGradient id="headGradient" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" style="stop-color:${isDark ? "#26ffdf" : "#08a696"};stop-opacity:0.9" />
-              <stop offset="100%" style="stop-color:${isDark ? "#1a8a7a" : "#065a52"};stop-opacity:0.7" />
+              <stop offset="0%" style="stop-color:#26ffdf;stop-opacity:0.9" />
+              <stop offset="100%" style="stop-color:#1a8a7a;stop-opacity:0.7" />
             </radialGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -73,8 +73,8 @@ const CharacterBackground = ({ style = undefined }: CharacterBackgroundProps) =>
           <circle cx="200" cy="150" r="120" fill="url(#headGradient)" filter="url(#glow)" />
           
           <!-- Eyes -->
-          <rect x="120" y="120" width="50" height="30" rx="5" fill="${isDark ? "#000" : "#fff"}" />
-          <rect x="230" y="120" width="50" height="30" rx="5" fill="${isDark ? "#000" : "#fff"}" />
+          <rect x="120" y="120" width="50" height="30" rx="5" fill="#000" />
+          <rect x="230" y="120" width="50" height="30" rx="5" fill="#000" />
           
           <!-- Body -->
           <rect x="150" y="270" width="100" height="180" rx="20" fill="url(#headGradient)" filter="url(#glow)" />
@@ -107,28 +107,28 @@ const CharacterBackground = ({ style = undefined }: CharacterBackgroundProps) =>
           </defs>
           
           <!-- Head outline -->
-          <circle cx="200" cy="150" r="120" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="3" filter="url(#outlineGlow)" />
+          <circle cx="200" cy="150" r="120" fill="none" stroke="#26ffdf" stroke-width="3" filter="url(#outlineGlow)" />
           
           <!-- Eyes outline -->
-          <rect x="120" y="120" width="50" height="30" rx="5" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <rect x="230" y="120" width="50" height="30" rx="5" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
+          <rect x="120" y="120" width="50" height="30" rx="5" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <rect x="230" y="120" width="50" height="30" rx="5" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
           
           <!-- Body outline -->
-          <rect x="150" y="270" width="100" height="180" rx="20" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="3" filter="url(#outlineGlow)" />
+          <rect x="150" y="270" width="100" height="180" rx="20" fill="none" stroke="#26ffdf" stroke-width="3" filter="url(#outlineGlow)" />
           
           <!-- Tentacles outline -->
-          <ellipse cx="120" cy="500" rx="15" ry="120" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <ellipse cx="160" cy="520" rx="12" ry="140" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <ellipse cx="200" cy="530" rx="15" ry="150" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <ellipse cx="240" cy="520" rx="12" ry="140" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <ellipse cx="280" cy="500" rx="15" ry="120" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
+          <ellipse cx="120" cy="500" rx="15" ry="120" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <ellipse cx="160" cy="520" rx="12" ry="140" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <ellipse cx="200" cy="530" rx="15" ry="150" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <ellipse cx="240" cy="520" rx="12" ry="140" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <ellipse cx="280" cy="500" rx="15" ry="120" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
           
           <!-- Tentacle ends outline -->
-          <circle cx="120" cy="620" r="12" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <circle cx="160" cy="660" r="10" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <circle cx="200" cy="680" r="12" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <circle cx="240" cy="660" r="10" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
-          <circle cx="280" cy="620" r="12" fill="none" stroke="${isDark ? "#26ffdf" : "#08a696"}" stroke-width="2" filter="url(#outlineGlow)" />
+          <circle cx="120" cy="620" r="12" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <circle cx="160" cy="660" r="10" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <circle cx="200" cy="680" r="12" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <circle cx="240" cy="660" r="10" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
+          <circle cx="280" cy="620" r="12" fill="none" stroke="#26ffdf" stroke-width="2" filter="url(#outlineGlow)" />
         `
       }
 

@@ -10,7 +10,6 @@ import {
   setShopSearchQuery,
   useShopSearch,
 } from "../search/shopSearchStore";
-import { useTheme } from "@/components/theme-provider";
 import { motion } from "framer-motion";
 import { surfaceInner, surfaceInnerActive } from "@/components/home/shared/surface";
 import { ShopSearchTrigger } from "../search/ShopSearchTrigger";
@@ -26,8 +25,6 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   products,
   onAddToCart,
 }) => {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   const [activeCategory, setActiveCategory] = useState("all");
   // La búsqueda se controla desde la lupa del header (store compartido).
   const { query: searchQuery } = useShopSearch();
@@ -142,7 +139,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <button key={1} onClick={() => handlePageChange(1)} className={`px-4 py-2 font-medium ${baseBtnClass}`}>1</button>
       );
       if (startPage > 2) {
-        buttons.push(<span key="ellipsis1" className={`px-2 font-medium ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>...</span>);
+        buttons.push(<span key="ellipsis1" className={`px-2 font-medium text-[#a0a0a0]`}>...</span>);
       }
     }
 
@@ -160,7 +157,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        buttons.push(<span key="ellipsis2" className={`px-2 font-medium ${isDark ? "text-[#a0a0a0]" : "text-[#666666]"}`}>...</span>);
+        buttons.push(<span key="ellipsis2" className={`px-2 font-medium text-[#a0a0a0]`}>...</span>);
       }
       buttons.push(
         <button key={totalPages} onClick={() => handlePageChange(totalPages)} className={`px-4 py-2 font-medium ${baseBtnClass}`}>{totalPages}</button>
@@ -182,7 +179,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     return buttons;
   };
 
-  const textSecondary = isDark ? "text-[#a0a0a0]" : "text-[#666666]"
+  const textSecondary = "text-[#a0a0a0]"
 
   return (
     <section id="productos" className="relative w-full scroll-mt-[60px]">

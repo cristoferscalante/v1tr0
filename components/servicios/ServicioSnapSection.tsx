@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useTheme } from "@/components/theme-provider"
 import type { servicesData } from "@/components/home/sections/ServicesTabSection"
 import PromoCarousel from "@/components/servicios/PromoCarousel"
 
@@ -32,8 +31,6 @@ const itemVariants = {
 }
 
 export default function ServicioSnapSection({ service }: ServicioSnapSectionProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   return (
     <section
@@ -48,14 +45,14 @@ export default function ServicioSnapSection({ service }: ServicioSnapSectionProp
         viewport={{ once: true, amount: 0.3 }}
       >
         <motion.div className="text-center mb-10" variants={itemVariants}>
-          <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+          <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold text-white`}>
             {service.title}
           </h2>
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <PromoCarousel isDark={isDark} size="lg" />
-          <p className={`text-center text-xs font-semibold uppercase tracking-widest mt-4 opacity-30 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+          <PromoCarousel size="lg" />
+          <p className={`text-center text-xs font-semibold uppercase tracking-widest mt-4 opacity-30 text-gray-500`}>
             Algunos diseños que hemos construido
           </p>
         </motion.div>

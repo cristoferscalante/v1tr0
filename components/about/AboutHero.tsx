@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic"
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useTheme } from "@/components/theme-provider"
 import { useIsMobile, useIsConfirmedDesktop } from "@/hooks/use-mobile"
 import LogoPlaceholder from "@/components/3d/LogoPlaceholder"
 
@@ -99,11 +98,9 @@ type StoryId = (typeof STORIES)[number]["id"]
 function StoryTabs({
   active,
   onChange,
-  isDark,
 }: {
   active: StoryId
   onChange: (id: StoryId) => void
-  isDark: boolean
 }) {
   return (
     <div className="flex gap-1.5 flex-wrap">
@@ -113,20 +110,14 @@ function StoryTabs({
           onClick={() => onChange(s.id)}
           className={`relative px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 border ${
             active === s.id
-              ? isDark
-                ? "bg-[#08A696]/20 border-[#26FFDF]/60 text-[#26FFDF] shadow-lg shadow-[#08A696]/20"
-                : "bg-[#08A696]/10 border-[#08A696]/60 text-[#08A696] shadow-lg shadow-[#08A696]/10"
-              : isDark
-              ? "bg-transparent border-[#08A696]/20 text-gray-500 hover:border-[#08A696]/40 hover:text-[#26FFDF]/70"
-              : "bg-transparent border-[#08A696]/20 text-gray-400 hover:border-[#08A696]/40 hover:text-[#08A696]/70"
+              ? "bg-[#08A696]/20 border-[#26FFDF]/60 text-[#26FFDF] shadow-lg shadow-[#08A696]/20"
+              : "bg-transparent border-[#08A696]/20 text-gray-500 hover:border-[#08A696]/40 hover:text-[#26FFDF]/70"
           }`}
         >
           {active === s.id && (
             <motion.span
               layoutId="active-tab-bg"
-              className={`absolute inset-0 rounded-lg ${
-                isDark ? "bg-[#08A696]/15" : "bg-[#08A696]/08"
-              }`}
+              className={`absolute inset-0 rounded-lg bg-[#08A696]/15`}
               transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
             />
           )}
@@ -143,10 +134,8 @@ function StoryTabs({
 
 function StoryContent({
   story,
-  isDark,
 }: {
   story: (typeof STORIES)[number]
-  isDark: boolean
 }) {
   return (
     <AnimatePresence mode="wait">
@@ -160,37 +149,27 @@ function StoryContent({
       >
         {/* Headline */}
         <h2
-          className={`text-2xl md:text-3xl lg:text-[2.1rem] font-extrabold leading-[1.15] tracking-tight ${
-            isDark ? "text-white" : "text-gray-900"
-          }`}
+          className={`text-2xl md:text-3xl lg:text-[2.1rem] font-extrabold leading-[1.15] tracking-tight text-white`}
         >
           {story.headline}
         </h2>
 
         {/* Body */}
         <p
-          className={`text-sm md:text-base leading-relaxed ${
-            isDark ? "text-gray-400" : "text-gray-600"
-          } max-w-lg`}
+          className={`text-sm md:text-base leading-relaxed text-gray-400 max-w-lg`}
         >
           {story.body}
         </p>
 
         {/* Stat highlight */}
         <div
-          className={`inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border ${
-            isDark
-              ? "bg-[#02505930] border-[#08A696]/25 text-[#26FFDF]"
-              : "bg-[#e6f7f6] border-[#08A696]/30 text-[#08A696]"
-          }`}
+          className={`inline-flex items-center gap-3 px-4 py-2.5 rounded-xl border bg-[#02505930] border-[#08A696]/25 text-[#26FFDF]`}
         >
           <span className="text-2xl font-black font-mono tracking-tight">
             {story.stat.value}
           </span>
           <span
-            className={`text-xs font-semibold uppercase tracking-widest ${
-              isDark ? "text-[#26FFDF]/70" : "text-[#08A696]/80"
-            }`}
+            className={`text-xs font-semibold uppercase tracking-widest text-[#26FFDF]/70`}
           >
             {story.stat.label}
           </span>
@@ -204,7 +183,7 @@ function StoryContent({
 // CTA BUTTONS
 // ============================================================================
 
-function CTAButtons({ isDark }: { isDark: boolean }) {
+function CTAButtons() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -214,21 +193,13 @@ function CTAButtons({ isDark }: { isDark: boolean }) {
     >
       <a
         href="/servicios"
-        className={`group relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 overflow-hidden ${
-          isDark
-            ? "bg-[#08A696] hover:bg-[#26FFDF] text-black shadow-lg shadow-[#08A696]/30 hover:shadow-[#26FFDF]/30"
-            : "bg-[#08A696] hover:bg-[#06877a] text-white shadow-lg shadow-[#08A696]/30"
-        }`}
+        className={`group relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 overflow-hidden bg-[#08A696] hover:bg-[#26FFDF] text-black shadow-lg shadow-[#08A696]/30 hover:shadow-[#26FFDF]/30`}
       >
         <span className="relative z-10">Ver servicios →</span>
       </a>
       <a
         href="#team"
-        className={`px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-300 ${
-          isDark
-            ? "border-[#08A696]/40 text-[#26FFDF]/80 hover:border-[#26FFDF]/70 hover:bg-[#08A696]/10"
-            : "border-[#08A696]/40 text-[#08A696] hover:border-[#08A696] hover:bg-[#08A696]/5"
-        }`}
+        className={`px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-300 border-[#08A696]/40 text-[#26FFDF]/80 hover:border-[#26FFDF]/70 hover:bg-[#08A696]/10`}
       >
         Conoce el equipo
       </a>
@@ -243,25 +214,23 @@ function CTAButtons({ isDark }: { isDark: boolean }) {
 function MobileHero({
   activeStory,
   setActiveStory,
-  isDark,
 }: {
   activeStory: StoryId
   setActiveStory: (id: StoryId) => void
-  isDark: boolean
 }) {
   const story = STORIES.find((s) => s.id === activeStory)!
 
   return (
     <div className="flex flex-col gap-8 px-4 py-8 pt-24">
-      <StoryTabs active={activeStory} onChange={setActiveStory} isDark={isDark} />
-      <StoryContent story={story} isDark={isDark} />
+      <StoryTabs active={activeStory} onChange={setActiveStory} />
+      <StoryContent story={story} />
 
       {/* En móvil se usa el sustituto estático: evita descargar el chunk 3D */}
       <div className="w-full h-64 rounded-2xl overflow-hidden border border-[#08A696]/20 bg-black/20">
         <LogoPlaceholder className="w-full h-full" />
       </div>
 
-      <CTAButtons isDark={isDark} />
+      <CTAButtons />
     </div>
   )
 }
@@ -271,8 +240,6 @@ function MobileHero({
 // ============================================================================
 
 export default function AboutHero() {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   const isMobile = useIsMobile()
   const isConfirmedDesktop = useIsConfirmedDesktop()
   const [activeStory, setActiveStory] = useState<StoryId>("origen")
@@ -288,7 +255,6 @@ export default function AboutHero() {
       <MobileHero
         activeStory={activeStory}
         setActiveStory={handleStoryChange}
-        isDark={isDark}
       />
     )
   }
@@ -323,23 +289,18 @@ export default function AboutHero() {
         <StoryTabs
           active={activeStory}
           onChange={handleStoryChange}
-          isDark={isDark}
         />
 
         {/* Story content */}
-        <StoryContent story={story} isDark={isDark} />
+        <StoryContent story={story} />
 
         {/* CTA */}
-        <CTAButtons isDark={isDark} />
+        <CTAButtons />
       </motion.div>
 
       {/* ── SEPARADOR VERTICAL ─────────────────────────────────────────── */}
       <div
-        className={`absolute left-[40%] top-[10%] bottom-[10%] w-px pointer-events-none ${
-          isDark
-            ? "bg-gradient-to-b from-transparent via-[#08A696]/30 to-transparent"
-            : "bg-gradient-to-b from-transparent via-[#08A696]/20 to-transparent"
-        }`}
+        className={`absolute left-[40%] top-[10%] bottom-[10%] w-px pointer-events-none bg-gradient-to-b from-transparent via-[#08A696]/30 to-transparent`}
       />
 
       {/* ── COLUMNA DERECHA — MODELO 3D ─────────────────────────────────── */}

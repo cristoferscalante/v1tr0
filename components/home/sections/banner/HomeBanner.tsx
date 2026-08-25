@@ -1,6 +1,5 @@
 "use client"
 import HeroNavCards from "@/components/home/sections/banner/HeroNavCards"
-import { useTheme } from "@/components/theme-provider"
 import { motion } from "framer-motion"
 import TextType from "@/components/home/hero/TextType"
 import Link from "next/link"
@@ -32,8 +31,6 @@ const itemVariants = {
 }
 
 export default function HomeBanner() {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   return (
     <section
@@ -72,7 +69,7 @@ export default function HomeBanner() {
             typingSpeed={60}
             pauseDuration={1500}
             deletingSpeed={10}
-            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug md:leading-tight text-center min-h-[4em] sm:min-h-[3em] md:min-h-[2.5em] ${isDark ? 'text-white' : 'text-[#08a696]'}`}
+            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug md:leading-tight text-center min-h-[4em] sm:min-h-[3em] md:min-h-[2.5em] ${'text-white'}`}
           />
         </motion.div>
 
@@ -88,11 +85,11 @@ export default function HomeBanner() {
           className="relative group inline-flex items-center mx-2"
         >
           {/* Badge principal */}
-          <div className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} px-4 sm:px-6 py-2 sm:py-3 rounded-2xl border ${isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"} text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} transform group-hover:scale-[1.03]`}>
-            <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-colors duration-300`}>
+          <div className={`relative bg-[#02505931] backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-2xl border border-[#08A696]/30 text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-[#02505950] transform group-hover:scale-[1.03]`}>
+            <span className={`text-[#26FFDF] transition-colors duration-300`}>
               V1TR0 Technologies
             </span>
-            <span className={`ml-2 sm:ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+            <span className={`ml-2 sm:ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1 text-[#26FFDF]`}>
               →
             </span>
           </div>

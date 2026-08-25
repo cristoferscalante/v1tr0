@@ -2,12 +2,9 @@
 
 import { motion } from "framer-motion"
 import { Code2, Database, Server, Smartphone, Terminal } from "lucide-react"
-import { useTheme } from "@/components/theme-provider"
 import { sectionTitle } from "@/components/home/shared/surface"
 
 export default function ModernTechnologiesSection() {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   const technologies = [
     {
@@ -86,26 +83,24 @@ export default function ModernTechnologiesSection() {
               className="relative overflow-hidden group"
             >
               {/* Gradiente de fondo con blur - igual que CardBanner */}
-              <div className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`} />
+              <div className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`} />
               
               {/* Card principal con backdrop blur */}
-              <div className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} h-full`}>
+              <div className={`relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] group-hover:bg-[#02505950] h-full`}>
                 
                 {/* Gradiente de overlay para mantener compatibilidad con el diseño original */}
-                {isDark && (
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${tech.color} opacity-10 group-hover:opacity-20 transition-opacity duration-300 rounded-2xl`}
-                  />
-                )}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${tech.color} opacity-10 group-hover:opacity-20 transition-opacity duration-300 rounded-2xl`}
+                />
                 
                 <div className="relative p-3 sm:p-4 md:p-5 h-full flex flex-col">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                    <div className={`p-1.5 sm:p-2 rounded-xl ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} group-hover:bg-[#08A696]/20 transition-all duration-300 group-hover:scale-110`}>
-                      <div className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-transform duration-300 group-hover:rotate-3`}>
+                    <div className={`p-1.5 sm:p-2 rounded-xl bg-[#08A696]/10 group-hover:bg-[#08A696]/20 transition-all duration-300 group-hover:scale-110`}>
+                      <div className={`text-[#26FFDF] transition-transform duration-300 group-hover:rotate-3`}>
                         {tech.icon}
                       </div>
                     </div>
-                    <h3 className={`text-base sm:text-lg md:text-xl font-semibold transition-colors duration-300 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                    <h3 className={`text-base sm:text-lg md:text-xl font-semibold transition-colors duration-300 text-[#26FFDF]`}>
                       {tech.name}
                     </h3>
                   </div>
@@ -114,7 +109,7 @@ export default function ModernTechnologiesSection() {
                     {tech.techs.map((t) => (
                       <span 
                         key={t} 
-                        className={`px-1.5 sm:px-2 py-0.5 text-xs rounded-lg transition-all duration-300 ${isDark ? "text-[#26FFDF] bg-[#08A696]/10 group-hover:bg-[#08A696]/20" : "text-[#08A696] bg-[#08A696]/10 group-hover:bg-[#08A696]/20"}`}
+                        className={`px-1.5 sm:px-2 py-0.5 text-xs rounded-lg transition-all duration-300 text-[#26FFDF] bg-[#08A696]/10 group-hover:bg-[#08A696]/20`}
                       >
                         {t}
                       </span>
