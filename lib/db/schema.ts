@@ -1,5 +1,6 @@
+import { sql } from "drizzle-orm";
 import { primaryKey } from "drizzle-orm/pg-core";
-import { boolean, integer, jsonb, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, integer, jsonb, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
@@ -246,7 +247,7 @@ export const projects = pgTable("projects", {
   images: text("images").array().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
-});
+}, (t) => [index("projects_client_idx").on(t.clientId)]);
 
 export const quotes = pgTable("quotes", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -283,62 +284,80 @@ export const meetingRequests = pgTable("meeting_requests", {
 export const PROJECT_TRACKS = ["planning", "development", "quality", "maintenance"] as const;
 export type ProjectTrack = (typeof PROJECT_TRACKS)[number];
 
-export const projectPhases = pgTable("project_phases", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  description: text("description"),
-  order: integer("order").notNull().default(0),
-  status: text("status").notNull().default("pending"),
-  track: text("track").notNull().default("development"),
-  startDate: timestamp("start_date", { withTimezone: true }),
-  endDate: timestamp("end_date", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
+export const projectPhases = pgTable(
+  "project_phases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description"),
+    order: integer("order").notNull().default(0),
+    status: text("status").notNull().default("pending"),
+    track: text("track").notNull().default("development"),
+    startDate: timestamp("start_date", { withTimezone: true }),
+    endDate: timestamp("end_date", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  // Toda lectura de fases arranca por projectId y se ordena por `order`
+  // (ver app/api/projects/[id]/details), así que el índice cubre ambos.
+  (t) => [index("project_phases_project_order_idx").on(t.projectId, t.order)],
+);
 
-export const phaseTasks = pgTable("phase_tasks", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  phaseId: uuid("phase_id").notNull().references(() => projectPhases.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  description: text("description"),
-  // Uno de los "key" de components/shared/task-icons.ts, elegido a mano por
-  // el admin al crear la tarea. Si es null, el árbol usa un ícono genérico.
-  icon: text("icon"),
-  completed: boolean("completed").default(false),
-  assignedTo: text("assigned_to").references(() => profiles.id),
-  dueDate: timestamp("due_date", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
+// Estados reales de una tarea. `completed` (booleano) se conserva y se
+// mantiene sincronizado como `status === "done"`, porque el árbol del cliente
+// y los cálculos de progreso ya lo leen en todas partes; `status` es la
+// fuente de verdad y lo que permite un tablero kanban de verdad.
+export const TASK_STATUSES = ["todo", "in_progress", "blocked", "done"] as const;
+export type TaskStatus = (typeof TASK_STATUSES)[number];
+
+export const TASK_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
+export type TaskPriority = (typeof TASK_PRIORITIES)[number];
+
+export const phaseTasks = pgTable(
+  "phase_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    phaseId: uuid("phase_id").notNull().references(() => projectPhases.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description"),
+    // Uno de los "key" de components/shared/task-icons.ts, elegido a mano por
+    // el admin al crear la tarea. Si es null, el árbol usa un ícono genérico.
+    icon: text("icon"),
+    status: text("status").notNull().default("todo"),
+    priority: text("priority").notNull().default("medium"),
+    // Posición dentro de su columna del kanban / rama del árbol.
+    order: integer("order").notNull().default(0),
+    estimatedHours: numeric("estimated_hours", { precision: 6, scale: 2 }),
+    // Espejo de `status === "done"`, mantenido por la API. No escribir a mano.
+    completed: boolean("completed").default(false),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    assignedTo: text("assigned_to").references(() => profiles.id),
+    dueDate: timestamp("due_date", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [
+    index("phase_tasks_phase_order_idx").on(t.phaseId, t.order),
+    // "mis tareas" del panel de equipo: filtra por responsable y estado.
+    index("phase_tasks_assigned_status_idx").on(t.assignedTo, t.status),
+  ],
+);
 
 // Desglose de una tarea en pasos concretos. El admin las agrega libremente
 // (de a 3, según necesite) para que la rama de esa tarea siga creciendo en
 // el árbol. No gatillan el desbloqueo global — solo son detalle bajo su tarea.
-export const phaseTaskSubtasks = pgTable("phase_task_subtasks", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  taskId: uuid("task_id").notNull().references(() => phaseTasks.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  completed: boolean("completed").default(false),
-  order: integer("order").notNull().default(0),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
-
-// @deprecated: reemplazada por phaseTasks (tarea ligada a una fase de projectPhases).
-// Ya no se escribe ni se lee desde ninguna ruta; se conserva la tabla en la DB
-// por ahora, se elimina en una migración posterior una vez confirmado que no
-// queda ningún consumidor.
-export const tasks = pgTable("tasks", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  nombre: text("nombre").notNull(),
-  descripcion: text("descripcion"),
-  estado: text("estado").default("pendiente"),
-  prioridad: text("prioridad").default("media"),
-  categoria: text("categoria").notNull(),
-  finalizada: boolean("finalizada").default(false),
-  projectId: uuid("project_id").references(() => projects.id, { onDelete: "cascade" }),
-  assignedTo: text("assigned_to").references(() => profiles.id),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
-});
+export const phaseTaskSubtasks = pgTable(
+  "phase_task_subtasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    taskId: uuid("task_id").notNull().references(() => phaseTasks.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    completed: boolean("completed").default(false),
+    order: integer("order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [index("phase_task_subtasks_task_order_idx").on(t.taskId, t.order)],
+);
 
 export const projectSuggestions = pgTable("project_suggestions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -383,3 +402,108 @@ export const clientSecrets = pgTable("client_secrets", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
+
+// ---------------------------------------------------------------------------
+// Equipo, colaboración y trazabilidad
+// ---------------------------------------------------------------------------
+
+export const PROJECT_MEMBER_ROLES = ["lead", "developer", "designer", "qa", "observer"] as const;
+export type ProjectMemberRole = (typeof PROJECT_MEMBER_ROLES)[number];
+
+// Quién del equipo trabaja en qué proyecto. Sin esta tabla `phaseTasks.assignedTo`
+// no tenía de dónde sacar candidatos: el selector de responsable se alimenta de
+// los miembros del proyecto, no de todos los perfiles de la base.
+export const projectMembers = pgTable(
+  "project_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+    profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("developer"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [
+    index("project_members_project_idx").on(t.projectId),
+    index("project_members_profile_idx").on(t.profileId),
+  ],
+);
+
+// Hilo de conversación por tarea. `visibleToClient` decide si el comentario
+// aparece en el portal del cliente o queda como nota interna del equipo.
+export const taskComments = pgTable(
+  "task_comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    taskId: uuid("task_id").notNull().references(() => phaseTasks.id, { onDelete: "cascade" }),
+    authorId: text("author_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    visibleToClient: boolean("visible_to_client").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [index("task_comments_task_created_idx").on(t.taskId, t.createdAt)],
+);
+
+export const ACTIVITY_ACTIONS = [
+  "task.created",
+  "task.status_changed",
+  "task.assigned",
+  "task.deleted",
+  "task.commented",
+  "phase.created",
+  "phase.updated",
+  "phase.deleted",
+  "project.created",
+  "project.status_changed",
+  "member.added",
+  "member.removed",
+] as const;
+export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
+
+// Bitácora append-only: quién hizo qué, sobre qué proyecto y cuándo. Es lo que
+// alimenta el feed de actividad del admin y el "qué pasó esta semana" del
+// cliente. Nunca se actualiza ni se borra fila por fila.
+export const activityLog = pgTable(
+  "activity_log",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id").references(() => projects.id, { onDelete: "cascade" }),
+    actorId: text("actor_id").references(() => profiles.id, { onDelete: "set null" }),
+    action: text("action").notNull(),
+    // Tipo + id de la entidad tocada ("task", "phase", "project"...), para
+    // poder enlazar desde el feed sin una tabla por tipo.
+    entityType: text("entity_type"),
+    entityId: text("entity_id"),
+    // Resumen ya renderizado, para que el feed no tenga que rearmar la frase.
+    summary: text("summary").notNull(),
+    // Detalle libre: { from, to } en cambios de estado, etc.
+    meta: jsonb("meta").default({}),
+    // El cliente solo ve las entradas marcadas como visibles.
+    visibleToClient: boolean("visible_to_client").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [
+    index("activity_log_project_created_idx").on(t.projectId, t.createdAt),
+    index("activity_log_actor_idx").on(t.actorId),
+  ],
+);
+
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+    projectId: uuid("project_id").references(() => projects.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    body: text("body"),
+    // Ruta interna a la que lleva la notificación al hacer clic.
+    href: text("href"),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  // El badge del sidebar cuenta las no leídas de un perfil: índice parcial
+  // sobre las pendientes, que son siempre una fracción del total.
+  (t) => [
+    index("notifications_profile_created_idx").on(t.profileId, t.createdAt),
+    index("notifications_unread_idx").on(t.profileId).where(sql`read_at is null`),
+  ],
+);

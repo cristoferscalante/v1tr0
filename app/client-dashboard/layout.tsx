@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 import ClientSidebar from '@/components/client/ClientSidebar'
+import NotificationBell from '@/components/global/NotificationBell'
 
 export default function ClientDashboardLayout({
   children,
@@ -50,6 +51,10 @@ export default function ClientDashboardLayout({
       {/* Fondo atenuado: mantiene la identidad del home sin competir con los datos */}
       <BackgroundAnimation density={0.22} intensity={0.55} />
       <ClientSidebar />
+      {/* El riel de navegación vive oculto hasta el hover, así que la campana
+          no puede ir dentro: flota fija arriba a la derecha, donde siempre se
+          ve y no compite con el contenido. */}
+      <NotificationBell className="fixed right-4 top-4 z-50 rounded-full border border-[#26FFDF]/10 bg-black/40 backdrop-blur-md" />
       {/* El riel flotante ahora vive oculto (aparece solo con el cursor
           encima) y flota por encima del contenido sin reservarle espacio,
           así el panel ocupa la pantalla completa hasta el borde izquierdo. */}

@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { Activity, ArrowLeft, GitBranch, Loader2 } from 'lucide-react'
 import TaskTreeBoard from '@/components/client/TaskTreeBoard'
+import ActivityFeed from '@/components/tasks/ActivityFeed'
 import type { FeedType } from '@/components/shared/project-tree'
 
 interface Phase {
@@ -78,6 +79,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const router = useRouter()
   const [project, setProject] = useState<ProjectDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  // El árbol cuenta en qué va el proyecto; la bitácora cuenta qué se movió
+  // desde la última vez que el cliente entró. Son preguntas distintas, así
+  // que conviven como dos vistas del mismo panel.
+  const [view, setView] = useState<'arbol' | 'actividad'>('arbol')
 
   const fetchProject = useCallback(async () => {
     const { id } = await params
@@ -123,10 +128,38 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <GlassCard className="flex flex-col overflow-hidden">
           {/* Back: vive dentro del panel, alineado con el arranque del riel de
               navegación (que no se toca, sigue flotando aparte). */}
-          <button onClick={() => router.push('/client-dashboard/projects')}
-            className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/5 text-textSecondary hover:text-[#26FFDF] transition-colors text-sm"
-          ><ArrowLeft className="h-4 w-4" /> Volver a proyectos</button>
+          <div className="shrink-0 flex items-center gap-1 border-b border-white/5 px-4 py-2">
+            <button onClick={() => router.push('/client-dashboard/projects')}
+              className="flex items-center gap-2 py-0.5 text-textSecondary hover:text-[#26FFDF] transition-colors text-sm"
+            ><ArrowLeft className="h-4 w-4" /> Volver a proyectos</button>
 
+            <div className="ml-auto flex items-center gap-1">
+              {([['arbol', 'Árbol', GitBranch], ['actividad', 'Actividad', Activity]] as const).map(
+                ([key, label, Icon]) => (
+                  <button
+                    key={key}
+                    onClick={() => setView(key)}
+                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors ${
+                      view === key
+                        ? 'bg-[#08A696]/15 text-[#26FFDF]'
+                        : 'text-white/40 hover:text-white/70'
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {label}
+                  </button>
+                ),
+              )}
+            </div>
+          </div>
+
+          {view === 'actividad' ? (
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5">
+              <div className="mx-auto max-w-2xl">
+                <ActivityFeed projectId={project.id} scope="client" />
+              </div>
+            </div>
+          ) : (
           <div className="flex-1 min-h-0">
             <TaskTreeBoard
               projectId={project.id}
@@ -139,6 +172,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               onChanged={fetchProject}
             />
           </div>
+          )}
         </GlassCard>
       </motion.div>
     </motion.div>

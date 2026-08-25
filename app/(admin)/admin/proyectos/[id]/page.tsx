@@ -2,7 +2,9 @@ import { db } from "@/lib/db"
 import { projects, projectPhases, phaseTasks, phaseTaskSubtasks, profiles } from "@/lib/db/schema"
 import { eq, asc, inArray } from "drizzle-orm"
 import { notFound } from "next/navigation"
-import AdminTaskTreeBoard from "@/components/admin/AdminTaskTreeBoard"
+import ProjectWorkspace from "@/components/tasks/ProjectWorkspace"
+import type { BoardTask } from "@/components/tasks/types"
+import type { TaskPriority, TaskStatus } from "@/components/shared/task-status"
 
 export default async function ProjectDetailPage({
   params,
@@ -33,17 +35,27 @@ export default async function ProjectDetailPage({
     .where(eq(projectPhases.projectId, id))
     .orderBy(asc(projectPhases.order))
 
-  const phasesWithTasksRaw = await Promise.all(
-    phases.map(async (ph) => ({
-      ...ph,
-      tasks: await db.select().from(phaseTasks).where(eq(phaseTasks.phaseId, ph.id)),
-    }))
-  )
-
-  const allTaskIds = phasesWithTasksRaw.flatMap((ph) => ph.tasks.map((t) => t.id))
-  const allSubtasks = allTaskIds.length
-    ? await db.select().from(phaseTaskSubtasks).where(inArray(phaseTaskSubtasks.taskId, allTaskIds)).orderBy(asc(phaseTaskSubtasks.order))
+  // Una sola consulta agrupada para las tareas de todas las fases: antes se
+  // lanzaba un SELECT por fase (Promise.all sobre `phases`), que en un
+  // proyecto con 12 fases eran 12 viajes a la base por carga de página.
+  const phaseIds = phases.map((ph) => ph.id)
+  const allTasks = phaseIds.length
+    ? await db
+        .select()
+        .from(phaseTasks)
+        .where(inArray(phaseTasks.phaseId, phaseIds))
+        .orderBy(asc(phaseTasks.order))
     : []
+
+  const allTaskIds = allTasks.map((t) => t.id)
+  const allSubtasks = allTaskIds.length
+    ? await db
+        .select()
+        .from(phaseTaskSubtasks)
+        .where(inArray(phaseTaskSubtasks.taskId, allTaskIds))
+        .orderBy(asc(phaseTaskSubtasks.order))
+    : []
+
   const subtasksByTask = new Map<string, typeof allSubtasks>()
   for (const s of allSubtasks) {
     const list = subtasksByTask.get(s.taskId) ?? []
@@ -51,26 +63,53 @@ export default async function ProjectDetailPage({
     subtasksByTask.set(s.taskId, list)
   }
 
-  const phasesWithTasks = phasesWithTasksRaw.map((ph) => ({
+  const tasksByPhase = new Map<string, typeof allTasks>()
+  for (const t of allTasks) {
+    const list = tasksByPhase.get(t.phaseId) ?? []
+    list.push(t)
+    tasksByPhase.set(t.phaseId, list)
+  }
+
+  const phasesWithTasks = phases.map((ph) => ({
     ...ph,
-    tasks: ph.tasks.map((t) => ({ ...t, subtasks: subtasksByTask.get(t.id) ?? [] })),
+    tasks: (tasksByPhase.get(ph.id) ?? []).map((t) => ({
+      ...t,
+      subtasks: subtasksByTask.get(t.id) ?? [],
+    })),
   }))
 
-  const allTasks = phasesWithTasks.flatMap((ph) => ph.tasks)
   const completed = allTasks.filter((t) => t.completed).length
   const progress = allTasks.length > 0 ? Math.round((completed / allTasks.length) * 100) : 0
 
-  // Solo el tablero: nombre, cliente, estado, progreso y gestión de fases
-  // viven todos dentro del propio panel (ver AdminTaskTreeBoard).
+  // El tablero consume una forma plana y serializable; las fechas viajan como
+  // ISO porque cruzan el límite servidor → cliente.
+  const boardTasks: BoardTask[] = allTasks.map((t) => ({
+    id: t.id,
+    phaseId: t.phaseId,
+    name: t.name,
+    description: t.description,
+    icon: t.icon,
+    status: t.status as TaskStatus,
+    priority: t.priority as TaskPriority,
+    order: t.order,
+    assignedTo: t.assignedTo,
+    dueDate: t.dueDate ? t.dueDate.toISOString() : null,
+  }))
+
   return (
-    <AdminTaskTreeBoard
+    <ProjectWorkspace
       projectId={project.id}
-      projectName={project.name}
-      phases={phasesWithTasks}
-      progress={progress}
-      statusLabel={project.status ?? undefined}
-      clientLabel={project.clientName ?? project.clientEmail ?? undefined}
-      clientHref={project.clientId ? `/admin/clientes/${project.clientId}` : undefined}
+      initialTasks={boardTasks}
+      phases={phases.map((ph) => ({ id: ph.id, name: ph.name }))}
+      treeProps={{
+        projectId: project.id,
+        projectName: project.name,
+        phases: phasesWithTasks,
+        progress,
+        statusLabel: project.status ?? undefined,
+        clientLabel: project.clientName ?? project.clientEmail ?? undefined,
+        clientHref: project.clientId ? `/admin/clientes/${project.clientId}` : undefined,
+      }}
     />
   )
 }

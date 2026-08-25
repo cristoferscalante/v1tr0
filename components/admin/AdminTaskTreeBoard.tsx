@@ -314,9 +314,12 @@ export default function AdminTaskTreeBoard({
   const existingTracks = useMemo(() => Array.from(new Set(phases.map((ph) => ph.track))), [phases])
 
   useEffect(() => {
-    fetch("/api/admin/clients?role=team&pageSize=100")
+    // El padrón de personal vive en su propia ruta: pedirlo al listado de
+    // clientes filtrando por rol dejaba fuera a los admin y dependía de la
+    // paginación de otra pantalla.
+    fetch("/api/admin/team")
       .then((res) => res.json())
-      .then((data) => setTeam(data.clients ?? []))
+      .then((data) => setTeam(Array.isArray(data) ? data : []))
       .catch(() => setTeam([]))
   }, [])
 
@@ -514,10 +517,10 @@ export default function AdminTaskTreeBoard({
           {/* Píldora: solo la flecha en reposo, el texto se revela con el
               cursor encima. Mismo lenguaje visual que el botón de WhatsApp
               flotante y el botón principal del login (rounded-2xl,
-              bg-[#02505931], borde y glow teal). */}
+              bg-[#1e2123], borde y glow teal). */}
           <Link
             href="/admin/proyectos"
-            className="group/back pointer-events-auto relative flex items-center pl-1.5 pr-1.5 py-1 rounded-2xl bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] no-underline hover:no-underline shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
+            className="group/back pointer-events-auto relative flex items-center pl-1.5 pr-1.5 py-1 rounded-2xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] no-underline hover:no-underline shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[#08A696]/10"
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
             <span className="overflow-hidden whitespace-nowrap max-w-[8rem] opacity-100 ml-1.5 sm:max-w-0 sm:opacity-0 sm:ml-0 group-hover/back:max-w-[8rem] group-hover/back:opacity-100 group-hover/back:ml-1.5 transition-all duration-300 text-xs">
@@ -681,12 +684,12 @@ export default function AdminTaskTreeBoard({
             <button
               type="button"
               onClick={() => setPhaseDialog({ mode: "create" })}
-              className="absolute bottom-14 right-3 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] text-xs font-medium shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
+              className="absolute bottom-14 right-3 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/30 text-[#26FFDF] text-xs font-medium shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[#08A696]/10"
             >
               <Plus className="h-3.5 w-3.5" /> Fase
             </button>
 
-            <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2 px-2.5 py-1.5 rounded-2xl bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 shadow-lg pointer-events-none">
+            <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2 px-2.5 py-1.5 rounded-2xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/30 shadow-lg pointer-events-none">
               <div className="w-14 h-1 rounded-full bg-white/10 overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
               </div>
