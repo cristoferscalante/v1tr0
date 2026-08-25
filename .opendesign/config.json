@@ -122,10 +122,9 @@
     }
   },
   "integrations": {
-    "supabase": {
+    "neon": {
       "enabled": true,
-      "url": "${NEXT_PUBLIC_SUPABASE_URL}",
-      "anonKey": "${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
+      "url": "${DATABASE_URL}"
     },
     "vercel": {
       "enabled": true,

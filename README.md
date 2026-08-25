@@ -1,10 +1,10 @@
 # V1TR0 - Plataforma de Gestión de Proyectos y E-Commerce
 
-Plataforma web completa construida con Next.js 15, TypeScript, Tailwind CSS y Supabase. Incluye gestión de proyectos, autenticación, dashboard de administración y tienda e-commerce.
+Plataforma web completa construida con Next.js 15, TypeScript, Tailwind CSS, Drizzle ORM y Neon (Postgres). Incluye gestión de proyectos, autenticación, dashboard de administración y tienda e-commerce.
 
 ## 🚀 Características
 
-- ✅ **Autenticación completa** con Supabase Auth
+- ✅ **Autenticación completa** con NextAuth v5 (Google OAuth)
 - ✅ **Dashboard de proyectos** con tareas y equipos
 - ✅ **E-commerce** con carrito y gestión de productos
 - ✅ **Panel de administración** para productos y paquetes
@@ -27,8 +27,8 @@ Plataforma web completa construida con Next.js 15, TypeScript, Tailwind CSS y Su
 - **Framework:** Next.js 15 (App Router)
 - **Lenguaje:** TypeScript
 - **Estilos:** Tailwind CSS + CSS Variables
-- **Base de datos:** Supabase (PostgreSQL)
-- **Autenticación:** Supabase Auth
+- **Base de datos:** Neon (PostgreSQL) con Drizzle ORM
+- **Autenticación:** NextAuth v5 (Google OAuth)
 - **UI Components:** shadcn/ui + Radix UI
 - **3D:** Three.js + React Three Fiber
 - **Animaciones:** Framer Motion
@@ -112,7 +112,7 @@ v1tr0-web/
 ├── lib/                   # Utilidades y contextos
 │   ├── context/          # React contexts
 │   ├── data/             # Datos mock
-│   └── supabase/         # Cliente Supabase
+│   └── db/              # Esquema y cliente Drizzle
 ├── styles/               # Estilos globales
 │   └── design-system/    # Sistema de diseño
 ├── docs/                 # Documentación
@@ -129,13 +129,15 @@ cp .env.example .env.local
 ```
 
 Configurar:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `DATABASE_URL` — cadena de conexión de Neon
+- `AUTH_SECRET`
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+- `SECRETS_ENCRYPTION_KEY` — clave AES de la bóveda de credenciales de clientes
 
 2. **Base de datos:**
 
-Ver setup completo en: [`SETUP_USUARIOS_PRUEBA.md`](SETUP_USUARIOS_PRUEBA.md)
+El esquema vive en `lib/db/schema.ts`. Las migraciones SQL se aplican en orden
+desde `drizzle/migrations/`.
 
 ## 🎨 Sistema de Diseño
 
