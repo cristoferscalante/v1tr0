@@ -56,20 +56,28 @@ export default function ProjectWorkspace({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap gap-1 border-b border-white/10 px-4 pt-4 lg:px-8">
-        {TABS.map(({ key, label, icon: Icon }) => (
+      {/* Riel de secciones en mono, con un cuadrito marcando la activa. Un
+          subrayado dice "pestaña de navegador"; el cuadrito dice "índice de
+          lámina", que es el registro de las referencias. */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-white/10 px-4 pt-5 pb-3 lg:px-8">
+        {TABS.map(({ key, label, icon: Icon }, i) => (
           <button
             key={key}
             type="button"
             onClick={() => setTab(key)}
             className={cn(
-              "flex items-center gap-1.5 rounded-t-lg px-3 py-2 text-xs font-semibold transition-colors",
-              tab === key
-                ? "border-b-2 border-[#08A696] text-white"
-                : "border-b-2 border-transparent text-white/40 hover:text-white/70",
+              "group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors",
+              tab === key ? "text-white" : "text-white/30 hover:text-white/60",
             )}
           >
-            <Icon className="h-3.5 w-3.5" />
+            <span
+              className={cn(
+                "rail-mark transition-colors",
+                tab === key ? "bg-[#08A696]" : "bg-transparent",
+              )}
+            />
+            <span className="tabular-nums text-white/25">{String(i + 1).padStart(2, "0")}</span>
+            <Icon className="h-3 w-3" />
             {label}
           </button>
         ))}
@@ -86,7 +94,7 @@ export default function ProjectWorkspace({
           como el resto de páginas del panel. */}
       {tab === "tablero" && (
         <div className="px-4 pb-8 lg:px-8">
-          <Panel className="p-4">
+          <Panel label="Tablero" className="p-4 pt-5">
           <TaskKanban
             projectId={projectId}
             initialTasks={tasks}
@@ -101,14 +109,14 @@ export default function ProjectWorkspace({
       {/* El panel de equipo se mantiene montado aunque no sea la pestaña
           activa: es quien alimenta la lista de responsables del tablero. */}
       <div className={cn("px-4 pb-8 lg:px-8", tab === "equipo" ? "block" : "hidden")}>
-        <Panel className="p-5">
+        <Panel label="Equipo" className="p-5 pt-6">
           <ProjectTeamPanel projectId={projectId} onMembersChange={handleMembers} />
         </Panel>
       </div>
 
       {tab === "actividad" && (
         <div className="max-w-2xl px-4 pb-8 lg:px-8">
-          <Panel className="p-5">
+          <Panel label="Bitácora" className="p-5 pt-6">
             <ActivityFeed projectId={projectId} scope="admin" />
           </Panel>
         </div>

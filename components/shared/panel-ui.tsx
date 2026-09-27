@@ -67,15 +67,39 @@ export function GlowCard({
   return inner
 }
 
-/** Superficie sobria para tablas, listados y tableros. */
+/**
+ * Superficie para tablas, listados y tableros.
+ *
+ * `label` monta un rótulo sobre el borde superior, como el cajetín de una
+ * lámina técnica: dice qué es el panel sin gastar una fila de contenido.
+ * `focal` cambia el borde continuo por cuatro esquineros — delimita con menos
+ * tinta y marca el panel que importa en la pantalla. Uno por vista: si todos
+ * llevan esquineros, ninguno destaca.
+ */
 export function Panel({
   children,
   className,
+  label,
+  focal = false,
 }: {
   children: React.ReactNode
   className?: string
+  label?: React.ReactNode
+  focal?: boolean
 }) {
-  return <div className={cn("panel-card", className)}>{children}</div>
+  return (
+    <div
+      className={cn(
+        "panel-card",
+        focal && "brackets border-transparent",
+        label && "relative",
+        className,
+      )}
+    >
+      {label && <span className="panel-tag text-[#08A696]">{label}</span>}
+      {children}
+    </div>
+  )
 }
 
 /** Fila de listado con realce de borde al pasar el cursor, sin movimiento. */
@@ -158,11 +182,16 @@ export function SectionHeading({
           {badge}
         </span>
       )}
-      <h1 className="mt-1.5 text-2xl font-bold text-white sm:text-3xl">{title}</h1>
-      {subtitle && <p className="mt-1 max-w-xl text-sm text-white/50">{subtitle}</p>}
+      {/* 24px no le daba voz a la página. Las cuatro referencias entran entre
+          54 y 112px; en una herramienta eso no cabe, pero 40px sí — el título
+          pasa a ser el ancla de la pantalla en vez de una etiqueta más. */}
+      <h1 className="mt-2 text-3xl font-extrabold tracking-[-0.03em] text-white sm:text-[40px] sm:leading-[1.05]">
+        {title}
+      </h1>
+      {subtitle && <p className="mt-2 max-w-xl text-sm text-white/50">{subtitle}</p>}
       {/* Regla fina a todo el ancho en vez de la barra degradada: separa la
           cabecera del contenido sin reclamar atención para sí misma. */}
-      <div className="mt-4 h-px w-full bg-white/10" />
+      <div className="mt-5 h-px w-full bg-white/10" />
     </div>
   )
 }

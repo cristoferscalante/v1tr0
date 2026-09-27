@@ -54,10 +54,14 @@ export default function ProjectSummaryStrip({
 
   const pendientes = actual ? actual.tasks.filter((t) => !t.completed).length : 0
 
+  // Posición de la fase actual dentro de la secuencia: "3 de 7" contesta
+  // "¿cuánto falta?" mejor que el nombre de la fase por sí solo.
+  const posicion = actual ? ordenadas.findIndex((p) => p.id === actual.id) + 1 : 0
+
   const celdas = [
     {
       icono: <CircleDot className="h-3.5 w-3.5" />,
-      etiqueta: "Fase actual",
+      etiqueta: posicion ? `Fase actual · ${posicion} de ${ordenadas.length}` : "Fase actual",
       valor: actual?.name ?? "Sin fases todavía",
     },
     {

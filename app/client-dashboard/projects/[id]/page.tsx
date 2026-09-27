@@ -137,11 +137,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          <ProjectSummaryStrip
-            projectId={project.id}
-            phases={project.phases}
-            progress={project.progress}
-          />
+          <div className="brackets relative mx-4 mt-4">
+            <ProjectSummaryStrip
+              projectId={project.id}
+              phases={project.phases}
+              progress={project.progress}
+            />
+          </div>
 
           {view === 'actividad' ? (
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5">

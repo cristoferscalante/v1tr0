@@ -206,8 +206,12 @@ export default function TaskKanban({
       <div className="flex flex-wrap items-center gap-2">
         <select value={phaseFilter} onChange={(e) => setPhaseFilter(e.target.value)} className={selectClass}>
           <option value="all">Todas las fases</option>
-          {phases.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
+          {/* El número no decora: las fases llevan `order` en la base, así que
+              dice en qué punto del proyecto cae cada una. */}
+          {phases.map((p, i) => (
+            <option key={p.id} value={p.id}>
+              [{String(i + 1).padStart(2, "0")}] {p.name}
+            </option>
           ))}
         </select>
         <select value={ownerFilter} onChange={(e) => setOwnerFilter(e.target.value)} className={selectClass}>

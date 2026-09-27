@@ -46,22 +46,30 @@ export const TRACK_LABELS: Record<string, string> = {
   maintenance: "Mantenimiento",
 }
 
-// Un color por camino, reutilizando la misma paleta que ya usa el resto de
-// la app para estos 4 caminos "conocidos" (statusConfig en la página de
-// detalle). Un camino no listado acá (el admin puede crear los que quiera,
-// track es texto libre) cae en la paleta de respaldo de abajo.
+// Un valor por camino, no un matiz por camino.
+//
+// Antes eran cuatro colores sin relación entre sí (amarillo, turquesa, morado,
+// naranja): un arcoíris que peleaba con la disciplina de un solo acento del
+// resto del panel, y que además no decía nada — el naranja no significaba
+// "mantenimiento" para nadie.
+//
+// Ahora son cuatro escalones del mismo turquesa de marca, de claro a profundo.
+// La rama sigue siendo distinguible, el tablero lee como una familia, y el
+// gradiente codifica algo cierto: los caminos van de lo que abre un proyecto
+// a lo que lo sostiene después de entregado.
 export const TRACK_COLORS: Record<string, string> = {
-  planning: "#F2C94C",
-  development: "#26FFDF",
-  quality: "#B794F6",
-  maintenance: "#FB923C",
+  planning: "#26FFDF",
+  development: "#08A696",
+  quality: "#1E7D7D",
+  maintenance: "#4A6B6A",
 }
 
-// Paleta de respaldo para caminos personalizados: se elige un color estable
-// por nombre de camino (mismo texto → mismo color siempre) en vez de uno
-// aleatorio en cada render.
+// Respaldo para caminos personalizados (el admin puede crear los que quiera,
+// `track` es texto libre). Se elige un valor estable por nombre — mismo texto,
+// mismo color siempre — dentro de la misma escala, para que un camino nuevo no
+// vuelva a meter un matiz ajeno.
 const FALLBACK_TRACK_PALETTE = [
-  "#FF6B9D", "#60A5FA", "#4ADE80", "#EAB308", "#F87171", "#38BDF8", "#C084FC", "#FB7185",
+  "#6EFFEA", "#26FFDF", "#08A696", "#1E7D7D", "#4A6B6A", "#8FA8A5", "#025159", "#0D5D5D",
 ]
 
 function hashTrackName(track: string): number {

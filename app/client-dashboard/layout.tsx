@@ -4,7 +4,6 @@ import { useAuth } from '@/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import BackgroundAnimation from '@/components/home/animations/BackgroundAnimation'
 import ClientSidebar from '@/components/client/ClientSidebar'
 import NotificationBell from '@/components/global/NotificationBell'
 
@@ -32,8 +31,7 @@ export default function ClientDashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <BackgroundAnimation />
+      <div className="tech-ground relative flex min-h-screen items-center justify-center overflow-hidden">
         <div className="flex flex-col items-center space-y-4 relative z-10">
           <Loader2 className="h-8 w-8 animate-spin text-highlight" />
           <p className="text-textPrimary font-bricolage">Cargando dashboard...</p>
@@ -47,9 +45,7 @@ export default function ClientDashboardLayout({
   }
 
   return (
-    <div className="min-h-screen relative">
-      {/* Fondo atenuado: mantiene la identidad del home sin competir con los datos */}
-      <BackgroundAnimation density={0.22} intensity={0.55} />
+    <div className="tech-ground relative min-h-screen">
       <ClientSidebar />
       {/* El riel de navegación vive oculto hasta el hover, así que la campana
           no puede ir dentro: flota fija arriba a la derecha, donde siempre se
