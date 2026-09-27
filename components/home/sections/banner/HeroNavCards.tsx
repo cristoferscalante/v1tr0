@@ -238,7 +238,7 @@ const odiseoFrames = Array.from(
  * Sin hover (táctil) o con reduced-motion se queda en el último fotograma, el
  * que muestra el gesto completo.
  */
-function HoverFrameSequence({
+export function HoverFrameSequence({
   frames,
   active,
   alt,
@@ -332,7 +332,7 @@ type HeroCard = (typeof CARDS)[number]
  * Tarjeta del hero. La figura reacciona al cursor: crece un poco y se inclina
  * hacia el lado donde está el puntero dentro de la tarjeta.
  */
-function HeroNavCard({ card }: { card: HeroCard }) {
+function HeroNavCard({ card, primed }: { card: HeroCard; primed: boolean }) {
   const { href, title, Illustration, figure, turntable, sequence } = card
   const [hovered, setHovered] = useState(false)
 
@@ -387,15 +387,19 @@ function HeroNavCard({ card }: { card: HeroCard }) {
                 }}
               >
                 <HeroTurntableCharacter
-                  frames={turntable.frames}
-                  frontIndex={turntable.frontIndex}
+                  frames={primed ? turntable.frames : [turntable.frames[turntable.frontIndex]!]}
+                  frontIndex={primed ? turntable.frontIndex : 0}
                   alt={title}
                   sizes="(min-width: 640px) 33vw, 100vw"
                   className="h-full w-full"
                 />
               </div>
             ) : sequence ? (
-              <HoverFrameSequence frames={sequence.frames} active={hovered} alt={figure.imageAlt} />
+              <HoverFrameSequence
+                frames={primed ? sequence.frames : [sequence.frames[sequence.frames.length - 1]!]}
+                active={hovered}
+                alt={figure.imageAlt}
+              />
             ) : (
               <Image
                 src={figure.imageSrc}
@@ -423,11 +427,34 @@ function HeroNavCard({ card }: { card: HeroCard }) {
 }
 
 export default function HeroNavCards() {
+  // Las secuencias suman más de cien fotogramas. Hasta que las tarjetas se
+  // ven, cada figura carga solo su fotograma de reposo: así no compiten con
+  // la intro del hero, que está justo encima.
+  const gridRef = useRef<HTMLDivElement>(null)
+  const [primed, setPrimed] = useState(false)
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!grid || primed) {
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setPrimed(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 },
+    )
+    observer.observe(grid)
+    return () => observer.disconnect()
+  }, [primed])
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-16 sm:gap-6 w-full flex-1 min-h-0">
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-3 gap-16 sm:gap-6 w-full flex-1 min-h-0">
       {CARDS.map((card) => (
-        <HeroNavCard key={card.href} card={card} />
+        <HeroNavCard key={card.href} card={card} primed={primed} />
       ))}
     </div>
   )

@@ -4,7 +4,6 @@ import React, { createContext, useContext, useEffect, useState, useCallback, Rea
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { GsapMinimalLoader } from '../gsap/GsapMinimalLoader'
 import { GsapErrorBoundary } from './GsapErrorBoundary'
 
 // Registrar plugins
@@ -119,7 +118,8 @@ export function GsapProvider({
   return (
     <GsapContext.Provider value={contextValue}>
       <GsapErrorBoundary>
-        <GsapMinimalLoader isVisible={isLoading} duration={initialDelay} />
+        {/* Sin loader propio: la carga visible la cuenta cada página (en el
+            home, la intro del hero). Uno aquí competía con ella. */}
         {children}
       </GsapErrorBoundary>
     </GsapContext.Provider>

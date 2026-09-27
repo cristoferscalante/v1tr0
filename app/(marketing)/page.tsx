@@ -2,6 +2,7 @@
 
 // Corrigiendo las rutas de importación
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
+import HomeHero from "@/components/home/sections/banner/HomeHero"
 import HomeBanner from "@/components/home/sections/banner/HomeBanner"
 import HomeTaglineSection from "@/components/home/sections/banner/HomeTaglineSection"
 import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
@@ -22,22 +23,25 @@ export default function Home() {
       <BackgroundAnimation />
       
       <HomeScrollSnap>
-        {/* Sección 1: Hero */}
+        {/* Sección 1: Hero de aterrizaje con el h1 */}
+        <HomeHero />
+
+        {/* Sección 2: Tarjetas de navegación */}
         <HomeBanner />
 
-        {/* Sección 2: Texto dinámico */}
+        {/* Sección 3: Texto dinámico */}
         <HomeTaglineSection />
 
-        {/* Sección 3: Servicios con Tabs */}
+        {/* Sección 4: Servicios con Tabs */}
         <ServicesTabSection />
         
-        {/* Sección 4: Bifurcación software / hardware */}
+        {/* Sección 5: Bifurcación software / hardware */}
         <PathChoiceSection />
         
-        {/* Sección 5: Tecnologías */}
+        {/* Sección 6: Tecnologías */}
         <TechnologiesSection />
         
-        {/* Sección 6: Footer */}
+        {/* Sección 7: Footer */}
         <FooterSection />
       </HomeScrollSnap>
       
