@@ -10,6 +10,8 @@ interface HeroTurntableCharacterProps {
   frontIndex: number;
   alt: string;
   className?: string;
+  /** `sizes` de cada fotograma; el default es el del hero de la tienda. */
+  sizes?: string;
 }
 
 /**
@@ -33,6 +35,7 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
   frontIndex,
   alt,
   className = "",
+  sizes = "(max-width: 1024px) 90vw, 45vw",
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState(frontIndex);
@@ -106,7 +109,7 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
             alt={i === frontIndex ? alt : ""}
             aria-hidden={i !== frontIndex}
             fill
-            sizes="(max-width: 1024px) 90vw, 45vw"
+            sizes={sizes}
             // Todos los fotogramas quedan montados y solo cambia cuál es
             // visible: alternar el `src` provocaría un parpadeo en cada paso.
             className={`object-contain drop-shadow-2xl ${i === frame ? "opacity-100" : "opacity-0"}`}

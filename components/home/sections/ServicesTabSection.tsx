@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { BarChartIcon, TrendingUpIcon, SettingsIcon, ShoppingCart, FileText, Smartphone, Globe, Database, Brain, Workflow, Bot, Link as LinkIcon, LayoutGrid, BarChart3, Cpu } from "lucide-react"
 import { AnimatedIcon } from "./AnimatedIcon"
+import { SubcategoryGalleryTile } from "./SubcategoryGalleryTile"
 import { accentText, eyebrow, sectionTitle, surface, surfaceInner, surfaceInnerActive, surfaceInteractive } from "@/components/home/shared/surface"
 import { subcategoryPageSlugById } from "@/lib/data/servicios"
 
@@ -43,6 +44,7 @@ export const servicesData = [
         features: [],
         examples: [
           { title: "Portafolio", description: "Sitio personal con identidad y 3D.", image: "/imagenes/proyectos/portafolio.png", href: "https://efren-portafolio.v1tr0.com/" },
+          { title: "Megudan", description: "Constructora en guadua con modelo 3D interactivo.", image: "/imagenes/proyectos/megudan.png", href: "https://www.megudan.com/" },
         ],
       },
       {
@@ -362,33 +364,15 @@ export default function ServicesTabSection() {
             <div className="pt-2 border-t border-[#26FFDF]/15 flex-1 flex flex-col min-h-0">
               <p className={`${eyebrow} mb-3`}>Subcategorías</p>
               <div className="grid grid-cols-2 gap-2 flex-1 auto-rows-fr">
-                {activeService.subcategories.map((subcat, index) => {
-                  const IconComponent = subcat.icon
-                  const isActive = activeSubcategory === index
-                  return (
-                    <button
-                      key={subcat.id}
-                      onClick={() => setActiveSubcategory(index)}
-                      aria-pressed={isActive}
-                      title={subcat.name}
-                      className={`group/sub relative min-h-[5.5rem] flex flex-col items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 ${
-                        isActive ? surfaceInnerActive : `${surfaceInner} text-textMuted hover:text-textPrimary hover:border-[#08A696]/40`
-                      }`}
-                      aria-label={subcat.name}
-                    >
-                      <AnimatedIcon
-                        kind={subcat.iconKind}
-                        icon={IconComponent}
-                        active={isActive}
-                        size={20}
-                        className="transition-transform duration-300 group-hover/sub:scale-110"
-                      />
-                      <span className="text-[11px] font-medium leading-tight text-center px-1.5 break-words line-clamp-2">
-                        {subcat.name}
-                      </span>
-                    </button>
-                  )
-                })}
+                {activeService.subcategories.map((subcat, index) => (
+                  <SubcategoryGalleryTile
+                    key={subcat.id}
+                    name={subcat.name}
+                    examples={subcat.examples}
+                    active={activeSubcategory === index}
+                    onSelect={() => setActiveSubcategory(index)}
+                  />
+                ))}
               </div>
             </div>
           </div>

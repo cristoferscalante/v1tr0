@@ -1,8 +1,8 @@
 "use client"
 import HeroNavCards from "@/components/home/sections/banner/HeroNavCards"
 import { motion } from "framer-motion"
-import TextType from "@/components/home/hero/TextType"
 import Link from "next/link"
+import Image from "next/image"
 
 // Variantes de animación
 const containerVariants = {
@@ -43,57 +43,37 @@ export default function HomeBanner() {
       <div aria-hidden="true" className="row-start-1" />
 
       <motion.div
-        className="row-start-2 max-w-5xl mx-auto z-10 grid content-center justify-items-center gap-8 sm:gap-10 md:gap-12 text-center w-full"
+        className="row-start-2 max-w-5xl mx-auto z-10 flex flex-col items-center gap-6 sm:gap-8 text-center w-full min-h-0"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* Hero animado con efecto typewriter y color personalizado en la segunda línea */}
-        <motion.div
-          className="w-full max-w-5xl px-2 sm:px-4"
-          variants={itemVariants}
-        >
-          <TextType
-            text={[
-              "Transformamos tu potencial\nen innovación y resultados",
-              "Las estructuras basadas en codigo\nno paran de crecer",
-              "Tu futuro te lo dicen tus datos\nSe soberano de tu información",
-              "Libera tu tiempo\nAutomatiza tus procesos, y tareas",
-              "Inaugura tu tienda virtual\nvende tus productos a todos",
-              "Tus clientes necesitan visitarte\n¡Vive digital!",
-              "Sistemas de información\nGestiona y centraliza tus datos",
-              "Portafolios interactivos\n¡Posiciona tu talento!",
-              "Infraestructura web\nUnifica procesos, sistemas, y tareas",
-              "Integra Inteligencia Artificial\ny potencia tus herramientas",
-            ]}
-            typingSpeed={60}
-            pauseDuration={1500}
-            deletingSpeed={10}
-            className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug md:leading-tight text-center min-h-[4em] sm:min-h-[3em] md:min-h-[2.5em] ${'text-white'}`}
-          />
-        </motion.div>
-
-        {/* Tarjetas de navegación: Servicios, Tienda y Blog */}
-        <motion.div className="w-full" variants={itemVariants}>
+        {/* Tarjetas de navegación: Servicios, Tienda y Blog. Ocupan todo el
+            alto que deja el botón; el texto dinámico vive en la sección 2. */}
+        <motion.div className="w-full flex-1 min-h-0 flex flex-col pt-10 sm:pt-14" variants={itemVariants}>
           <HeroNavCards />
         </motion.div>
-        {/* Badge */}
+        {/* Escudo de V1TR0: lleva a /about y muestra "Sobre nosotros" debajo al pasar el cursor */}
         <motion.div variants={itemVariants}>
-        <Link
-          href="/about"
-          aria-label="Ir a la página de V1TR0"
-          className="relative group inline-flex items-center mx-2"
-        >
-          {/* Badge principal */}
-          <div className={`relative bg-[#02505931] backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-2xl border border-[#08A696]/30 text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-[#02505950] transform group-hover:scale-[1.03]`}>
-            <span className={`text-[#26FFDF] transition-colors duration-300`}>
-              V1TR0 Technologies
+          <Link
+            href="/about"
+            aria-label="Sobre nosotros"
+            className="relative group inline-flex flex-col items-center rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+          >
+            <Image
+              src="/imagenes/logos/escudo-logo.png"
+              alt=""
+              width={551}
+              height={634}
+              className="h-16 sm:h-20 w-auto transition-all duration-300 group-hover:scale-110"
+            />
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute top-full mt-2 whitespace-nowrap rounded-full border border-[#08A696]/30 bg-[#02505980] backdrop-blur-sm px-3 py-1 text-xs font-semibold text-[#26FFDF] opacity-0 -translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0"
+            >
+              Sobre nosotros
             </span>
-            <span className={`ml-2 sm:ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1 text-[#26FFDF]`}>
-              →
-            </span>
-          </div>
-        </Link>
+          </Link>
         </motion.div>
       </motion.div>
     </section>
