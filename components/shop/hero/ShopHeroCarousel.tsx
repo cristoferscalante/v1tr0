@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { heroPackages } from "@/lib/data/mockProducts";
 import Link from "next/link";
 import { ShoppingBag, Radio } from "lucide-react";
@@ -58,27 +58,12 @@ const imageVariants = {
 export const ShopHeroCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Auto-play carousel
-  useEffect(() => {
-    if (!isAutoPlaying) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % heroPackages.length);
-    }, 6000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  // Sin auto-play por ahora: el hero solo cambia cuando el usuario elige un paquete.
 
   const goToSlide = (index: number) => {
     if (index === currentIndex) {
       return;
     }
-    setIsAutoPlaying(false);
     // La dirección la marca la posición del paquete destino respecto al actual.
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
@@ -265,15 +250,6 @@ export const ShopHeroCarousel: React.FC = () => {
           })}
         </motion.div>
 
-        {/* Auto-play indicator - minimalista */}
-        <div className="mt-8 sm:mt-12 text-center">
-          <button
-            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-            className="text-xs text-textSecondary hover:text-primary transition-colors px-4 py-2"
-          >
-            {isAutoPlaying ? "⏸" : "▶"} {isAutoPlaying ? "Pausar" : "Reproducir"}
-          </button>
-        </div>
       </div>
     </section>
   );

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ShoppingCart, Heart, Package, Truck, Shield } from "lucide-react";
-import { formatCurrency } from "@/config/site";
+import { availability, categoryLabel, formatPrice } from "@/lib/data/shopCatalog";
 import type { ProductDetailed, ProductVariant } from "@/lib/data/mockProducts";
 
 interface ProductInfoProps {
@@ -20,6 +20,9 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
   const currentPrice = selectedVariant?.price || product.price;
   const currentStock = selectedVariant?.stock || product.stock;
   const isOutOfStock = currentStock === 0;
+  // stock < 0 = sin límite (bajo pedido): la cantidad no se acota por inventario.
+  const maxQuantity = currentStock < 0 ? 99 : currentStock;
+  const stockInfo = availability(currentStock, product.delivery);
 
   const handleAddToCart = () => {
     if (!isOutOfStock) {
@@ -31,8 +34,13 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
     <div className="space-y-8">
       {/* Category & Badge */}
       <div className="flex items-center gap-3 flex-wrap">
+        {product.brand && (
+          <span className="px-3 py-1 shop-inset border shop-border rounded-full text-textPrimary text-xs font-semibold uppercase tracking-wide">
+            {product.brand}
+          </span>
+        )}
         <span className="px-3 py-1 shop-inset border shop-border rounded-full text-primary text-xs font-semibold uppercase tracking-wide">
-          {product.category}
+          {categoryLabel(product.category)}
         </span>
         {product.badge && (
           <span className="px-3 py-1 bg-primary text-background rounded-full text-xs font-bold uppercase">
@@ -55,17 +63,17 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
       <div className="py-6 border-y border-primary/20">
         <div className="flex flex-wrap items-baseline gap-2 sm:gap-4">
           <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-            {formatCurrency(currentPrice)}
+            {formatPrice(currentPrice)}
           </span>
           {product.originalPrice && (
             <span className="text-2xl text-textSecondary line-through">
-              {formatCurrency(product.originalPrice)}
+              {formatPrice(product.originalPrice)}
             </span>
           )}
         </div>
         {product.originalPrice && (
           <p className="text-green-500 font-semibold mt-2">
-            Ahorra {formatCurrency(product.originalPrice - currentPrice)} (
+            Ahorra {formatPrice(product.originalPrice - currentPrice)} (
             {Math.round(((product.originalPrice - currentPrice) / product.originalPrice) * 100)}% OFF)
           </p>
         )}
@@ -88,7 +96,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
               >
                 <p className="text-white font-semibold">{variant.name}</p>
                 <p className="text-primary text-lg font-bold mt-1">
-                  {formatCurrency(variant.price)}
+                  {formatPrice(variant.price)}
                 </p>
               </button>
             ))}
@@ -112,7 +120,7 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
               {quantity}
             </span>
             <button
-              onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
+              onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
               className="px-4 py-3 shop-inset hover:bg-[#08A696]/10 text-white transition-colors"
               disabled={isOutOfStock}
             >
@@ -167,8 +175,8 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product, onAddToCart }
         <div className="flex items-start gap-3 p-4 shop-surface rounded-xl border shop-border">
           <Package className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
           <div>
-            <p className="text-white font-semibold text-sm">En Stock</p>
-            <p className="text-textSecondary text-xs mt-1">Listo para enviar</p>
+            <p className="text-white font-semibold text-sm">{stockInfo.label}</p>
+            <p className="text-textSecondary text-xs mt-1">{stockInfo.detail}</p>
           </div>
         </div>
 

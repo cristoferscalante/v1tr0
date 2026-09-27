@@ -15,14 +15,22 @@ interface ProductRow {
   id: string; name: string; slug: string; description: string | null
   price: string; originalPrice: string | null; category: string
   stock: number; images: string[]; isFeatured: boolean; badge: string | null
+  shortDescription: string | null; subcategory: string | null; features: unknown
+  metadata: { coleccion?: string; marca?: string; entrega?: string; destacados?: string[] } | null
 }
 
 function rowToProduct(row: ProductRow): Product {
+  const meta = row.metadata ?? {};
+  const images = (row.images ?? []).filter(Boolean);
+  // En la colección de hardware, `features` son los usos recomendados.
+  const uses = meta.coleccion === "hardware" && Array.isArray(row.features)
+    ? (row.features as unknown[]).filter((f): f is string => typeof f === "string")
+    : [];
   return {
     id: row.id,
     name: row.name,
     slug: row.slug,
-    description: row.description ?? "",
+    description: row.shortDescription ?? row.description ?? "",
     price: Number(row.price),
     ...(row.originalPrice ? { originalPrice: Number(row.originalPrice) } : {}),
     image: resolveProductImage({ image: row.images?.[0] ?? null, slug: row.slug, category: row.category }),
@@ -30,6 +38,13 @@ function rowToProduct(row: ProductRow): Product {
     stock: row.stock,
     featured: row.isFeatured,
     ...(row.badge ? { badge: row.badge } : {}),
+    ...(meta.marca ? { brand: meta.marca } : {}),
+    ...(row.subcategory ? { subcategory: row.subcategory } : {}),
+    ...(meta.destacados?.length ? { highlights: meta.destacados } : {}),
+    ...(uses.length ? { uses } : {}),
+    ...(meta.entrega ? { delivery: meta.entrega } : {}),
+    ...(images.length ? { images } : {}),
+    ...(meta.coleccion === "hardware" ? { cutout: true } : {}),
   };
 }
 

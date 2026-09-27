@@ -7,9 +7,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface ProductGalleryProps {
   images: string[];
   productName: string;
+  /** Fotos recortadas sin fondo: completas, sin recortar, sobre el panel oscuro. */
+  cutout?: boolean;
 }
 
-export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName }) => {
+export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, cutout = false }) => {
+  const fit = cutout ? "object-contain p-[8%] drop-shadow-[0_18px_28px_rgba(0,0,0,0.55)]" : "object-cover";
   const [selectedImage, setSelectedImage] = useState(0);
 
   const goToNext = () => {
@@ -80,7 +83,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
             src={images[selectedImage] || "/imagenes/placeholder.jpg"}
             alt={`${productName} - imagen ${selectedImage + 1}`}
             fill
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            className={`${fit} transition-transform duration-500 ease-out group-hover:scale-110`}
             priority={selectedImage === 0}
           />
         </div>
@@ -108,7 +111,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 
         {/* Image Counter */}
         {images.length > 1 && (
-          <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-background/80 backdrop-blur-sm border border-primary/30 rounded-full text-white text-sm font-semibold z-10">
+          <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-[#1e2123]/85 backdrop-blur-sm border border-primary/30 rounded-full text-white text-sm font-semibold z-10">
             {selectedImage + 1} / {images.length}
           </div>
         )}
@@ -131,7 +134,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                 src={image}
                 alt={`${productName} - thumbnail ${index + 1}`}
                 fill
-                className="object-cover"
+                className={fit}
               />
             </button>
           ))}

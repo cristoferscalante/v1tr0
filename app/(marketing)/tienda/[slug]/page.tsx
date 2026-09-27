@@ -9,6 +9,7 @@ import { ProductGallery } from "@/components/shop/product-detail/ProductGallery"
 import { resolveProductImage } from "@/lib/data/productImages"
 import { ProductInfo } from "@/components/shop/product-detail/ProductInfo"
 import { ProductSpecifications } from "@/components/shop/product-detail/ProductSpecifications"
+import { ProductUses } from "@/components/shop/product-detail/ProductUses"
 import { RelatedProducts } from "@/components/shop/product-detail/RelatedProducts"
 import { CartDrawer } from "@/components/shop/cart/CartDrawer"
 import { FloatingCartTab } from "@/components/shop/cart/FloatingCartTab"
@@ -66,10 +67,31 @@ interface ProductRow {
   id: string; name: string; slug: string; description: string | null
   price: string; originalPrice: string | null; category: string
   stock: number; images: string[] | null; isFeatured: boolean; badge: string | null
+  subcategory: string | null; features: unknown; specifications: unknown
+  metadata: { coleccion?: string; marca?: string; entrega?: string; destacados?: string[]; ordenSpecs?: string[] } | null
 }
 
 function rowToDetailedProduct(row: ProductRow): ProductDetailed {
   const images = (row.images ?? []).filter(Boolean)
+  const meta = row.metadata ?? {}
+  const isHardware = meta.coleccion === "hardware"
+  // En la colección de hardware, `features` son los usos recomendados.
+  const uses = isHardware && Array.isArray(row.features)
+    ? (row.features as unknown[]).filter((f): f is string => typeof f === "string")
+    : []
+  const specs = row.specifications && typeof row.specifications === "object"
+    ? Object.fromEntries(
+        Object.entries(row.specifications as Record<string, unknown>)
+          .filter((entry): entry is [string, string] => typeof entry[1] === "string")
+          // JSONB reordena las claves; si el catálogo guardó el orden original, se respeta.
+          .sort(([a], [b]) => {
+            const order = meta.ordenSpecs ?? []
+            const ia = order.indexOf(a)
+            const ib = order.indexOf(b)
+            return (ia === -1 ? order.length : ia) - (ib === -1 ? order.length : ib)
+          })
+      )
+    : {}
   return {
     id: row.id,
     name: row.name,
@@ -83,6 +105,13 @@ function rowToDetailedProduct(row: ProductRow): ProductDetailed {
     featured: row.isFeatured,
     ...(row.badge ? { badge: row.badge } : {}),
     ...(images.length ? { images } : {}),
+    ...(Object.keys(specs).length ? { specifications: specs } : {}),
+    ...(meta.marca ? { brand: meta.marca } : {}),
+    ...(row.subcategory ? { subcategory: row.subcategory } : {}),
+    ...(meta.destacados?.length ? { highlights: meta.destacados } : {}),
+    ...(uses.length ? { uses } : {}),
+    ...(meta.entrega ? { delivery: meta.entrega } : {}),
+    ...(isHardware ? { cutout: true } : {}),
   }
 }
 
@@ -175,9 +204,11 @@ export default function TiendaSlugPage({ params }: PageProps) {
                     : [resolveProductImage({ image: product.image, slug: product.slug, category: product.category })]
                 }
                 productName={product.name}
+                {...(product.cutout && { cutout: true })}
               />
               <ProductInfo product={product} onAddToCart={handleAddToCart} />
             </div>
+            {product.uses && product.uses.length > 0 && <ProductUses uses={product.uses} />}
             {product.specifications && <ProductSpecifications specifications={product.specifications} />}
             {related.length > 0 && (
               <RelatedProducts products={related} onAddToCart={(p) => { addToCart(p.id); setShowNotification(true) }} />

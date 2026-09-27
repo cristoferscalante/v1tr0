@@ -16,6 +16,8 @@
     "od:server": "od daemon start",
     "seed:demo": "node scripts/seed-demo.mjs",
     "seed:demo:clean": "node scripts/seed-demo.mjs --clean",
+    "seed:hardware": "node scripts/seed-hardware.mjs",
+    "seed:hardware:clean": "node scripts/seed-hardware.mjs --clean",
     "test:smoke": "node scripts/e2e-smoke.mjs admin && node scripts/e2e-smoke.mjs client",
     "test:flows": "node scripts/e2e-flows.mjs",
     "test:e2e": "playwright test",

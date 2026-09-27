@@ -18,6 +18,15 @@ export interface Product {
   featured?: boolean;
   badge?: string;
   likes?: number;
+  /** Datos del catálogo de hardware (metadata de la tabla products). */
+  brand?: string;
+  subcategory?: string;
+  highlights?: string[];
+  uses?: string[];
+  delivery?: string;
+  images?: string[];
+  /** Foto recortada sin fondo (PNG/webp con transparencia): se muestra completa, flotando sobre el panel. */
+  cutout?: boolean;
 }
 
 interface ProductCardProps {

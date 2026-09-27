@@ -11,7 +11,8 @@ import {
   useShopSearch,
 } from "../search/shopSearchStore";
 import { motion } from "framer-motion";
-import { surfaceInner, surfaceInnerActive } from "@/components/home/shared/surface";
+import { pill, pillActive, surfaceInner, surfaceInnerActive } from "@/components/home/shared/surface";
+import { SHOP_CATEGORIES, categoryLabel } from "@/lib/data/shopCatalog";
 import { ShopSearchTrigger } from "../search/ShopSearchTrigger";
 
 interface ProductGridProps {
@@ -29,8 +30,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   // La búsqueda se controla desde la lupa del header (store compartido).
   const { query: searchQuery } = useShopSearch();
   const setSearchQuery = setShopSearchQuery;
-  // Sin barra de filtros, el catálogo mantiene el orden por destacados.
-  const activeSort: string = "featured";
+  const [activeSort, setActiveSort] = useState("featured");
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -75,6 +75,20 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 
     return filtered;
   }, [products, activeCategory, searchQuery, activeSort]);
+
+  // Categorías presentes en el catálogo, en el orden definido para la tienda.
+  const categories = useMemo(() => {
+    const counts = new Map<string, number>();
+    products.forEach((p) => counts.set(p.category, (counts.get(p.category) ?? 0) + 1));
+    const order = SHOP_CATEGORIES.map((c) => c.id);
+    return [...counts.entries()]
+      .sort(([a], [b]) => {
+        const ia = order.indexOf(a);
+        const ib = order.indexOf(b);
+        return (ia === -1 ? order.length : ia) - (ib === -1 ? order.length : ib);
+      })
+      .map(([id, count]) => ({ id, label: categoryLabel(id), count }));
+  }, [products]);
 
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = useMemo(() => {
@@ -219,7 +233,54 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
       </motion.div>
 
       {/* Products Grid */}
-      <div ref={gridRef} className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-14 pb-24 md:pb-32 scroll-mt-28">
+      <div ref={gridRef} className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-12 pb-24 md:pb-32 scroll-mt-28">
+        {/* Barra de catálogo: categorías, conteo y orden */}
+        {products.length > 0 && (
+          <div className="mb-8 md:mb-10 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+            <div
+              className="-mx-4 px-4 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto sm:flex-wrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              role="tablist"
+              aria-label="Categorías"
+            >
+              {[{ id: "all", label: "Todo", count: products.length }, ...categories].map((cat) => {
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`${isActive ? pillActive : pill} shrink-0 whitespace-nowrap`}
+                  >
+                    {cat.label}
+                    <span className={`text-[11px] tabular-nums ${isActive ? "opacity-80" : "opacity-50"}`}>{cat.count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center justify-between lg:justify-end gap-4 lg:ml-auto shrink-0">
+              <p className="text-xs text-textMuted tabular-nums" aria-live="polite">
+                {filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"}
+              </p>
+              <label className="flex items-center gap-2 text-xs text-textMuted">
+                <span className="sr-only sm:not-sr-only">Ordenar por</span>
+                <select
+                  value={activeSort}
+                  onChange={(e) => setActiveSort(e.target.value)}
+                  className={`${surfaceInner} px-3 py-2 text-sm text-textPrimary bg-[#16191b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 cursor-pointer`}
+                >
+                  <option value="featured">Destacados</option>
+                  <option value="price-asc">Precio: menor a mayor</option>
+                  <option value="price-desc">Precio: mayor a menor</option>
+                  <option value="name">Nombre</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        )}
+
         {paginatedProducts.length > 0 ? (
           <>
             <ProductBrowser

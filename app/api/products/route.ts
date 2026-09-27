@@ -1,15 +1,13 @@
 import { db } from "@/lib/db"
 import { products } from "@/lib/db/schema"
-import { and, eq, inArray, notInArray } from "drizzle-orm"
+import { and, eq, notInArray, sql } from "drizzle-orm"
 import { NextResponse } from "next/server"
 
 // Endpoint público de solo lectura para la tienda (app/(marketing)/tienda).
-// Excluye paquetes (se administran/muestran aparte) y servicios: la tienda
-// vende productos; los servicios viven en /servicios.
-// Catálogo acotado a los dos productos en venta por ahora.
-// Para reabrir el catálogo completo, borrar esta lista y su filtro.
-const SLUGS_VISIBLES = ["sistema-pos", "sistema-comunicacion-descentralizado"]
-
+// La sección de productos solo lista la colección de hardware
+// (metadata.coleccion = "hardware", sembrada por scripts/seed-hardware.mjs).
+// Los paquetes (POS, comunicación) se muestran en el hero y en /tienda/[slug];
+// los servicios viven en /servicios.
 export async function GET() {
   const rows = await db
     .select()
@@ -18,7 +16,7 @@ export async function GET() {
       and(
         eq(products.isActive, true),
         notInArray(products.productType, ["package", "service"]),
-        inArray(products.slug, SLUGS_VISIBLES)
+        sql`${products.metadata}->>'coleccion' = 'hardware'`
       )
     )
 
