@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic"
 import CardBanner from "@/components/home/shared/CardBanner"
-import { useTheme } from "@/components/theme-provider"
 import { motion } from "framer-motion"
 import { useIsConfirmedDesktop } from "@/hooks/use-mobile"
 import LogoPlaceholder from "@/components/3d/LogoPlaceholder"
@@ -40,8 +39,6 @@ const itemVariants = {
 // ============================================================================
 
 export default function HomeBanner() {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   const isConfirmedDesktop = useIsConfirmedDesktop()
 
   return (
@@ -65,26 +62,16 @@ export default function HomeBanner() {
           {/* Badge */}
           <div className="relative group inline-flex items-center">
             <div
-              className={`absolute -inset-0.5 bg-gradient-to-r ${
-                isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"
-              } rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`}
+              className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300`}
             />
             <div
-              className={`relative ${
-                isDark ? "bg-[#02505931]" : "bg-[#e6f7f6]"
-              } backdrop-blur-sm px-5 py-2 rounded-2xl border ${
-                isDark ? "border-[#08A696]/30" : "border-[#08A696]/40"
-              } text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] ${
-                isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"
-              } shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transform group-hover:scale-105`}
+              className={`relative bg-[#02505931] backdrop-blur-sm px-5 py-2 rounded-2xl border border-[#08A696]/30 text-xs sm:text-sm font-semibold transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-[#02505950] shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transform group-hover:scale-105`}
             >
-              <span className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} transition-colors duration-300`}>
+              <span className={`text-[#26FFDF] transition-colors duration-300`}>
                 V1TR0 Technologies
               </span>
               <span
-                className={`ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1 ${
-                  isDark ? "text-[#26FFDF]" : "text-[#08A696]"
-                }`}
+                className={`ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1 text-[#26FFDF]`}
               >
                 →
               </span>

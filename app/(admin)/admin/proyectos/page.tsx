@@ -69,7 +69,7 @@ export default async function ProjectsPage() {
 
       {withProgress.length === 0 ? (
         <EmptyState
-          icon={FolderKanban}
+          icon={<FolderKanban />}
           message="No hay proyectos aún"
           hint="Crea el primero con el botón «Nuevo proyecto»"
         />

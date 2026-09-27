@@ -20,8 +20,10 @@ import {
   Users,
   Package,
   ChevronDown,
+  Inbox,
 } from "lucide-react"
 import type { TreeGroup } from "@/components/shared/tree-nav"
+import NotificationBell from "@/components/global/NotificationBell"
 
 // Árbol de navegación: 3 ramas (Clientes / Tienda / Proyectos), sin mezclar
 // productos con proyectos, más los accesos transversales Dashboard y Reportes.
@@ -50,6 +52,7 @@ const treeGroups: TreeGroup[] = [
     ],
   },
   { id: "proyectos", label: "Proyectos", icon: FolderKanban, href: "/admin/proyectos" },
+  { id: "mis-tareas", label: "Mis tareas", icon: Inbox, href: "/admin/mis-tareas" },
   { id: "reportes", label: "Reportes", icon: FileBarChart, href: "/admin/reportes" },
 ]
 
@@ -145,6 +148,7 @@ export default function AdminSidebar() {
           {/* Cuenta + salir: con la barra horizontal ya hay espacio de sobra,
               no hace falta ocultar el nombre hasta el hover como en el riel. */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
+            <NotificationBell />
             <div className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-[#26FFDF]/10 bg-black/20">
               <div className="w-7 h-7 shrink-0 rounded-full overflow-hidden border border-[#26FFDF]/30 bg-gradient-to-br from-[#08A696]/40 to-[#26FFDF]/20 flex items-center justify-center">
                 {userProfile?.image ? (

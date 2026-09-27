@@ -353,45 +353,131 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
-/* ===== SUPERFICIES DE LA TIENDA =====
-   Toma los grises neutros del CartDrawer y los convierte en un sistema
-   reutilizable, para que toda la tienda comparta ese fondo diferencial
-   mientras el acento sigue siendo el turquesa de la marca (#08A696/#26FFDF). */
+/* ===== SUPERFICIES DEL PRODUCTO =====
+   Los grises neutros que nacieron en el CartDrawer, convertidos en el sistema
+   de superficies de TODO el producto: tienda, home y los dos paneles. El
+   acento turquesa (#08A696/#26FFDF) queda reservado para lo focal — acción
+   primaria, estado activo, bloqueo — y nunca para una superficie de fondo.
+
+   Los nombres neutrales (`surface`, `inset`, `band`, `track`, `card`) son los
+   que se usan de aquí en adelante. Los `shop-*` se conservan como alias
+   porque ya hay 8 archivos de la tienda apoyados en ellos; son la misma
+   declaración, no una variante.
+
+   El tema está bloqueado en oscuro (`app/layout.tsx` fija `<html class="dark">`
+   en el servidor y `components/theme-provider.tsx` lo reafirma), así que la
+   variante `dark:` es la que aplica siempre, también dentro de los paneles. */
 @layer components {
   /* Tarjeta / panel principal */
+  .surface,
   .shop-surface {
     @apply bg-white/60 dark:bg-[#1e2123];
   }
 
   /* Hueco embebido: miniaturas, inputs, controles dentro de una tarjeta */
+  .inset-surface,
   .shop-inset {
     @apply bg-white/50 dark:bg-[#232629];
   }
 
   /* Banda de encabezado o pie, ligeramente teñida por el acento */
+  .band,
   .shop-band {
     @apply bg-[#08A696]/5 dark:bg-[#202325];
   }
 
   /* Riel de progreso o separador con algo más de peso */
+  .track,
   .shop-track {
     @apply bg-white/50 dark:bg-[#2b2e31];
   }
 
   /* Borde estándar y su estado hover */
+  .edge,
   .shop-border {
     @apply border-[#08A696]/20 dark:border-[#08A696]/15;
   }
 
+  .edge-hover,
   .shop-border-hover {
     @apply hover:border-[#08A696]/60 dark:hover:border-[#26FFDF]/60;
   }
 
-  /* Panel completo: la superficie del carrito con su radio, borde y blur.
-     Equivalente de `surface` del home, pero con el gris neutro de la tienda. */
+  /* Panel completo: superficie + radio + borde + blur. Conserva el blur
+     porque en las páginas públicas se apila sobre `BackgroundAnimation`, donde
+     sí aporta. Los paneles de datos usan `.panel-card` (abajo), sin blur. */
+  .card-surface,
   .shop-panel {
     @apply rounded-3xl border backdrop-blur-sm transition-all duration-300
            bg-white/60 border-[#08A696]/20 dark:bg-[#1e2123] dark:border-[#08A696]/15;
+  }
+
+  /* Tarjeta de datos para los paneles de admin y cliente: misma superficie y
+     mismo borde que el resto del producto, pero sin blur ni sombra. En una
+     lista de datos la elevación solo compite con el contenido — la tarjeta se
+     distingue por relleno y borde, que es la regla del tipo kanban de la
+     skill `diagram-design`. Radio menor que `.card-surface`: estas tarjetas
+     se apilan y un radio grande las hace ver más blandas de lo que son. */
+  .panel-card {
+    @apply rounded-xl border transition-colors duration-200
+           bg-[#1e2123] border-[#08A696]/15;
+  }
+
+  /* ===== REGISTRO DE DIBUJO TÉCNICO =====
+     Vocabulario tomado de las referencias que aprobó el cliente (Vaulk, Dieste):
+     documentación de ingeniería, no panel de control genérico. Encaja con el
+     oficio — V1TR0 construye software y hardware — así que no es prestado.
+
+     Nada de esto agrega color: la retícula y los esquineros viven en la misma
+     tinta que ya usan los bordes. */
+
+  /* Fondo de papel técnico: una cruz cada 48px, casi invisible. Da profundidad
+     sin la textura de una retícula completa, que a este tamaño vibra. */
+  .tech-ground {
+    background-color: #1e2123;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M24 20.5v7M20.5 24h7' stroke='rgba(230,247,246,0.055)' stroke-width='1'/%3E%3C/svg%3E");
+  }
+
+  /* Esquineros: cuatro ángulos en vez de un borde continuo. Delimitan con menos
+     tinta que un rectángulo cerrado, que es justo lo que hace una plantilla de
+     dibujo. Van sobre `.panel-card`, que aporta la superficie. */
+  .brackets { position: relative; }
+  .brackets::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    --e: rgba(8,166,150,0.55);
+    --l: 10px;
+    --g: 1px;
+    background:
+      linear-gradient(var(--e),var(--e)) 0 0        / var(--l) var(--g) no-repeat,
+      linear-gradient(var(--e),var(--e)) 0 0        / var(--g) var(--l) no-repeat,
+      linear-gradient(var(--e),var(--e)) 100% 0     / var(--l) var(--g) no-repeat,
+      linear-gradient(var(--e),var(--e)) 100% 0     / var(--g) var(--l) no-repeat,
+      linear-gradient(var(--e),var(--e)) 0 100%     / var(--l) var(--g) no-repeat,
+      linear-gradient(var(--e),var(--e)) 0 100%     / var(--g) var(--l) no-repeat,
+      linear-gradient(var(--e),var(--e)) 100% 100%  / var(--l) var(--g) no-repeat,
+      linear-gradient(var(--e),var(--e)) 100% 100%  / var(--g) var(--l) no-repeat;
+  }
+
+  /* Etiqueta montada sobre el borde superior del panel, como el rótulo de una
+     lámina. Rompe el borde a propósito: por eso el fondo opaco. */
+  .panel-tag {
+    @apply absolute -top-[7px] left-4 inline-flex items-center gap-1.5
+           bg-[#1e2123] px-2 font-mono text-[10px] uppercase tracking-[0.16em];
+  }
+
+  /* Marcador de sección activa: un cuadrito, no un subrayado. */
+  .rail-mark {
+    @apply inline-block h-[5px] w-[5px] shrink-0;
+  }
+
+  /* Chip rectangular para dato/estado. Nunca píldora: una píldora lee como
+     badge de otro sistema de diseño (ver references/type-kanban.md). */
+  .chip {
+    @apply inline-flex items-center rounded-[2px] border px-1.5 py-px
+           font-mono text-[10px] uppercase tracking-wider;
   }
 
   /* Botón de acción de la tienda: el mismo relleno turquesa que usan

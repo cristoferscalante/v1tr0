@@ -5,18 +5,27 @@ import { cn } from "@/lib/utils"
 
 /**
  * Primitivas de UI compartidas por el panel de admin y el portal del cliente.
- * Replican el lenguaje visual del sitio público (ver components/blog/BlogCard.tsx):
- * cristal turquesa, borde #08A696 y resplandor exterior.
  *
- * Los paneles son solo tema oscuro por decisión de producto, así que aquí no
- * se consulta useTheme: los colores están fijados a la variante oscura.
+ * Comparten superficie con el sitio público: el gris carbón neutro de
+ * `styles/globals.css` (`.panel-card`, `.inset-surface`, `.band`), con el
+ * turquesa de marca reservado para lo focal — acción primaria, estado activo,
+ * bloqueo. Antes el turquesa estaba también en el fondo de cada tarjeta, así
+ * que no señalaba nada; esa es la regla de acento de `diagram-design`.
+ *
+ * Los paneles son solo tema oscuro por decisión de producto, y el tema del
+ * sitio está bloqueado en oscuro (ver components/theme-provider.tsx), así que
+ * aquí no se consulta useTheme.
  */
 
-const GLASS = "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
+/** Acento de marca. Fuera de aquí no debería escribirse a mano. */
+export const ACCENT = "#08A696"
+export const ACCENT_BRIGHT = "#26FFDF"
 
 /**
- * Tarjeta "rica": resplandor exterior + gesto scale-95 → scale-100 al pasar el
- * cursor, igual que las tarjetas de blog. Para menús de entrada y navegación.
+ * Tarjeta de entrada para menús y navegación. El realce vive en el borde, no
+ * en un resplandor ni en un escalado: en una rejilla de accesos el movimiento
+ * al pasar el cursor arrastra la vista y compite con lo que el usuario está
+ * leyendo.
  */
 export function GlowCard({
   children,
@@ -30,20 +39,14 @@ export function GlowCard({
   className?: string
 }) {
   const inner = (
-    <div className="relative group h-full">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300" />
-      <div
-        className={cn(
-          "relative h-full flex flex-col rounded-2xl transition-all duration-300",
-          GLASS,
-          "transform scale-95 group-hover:scale-100",
-          "group-hover:border-[#08A696] group-hover:bg-[#02505950]",
-          "shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10",
-          className,
-        )}
-      >
-        {children}
-      </div>
+    <div
+      className={cn(
+        "panel-card group h-full flex flex-col",
+        "hover:border-[#08A696]/60",
+        className,
+      )}
+    >
+      {children}
     </div>
   )
 
@@ -65,17 +68,38 @@ export function GlowCard({
 }
 
 /**
- * Tarjeta "sobria": mismo cristal y paleta, sin escalado ni resplandor.
- * Para tablas, listados y el tablero Kanban, donde el movimiento distrae.
+ * Superficie para tablas, listados y tableros.
+ *
+ * `label` monta un rótulo sobre el borde superior, como el cajetín de una
+ * lámina técnica: dice qué es el panel sin gastar una fila de contenido.
+ * `focal` cambia el borde continuo por cuatro esquineros — delimita con menos
+ * tinta y marca el panel que importa en la pantalla. Uno por vista: si todos
+ * llevan esquineros, ninguno destaca.
  */
 export function Panel({
   children,
   className,
+  label,
+  focal = false,
 }: {
   children: React.ReactNode
   className?: string
+  label?: React.ReactNode
+  focal?: boolean
 }) {
-  return <div className={cn("rounded-2xl", GLASS, className)}>{children}</div>
+  return (
+    <div
+      className={cn(
+        "panel-card",
+        focal && "brackets border-transparent",
+        label && "relative",
+        className,
+      )}
+    >
+      {label && <span className="panel-tag text-[#08A696]">{label}</span>}
+      {children}
+    </div>
+  )
 }
 
 /** Fila de listado con realce de borde al pasar el cursor, sin movimiento. */
@@ -89,8 +113,8 @@ export function PanelRow({
   className?: string
 }) {
   const base = cn(
-    "block rounded-xl border border-transparent px-4 py-3 transition-colors duration-200",
-    "hover:border-[#08A696]/40 hover:bg-[#02505950]",
+    "block rounded-lg border border-transparent px-4 py-3 transition-colors duration-200",
+    "hover:border-[#08A696]/40 hover:bg-white/[0.03]",
     className,
   )
   return href ? (
@@ -102,7 +126,15 @@ export function PanelRow({
   )
 }
 
-/** Píldora de etiqueta, mismo tratamiento que los tags del blog. */
+/**
+ * Chip de estado o dato. Rectángulo (`rounded-[2px]`), nunca píldora: una
+ * píldora lee como badge de otro sistema de diseño y le da a un dato el peso
+ * visual de una acción (ver references/type-kanban.md de la skill).
+ *
+ * Los tonos usan color solo en texto y borde, sin relleno saturado: en una
+ * tabla con muchas filas los rellenos compiten entre sí y el ojo pierde el
+ * orden de lectura.
+ */
 export function Pill({
   children,
   tone = "default",
@@ -113,26 +145,24 @@ export function Pill({
   className?: string
 }) {
   const tones: Record<string, string> = {
-    default: "bg-[#08A696]/10 text-[#26FFDF] border-[#08A696]/50",
-    success: "bg-[#10b981]/10 text-[#10b981] border-[#10b981]/40",
-    warning: "bg-[#f26a1b]/10 text-[#f26a1b] border-[#f26a1b]/40",
-    danger: "bg-[#ff2c10]/10 text-[#ff6b5b] border-[#ff2c10]/40",
-    muted: "bg-white/5 text-textSecondary border-white/10",
+    default: "text-[#26FFDF] border-[#08A696]/50",
+    success: "text-[#10b981] border-[#10b981]/45",
+    warning: "text-[#f7c163] border-[#f7c163]/50",
+    danger: "text-[#ff8a7f] border-[#ff8a7f]/50",
+    muted: "text-white/45 border-white/15",
   }
   return (
-    <span
-      className={cn(
-        "inline-flex items-center text-xs font-medium px-3 py-1 rounded-full border backdrop-blur-sm whitespace-nowrap",
-        tones[tone],
-        className,
-      )}
-    >
+    <span className={cn("chip whitespace-nowrap", tones[tone], className)}>
       {children}
     </span>
   )
 }
 
-/** Encabezado de sección centrado, con la barra degradada del home. */
+/**
+ * Encabezado de sección. El badge es un eyebrow en mono, no una píldora
+ * turquesa: es una etiqueta de categoría, y gastar el acento ahí lo resta de
+ * donde sí hace falta.
+ */
 export function SectionHeading({
   badge,
   title,
@@ -148,18 +178,20 @@ export function SectionHeading({
   return (
     <div className={cn("flex flex-col", centered ? "items-center text-center" : "items-start")}>
       {badge && (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold tracking-[0.22em] uppercase bg-[#08A696]/10 border border-[#08A696]/30 text-[#26FFDF] mb-3">
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-white/35">
           {badge}
         </span>
       )}
-      <h1 className="text-2xl sm:text-3xl font-bold text-white">{title}</h1>
-      {subtitle && <p className="text-textSecondary text-sm mt-1 max-w-xl">{subtitle}</p>}
-      <div
-        className={cn(
-          "w-20 h-1 bg-gradient-to-r from-[#08A696] to-[#26FFDF] rounded-full mt-4",
-          centered && "mx-auto",
-        )}
-      />
+      {/* 24px no le daba voz a la página. Las cuatro referencias entran entre
+          54 y 112px; en una herramienta eso no cabe, pero 40px sí — el título
+          pasa a ser el ancla de la pantalla en vez de una etiqueta más. */}
+      <h1 className="mt-2 text-3xl font-extrabold tracking-[-0.03em] text-white sm:text-[40px] sm:leading-[1.05]">
+        {title}
+      </h1>
+      {subtitle && <p className="mt-2 max-w-xl text-sm text-white/50">{subtitle}</p>}
+      {/* Regla fina a todo el ancho en vez de la barra degradada: separa la
+          cabecera del contenido sin reclamar atención para sí misma. */}
+      <div className="mt-5 h-px w-full bg-white/10" />
     </div>
   )
 }
@@ -184,28 +216,30 @@ export function PanelPage({
   )
 }
 
-/** Métrica compacta para filas de indicadores. */
+/**
+ * Métrica compacta. La cifra manda: va grande y en tabular-nums para que las
+ * columnas de dígitos alineen entre tarjetas.
+ */
 export function StatTile({
   label,
   value,
-  icon: Icon,
+  icon,
 }: {
   label: string
   value: React.ReactNode
-  icon?: React.ComponentType<{ className?: string }>
+  /** Ícono ya renderizado (`<Users />`), no el componente — ver EmptyState. */
+  icon?: React.ReactNode
 }) {
   return (
-    <Panel className="p-4 flex items-center justify-between">
+    <Panel className="flex items-center justify-between p-4">
       <div className="min-w-0">
-        <p className="text-textSecondary text-[10px] font-semibold uppercase tracking-wider truncate">
+        <p className="truncate font-mono text-[10px] uppercase tracking-wider text-white/35">
           {label}
         </p>
-        <p className="text-2xl font-bold text-white mt-1">{value}</p>
+        <p className="mt-1 text-2xl font-bold tabular-nums text-white">{value}</p>
       </div>
-      {Icon && (
-        <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#08A696]/20 to-[#26FFDF]/20 shrink-0">
-          <Icon className="h-5 w-5 text-[#26FFDF]" />
-        </div>
+      {icon && (
+        <div className="shrink-0 [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white/25">{icon}</div>
       )}
     </Panel>
   )
@@ -213,19 +247,31 @@ export function StatTile({
 
 /** Estado vacío consistente en todas las listas. */
 export function EmptyState({
-  icon: Icon,
+  icon,
   message,
   hint,
 }: {
-  icon?: React.ComponentType<{ className?: string }>
+  /**
+   * El ícono ya renderizado (`<Users />`), no el componente (`Users`).
+   * Este archivo es "use client", así que las páginas de servidor que usan
+   * EmptyState cruzan la frontera server→client al pasar props: un componente
+   * es una función y no se puede serializar, mientras que un elemento ya
+   * renderizado sí. El tamaño y el color los pone el contenedor de abajo para
+   * no repetirlos en cada llamada.
+   */
+  icon?: React.ReactNode
   message: string
   hint?: string
 }) {
   return (
-    <Panel className="text-center py-16 px-6">
-      {Icon && <Icon className="h-10 w-10 text-[#08A696]/50 mx-auto mb-3" />}
-      <p className="text-textSecondary">{message}</p>
-      {hint && <p className="text-textSecondary/60 text-sm mt-1">{hint}</p>}
+    <Panel className="px-6 py-16 text-center">
+      {icon && (
+        <div className="mb-3 flex justify-center [&>svg]:h-8 [&>svg]:w-8 [&>svg]:text-white/20">
+          {icon}
+        </div>
+      )}
+      <p className="text-white/60">{message}</p>
+      {hint && <p className="mt-1 text-sm text-white/35">{hint}</p>}
     </Panel>
   )
 }

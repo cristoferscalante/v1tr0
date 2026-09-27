@@ -142,7 +142,7 @@ export function ProductFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#26FFDF]">
             {mode === "create" ? "Crear Nuevo Producto" : "Editar Producto"}
@@ -167,7 +167,7 @@ export function ProductFormDialog({
                     <Input
                       placeholder="Ej: Cyber Deck Pro"
                       {...field}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                     />
                   </FormControl>
                   <FormMessage className="text-red-400" />
@@ -187,7 +187,7 @@ export function ProductFormDialog({
                       placeholder="Describe el producto en detalle..."
                       {...field}
                       rows={4}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF] resize-none"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF] resize-none"
                     />
                   </FormControl>
                   <FormMessage className="text-red-400" />
@@ -209,7 +209,7 @@ export function ProductFormDialog({
                         placeholder="0"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                        className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                       />
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -232,7 +232,7 @@ export function ProductFormDialog({
                         onChange={(e) =>
                           field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
                         }
-                        className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                        className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                       />
                     </FormControl>
                     <FormDescription className="text-[#b2fff6]/70 text-xs">
@@ -256,7 +256,7 @@ export function ProductFormDialog({
                       type="url"
                       placeholder="https://ejemplo.com/imagen.jpg"
                       {...field}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                     />
                   </FormControl>
                   <FormMessage className="text-red-400" />
@@ -274,11 +274,11 @@ export function ProductFormDialog({
                     <FormLabel className="text-[#26FFDF]">Categoría *</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-[#02505950] border-[#08A696]/20 text-white focus:border-[#26FFDF]">
+                        <SelectTrigger className="bg-[#232629] border-[#08A696]/20 text-white focus:border-[#26FFDF]">
                           <SelectValue placeholder="Selecciona una categoría" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/20">
+                      <SelectContent className="bg-[#1e2123] backdrop-blur-sm border-[#08A696]/20">
                         <SelectItem value="hardware" className="text-white hover:bg-[#08A696]/20">
                           Hardware
                         </SelectItem>
@@ -307,7 +307,7 @@ export function ProductFormDialog({
                         placeholder="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                        className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                       />
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -328,7 +328,7 @@ export function ProductFormDialog({
                       placeholder="Ej: Nuevo, Destacado, Oferta"
                       {...field}
                       value={field.value || ""}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                     />
                   </FormControl>
                   <FormDescription className="text-[#b2fff6]/70 text-xs">
@@ -344,12 +344,12 @@ export function ProductFormDialog({
               control={form.control}
               name="featured"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-[#08A696]/20 p-4 bg-[#02505950]">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-[#08A696]/20 p-4 bg-[#232629]">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="border-[#26FFDF] data-[state=checked]:bg-[#26FFDF] data-[state=checked]:text-[#02505931]"
+                      className="border-[#26FFDF] data-[state=checked]:bg-[#26FFDF] data-[state=checked]:text-[#0d1210]"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">

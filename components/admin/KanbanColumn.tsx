@@ -23,7 +23,7 @@ export default function KanbanColumn({
       className={`rounded-2xl border transition-colors duration-200 flex flex-col ${
         isOver
           ? "border-[#26FFDF] bg-[#08A696]/10"
-          : "border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm"
+          : "border-[#08A696]/20 bg-[#1e2123] backdrop-blur-sm"
       }`}
     >
       <div className="flex items-center justify-between px-3 py-2 border-b border-[#08A696]/15">

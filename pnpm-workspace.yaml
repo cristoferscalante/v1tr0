@@ -1,6 +1,16 @@
 packages:
   - "."
 
+# pnpm 11 falla el install si una dependencia trae scripts de instalación que
+# no están ni permitidos ni denegados aquí (ERR_PNPM_IGNORED_BUILDS). Vercel
+# instala con la versión de `packageManager`, así que cada dependencia nueva
+# con scripts tiene que quedar listada.
 allowBuilds:
   esbuild: false
   msgpackr-extract: false
+  # sharp 0.34 trae su binario precompilado como dependencia opcional
+  # (@img/sharp-*); su script solo intenta compilar desde el código fuente, y
+  # eso falla sin toolchain. No hace falta correrlo.
+  sharp: false
+  # Resolver nativo de eslint-plugin-import; su script solo baja el binario.
+  unrs-resolver: true

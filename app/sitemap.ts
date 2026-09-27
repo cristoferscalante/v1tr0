@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next"
 
 import { siteConfig } from "@/config/site"
 import { subcategoryPages } from "@/lib/data/servicios"
+import { ubicacionPages } from "@/lib/data/ubicaciones"
 
 /**
  * Sitemap del sitio público.
@@ -41,6 +42,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    // Páginas por ubicación: prioridad alta porque son las que responden las
+    // consultas con intención de contratación ("empresa de software en X").
+    ...ubicacionPages.map((page) => ({
+      url: `${siteConfig.url}/${page.slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
     })),
   ]
 }

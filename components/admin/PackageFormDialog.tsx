@@ -155,7 +155,7 @@ export function PackageFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#26FFDF]">
             {mode === "create" ? "Crear Nuevo Paquete" : "Editar Paquete"}
@@ -178,11 +178,11 @@ export function PackageFormDialog({
                   <FormLabel className="text-[#26FFDF]">Tipo de Paquete *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-[#02505950] border-[#08A696]/20 text-white focus:border-[#26FFDF]">
+                      <SelectTrigger className="bg-[#232629] border-[#08A696]/20 text-white focus:border-[#26FFDF]">
                         <SelectValue placeholder="Selecciona un tipo" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-[#02505931] backdrop-blur-sm border-[#08A696]/20">
+                    <SelectContent className="bg-[#1e2123] backdrop-blur-sm border-[#08A696]/20">
                       <SelectItem value="pos" className="text-white hover:bg-[#08A696]/20">
                         POS Package
                       </SelectItem>
@@ -210,7 +210,7 @@ export function PackageFormDialog({
                     <Input
                       placeholder="Ej: Plan Premium"
                       {...field}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                     />
                   </FormControl>
                   <FormMessage className="text-red-400" />
@@ -232,7 +232,7 @@ export function PackageFormDialog({
                         placeholder="0"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                        className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                       />
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -251,7 +251,7 @@ export function PackageFormDialog({
                         placeholder="Ej: mes, año, 7 días"
                         {...field}
                         value={field.value || ""}
-                        className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                        className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                       />
                     </FormControl>
                     <FormDescription className="text-[#b2fff6]/70 text-xs">
@@ -277,7 +277,7 @@ export function PackageFormDialog({
                       {...field}
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                     />
                   </FormControl>
                   <FormDescription className="text-[#b2fff6]/70 text-xs">
@@ -303,7 +303,7 @@ export function PackageFormDialog({
                           <Input
                             placeholder={`Característica ${index + 1}`}
                             {...field}
-                            className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                            className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                           />
                           {fields.length > 1 && (
                             <Button
@@ -346,7 +346,7 @@ export function PackageFormDialog({
                     <Input
                       placeholder="Ej: Comenzar Ahora, Comprar Kit"
                       {...field}
-                      className="bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
+                      className="bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
                     />
                   </FormControl>
                   <FormDescription className="text-[#b2fff6]/70 text-xs">
@@ -362,12 +362,12 @@ export function PackageFormDialog({
               control={form.control}
               name="isPopular"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-[#08A696]/20 p-4 bg-[#02505950]">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-[#08A696]/20 p-4 bg-[#232629]">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="border-[#26FFDF] data-[state=checked]:bg-[#26FFDF] data-[state=checked]:text-[#02505931]"
+                      className="border-[#26FFDF] data-[state=checked]:bg-[#26FFDF] data-[state=checked]:text-[#0d1210]"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">

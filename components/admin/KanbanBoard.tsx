@@ -28,7 +28,7 @@ const COLUMNS: { status: string; label: string }[] = [
 ]
 
 const selectClass =
-  "bg-[#02505950] border border-[#08A696]/20 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-[#26FFDF] transition-colors"
+  "bg-[#232629] border border-[#08A696]/20 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-[#26FFDF] transition-colors"
 
 export default function KanbanBoard({ initialProjects }: { initialProjects: KanbanProject[] }) {
   const [projects, setProjects] = useState(initialProjects)

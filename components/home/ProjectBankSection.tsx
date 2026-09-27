@@ -3,7 +3,6 @@
 import React, { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, ExternalLink, Github, Code, Database, Zap } from 'lucide-react'
-import { useTheme } from "@/components/theme-provider"
 import useSnapAnimations from '@/hooks/use-snap-animations'
 import { projectsData } from '@/data/projects'
 import Image from 'next/image'
@@ -46,8 +45,6 @@ const itemVariants = {
 
 export default function ProjectBankSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   const [activeCategoriesTags, setActiveCategoriesTags] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -163,17 +160,17 @@ export default function ProjectBankSection() {
               >
                 {/* Header con categoría y año */}
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-lg ${isDark ? "bg-[#08A696]/10 text-[#26FFDF]" : "bg-[#08A696]/10 text-[#08A696]"} transition-all duration-300 group-hover:bg-[#08A696]/20`}>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-lg bg-[#08A696]/10 text-[#26FFDF] transition-all duration-300 group-hover:bg-[#08A696]/20`}>
                     {project.subcategory}
                   </span>
-                  <span className={`text-[10px] ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
+                  <span className={`text-[10px] text-[#a0a0a0]`}>
                     {project.year}
                   </span>
                 </div>
                 
                 {/* Video o Imagen del proyecto - Más pequeño */}
                 <div className="flex-shrink-0 flex items-center justify-center mb-2 transition-transform duration-300 group-hover:scale-105 overflow-hidden rounded-lg">
-                  <div className={`relative w-full h-24 ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/10"} group-hover:bg-[#08A696]/20 transition-all duration-300`}>
+                  <div className={`relative w-full h-24 bg-[#08A696]/10 group-hover:bg-[#08A696]/20 transition-all duration-300`}>
                     {project.video ? (
                       <video
                         src={project.video}
@@ -193,7 +190,7 @@ export default function ProjectBankSection() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <span className={`text-3xl font-bold ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                        <span className={`text-3xl font-bold text-[#26FFDF]`}>
                           {project.title.charAt(0)}
                         </span>
                       </div>
@@ -202,12 +199,12 @@ export default function ProjectBankSection() {
                 </div>
                 
                 {/* Título - Más pequeño */}
-                <h3 className={`${isDark ? "text-[#26FFDF]" : "text-[#08A696]"} font-semibold text-sm mb-1.5 transition-all duration-300 transform-gpu line-clamp-1`}>
+                <h3 className={`text-[#26FFDF] font-semibold text-sm mb-1.5 transition-all duration-300 transform-gpu line-clamp-1`}>
                   {project.title}
                 </h3>
                 
                 {/* Descripción - Más pequeña */}
-                <p className={`text-[11px] mb-2 line-clamp-2 flex-1 ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
+                <p className={`text-[11px] mb-2 line-clamp-2 flex-1 text-[#a0a0a0]`}>
                   {project.description}
                 </p>
                 
@@ -216,13 +213,13 @@ export default function ProjectBankSection() {
                   {project.technologies.slice(0, 3).map((tech, i) => (
                     <span
                       key={i}
-                      className={`px-1 py-0.5 text-[10px] rounded-md ${isDark ? "bg-[#08A696]/5 text-[#26FFDF]/80" : "bg-[#08A696]/5 text-[#08A696]"} border ${isDark ? "border-[#08A696]/10" : "border-[#08A696]/10"}`}
+                      className={`px-1 py-0.5 text-[10px] rounded-md bg-[#08A696]/5 text-[#26FFDF]/80 border border-[#08A696]/10`}
                     >
                       {tech}
                     </span>
                   ))}
                   {project.technologies.length > 3 && (
-                    <span className={`px-1 py-0.5 text-[10px] ${isDark ? "text-[#a0a0a0]" : "text-[#6b7280]"}`}>
+                    <span className={`px-1 py-0.5 text-[10px] text-[#a0a0a0]`}>
                       +{project.technologies.length - 3}
                     </span>
                   )}
@@ -235,7 +232,7 @@ export default function ProjectBankSection() {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 flex items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] md:px-1.5 md:py-1 md:min-h-0 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
+                      className={`flex-1 flex items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] md:px-1.5 md:py-1 md:min-h-0 rounded-lg bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] transition-all duration-300 text-[10px] font-medium`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink className="w-2.5 h-2.5" />
@@ -247,7 +244,7 @@ export default function ProjectBankSection() {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex-1 flex items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] md:px-1.5 md:py-1 md:min-h-0 rounded-lg ${isDark ? "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF]" : "bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#08A696]"} transition-all duration-300 text-[10px] font-medium`}
+                      className={`flex-1 flex items-center justify-center gap-1 px-3 py-2.5 min-h-[44px] md:px-1.5 md:py-1 md:min-h-0 rounded-lg bg-[#08A696]/10 hover:bg-[#08A696]/20 text-[#26FFDF] transition-all duration-300 text-[10px] font-medium`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Github className="w-2.5 h-2.5" />
@@ -272,7 +269,7 @@ export default function ProjectBankSection() {
               className={`relative group inline-flex items-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 ${currentPage === 1 ? 'scale-90' : 'hover:scale-95'}`}
             >
               <div className={`relative p-1.5 ${surfaceInner} group-hover:border-[#08A696]/50`}>
-                <ChevronLeft className={`w-4 h-4 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
+                <ChevronLeft className={`w-4 h-4 text-[#26FFDF]`} />
               </div>
             </button>
 
@@ -296,7 +293,7 @@ export default function ProjectBankSection() {
               className={`relative group inline-flex items-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 ${currentPage === totalPages ? 'scale-90' : 'hover:scale-95'}`}
             >
               <div className={`relative p-1.5 ${surfaceInner} group-hover:border-[#08A696]/50`}>
-                <ChevronRight className={`w-4 h-4 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
+                <ChevronRight className={`w-4 h-4 text-[#26FFDF]`} />
               </div>
             </button>
           </motion.div>
@@ -308,7 +305,7 @@ export default function ProjectBankSection() {
             className="text-center py-8"
             variants={itemVariants}
           >
-            <p className={`text-base ${isDark ? 'text-[#a0a0a0]' : 'text-[#6b7280]'}`}>
+            <p className={`text-base ${'text-[#a0a0a0]'}`}>
               No hay proyectos disponibles en esta categoría
             </p>
           </motion.div>

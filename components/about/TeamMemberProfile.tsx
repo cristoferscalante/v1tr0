@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { useTheme } from "@/components/theme-provider"
 import CardViewerPremium from "./card-viewer-premium"
 
 export interface TeamMemberProfileProps {
@@ -27,18 +26,14 @@ const TeamMemberProfile = ({
   isMobile,
   animationDelay = "0s"
 }: TeamMemberProfileProps) => {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   const cardBase = "backdrop-blur-sm border rounded-xl shadow-lg transition-all duration-300"
-  const cardBorder = isDark ? "border-[#08A696]/30" : "border-[#08A696]/60"
-  const cardTheme = isDark ? "bg-[#02505931]" : "bg-white/90"
+  const cardBorder = "border-[#08A696]/30"
+  const cardTheme = "bg-[#02505931]"
 
   const socialButtonBase = "flex items-center justify-center w-12 h-12 backdrop-blur-sm border rounded-full shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
-  const socialButtonBorder = isDark ? "border-[#08A696]/30" : "border-[#08A696]/60"
-  const socialButtonTheme = isDark
-    ? "bg-[#02505931] text-[#26FFDF] hover:bg-[#08A696]/20 hover:border-[#08A696]"
-    : "bg-white/90 text-[#08A696] hover:bg-[#08A696]/10 hover:border-[#08A696]"
+  const socialButtonBorder = "border-[#08A696]/30"
+  const socialButtonTheme = "bg-[#02505931] text-[#26FFDF] hover:bg-[#08A696]/20 hover:border-[#08A696]"
 
   return (
     <div className={`flex items-start justify-center ${isMobile ? 'flex-col gap-6' : 'gap-8'} w-full px-4 sm:px-0`}>
@@ -160,9 +155,7 @@ const TeamMemberProfile = ({
                 <span
                   key={index}
                   className={`px-3 py-1 rounded-full text-xs font-medium border transition-all duration-300 hover:scale-105 ${
-                    isDark
-                      ? 'bg-[#08A696]/10 border-[#08A696]/30 text-[#26FFDF] hover:bg-[#08A696]/20 hover:border-[#08A696]'
-                      : 'bg-[#08A696]/5 border-[#08A696]/40 text-[#08A696] hover:bg-[#08A696]/10 hover:border-[#08A696]'
+                    'bg-[#08A696]/10 border-[#08A696]/30 text-[#26FFDF] hover:bg-[#08A696]/20 hover:border-[#08A696]'
                   }`}
                   style={{
                     animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`

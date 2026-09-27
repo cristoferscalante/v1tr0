@@ -62,7 +62,7 @@ function GlassCard({ children, className = '' }: { children: React.ReactNode; cl
   return (
     <div className="relative group h-full">
       <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300" />
-      <div className={`relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 h-full ${className}`}>
+      <div className={`relative bg-[#1e2123] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 h-full ${className}`}>
         {children}
       </div>
     </div>
@@ -152,7 +152,7 @@ export default function ClientDashboard() {
         {featuredProject && featuredMeta && featuredStatus ? (
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30" />
-            <div className={`relative bg-[#02505931] backdrop-blur-sm rounded-2xl border ${PROJECT_CARD_TONE_CLASSES[projectCardTone(featuredProject.status)]} p-6 sm:p-8`}>
+            <div className={`relative bg-[#1e2123] backdrop-blur-sm rounded-2xl border ${PROJECT_CARD_TONE_CLASSES[projectCardTone(featuredProject.status)]} p-6 sm:p-8`}>
               <div className="flex flex-col sm:flex-row sm:items-start gap-6">
                 <div className="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#08A696]/20 to-[#26FFDF]/10 border border-[#08A696]/30 flex items-center justify-center">
                   <AnimatedIcon kind={featuredMeta.kind} icon={featuredMeta.icon} active size={30} className="text-[#26FFDF]" />

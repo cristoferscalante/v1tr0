@@ -37,7 +37,6 @@ function generateSlug(name: string): string {
     .trim();
 }
 import { ProductFormDialog } from "@/components/admin/ProductFormDialog";
-import { useTheme } from "@/components/theme-provider";
 import { toast } from "sonner";
 import {
   Plus,
@@ -77,11 +76,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { PanelPage, SectionHeading } from "@/components/shared/panel-ui";
 import Image from "next/image";
 
 export default function ProductosAdminPage() {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
 
   // Estados
   const [products, setProducts] = useState<Product[]>([]);
@@ -234,152 +232,97 @@ export default function ProductosAdminPage() {
   };
 
   return (
-    <div
-      className={`min-h-screen ${
-        isDark ? "bg-[#02505931]" : "bg-[#e6f7f6]"
-      } p-4 sm:p-6 lg:p-8`}
-    >
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1
-              className={`text-3xl font-bold ${
-                isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-              }`}
-            >
-              Gestión de Productos
-            </h1>
-            <p className={`${isDark ? "text-[#b2fff6]" : "text-[#085c54]"} mt-1`}>
-              Administra el catálogo completo de productos V1TR0
-            </p>
-          </div>
+    <PanelPage>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <SectionHeading badge="Tienda" title="Gestión de Productos" subtitle="Administra el catálogo completo de productos V1TR0" />
 
-          <Button
-            onClick={openCreateDialog}
-            className="bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/50 text-[#26FFDF] hover:bg-[#08A696]/30 hover:border-[#26FFDF] hover:shadow-lg hover:shadow-[#26FFDF]/20 transition-all duration-300"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Agregar Producto
-          </Button>
-        </div>
+        <Button
+          onClick={openCreateDialog}
+          className="shrink-0 border border-[#08A696]/50 bg-[#08A696]/15 text-[#26FFDF] transition-colors hover:border-[#26FFDF] hover:bg-[#08A696]/25"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Agregar Producto
+        </Button>
+      </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Total Productos
                 </p>
                 <p
-                  className={`text-2xl font-bold ${
-                    isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                  } mt-1`}
+                  className="text-2xl font-bold text-[#26FFDF] mt-1"
                 >
                   {stats.totalProducts}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <Package
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
           </div>
 
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Valor Total
                 </p>
                 <p
-                  className={`text-2xl font-bold ${
-                    isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                  } mt-1`}
+                  className="text-2xl font-bold text-[#26FFDF] mt-1"
                 >
                   ${stats.totalValue.toLocaleString()}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <DollarSign
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
           </div>
 
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Sin Stock
                 </p>
                 <p
                   className={`text-2xl font-bold ${
-                    stats.outOfStock > 0 ? "text-red-400" : isDark ? "text-[#26FFDF]" : "text-[#04423c]"
+                    stats.outOfStock > 0 ? "text-red-400" : "text-[#26FFDF]"
                   } mt-1`}
                 >
                   {stats.outOfStock}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <Package
                   className={`w-6 h-6 ${
-                    stats.outOfStock > 0 ? "text-red-400" : isDark ? "text-[#26FFDF]" : "text-[#085c54]"
+                    stats.outOfStock > 0 ? "text-red-400" : "text-[#26FFDF]"
                   }`}
                 />
               </div>
@@ -387,40 +330,26 @@ export default function ProductosAdminPage() {
           </div>
 
           <div
-            className={`rounded-xl ${
-              isDark
-                ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-                : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-            } p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg`}
+            className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6 transition-all duration-300 hover:border-[#08A696] hover:shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p
-                  className={`text-sm ${
-                    isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                  }`}
+                  className="text-sm text-[#b2fff6]"
                 >
                   Destacados
                 </p>
                 <p
-                  className={`text-2xl font-bold ${
-                    isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                  } mt-1`}
+                  className="text-2xl font-bold text-[#26FFDF] mt-1"
                 >
                   {stats.featured}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-xl ${
-                  isDark
-                    ? "bg-[#02505950] border border-[#08A696]/20"
-                    : "bg-[#c5ebe7] border border-[#08A696]/40"
-                }`}
+                className="p-3 rounded-xl bg-[#232629] border border-[#08A696]/20"
               >
                 <TrendingUp
-                  className={`w-6 h-6 ${
-                    isDark ? "text-[#26FFDF]" : "text-[#085c54]"
-                  }`}
+                  className="w-6 h-6 text-[#26FFDF]"
                 />
               </div>
             </div>
@@ -429,29 +358,19 @@ export default function ProductosAdminPage() {
 
         {/* Filters */}
         <div
-          className={`rounded-xl ${
-            isDark
-              ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-              : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-          } p-6`}
+          className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 p-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
               <Search
-                className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${
-                  isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                }`}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#b2fff6]"
               />
               <Input
                 placeholder="Buscar por nombre, descripción o ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`pl-10 ${
-                  isDark
-                    ? "bg-[#02505950] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50"
-                    : "bg-white border-[#08A696]/60 text-[#04423c] placeholder:text-[#085c54]/50"
-                } focus:border-[#26FFDF]`}
+                className="pl-10 bg-[#232629] border-[#08A696]/20 text-white placeholder:text-[#b2fff6]/50 focus:border-[#26FFDF]"
               />
             </div>
 
@@ -459,51 +378,35 @@ export default function ProductosAdminPage() {
             <div className="w-full sm:w-48">
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger
-                  className={`${
-                    isDark
-                      ? "bg-[#02505950] border-[#08A696]/20 text-white"
-                      : "bg-white border-[#08A696]/60 text-[#04423c]"
-                  } focus:border-[#26FFDF]`}
+                  className="bg-[#232629] border-[#08A696]/20 text-white focus:border-[#26FFDF]"
                 >
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Categoría" />
                 </SelectTrigger>
                 <SelectContent
-                  className={`${
-                    isDark
-                      ? "bg-[#02505931] backdrop-blur-sm border-[#08A696]/20"
-                      : "bg-white border-[#08A696]/60"
-                  }`}
+                  className="bg-[#1e2123] backdrop-blur-sm border-[#08A696]/20"
                 >
                   <SelectItem
                     value="all"
-                    className={`${
-                      isDark ? "text-white hover:bg-[#08A696]/20" : "text-[#04423c] hover:bg-[#08A696]/10"
-                    }`}
+                    className="text-white hover:bg-[#08A696]/20"
                   >
                     Todas las categorías
                   </SelectItem>
                   <SelectItem
                     value="hardware"
-                    className={`${
-                      isDark ? "text-white hover:bg-[#08A696]/20" : "text-[#04423c] hover:bg-[#08A696]/10"
-                    }`}
+                    className="text-white hover:bg-[#08A696]/20"
                   >
                     Hardware
                   </SelectItem>
                   <SelectItem
                     value="software"
-                    className={`${
-                      isDark ? "text-white hover:bg-[#08A696]/20" : "text-[#04423c] hover:bg-[#08A696]/10"
-                    }`}
+                    className="text-white hover:bg-[#08A696]/20"
                   >
                     Software
                   </SelectItem>
                   <SelectItem
                     value="servicios"
-                    className={`${
-                      isDark ? "text-white hover:bg-[#08A696]/20" : "text-[#04423c] hover:bg-[#08A696]/10"
-                    }`}
+                    className="text-white hover:bg-[#08A696]/20"
                   >
                     Servicios
                   </SelectItem>
@@ -514,7 +417,7 @@ export default function ProductosAdminPage() {
 
           {/* Results count */}
           <div className="mt-4">
-            <p className={`text-sm ${isDark ? "text-[#b2fff6]" : "text-[#085c54]"}`}>
+            <p className="text-sm text-[#b2fff6]">
               Mostrando {filteredProducts.length} de {products.length} productos
             </p>
           </div>
@@ -522,56 +425,46 @@ export default function ProductosAdminPage() {
 
         {/* Products Table */}
         <div
-          className={`rounded-xl ${
-            isDark
-              ? "bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20"
-              : "bg-[#e6f7f6] backdrop-blur-sm border border-[#08A696]/60"
-          } overflow-hidden`}
+          className="rounded-xl bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 overflow-hidden"
         >
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow
-                  className={`${
-                    isDark
-                      ? "border-[#08A696]/20 hover:bg-[#02505950]"
-                      : "border-[#08A696]/60 hover:bg-[#c5ebe7]"
-                  }`}
+                  className="border-[#08A696]/20 hover:bg-white/[0.04]"
                 >
                   <TableHead
-                    className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                    className="text-[#26FFDF]"
                   >
                     Imagen
                   </TableHead>
                   <TableHead
-                    className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                    className="text-[#26FFDF]"
                   >
                     Producto
                   </TableHead>
                   <TableHead
-                    className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                    className="text-[#26FFDF]"
                   >
                     Categoría
                   </TableHead>
                   <TableHead
-                    className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                    className="text-[#26FFDF]"
                   >
                     Precio
                   </TableHead>
                   <TableHead
-                    className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                    className="text-[#26FFDF]"
                   >
                     Stock
                   </TableHead>
                   <TableHead
-                    className={`${isDark ? "text-[#26FFDF]" : "text-[#04423c]"}`}
+                    className="text-[#26FFDF]"
                   >
                     Estado
                   </TableHead>
                   <TableHead
-                    className={`text-right ${
-                      isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                    }`}
+                    className="text-right text-[#26FFDF]"
                   >
                     Acciones
                   </TableHead>
@@ -582,9 +475,7 @@ export default function ProductosAdminPage() {
                   <TableRow>
                     <TableCell
                       colSpan={7}
-                      className={`text-center py-12 ${
-                        isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                      }`}
+                      className="text-center py-12 text-[#b2fff6]"
                     >
                       No se encontraron productos
                     </TableCell>
@@ -593,11 +484,7 @@ export default function ProductosAdminPage() {
                   filteredProducts.map((product) => (
                     <TableRow
                       key={product.id}
-                      className={`${
-                        isDark
-                          ? "border-[#08A696]/20 hover:bg-[#02505950]"
-                          : "border-[#08A696]/60 hover:bg-[#c5ebe7]"
-                      } transition-colors`}
+                      className="border-[#08A696]/20 hover:bg-white/[0.04] transition-colors"
                     >
                       <TableCell>
                         <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-background/50">
@@ -612,23 +499,17 @@ export default function ProductosAdminPage() {
                       <TableCell>
                         <div>
                           <p
-                            className={`font-semibold ${
-                              isDark ? "text-white" : "text-[#04423c]"
-                            }`}
+                            className="font-semibold text-white"
                           >
                             {product.name}
                           </p>
                           <p
-                            className={`text-sm ${
-                              isDark ? "text-[#b2fff6]" : "text-[#085c54]"
-                            } line-clamp-1`}
+                            className="text-sm text-[#b2fff6] line-clamp-1"
                           >
                             {product.description}
                           </p>
                           <p
-                            className={`text-xs ${
-                              isDark ? "text-[#b2fff6]/70" : "text-[#085c54]/70"
-                            }`}
+                            className="text-xs text-[#b2fff6]/70"
                           >
                             ID: {product.id}
                           </p>
@@ -651,17 +532,13 @@ export default function ProductosAdminPage() {
                       <TableCell>
                         <div>
                           <p
-                            className={`font-bold ${
-                              isDark ? "text-[#26FFDF]" : "text-[#04423c]"
-                            }`}
+                            className="font-bold text-[#26FFDF]"
                           >
                             ${product.price.toLocaleString()}
                           </p>
                           {product.originalPrice && (
                             <p
-                              className={`text-sm line-through ${
-                                isDark ? "text-[#b2fff6]/50" : "text-[#085c54]/50"
-                              }`}
+                              className="text-sm line-through text-[#b2fff6]/50"
                             >
                               ${product.originalPrice.toLocaleString()}
                             </p>
@@ -675,9 +552,7 @@ export default function ProductosAdminPage() {
                               ? "text-red-400"
                               : product.stock < 10
                               ? "text-yellow-400"
-                              : isDark
-                              ? "text-white"
-                              : "text-[#04423c]"
+                              : "text-white"
                           }`}
                         >
                           {product.stock}
@@ -709,11 +584,7 @@ export default function ProductosAdminPage() {
                             variant="ghost"
                             size="icon"
                             onClick={() => openEditDialog(product)}
-                            className={`${
-                              isDark
-                                ? "text-[#26FFDF] hover:bg-[#08A696]/20"
-                                : "text-[#085c54] hover:bg-[#08A696]/10"
-                            }`}
+                            className="text-[#26FFDF] hover:bg-[#08A696]/20"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
@@ -734,7 +605,6 @@ export default function ProductosAdminPage() {
             </Table>
           </div>
         </div>
-      </div>
 
       {/* Product Form Dialog */}
       <ProductFormDialog
@@ -747,7 +617,7 @@ export default function ProductosAdminPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20">
+        <AlertDialogContent className="bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-[#26FFDF] text-xl">
               ¿Estás seguro?
@@ -771,6 +641,6 @@ export default function ProductosAdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PanelPage>
   );
 }

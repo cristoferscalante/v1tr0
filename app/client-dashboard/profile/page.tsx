@@ -11,7 +11,7 @@ import type { OurFileRouter } from '@/lib/uploadthing'
 import { Panel, PanelPage, Pill, SectionHeading } from '@/components/shared/panel-ui'
 
 const inputClass =
-  'w-full mt-1.5 bg-[#02505950] border border-[#08A696]/20 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-textSecondary/50 focus:outline-none focus:border-[#26FFDF] transition-colors'
+  'w-full mt-1.5 bg-[#232629] border border-[#08A696]/20 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-textSecondary/50 focus:outline-none focus:border-[#26FFDF] transition-colors'
 
 export default function ProfilePage() {
   const { user, userRole } = useAuth()
@@ -128,7 +128,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <label className="text-textSecondary text-sm font-medium">Correo</label>
-              <p className="mt-1.5 px-4 py-2.5 rounded-xl bg-[#02505931] border border-[#08A696]/10 text-textSecondary text-sm">
+              <p className="mt-1.5 px-4 py-2.5 rounded-xl bg-[#1e2123] border border-[#08A696]/10 text-textSecondary text-sm">
                 {user?.email}
                 <span className="block text-xs text-textSecondary/60 mt-0.5">
                   Vinculado a tu cuenta de Google, no se puede cambiar

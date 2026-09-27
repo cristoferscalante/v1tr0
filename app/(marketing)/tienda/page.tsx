@@ -15,14 +15,22 @@ interface ProductRow {
   id: string; name: string; slug: string; description: string | null
   price: string; originalPrice: string | null; category: string
   stock: number; images: string[]; isFeatured: boolean; badge: string | null
+  shortDescription: string | null; subcategory: string | null; features: unknown
+  metadata: { coleccion?: string; marca?: string; entrega?: string; destacados?: string[] } | null
 }
 
 function rowToProduct(row: ProductRow): Product {
+  const meta = row.metadata ?? {};
+  const images = (row.images ?? []).filter(Boolean);
+  // En la colección de hardware, `features` son los usos recomendados.
+  const uses = meta.coleccion === "hardware" && Array.isArray(row.features)
+    ? (row.features as unknown[]).filter((f): f is string => typeof f === "string")
+    : [];
   return {
     id: row.id,
     name: row.name,
     slug: row.slug,
-    description: row.description ?? "",
+    description: row.shortDescription ?? row.description ?? "",
     price: Number(row.price),
     ...(row.originalPrice ? { originalPrice: Number(row.originalPrice) } : {}),
     image: resolveProductImage({ image: row.images?.[0] ?? null, slug: row.slug, category: row.category }),
@@ -30,6 +38,13 @@ function rowToProduct(row: ProductRow): Product {
     stock: row.stock,
     featured: row.isFeatured,
     ...(row.badge ? { badge: row.badge } : {}),
+    ...(meta.marca ? { brand: meta.marca } : {}),
+    ...(row.subcategory ? { subcategory: row.subcategory } : {}),
+    ...(meta.destacados?.length ? { highlights: meta.destacados } : {}),
+    ...(uses.length ? { uses } : {}),
+    ...(meta.entrega ? { delivery: meta.entrega } : {}),
+    ...(images.length ? { images } : {}),
+    ...(meta.coleccion === "hardware" ? { cutout: true } : {}),
   };
 }
 
@@ -37,11 +52,11 @@ export default function TiendaPage() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([]);
   const [showCartNotification, setShowCartNotification] = useState(false);
-  const [checkingOut, setCheckingOut] = useState(false)
 
   // Carrito compartido (persistido en el servidor): mismo que usa la ficha
   // de producto y el que lee /api/checkout.
-  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart } = useCart()
+  const { cart, addToCart, updateQuantity, removeItem, totalItems, isCartOpen, openCart, closeCart,
+          checkout, checkingOut, checkoutError, dismissCheckoutError } = useCart()
 
   useEffect(() => {
     fetch("/api/products")
@@ -55,21 +70,6 @@ export default function TiendaPage() {
     setShowCartNotification(true);
     setTimeout(() => setShowCartNotification(false), 2000);
   };
-
-  const handleCheckout = async () => {
-    setCheckingOut(true)
-    try {
-      const res = await fetch("/api/checkout", { method: "POST" })
-      if (res.status === 401) { router.push("/login"); return }
-      if (!res.ok) {return}
-      const data = await res.json()
-      if (data.wompiUrl) {window.location.href = data.wompiUrl}
-    } catch {
-      // silent
-    } finally {
-      setCheckingOut(false)
-    }
-  }
 
   const flatCartItems = cart.map((item) => ({
     id: item.id,
@@ -120,8 +120,10 @@ export default function TiendaPage() {
         onRemoveItem={removeItem}
         recommendedProducts={recommendedProducts}
         onAddRecommended={handleAddToCart}
-        onCheckout={handleCheckout}
+        onCheckout={checkout}
         checkoutLoading={checkingOut}
+            checkoutError={checkoutError}
+            onDismissCheckoutError={dismissCheckoutError}
       />
 
       {/* Cart Notification Toast */}

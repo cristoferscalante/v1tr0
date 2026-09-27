@@ -1,6 +1,7 @@
 /**
  * Librería de mensajes de error de autenticación en español
- * Traduce los errores de Supabase a mensajes amigables para el usuario
+ * Traduce los códigos de error del proveedor de autenticación a mensajes
+ * amigables para el usuario.
  */
 
 export interface AuthError {
@@ -10,7 +11,7 @@ export interface AuthError {
 }
 
 /**
- * Mapeo de códigos de error de Supabase a mensajes en español
+ * Mapeo de códigos de error a mensajes en español
  */
 export const AUTH_ERROR_MESSAGES: Record<string, AuthError> = {
   // Errores de autenticación
@@ -139,7 +140,7 @@ export const AUTH_ERROR_MESSAGES: Record<string, AuthError> = {
 }
 
 /**
- * Obtiene un mensaje de error amigable basado en el error de Supabase
+ * Obtiene un mensaje de error amigable a partir del error recibido
  */
 export function getAuthErrorMessage(error: unknown): AuthError {
   // Si el error es null o undefined

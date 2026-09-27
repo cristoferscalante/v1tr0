@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/hooks/use-auth"
 import AdminSidebar from "@/components/admin/AdminSidebar"
-import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { Loader2 } from "lucide-react"
 
 export default function AdminLayout({
@@ -44,9 +43,11 @@ export default function AdminLayout({
 
   // Layout normal con sidebar para usuarios admin
   return (
-    <div className="min-h-screen relative">
-      {/* Mismo fondo atenuado que el portal del cliente, para unificar ambos paneles */}
-      <BackgroundAnimation density={0.22} intensity={0.55} />
+    <div className="tech-ground relative min-h-screen">
+      {/* Papel técnico en vez del campo de partículas del sitio público: una
+          retícula estática de cruces cada 48px. Da profundidad sin un canvas
+          animándose detrás de una tabla de datos, y es el registro de dibujo
+          de ingeniería que pidieron las referencias. */}
 
       <AdminSidebar />
 

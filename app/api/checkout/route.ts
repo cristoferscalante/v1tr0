@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { carts, cartItems, orders, orderItems, products } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
-import { createWompiPayment } from "@/lib/wompi"
+import { buildWompiCheckoutUrl } from "@/lib/wompi"
 
 export async function POST() {
   const session = await auth()
@@ -36,12 +36,46 @@ export async function POST() {
     return NextResponse.json({ error: "Carrito vacío" }, { status: 400 })
   }
 
+  // El precio se recalcula contra la tabla de productos: el priceSnapshot pudo
+  // quedar viejo y las cantidades se revalidan por si entraron por otra vía.
+  const invalid = items.find(({ item }) => !Number.isInteger(item.quantity) || item.quantity < 1)
+  if (invalid) {
+    return NextResponse.json(
+      { error: "Hay líneas con cantidad inválida en el carrito" },
+      { status: 400 }
+    )
+  }
+
   const subtotal = items.reduce(
-    (sum, { item }) => sum + Number(item.priceSnapshot) * item.quantity,
+    (sum, { item, product }) => sum + Number(product.price) * item.quantity,
     0
   )
   const total = subtotal
+
+  if (!(total > 0)) {
+    return NextResponse.json({ error: "El total de la orden no es válido" }, { status: 400 })
+  }
+
+  const amountInCents = Math.round(total * 100)
+  const currency = "COP"
   const orderNumber = `V1TR0-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
+  const frontendUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+
+  // La URL de pago se arma ANTES de tocar la base: si Wompi no está
+  // configurado no queremos dejar órdenes huérfanas en estado pending.
+  let checkoutUrl: string
+  try {
+    checkoutUrl = await buildWompiCheckoutUrl({
+      reference: orderNumber,
+      amountInCents,
+      currency,
+      redirectUrl: `${frontendUrl}/checkout/confirmacion?order=__ORDER_ID__`,
+      customerEmail: session.user.email ?? undefined,
+    })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Pasarela de pago no disponible"
+    return NextResponse.json({ error: msg }, { status: 503 })
+  }
 
   const [order] = await db
     .insert(orders)
@@ -50,7 +84,8 @@ export async function POST() {
       orderNumber,
       subtotal: String(subtotal),
       total: String(total),
-      currency: "COP",
+      currency,
+      wompiReference: orderNumber,
     })
     .returning()
 
@@ -65,39 +100,17 @@ export async function POST() {
       productName: product.name,
       productSlug: product.slug,
       quantity: item.quantity,
-      unitPrice: String(item.priceSnapshot),
-      totalPrice: String(Number(item.priceSnapshot) * item.quantity),
+      unitPrice: String(product.price),
+      totalPrice: String(Number(product.price) * item.quantity),
     }))
   )
 
-  const frontendUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
-
-  try {
-    const wompi = await createWompiPayment({
-      amountInCents: Math.round(total * 100),
-      reference: orderNumber,
-      redirectUrl: `${frontendUrl}/checkout/confirmacion?order=${order.id}`,
-      customerEmail: session.user.email ?? "cliente@v1tr0.com",
-    })
-
-    await db
-      .update(orders)
-      .set({
-        wompiTransactionId: wompi.data.id,
-        wompiReference: wompi.data.reference,
-        wompiStatus: wompi.data.status,
-      })
-      .where(eq(orders.id, order.id))
-
-    await db.delete(cartItems).where(eq(cartItems.cartId, cart.id))
-
-    return NextResponse.json({
-      orderId: order.id,
-      wompiUrl: `https://checkout.wompi.co/p/${process.env.WOMPI_PUBLIC_KEY}?reference=${orderNumber}`,
-      transactionId: wompi.data.id,
-    })
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "Error al procesar pago"
-    return NextResponse.json({ error: msg, orderId: order.id }, { status: 500 })
-  }
+  // El carrito NO se vacía aquí: el pago todavía no ocurrió. Se vacía cuando
+  // el webhook (o la verificación de retorno) confirma la transacción, para
+  // que un pago abandonado no le borre la compra al cliente.
+  return NextResponse.json({
+    orderId: order.id,
+    orderNumber,
+    wompiUrl: checkoutUrl.replace("__ORDER_ID__", order.id),
+  })
 }

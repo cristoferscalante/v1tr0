@@ -22,6 +22,8 @@ interface CartDrawerProps {
   onAddRecommended?: (product: { id: string }) => void;
   onCheckout?: () => void;
   checkoutLoading?: boolean;
+  checkoutError?: string | null;
+  onDismissCheckoutError?: () => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -34,6 +36,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onAddRecommended,
   onCheckout,
   checkoutLoading,
+  checkoutError,
+  onDismissCheckoutError,
 }) => {
   // Calcular total
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -238,6 +242,26 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   Impuestos y envío calculados al finalizar la compra
                 </p>
               </div>
+
+              {/* Error de la pasarela: antes el fallo era invisible y el
+                  botón simplemente volvía a su estado normal. */}
+              {checkoutError && (
+                <div
+                  role="alert"
+                  className="flex items-start gap-2 rounded-xl border border-red-500/40 bg-red-500/10 px-3.5 py-3 text-sm text-red-700 dark:text-red-300"
+                >
+                  <span className="flex-1">{checkoutError}</span>
+                  {onDismissCheckoutError && (
+                    <button
+                      onClick={onDismissCheckoutError}
+                      aria-label="Descartar error"
+                      className="p-0.5 hover:opacity-70 transition-opacity"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Checkout Button */}
               <button

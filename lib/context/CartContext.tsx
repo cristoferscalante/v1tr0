@@ -17,6 +17,10 @@ interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (productId: string) => Promise<void>;
+  checkout: () => Promise<void>;
+  checkingOut: boolean;
+  checkoutError: string | null;
+  dismissCheckoutError: () => void;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -35,6 +39,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const fetchCart = useCallback(async () => {
     if (!session?.user) {
@@ -93,6 +99,42 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart([]);
   };
 
+  /**
+   * Checkout centralizado: antes vivía duplicado en las dos páginas de tienda
+   * y descartaba los errores en silencio, así que un fallo de la pasarela
+   * dejaba el botón "Procesando..." sin decirle nada al usuario.
+   */
+  const checkout = async () => {
+    setCheckingOut(true);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/checkout", { method: "POST" });
+      if (res.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setCheckoutError(data.error ?? "No pudimos iniciar el pago. Intenta de nuevo.");
+        return;
+      }
+      if (!data.wompiUrl) {
+        setCheckoutError("La pasarela de pago no está disponible en este momento.");
+        return;
+      }
+
+      window.location.href = data.wompiUrl;
+    } catch {
+      setCheckoutError("No pudimos conectar con la pasarela de pago. Revisa tu conexión.");
+    } finally {
+      setCheckingOut(false);
+    }
+  };
+
+  const dismissCheckoutError = () => setCheckoutError(null);
+
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -108,6 +150,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     <CartContext.Provider
       value={{
         cart, addToCart, updateQuantity, removeItem, clearCart,
+        checkout, checkingOut, checkoutError, dismissCheckoutError,
         totalItems, loading, isCartOpen, openCart, closeCart, toggleCart,
       }}
     >

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState, createElement, useMemo, useCallback } from 'react';
 import { gsap } from 'gsap';
-import { useTheme } from '@/components/theme-provider';
 import './TextType.css';
 
 interface TextTypeProps {
@@ -170,8 +169,6 @@ const TextType: React.FC<TextTypeProps> = ({
     getRandomSpeed
   ]);
 
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
 
   const renderTextWithColoredSecondLine = (text: string) => {
     const lines = text.split('\n');
@@ -183,7 +180,7 @@ const TextType: React.FC<TextTypeProps> = ({
       <>
         <span>{lines[0]}</span>
         <br />
-        <span style={{ color: isDark ? '#26FFDF' : '#08a696' }}>{lines[1]}</span>
+        <span style={{ color: '#26FFDF' }}>{lines[1]}</span>
       </>
     );
   };

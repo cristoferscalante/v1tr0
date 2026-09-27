@@ -67,7 +67,7 @@ export default function QuotesPage() {
 
       {quotes.length === 0 ? (
         <EmptyState
-          icon={MessageSquare}
+          icon={<MessageSquare />}
           message="Aún no has solicitado ninguna cotización"
           hint="Cuéntanos qué necesitas y te preparamos un presupuesto"
         />

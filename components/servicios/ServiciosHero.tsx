@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { CheckCircle2, Network, LineChart, Bot, ShoppingCart, Globe, Smartphone, Settings } from "lucide-react"
-import { useTheme } from "@/components/theme-provider"
 import { servicesData } from "@/components/home/sections/ServicesTabSection"
 
 const AUTOPLAY_MS = 6000
@@ -39,14 +38,14 @@ const SLIDE_COPY = [
 
 const DEV_NODE_ICONS = [ShoppingCart, Globe, Smartphone] as const
 
-export function DevIllustration({ isDark, glow = true }: { isDark: boolean; glow?: boolean }) {
-  const stroke = isDark ? "#26FFDF" : "#08A696"
+export function DevIllustration({ glow = true }: { glow?: boolean }) {
+  const stroke = "#26FFDF"
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden">
       {glow && (
         <div
           className="absolute right-2 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-2xl pointer-events-none"
-          style={{ backgroundColor: stroke, opacity: isDark ? 0.18 : 0.22 }}
+          style={{ backgroundColor: stroke, opacity: 0.18 }}
         />
       )}
       <svg viewBox="0 0 200 100" className="relative w-full h-full">
@@ -140,14 +139,14 @@ export function DevIllustration({ isDark, glow = true }: { isDark: boolean; glow
   )
 }
 
-function DataIllustration({ isDark }: { isDark: boolean }) {
-  const stroke = isDark ? "#26FFDF" : "#08A696"
+function DataIllustration() {
+  const stroke = "#26FFDF"
   const bars = [30, 55, 40, 70, 50, 85]
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden flex items-center justify-center">
       <div
         className="absolute right-4 top-3 w-16 h-16 rounded-full blur-2xl pointer-events-none"
-        style={{ backgroundColor: stroke, opacity: isDark ? 0.18 : 0.22 }}
+        style={{ backgroundColor: stroke, opacity: 0.18 }}
       />
       {/* Escala contenida: la gráfica mantiene su proporción en vez de estirarse a toda la tarjeta */}
       <svg viewBox="0 0 200 100" className="relative w-full h-auto max-h-full" preserveAspectRatio="xMidYMid meet">
@@ -236,13 +235,13 @@ function DataIllustration({ isDark }: { isDark: boolean }) {
   )
 }
 
-function AutomationIllustration({ isDark }: { isDark: boolean }) {
-  const stroke = isDark ? "#26FFDF" : "#08A696"
+function AutomationIllustration() {
+  const stroke = "#26FFDF"
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden flex items-center justify-center">
       <div
         className="absolute w-24 h-24 rounded-full blur-2xl pointer-events-none"
-        style={{ backgroundColor: stroke, opacity: isDark ? 0.16 : 0.2 }}
+        style={{ backgroundColor: stroke, opacity: 0.16 }}
       />
       <svg viewBox="0 0 100 100" className="relative w-32 h-32">
         <circle cx="50" cy="50" r="42" fill="none" stroke={stroke} strokeOpacity="0.2" strokeWidth="1.5" strokeDasharray="4 5" className="auto-ring-outer" />
@@ -330,7 +329,7 @@ export interface ProjectExample {
 
 // Insignia flotante sobre la ilustración, al estilo de la etiqueta "↑32%"
 // del ejemplo de referencia: muestra en loop los proyectos reales del servicio.
-export function ServiceProjectsBadge({ examples, isDark }: { examples: ProjectExample[]; isDark: boolean }) {
+export function ServiceProjectsBadge({ examples }: { examples: ProjectExample[] }) {
   const [exampleIndex, setExampleIndex] = useState(0)
 
   useEffect(() => {
@@ -361,10 +360,10 @@ export function ServiceProjectsBadge({ examples, isDark }: { examples: ProjectEx
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.3 }}
         >
-          <span className={`block text-[9px] font-medium uppercase tracking-wider ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+          <span className={`block text-[9px] font-medium uppercase tracking-wider text-[#26FFDF]`}>
             {example.subcategory}
           </span>
-          <span className={`block text-xs font-medium truncate ${isDark ? "text-white" : "text-gray-900"}`}>
+          <span className={`block text-xs font-medium truncate text-white`}>
             {example.title}
           </span>
         </motion.div>
@@ -374,8 +373,6 @@ export function ServiceProjectsBadge({ examples, isDark }: { examples: ProjectEx
 }
 
 export default function ServiciosHero() {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
   const [activeIndex, setActiveIndex] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -410,7 +407,7 @@ export default function ServiciosHero() {
     <section className="relative min-h-screen w-full overflow-hidden flex flex-col items-center px-4 pb-16 pt-28 sm:pt-32 lg:pt-36">
       {/* Glow de fondo */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className={`absolute left-1/2 top-[15%] -translate-x-1/2 w-[70%] h-[50%] rounded-full blur-[120px] ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/15"}`} />
+        <div className={`absolute left-1/2 top-[15%] -translate-x-1/2 w-[70%] h-[50%] rounded-full blur-[120px] bg-[#08A696]/10`} />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center text-center">
@@ -424,19 +421,19 @@ export default function ServiciosHero() {
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="w-full"
           >
-            <h1 className={`max-w-3xl mx-auto text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold leading-[1.1] tracking-tight ${isDark ? "text-white" : "text-gray-900"}`}>
+            <h1 className={`max-w-3xl mx-auto text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold leading-[1.1] tracking-tight text-white`}>
               {activeCopy.prefix ? `${activeCopy.prefix} ` : ""}
-              <em className={`font-serif italic ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+              <em className={`font-serif italic text-[#26FFDF]`}>
                 {activeCopy.accent}
               </em>{" "}
               {activeCopy.suffix}
             </h1>
 
             {/* Checkmarks */}
-            <div className={`mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <div className={`mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm text-gray-400`}>
               {activeService.subcategories.slice(0, 3).map((sub) => (
                 <span key={sub.id} className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className={`w-4 h-4 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
+                  <CheckCircle2 className={`w-4 h-4 text-[#26FFDF]`} />
                   {sub.name}
                 </span>
               ))}
@@ -467,21 +464,17 @@ export default function ServiciosHero() {
                 }}
                 className={`relative flex flex-col min-h-[400px] text-left rounded-3xl border p-6 cursor-pointer transition-all duration-300 ${
                   isActive
-                    ? isDark
-                      ? "bg-[#02505950] border-[#26FFDF]/60 shadow-lg shadow-[#08A696]/20"
-                      : "bg-[#c5ebe7] border-[#08A696]/60 shadow-lg shadow-[#08A696]/20"
-                    : isDark
-                    ? "bg-[#02505920] border-[#08A696]/15 hover:border-[#08A696]/40"
-                    : "bg-white/60 border-[#08A696]/20 hover:border-[#08A696]/40"
+                    ? "bg-[#02505950] border-[#26FFDF]/60 shadow-lg shadow-[#08A696]/20"
+                    : "bg-[#02505920] border-[#08A696]/15 hover:border-[#08A696]/40"
                 }`}
               >
-                <h3 className={`text-lg font-bold mb-2 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`}>
+                <h3 className={`text-lg font-bold mb-2 text-[#26FFDF]`}>
                   {service.title}
                 </h3>
 
                 <div className="relative flex-1 min-h-[140px] mt-3">
-                  <Illustration isDark={isDark} />
-                  <ServiceProjectsBadge examples={examples} isDark={isDark} />
+                  <Illustration />
+                  <ServiceProjectsBadge examples={examples} />
                 </div>
               </div>
             )

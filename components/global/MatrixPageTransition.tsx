@@ -62,8 +62,8 @@ function MatrixRain({ isDark }: { isDark: boolean }) {
       ctx.font = `${fontSize}px monospace`
 
       // Mismos colores que el texto de la web: acento de marca y su versión apagada
-      const head = isDark ? "#26FFDF" : "#08A696"
-      const tail = isDark ? "rgba(38, 255, 223, 0.45)" : "rgba(8, 166, 150, 0.45)"
+      const head = "#26FFDF"
+      const tail = "rgba(38, 255, 223, 0.45)"
 
       for (let i = 0; i < lanes.length; i++) {
         const pos = lanes[i] ?? 0

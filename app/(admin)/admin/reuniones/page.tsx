@@ -30,7 +30,7 @@ export default async function MeetingsPage() {
       <SectionHeading badge="Agenda" title="Solicitudes de Reunión" subtitle="Reuniones que tus clientes han solicitado" />
       <div className="grid gap-4">
         {meetings.map((m) => (
-          <div key={m.id} className="bg-[#02505931] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl p-6">
+          <div key={m.id} className="bg-[#1e2123] backdrop-blur-sm border border-[#08A696]/20 rounded-2xl p-6">
             <div className="flex items-start justify-between mb-3">
               <div>
                 <h3 className="text-lg font-semibold text-white">{m.title}</h3>

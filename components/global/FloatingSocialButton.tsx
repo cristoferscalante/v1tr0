@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { TikTokIcon, LinkedInIcon } from "@/lib/icons";
 import { SVGProps } from "react";
+import { usePathname } from "next/navigation";
 
 // WhatsApp SVG (inline, ya que no hay export en lib/icons)
 const WhatsAppSvg = (props: React.SVGProps<SVGSVGElement>) => (
@@ -105,8 +106,21 @@ const socialLinks = [
 
 
 
+/** Rutas donde el botón no debe aparecer: son herramientas de trabajo, no
+ *  páginas de captación. Flotando sobre un tablero solo tapa tarjetas. */
+const RUTAS_SIN_BOTON = ["/admin", "/client-dashboard", "/dashboard"];
+
 const FloatingSocialButton: React.FC = () => {
   const [hovered, setHovered] = useState<number | null>(null);
+  const pathname = usePathname();
+
+  // El CTA de WhatsApp es para visitantes del sitio público. Dentro de los
+  // paneles cubría la esquina inferior izquierda, justo donde el tablero
+  // apila tarjetas.
+  if (RUTAS_SIN_BOTON.some((r) => pathname?.startsWith(r))) {
+    return null;
+  }
+
   return (
   // En móvil se acerca al borde y respeta la home-indicator de iOS vía safe-area.
   <div className="fixed z-50 left-4 md:left-12 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] md:bottom-12">

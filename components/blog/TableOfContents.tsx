@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useTransition, type ReactNode } from "react"
 import { FileText, ChevronDown } from "lucide-react"
 import { slugify, findElementByIdOrText, logAllHeadings } from "@/lib/utils"
-import { useTheme } from "@/components/theme-provider"
 
 interface TableOfContentsProps {
   headings: {
@@ -18,8 +17,6 @@ export default function TableOfContents({ headings, children }: TableOfContentsP
   const [activeId, setActiveId] = useState<string>("")
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [, startTransition] = useTransition()
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   // Función para inicializar los IDs de encabezados
   const initializeHeadingIds = React.useCallback(() => {
@@ -94,19 +91,19 @@ export default function TableOfContents({ headings, children }: TableOfContentsP
     <div className="relative group">
       {/* Gradiente exterior igual a BlogCard */}
       <div
-        className={`absolute -inset-0.5 bg-gradient-to-r ${isDark ? "from-[#08a6961e] to-[#26ffde23]" : "from-[#08a69630] to-[#08a69620]"} rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
+        className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
       ></div>
       
       {/* Container principal con glassmorphism */}
       <div 
-        className={`relative ${isDark ? "bg-[#02505931] backdrop-blur-sm" : "bg-[#e6f7f6] backdrop-blur-sm"} rounded-2xl border ${isDark ? "border-[#08A696]/20" : "border-[#08A696]/30"} transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] ${isDark ? "group-hover:bg-[#02505950]" : "group-hover:bg-[#c5ebe7]"} shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
+        className={`relative bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] group-hover:bg-[#02505950] shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
       >
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`flex items-center justify-between w-full p-4 font-medium transition-all duration-300 ${isDark ? "text-[#26FFDF] hover:text-[#26FFDF]" : "text-[#08A696] hover:text-[#08A696]"} ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"} ${isDark ? "hover:bg-[#08A696]/20" : "hover:bg-[#08A696]/10"}`}
+          className={`flex items-center justify-between w-full p-4 font-medium transition-all duration-300 text-[#26FFDF] hover:text-[#26FFDF] bg-[#08A696]/10 hover:bg-[#08A696]/20`}
         >
           <div className="flex items-center">
-            <FileText className={`w-4 h-4 mr-2 ${isDark ? "text-[#26FFDF]" : "text-[#08A696]"}`} />
+            <FileText className={`w-4 h-4 mr-2 text-[#26FFDF]`} />
             <h3 className="font-bold">Contenido</h3>
           </div>
           <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
@@ -130,8 +127,8 @@ export default function TableOfContents({ headings, children }: TableOfContentsP
                       href={`#${slugId}`}
                       className={`block py-1 border-l-2 pl-3 transition-all duration-300 rounded-md ${
                         activeId === slugId
-                          ? `${isDark ? "border-[#26FFDF] text-[#26FFDF]" : "border-[#08A696] text-[#08A696]"} font-medium ${isDark ? "bg-[#08A696]/10" : "bg-[#08A696]/5"}`
-                          : `border-transparent ${isDark ? "text-[#a0a0a0] hover:text-[#26FFDF]" : "text-[#666666] hover:text-[#08A696]"} ${isDark ? "hover:border-[#08A696]/50 hover:bg-[#08A696]/5" : "hover:border-[#08A696]/30 hover:bg-[#08A696]/5"}`
+                          ? `border-[#26FFDF] text-[#26FFDF] font-medium bg-[#08A696]/10`
+                          : `border-transparent text-[#a0a0a0] hover:text-[#26FFDF] hover:border-[#08A696]/50 hover:bg-[#08A696]/5`
                       }`}
                       onClick={(e) => {
                         e.preventDefault()
