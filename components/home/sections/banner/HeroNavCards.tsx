@@ -15,64 +15,58 @@ import { HeroTurntableCharacter } from "@/components/shop/hero/HeroTurntableChar
 // color de marca y animaciones sutiles que se desactivan con reduced-motion.
 // ============================================================================
 
-/** Blog: artículo con líneas de texto que se van escribiendo. */
+/** Artículos del blog del mazo: [frente, izquierda, derecha]. */
+const BLOG_POSTS = [
+  { title: "Programación con IA", image: "/imagenes/blog/no_es_magia.webp" },
+  { title: "Tecnologías Emergentes", image: "/imagenes/blog/emerge.webp" },
+  { title: "Desarrollo Web Moderno", image: "/imagenes/blog/moderno.webp" },
+]
+
+/**
+ * Blog: mazo fijo de tres artículos publicados, el primero al frente. Misma
+ * gramática que el mazo de webs de Servicios, pero con la silueta de una
+ * tarjeta de artículo (portada arriba, titular abajo) en vez de un navegador.
+ */
 function BlogIllustration({ }: { glow?: boolean }) {
-  const stroke = "#26FFDF"
-  const lines = [96, 76, 88, 60]
   return (
-    <div className="relative h-full w-full rounded-xl overflow-hidden">
-      <svg viewBox="0 0 200 100" className="relative w-full h-full">
-        <rect
-          x="18"
-          y="16"
-          width="58"
-          height="68"
-          rx="8"
-          fill={stroke}
-          fillOpacity="0.14"
-          stroke={stroke}
-          strokeOpacity="0.55"
-          strokeWidth="1.5"
-        />
-        <circle cx="47" cy="42" r="10" fill={stroke} fillOpacity="0.3" />
-        <rect x="28" y="60" width="38" height="4" rx="2" fill={stroke} fillOpacity="0.45" />
-        <rect x="28" y="69" width="24" height="4" rx="2" fill={stroke} fillOpacity="0.3" />
-        {lines.map((w, i) => (
-          <rect
-            key={i}
-            x="90"
-            y={22 + i * 16}
-            width={w}
-            height="6"
-            rx="3"
-            fill={stroke}
-            fillOpacity={i === 0 ? "0.6" : "0.32"}
-            className="blog-line"
-            style={{ transformOrigin: "90px center", animationDelay: `${i * 0.35}s` }}
-          />
-        ))}
-      </svg>
-      <style jsx>{`
-        .blog-line {
-          animation: blogType 3.2s ease-in-out infinite;
-        }
-        @keyframes blogType {
-          0%,
-          100% {
-            transform: scaleX(0.55);
-            opacity: 0.5;
-          }
-          50% {
-            transform: scaleX(1);
-            opacity: 1;
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .blog-line {
-            animation: none;
-          }
-        }
-      `}</style>
+    <div className="relative h-full w-full flex items-center justify-center">
+      <div className="relative h-[72%] aspect-[3/4]">
+        {[2, 1, 0].map((slot) => {
+          const post = BLOG_POSTS[slot]!
+          const { x, y, rotate, scale } = DECK_POSES[slot]!
+          return (
+            <div
+              key={slot}
+              className="absolute inset-0"
+              style={{ zIndex: 3 - slot, transform: `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${scale})` }}
+            >
+              <div className="h-full w-full overflow-hidden rounded-lg border border-[#26FFDF]/20 bg-[#0b1417] shadow-lg shadow-black/40">
+                <div className="relative h-[62%] w-full">
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
+                    sizes="120px"
+                    className={`object-cover ${slot === 0 ? "" : "opacity-80"}`}
+                  />
+                </div>
+                <div className="flex flex-col gap-[3px] p-[6px]">
+                  {slot === 0 ? (
+                    <span className="line-clamp-2 text-[7px] font-medium leading-tight text-[#26FFDF]">
+                      {post.title}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="h-[3px] w-full rounded-full bg-[#26FFDF]/35" />
+                      <span className="h-[3px] w-2/3 rounded-full bg-[#26FFDF]/20" />
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -229,6 +223,13 @@ const odiseoFrames = Array.from(
   (_, i) => `/imagenes/home/odiseo/odiseo-${String(i).padStart(2, "0")}.webp`,
 )
 
+// La tarjeta de Blog usa a Apolo: al pasar el cursor se acerca al lente y el
+// monitor holográfico termina de dibujarse. Fotogramas de apolonew.mp4.
+const apoloFrames = Array.from(
+  { length: 116 },
+  (_, i) => `/imagenes/home/apolo-blog/apolo-${String(i).padStart(2, "0")}.webp`,
+)
+
 /**
  * Secuencia de fotogramas que avanza mientras `active` es true y retrocede
  * cuando deja de serlo. El avance es por tiempo, no por fotograma, así que el
@@ -242,10 +243,14 @@ export function HoverFrameSequence({
   frames,
   active,
   alt,
+  forwardMs = 1400,
+  backwardMs = 800,
 }: {
   frames: string[]
   active: boolean
   alt: string
+  forwardMs?: number
+  backwardMs?: number
 }) {
   const last = frames.length - 1
   const [frame, setFrame] = useState(last)
@@ -263,8 +268,6 @@ export function HoverFrameSequence({
     setAnimated(true)
     setFrame(0)
 
-    const FORWARD_MS = 1400
-    const BACKWARD_MS = 800
     let progress = 0
     let prev = performance.now()
     let raf = 0
@@ -273,15 +276,15 @@ export function HoverFrameSequence({
       const dt = now - prev
       prev = now
       progress = activeRef.current
-        ? Math.min(1, progress + dt / FORWARD_MS)
-        : Math.max(0, progress - dt / BACKWARD_MS)
+        ? Math.min(1, progress + dt / forwardMs)
+        : Math.max(0, progress - dt / backwardMs)
       const index = Math.round(progress * last)
       setFrame((p) => (p === index ? p : index))
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [last])
+  }, [last, forwardMs, backwardMs])
 
   return (
     <div className="relative h-full w-full">
@@ -323,6 +326,8 @@ const CARDS = [
     title: "Blog",
     Illustration: BlogIllustration,
     figure: autoService,
+    // Gesto lento, cerca del ritmo del video original.
+    sequence: { frames: apoloFrames, forwardMs: 6000, backwardMs: 3000, fade: true },
   },
 ]
 
@@ -419,20 +424,27 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
                   className="h-full w-full"
                 />
               </div>
-            ) : sequence ? (
-              <HoverFrameSequence
-                frames={primed ? sequence.frames : [sequence.frames[sequence.frames.length - 1]!]}
-                active={hovered}
-                alt={figure.imageAlt}
-              />
             ) : (
-              <Image
-                src={figure.imageSrc}
-                alt={figure.imageAlt}
-                fill
-                sizes="(min-width: 768px) 33vw, 50vw"
-                className="object-contain"
-              />
+              // Con `fade` se desvanece el borde inferior (la sombra del piso).
+              <div
+                className="relative w-full h-full"
+                style={
+                  sequence.fade
+                    ? {
+                        maskImage: "linear-gradient(to bottom, black 65%, transparent 100%)",
+                        WebkitMaskImage: "linear-gradient(to bottom, black 65%, transparent 100%)",
+                      }
+                    : undefined
+                }
+              >
+                <HoverFrameSequence
+                  frames={primed ? sequence.frames : [sequence.frames[sequence.frames.length - 1]!]}
+                  active={hovered}
+                  alt={figure.imageAlt}
+                  forwardMs={sequence.forwardMs}
+                  backwardMs={sequence.backwardMs}
+                />
+              </div>
             )}
           </motion.div>
         </div>
