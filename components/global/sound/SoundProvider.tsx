@@ -5,8 +5,13 @@ import type { AmbientScore } from "@/lib/audio/ambient-score"
 
 type ToneLib = typeof import("tone")
 
-/** Preferencia de música que sobrevive entre visitas. Sin valor = encendida. */
-const STORAGE_KEY = "v1tr0-sound"
+/**
+ * Preferencia de sonido que sobrevive entre visitas. Sin valor = encendido.
+ * La comparten la música y los efectos puntuales (lib/audio/bleeps): apagar
+ * el sonido del sitio apaga las dos cosas.
+ */
+export const SOUND_STORAGE_KEY = "v1tr0-sound"
+const STORAGE_KEY = SOUND_STORAGE_KEY
 
 /**
  * Marca los controles que deciden el sonido por su cuenta (el botón de

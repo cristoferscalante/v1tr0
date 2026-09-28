@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState, type FormEvent } from "react"
-import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowUp, Loader2, X } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
@@ -18,6 +17,8 @@ import {
 } from "@/lib/asistente/brief"
 import { CIERRE, PASOS, responderPregunta } from "@/lib/asistente/guion"
 import useSnapAnimations from "@/hooks/use-snap-animations"
+import RobotAsistente, { type Animo } from "./RobotAsistente"
+import { bleep } from "@/lib/audio/bleeps"
 
 /**
  * Cierre del home: el asistente de V1TR0.
@@ -28,22 +29,33 @@ import useSnapAnimations from "@/hooks/use-snap-animations"
  * envío abre WhatsApp con el mensaje ya redactado. Nada se guarda en el
  * servidor, así que no hay datos personales que custodiar.
  *
- * Sin panel de fondo: los modelos y el chat flotan sobre el vacío de la página.
+ * El robot de la marca hace de cara del asistente: dibujo vectorial, sin
+ * imágenes. Vuela en una capa por detrás y va cambiando de sitio conforme
+ * avanza la conversación, mientras el chat —un marco sin relleno, para no
+ * taparlo— ocupa el alto entero del snap. Cada turno suena con bleeps de chip
+ * (lib/audio/bleeps).
  */
 
 type Mensaje = { rol: "usuario" | "asistente"; texto: string }
 
 /**
- * Los modelos de la marca, reunidos. `alto` es relativo al grupo y `z` decide
- * quién queda delante; el del POS viene cortado a media altura, así que se
- * desvanece por abajo como en el hero de la tienda.
+ * Las posiciones por las que pasa el robot, una por turno de la conversación.
+ * Se recorren en orden y se repiten si el chat sigue más allá del guion.
+ * `x`/`y` son porcentajes de la sección; el vuelo entre una y otra lo resuelve
+ * el spring de framer-motion.
  */
-const MODELOS = [
-  { src: "/imagenes/home/carrusel/sistemas_de_informacion.webp", aspecto: 2 / 3, centro: "15%", alto: "72%", z: 20, flotar: 0.4 },
-  { src: "/imagenes/home/odiseo/odiseo-46.webp", aspecto: 644 / 1320, centro: "38%", alto: "92%", z: 30, flotar: 0 },
-  { src: "/imagenes/tienda/pos-turn/pos-40.webp", aspecto: 520 / 713, centro: "60%", alto: "52%", z: 40, flotar: 0.8, cortado: true },
-  { src: "/imagenes/home/carrusel/automatizacion_de_tareas.webp", aspecto: 2 / 3, centro: "84%", alto: "68%", z: 20, flotar: 1.2 },
-]
+const VUELOS = [
+  { x: 50, y: 46, escala: 1, giro: 0 },
+  { x: 17, y: 30, escala: 0.72, giro: -9 },
+  { x: 84, y: 36, escala: 0.66, giro: 9 },
+  { x: 13, y: 68, escala: 0.82, giro: 7 },
+  { x: 87, y: 64, escala: 0.76, giro: -7 },
+  { x: 22, y: 46, escala: 0.6, giro: -5 },
+  { x: 79, y: 22, escala: 0.7, giro: 11 },
+  { x: 16, y: 20, escala: 0.64, giro: -11 },
+  { x: 85, y: 74, escala: 0.8, giro: 6 },
+  { x: 50, y: 26, escala: 0.95, giro: 0 },
+] as const
 
 const MULTILINEA: CampoBrief[] = ["necesidad", "funcionalidades"]
 
@@ -62,8 +74,16 @@ export default function ContactoAsistenteSection() {
   const [entrada, setEntrada] = useState("")
   const [cargando, setCargando] = useState(false)
   const [revisando, setRevisando] = useState(false)
+  const [reaccion, setReaccion] = useState<Animo>("neutral")
+  /** Cuántas veces ha cambiado de sitio el robot: elige la posición del vuelo. */
+  const [vuelo, setVuelo] = useState(0)
+  /** El robot "dice" el mensaje recién aparecido: la cara pasa a onda. */
+  const [hablando, setHablando] = useState(false)
+  /** Hasta que la sección no está a la vista, el robot sigue en el fondo. */
+  const [entrado, setEntrado] = useState(false)
   const listaRef = useRef<HTMLDivElement>(null)
   const temporizador = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const temporizadorVoz = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useSnapAnimations({
     sections: [".contacto-asistente-section"],
@@ -79,14 +99,28 @@ export default function ContactoAsistenteSection() {
     }
   }, [mensajes, cargando])
 
-  useEffect(() => () => clearTimeout(temporizador.current), [])
+  useEffect(
+    () => () => {
+      clearTimeout(temporizador.current)
+      clearTimeout(temporizadorVoz.current)
+    },
+    [],
+  )
 
   /** El asistente "escribe" un momento antes de contestar. */
-  function contestar(texto: string) {
+  function contestar(texto: string, sonido: "hablar" | "error" | "listo" = "hablar") {
     setCargando(true)
+    // Cada respuesta lo manda a otra posición: el cambio de sitio va con la
+    // espera, no con el mensaje, para que el vuelo termine cuando aparece.
+    setVuelo((actual) => actual + 1)
+    bleep("volar")
     temporizador.current = setTimeout(() => {
       setMensajes((actual) => [...actual, { rol: "asistente", texto }])
       setCargando(false)
+      bleep(sonido)
+      // La onda dura lo que costaría leer el mensaje en voz alta.
+      setHablando(true)
+      temporizadorVoz.current = setTimeout(() => setHablando(false), Math.min(600 + texto.length * 28, 3200))
     }, 450 + Math.min(texto.length * 8, 700))
   }
 
@@ -97,10 +131,12 @@ export default function ContactoAsistenteSection() {
     }
     setMensajes((actual) => [...actual, { rol: "usuario", texto: limpio }])
     setEntrada("")
+    bleep(esOpcion ? "clic" : "enviar")
 
     const actual = PASOS[paso]
     // Guion terminado: solo quedan las dudas y el envío.
     if (!actual) {
+      setReaccion("sorprendido")
       contestar(responderPregunta(limpio) ?? "Tu resumen ya está listo. Cuando quieras, envíalo por WhatsApp.")
       return
     }
@@ -108,6 +144,7 @@ export default function ContactoAsistenteSection() {
     // Una pregunta no avanza el guion: se contesta y se retoma el paso.
     const aclaracion = esOpcion ? null : responderPregunta(limpio)
     if (aclaracion) {
+      setReaccion("sorprendido")
       contestar(`${aclaracion}\n\n${actual.pregunta(brief.nombre)}`)
       return
     }
@@ -115,15 +152,20 @@ export default function ContactoAsistenteSection() {
     const valor = limpio === actual.omitir ? "" : limpio
     const invalido = valor && !esOpcion ? actual.validar?.(valor) : null
     if (invalido) {
-      contestar(invalido)
+      setReaccion("confundido")
+      contestar(invalido, "error")
       return
     }
 
+    setReaccion(valor ? "contento" : "neutral")
     const siguiente = { ...brief, [actual.campo]: valor }
     setBrief(siguiente)
     setPaso(paso + 1)
     const proximo = PASOS[paso + 1]
-    contestar(proximo ? proximo.pregunta(siguiente.nombre) : CIERRE(siguiente.nombre))
+    contestar(
+      proximo ? proximo.pregunta(siguiente.nombre) : CIERRE(siguiente.nombre),
+      proximo ? "hablar" : "listo",
+    )
   }
 
   function alEnviar(evento: FormEvent) {
@@ -136,67 +178,73 @@ export default function ContactoAsistenteSection() {
     ? [...(pasoActual.opciones ?? []), ...(pasoActual.omitir ? [pasoActual.omitir] : [])]
     : []
   const listo = briefListo(brief)
+  // El gesto del robot: pensar mientras escribe, celebrar cuando ya no quedan
+  // preguntas y, entre medias, la reacción a la última respuesta.
+  const animo: Animo = cargando ? "pensando" : !pasoActual ? "celebrando" : reaccion
+  const posicion = VUELOS[vuelo % VUELOS.length]!
   const hayDatos = CAMPOS_BRIEF.some((campo) => brief[campo.id].trim())
 
   return (
     <section className="contacto-asistente-section relative flex min-h-[100dvh] w-full items-center justify-center px-4 pb-10 pt-24">
-      <div className="z-10 mx-auto grid w-full max-w-6xl items-center gap-6 lg:h-[min(640px,calc(100dvh-160px))] lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
-        {/* Modelos reunidos */}
+      {/* Capa de vuelo: el robot va por detrás de todo, sin estorbar al chat. */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.8 }}
+        onViewportEnter={() => setEntrado(true)}
+        aria-hidden="true"
+      >
         <motion.div
-          className="pointer-events-none relative mx-auto h-[260px] w-full max-w-md sm:h-[320px] lg:h-full lg:max-w-none"
-          initial={{ opacity: 0, x: -56 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6 }}
-          aria-hidden="true"
+          className="absolute w-[46vw] max-w-[320px] sm:w-[34vw]"
+          // Entra desde el fondo: lejos y desenfocado, y se acomoda al frente.
+          initial={{ left: "50%", top: "52%", x: "-50%", y: "-50%", scale: 0.15, opacity: 0, filter: "blur(14px)" }}
+          animate={
+            entrado
+              ? {
+                  left: `${posicion.x}%`,
+                  top: `${posicion.y}%`,
+                  x: "-50%",
+                  y: "-50%",
+                  scale: posicion.escala,
+                  rotate: posicion.giro,
+                  opacity: 1,
+                  filter: "blur(0px)",
+                }
+              : undefined
+          }
+          transition={{ type: "spring", stiffness: 42, damping: 15, mass: 1.1 }}
         >
-          {MODELOS.map((modelo) => (
-            <motion.div
-              key={modelo.src}
-              className="absolute bottom-0"
-              style={{
-                // El centrado va por motion: una clase translate la pisaría la animación.
-                x: "-50%",
-                left: modelo.centro,
-                height: modelo.alto,
-                aspectRatio: modelo.aspecto,
-                zIndex: modelo.z,
-                ...(modelo.cortado && {
-                  maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
-                  WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
-                }),
-              }}
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: modelo.flotar }}
-            >
-              <Image
-                src={modelo.src}
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 18vw, 30vw"
-                className="object-contain object-bottom"
-              />
-            </motion.div>
-          ))}
+          {/* Vuelo estacionario: cabeceo y balanceo suaves, siempre encendidos.
+              En pantalla estrecha vuela detrás del chat, así que se atenúa. */}
+          <motion.div
+            className="opacity-25 sm:opacity-100"
+            animate={{ y: [0, -16, 0, 10, 0], rotate: [0, 2.5, 0, -2.5, 0] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <RobotAsistente animo={animo} hablando={hablando} className="w-full" />
+          </motion.div>
         </motion.div>
+      </motion.div>
 
-        {/* Chat */}
+      <div className="relative z-10 mx-auto flex h-[min(760px,calc(100dvh-140px))] w-full max-w-3xl">
+        {/* Chat: marco sin relleno, para que el robot se vea volar por detrás. */}
         <motion.div
-          className="relative flex h-[520px] min-h-0 min-w-0 flex-col lg:h-full"
-          initial={{ opacity: 0, x: 56 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          className="relative flex min-h-0 w-full min-w-0 flex-col p-5 sm:p-6"
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl font-bold text-textPrimary sm:text-3xl">Asistente V1TR0</h2>
-          <p className="mt-1.5 text-sm text-textMuted">
-            Cuéntanos tu proyecto; al final lo enviamos a nuestro WhatsApp.
-          </p>
+          {/* La sección necesita un encabezado, pero a la vista sobra: el chat
+              se presenta solo con su primer mensaje. */}
+          <h2 className="sr-only">Asistente V1TR0</h2>
 
           <div
             ref={listaRef}
             data-scroll-inside
-            className="mt-4 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain py-4 pr-1 [scrollbar-width:none]"
+            className="mt-3 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain py-4 pr-1 [scrollbar-width:none]"
             style={{
               maskImage: "linear-gradient(to bottom, transparent 0, black 32px, black calc(100% - 16px), transparent 100%)",
               WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 32px, black calc(100% - 16px), transparent 100%)",

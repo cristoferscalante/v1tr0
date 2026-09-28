@@ -7,7 +7,6 @@ import HomeBanner from "@/components/home/sections/banner/HomeBanner"
 import HomeTaglineSection from "@/components/home/sections/banner/HomeTaglineSection"
 import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
 import ProyectosEnProduccion from "@/components/home/sections/ProyectosEnProduccion"
-import PathChoiceSection from "@/components/home/sections/PathChoiceSection"
 import ContactoAsistenteSection from "@/components/home/sections/contact/ContactoAsistenteSection"
 
 import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
@@ -30,22 +29,20 @@ export default function Home() {
         {/* Sección 2: Tarjetas de navegación */}
         <HomeBanner />
 
-        {/* Sección 3: Texto dinámico */}
-        <HomeTaglineSection />
-
-        {/* Sección 4: Proyectos de clientes publicados */}
+        {/* Sección 3: Proyectos de clientes publicados */}
         <ProyectosEnProduccion />
-        
-        {/* Sección 5: Bifurcación software / hardware */}
-        <PathChoiceSection />
 
-        {/* Sección 6: Contacto con asistente que llena el brief */}
-        <ContactoAsistenteSection />
+        {/* Sección 4: Texto dinámico */}
+        <HomeTaglineSection />
         
-        {/* Sección 7: Tecnologías. HomeScrollSnap la reconoce por ser la penúltima. */}
+        {/* Sección 5: el asistente. Ocupa el lugar de la vieja bifurcación
+            software / hardware; las dos rutas siguen a mano como enlaces. */}
+        <ContactoAsistenteSection />
+
+        {/* Sección 6: Tecnologías. HomeScrollSnap la reconoce por ser la penúltima. */}
         <TechnologiesSection />
         
-        {/* Sección 8: Footer */}
+        {/* Sección 7: Footer */}
         <FooterSection />
       </HomeScrollSnap>
       
