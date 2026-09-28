@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowUp, Loader2, X } from "lucide-react"
+import { ArrowUp, Loader2 } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
 import { siteConfig } from "@/config/site"
 import {
@@ -19,6 +19,7 @@ import { CIERRE, PASOS, responderPregunta } from "@/lib/asistente/guion"
 import useSnapAnimations from "@/hooks/use-snap-animations"
 import RobotAsistente, { type Animo } from "./RobotAsistente"
 import { bleep } from "@/lib/audio/bleeps"
+import ConmutadorVista, { type Vista } from "./ConmutadorVista"
 
 /**
  * Cierre del home: el asistente de V1TR0.
@@ -34,6 +35,13 @@ import { bleep } from "@/lib/audio/bleeps"
  * avanza la conversación, mientras el chat —un marco sin relleno, para no
  * taparlo— ocupa el alto entero del snap. Cada turno suena con bleeps de chip
  * (lib/audio/bleeps).
+ *
+ * El mismo espacio sirve para dos vistas, que se alternan con un conmutador:
+ * la conversación y la ficha de datos. Al cerrar el guion ya no hay nada que
+ * preguntar, así que la ficha sale sola.
+ *
+ * Sin nadie escribiendo, el robot no se queda quieto: cambia de sitio cada
+ * pocos segundos por su cuenta y su cara recorre la rutina de reposo.
  */
 
 type Mensaje = { rol: "usuario" | "asistente"; texto: string }
@@ -44,6 +52,9 @@ type Mensaje = { rol: "usuario" | "asistente"; texto: string }
  * `x`/`y` son porcentajes de la sección; el vuelo entre una y otra lo resuelve
  * el spring de framer-motion.
  */
+/** Rincón al que se retira mientras se revisan los datos, para no estorbar. */
+const RINCON = { x: 88, y: 18, escala: 0.42, giro: 8 } as const
+
 const VUELOS = [
   { x: 50, y: 46, escala: 1, giro: 0 },
   { x: 17, y: 30, escala: 0.72, giro: -9 },
@@ -73,7 +84,8 @@ export default function ContactoAsistenteSection() {
   const [paso, setPaso] = useState(0)
   const [entrada, setEntrada] = useState("")
   const [cargando, setCargando] = useState(false)
-  const [revisando, setRevisando] = useState(false)
+  /** Qué se ve en el panel: la conversación o la ficha de datos. */
+  const [vista, setVista] = useState<Vista>("chat")
   const [reaccion, setReaccion] = useState<Animo>("neutral")
   /** Cuántas veces ha cambiado de sitio el robot: elige la posición del vuelo. */
   const [vuelo, setVuelo] = useState(0)
@@ -99,6 +111,15 @@ export default function ContactoAsistenteSection() {
     }
   }, [mensajes, cargando])
 
+  // Vuelo en reposo: si nadie contesta, se pasea solo.
+  useEffect(() => {
+    if (!entrado || cargando) {
+      return
+    }
+    const id = setTimeout(() => setVuelo((actual) => actual + 1), 7500)
+    return () => clearTimeout(id)
+  }, [entrado, cargando, vuelo])
+
   useEffect(
     () => () => {
       clearTimeout(temporizador.current)
@@ -120,7 +141,15 @@ export default function ContactoAsistenteSection() {
       bleep(sonido)
       // La onda dura lo que costaría leer el mensaje en voz alta.
       setHablando(true)
-      temporizadorVoz.current = setTimeout(() => setHablando(false), Math.min(600 + texto.length * 28, 3200))
+      temporizadorVoz.current = setTimeout(() => {
+        setHablando(false)
+        // Terminado el guion, el chat no tiene más que preguntar: la ficha de
+        // datos pasa al frente por su cuenta, en cuanto acaba de hablar.
+        if (sonido === "listo") {
+          setVista("datos")
+          bleep("clic")
+        }
+      }, Math.min(600 + texto.length * 28, 3200))
     }, 450 + Math.min(texto.length * 8, 700))
   }
 
@@ -168,6 +197,13 @@ export default function ContactoAsistenteSection() {
     )
   }
 
+  function cambiarVista(siguiente: Vista) {
+    if (siguiente !== vista) {
+      setVista(siguiente)
+      bleep("clic")
+    }
+  }
+
   function alEnviar(evento: FormEvent) {
     evento.preventDefault()
     responder(entrada)
@@ -181,7 +217,8 @@ export default function ContactoAsistenteSection() {
   // El gesto del robot: pensar mientras escribe, celebrar cuando ya no quedan
   // preguntas y, entre medias, la reacción a la última respuesta.
   const animo: Animo = cargando ? "pensando" : !pasoActual ? "celebrando" : reaccion
-  const posicion = VUELOS[vuelo % VUELOS.length]!
+  // Con la ficha abierta se aparta a un rincón: el formulario manda.
+  const posicion = vista === "datos" ? RINCON : VUELOS[vuelo % VUELOS.length]!
   const hayDatos = CAMPOS_BRIEF.some((campo) => brief[campo.id].trim())
 
   return (
@@ -241,109 +278,105 @@ export default function ContactoAsistenteSection() {
               se presenta solo con su primer mensaje. */}
           <h2 className="sr-only">Asistente V1TR0</h2>
 
-          <div
-            ref={listaRef}
-            data-scroll-inside
-            className="mt-3 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain py-4 pr-1 [scrollbar-width:none]"
-            style={{
-              maskImage: "linear-gradient(to bottom, transparent 0, black 32px, black calc(100% - 16px), transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 32px, black calc(100% - 16px), transparent 100%)",
-            }}
-            aria-live="polite"
-          >
-            <div className="flex-1" />
-            {mensajes.map((mensaje, indice) => (
-              <motion.div
-                key={indice}
-                initial={{ opacity: 0, x: mensaje.rol === "usuario" ? 24 : -24 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-                className={`max-w-[85%] whitespace-pre-wrap rounded-3xl px-4 py-2.5 text-sm leading-relaxed text-textPrimary ${
-                  mensaje.rol === "usuario"
-                    ? "self-end rounded-br-lg border border-[#26FFDF]/15 bg-[#0d3b3b]/85"
-                    : `self-start rounded-bl-lg ${tarjetaOscura}`
-                }`}
-              >
-                {mensaje.texto}
-              </motion.div>
-            ))}
-
-            {respuestasRapidas.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {respuestasRapidas.map((opcion) => (
-                  <button
-                    key={opcion}
-                    type="button"
-                    onClick={() => responder(opcion, true)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs text-textMuted transition-colors duration-300 hover:border-[#26FFDF]/40 hover:text-[#26FFDF] ${tarjetaOscura}`}
-                  >
-                    {opcion}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {cargando && (
-              <div className={`self-start rounded-3xl rounded-bl-lg px-4 py-2.5 ${tarjetaOscura}`}>
-                <Loader2 className="h-4 w-4 animate-spin text-textMuted" aria-label="El asistente está escribiendo" />
-              </div>
-            )}
-
-          </div>
-
-          <form onSubmit={alEnviar} className="flex items-center gap-2 pt-2">
-            <label htmlFor="asistente-entrada" className="sr-only">
-              Escribe tu mensaje
-            </label>
-            <input
-              id="asistente-entrada"
-              value={entrada}
-              onChange={(e) => setEntrada(e.target.value)}
-              maxLength={800}
-              autoComplete="off"
-              placeholder="Escribe tu mensaje…"
-              className={`${campoBase} rounded-full px-5 py-3`}
-            />
-            <button
-              type="submit"
-              disabled={cargando || !entrada.trim()}
-              aria-label="Enviar mensaje"
-              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[#26FFDF] transition-colors duration-300 hover:border-[#26FFDF]/50 disabled:opacity-40 ${tarjetaOscura}`}
+          {/* Conmutador: aparece en cuanto hay algo que mirar en la ficha. */}
+          {(hayDatos || vista === "datos") && (
+            <motion.div
+              className="mb-1 flex justify-center"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <ArrowUp className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </form>
-
-          {(listo || hayDatos) && (
-            <div className="flex flex-wrap items-center gap-3 pt-3">
-              {listo && (
-                <a
-                  href={enlaceWhatsApp(siteConfig.company.whatsapp, brief)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={botonPildora}
-                >
-                  <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
-                  Enviar por WhatsApp
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={() => setRevisando(true)}
-                className="text-xs text-textMuted underline-offset-4 transition-colors hover:text-[#26FFDF] hover:underline"
-              >
-                Revisar datos
-              </button>
-            </div>
+              <ConmutadorVista vista={vista} onCambiar={cambiarVista} completo={listo} />
+            </motion.div>
           )}
 
-          {/* El brief: se llena por detrás y solo aparece si la persona quiere revisarlo. */}
-          <AnimatePresence>
-            {revisando && (
-              <RevisionBrief
+          <AnimatePresence mode="wait" initial={false}>
+            {vista === "chat" ? (
+              <motion.div
+                key="chat"
+                className="flex min-h-0 flex-1 flex-col"
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div
+                  ref={listaRef}
+                  data-scroll-inside
+                  className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain py-4 pr-1 [scrollbar-width:none]"
+                  style={{
+                    maskImage: "linear-gradient(to bottom, transparent 0, black 32px, black calc(100% - 16px), transparent 100%)",
+                    WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 32px, black calc(100% - 16px), transparent 100%)",
+                  }}
+                  aria-live="polite"
+                >
+                  <div className="flex-1" />
+                  {mensajes.map((mensaje, indice) => (
+                    <motion.div
+                      key={indice}
+                      initial={{ opacity: 0, x: mensaje.rol === "usuario" ? 24 : -24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`max-w-[85%] whitespace-pre-wrap rounded-3xl px-4 py-2.5 text-sm leading-relaxed text-textPrimary ${
+                        mensaje.rol === "usuario"
+                          ? "self-end rounded-br-lg border border-[#26FFDF]/15 bg-[#0d3b3b]/85"
+                          : `self-start rounded-bl-lg ${tarjetaOscura}`
+                      }`}
+                    >
+                      {mensaje.texto}
+                    </motion.div>
+                  ))}
+
+                  {respuestasRapidas.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {respuestasRapidas.map((opcion) => (
+                        <button
+                          key={opcion}
+                          type="button"
+                          onClick={() => responder(opcion, true)}
+                          className={`rounded-full px-3.5 py-1.5 text-xs text-textMuted transition-colors duration-300 hover:border-[#26FFDF]/40 hover:text-[#26FFDF] ${tarjetaOscura}`}
+                        >
+                          {opcion}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {cargando && (
+                    <div className={`self-start rounded-3xl rounded-bl-lg px-4 py-2.5 ${tarjetaOscura}`}>
+                      <Loader2 className="h-4 w-4 animate-spin text-textMuted" aria-label="El asistente está escribiendo" />
+                    </div>
+                  )}
+                </div>
+
+                <form onSubmit={alEnviar} className="flex items-center gap-2 pt-2">
+                  <label htmlFor="asistente-entrada" className="sr-only">
+                    Escribe tu mensaje
+                  </label>
+                  <input
+                    id="asistente-entrada"
+                    value={entrada}
+                    onChange={(e) => setEntrada(e.target.value)}
+                    maxLength={800}
+                    autoComplete="off"
+                    placeholder="Escribe tu mensaje…"
+                    className={`${campoBase} rounded-full px-5 py-3`}
+                  />
+                  <button
+                    type="submit"
+                    disabled={cargando || !entrada.trim()}
+                    aria-label="Enviar mensaje"
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[#26FFDF] transition-colors duration-300 hover:border-[#26FFDF]/50 disabled:opacity-40 ${tarjetaOscura}`}
+                  >
+                    <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </form>
+              </motion.div>
+            ) : (
+              <FichaDatos
+                key="datos"
                 brief={brief}
                 onCambio={(campo, valor) => setBrief((actual) => ({ ...actual, [campo]: valor }))}
-                onCerrar={() => setRevisando(false)}
               />
             )}
           </AnimatePresence>
@@ -353,58 +386,79 @@ export default function ContactoAsistenteSection() {
   )
 }
 
-function RevisionBrief({
+/**
+ * La ficha del brief. Es la otra cara del panel: mismo espacio que el chat,
+ * campos editables y, encima, dos efectos en SVG —un barrido que recorre la
+ * ficha al abrirla y un visto que se dibuja en cada campo ya resuelto—, para
+ * que se vea de un vistazo qué queda por completar.
+ */
+function FichaDatos({
   brief,
   onCambio,
-  onCerrar,
 }: {
   brief: Brief
   onCambio: (campo: CampoBrief, valor: string) => void
-  onCerrar: () => void
 }) {
   const listo = briefListo(brief)
 
   return (
     <motion.div
-      role="dialog"
-      aria-label="Datos del proyecto"
-      className="absolute inset-0 z-40 flex flex-col rounded-[2rem] border border-white/[0.07] bg-[#0b1414]/95 backdrop-blur-md"
-      initial={{ opacity: 0, x: 40 }}
+      className="relative flex min-h-0 flex-1 flex-col"
+      initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 40 }}
-      transition={{ duration: 0.3 }}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") {
-          onCerrar()
-        }
-      }}
+      exit={{ opacity: 0, x: 24 }}
+      transition={{ duration: 0.25 }}
     >
-      <div className="flex items-center justify-between px-5 pt-4">
-        <p className="text-sm font-semibold text-textPrimary">Datos del proyecto</p>
-        <button
-          type="button"
-          onClick={onCerrar}
-          aria-label="Volver al chat"
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-textMuted transition-colors hover:border-white/25 hover:text-textPrimary"
-        >
-          <X className="h-4 w-4" aria-hidden="true" />
-        </button>
-      </div>
+      {/* Barrido: una sola pasada al abrir la ficha, como un escáner. */}
+      <motion.svg
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+        initial={{ opacity: 0.9 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 1.1, ease: "easeOut" }}
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="barrido-ficha" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#26ffdf" stopOpacity="0" />
+            <stop offset="50%" stopColor="#26ffdf" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#26ffdf" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <motion.rect
+          y="0"
+          width="22"
+          height="100"
+          fill="url(#barrido-ficha)"
+          initial={{ x: -22 }}
+          animate={{ x: 100 }}
+          transition={{ duration: 1.1, ease: "easeOut" }}
+        />
+      </motion.svg>
 
       <div
         data-scroll-inside
-        className="grid min-h-0 flex-1 grid-cols-1 content-start gap-x-3 gap-y-2.5 overflow-y-auto overscroll-contain p-5 sm:grid-cols-2"
+        className="grid min-h-0 flex-1 grid-cols-1 content-start gap-x-3 gap-y-2.5 overflow-y-auto overscroll-contain py-4 pr-1 [scrollbar-width:none] sm:grid-cols-2"
       >
-        {CAMPOS_BRIEF.map((campo) => {
+        {CAMPOS_BRIEF.map((campo, indice) => {
           const id = `brief-${campo.id}`
           const requerido = CAMPOS_REQUERIDOS.includes(campo.id)
           const ancho = MULTILINEA.includes(campo.id) || campo.id === "tipoProyecto" ? "sm:col-span-2" : ""
+          const resuelto = Boolean(brief[campo.id].trim())
 
           return (
-            <div key={campo.id} className={ancho}>
-              <label htmlFor={id} className="mb-1 block text-xs text-textMuted">
+            <motion.div
+              key={campo.id}
+              className={ancho}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: indice * 0.04 }}
+            >
+              <label htmlFor={id} className="mb-1 flex items-center gap-1.5 text-xs text-textMuted">
                 {campo.etiqueta}
-                {requerido && <span className="text-[#26FFDF]"> *</span>}
+                {requerido && <span className="text-[#26ffdf]">*</span>}
+                {resuelto && <VistoBueno />}
               </label>
               {campo.id === "tipoProyecto" ? (
                 <select
@@ -443,12 +497,12 @@ function RevisionBrief({
                   className={campoBase}
                 />
               )}
-            </div>
+            </motion.div>
           )
         })}
       </div>
 
-      <div className="flex justify-center px-5 pb-5">
+      <div className="flex justify-center pt-2">
         {listo ? (
           <a
             href={enlaceWhatsApp(siteConfig.company.whatsapp, brief)}
@@ -464,5 +518,31 @@ function RevisionBrief({
         )}
       </div>
     </motion.div>
+  )
+}
+
+/** Visto que se dibuja de un trazo cuando el campo ya tiene contenido. */
+function VistoBueno() {
+  return (
+    <motion.svg
+      viewBox="0 0 16 16"
+      className="h-3 w-3 text-[#26ffdf]"
+      fill="none"
+      initial={{ scale: 0.6, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      aria-hidden="true"
+    >
+      <motion.path
+        d="M3 8.5l3.2 3.2L13 4.6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+      />
+    </motion.svg>
   )
 }

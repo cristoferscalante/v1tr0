@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 
 /**
@@ -106,6 +107,26 @@ const GESTOS: Record<Animo, Gesto> = {
   },
 }
 
+/**
+ * Rutina de reposo: sin nadie con quien hablar, el robot sigue vivo. Recorre
+ * este ciclo en bucle —mira a un lado, se distrae, se entusiasma solo— para
+ * que nunca se quede congelado en una sola cara.
+ *
+ * `mirada` desplaza los ojos en el eje X; `saludo` levanta los brazos.
+ */
+const RUTINA: Array<{ animo: Animo; dura: number; mirada?: number; saludo?: boolean }> = [
+  { animo: "neutral", dura: 3200 },
+  { animo: "neutral", dura: 1600, mirada: -3 },
+  { animo: "sorprendido", dura: 900, mirada: -3 },
+  { animo: "contento", dura: 1800, saludo: true },
+  { animo: "neutral", dura: 2400, mirada: 3 },
+  { animo: "pensando", dura: 2200, mirada: 3 },
+  { animo: "neutral", dura: 1500 },
+  { animo: "confundido", dura: 1400, mirada: -2 },
+  { animo: "contento", dura: 1600 },
+  { animo: "neutral", dura: 2800 },
+]
+
 /** Los ojos parpadean solos; en los gestos ya entrecerrados se nota menos. */
 const PARPADEO = { duration: 0.18, repeat: Infinity, repeatDelay: 4.5, repeatType: "reverse" as const }
 
@@ -119,7 +140,22 @@ export default function RobotAsistente({
   hablando?: boolean
   className?: string
 }) {
-  const gesto = GESTOS[animo]
+  // En reposo manda la rutina; en cuanto la conversación dice algo, manda ella.
+  const [tramo, setTramo] = useState(0)
+  const enReposo = animo === "neutral" && !hablando
+  const paso = RUTINA[tramo % RUTINA.length]!
+
+  useEffect(() => {
+    if (!enReposo) {
+      return
+    }
+    const id = setTimeout(() => setTramo((actual) => actual + 1), paso.dura)
+    return () => clearTimeout(id)
+  }, [enReposo, tramo, paso.dura])
+
+  const gesto = GESTOS[enReposo ? paso.animo : animo]
+  const mirada = enReposo ? (paso.mirada ?? 0) : 0
+  const brazosArriba = animo === "celebrando" || (enReposo && paso.saludo === true)
   const transicion = { type: "spring" as const, stiffness: 220, damping: 18 }
 
   return (
@@ -130,7 +166,7 @@ export default function RobotAsistente({
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="Robot del asistente V1TR0"
-      animate={{ y: [0, -5, 0] }}
+      animate={{ y: [0, -5, 0], rotate: enReposo ? [0, 1.2, 0, -1.2, 0] : 0 }}
       transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
     >
       {/* Brazos y cuerpo: quietos, sostienen la composición. */}
@@ -151,7 +187,7 @@ export default function RobotAsistente({
 
       {/* Brazos largos: se levantan al celebrar. */}
       <motion.g
-        animate={{ rotate: animo === "celebrando" ? -8 : 0 }}
+        animate={{ rotate: brazosArriba ? -8 : 0 }}
         transition={transicion}
         style={{ originX: "20%", originY: "70%" }}
       >
@@ -159,7 +195,7 @@ export default function RobotAsistente({
         <path d="M16.6906 91.7109C14.6469 91.7109 12.9438 91.375 10.9 90.7031C4.42813 88.3516 0 81.2969 0 73.5703H8.175C8.175 77.9375 10.5594 81.9687 13.9656 82.9766C18.3937 84.6562 24.525 82.3047 26.5688 76.9297L34.0625 79.6172C31.3375 87.0078 24.1844 91.7109 16.6906 91.7109Z" fill="black" />
       </motion.g>
       <motion.g
-        animate={{ rotate: animo === "celebrando" ? 8 : 0 }}
+        animate={{ rotate: brazosArriba ? 8 : 0 }}
         transition={transicion}
         style={{ originX: "80%", originY: "70%" }}
       >
@@ -207,7 +243,10 @@ export default function RobotAsistente({
         <path d="M140.678 91.0391H80.0468C77.3218 91.0391 75.2781 88.6875 75.2781 86.3359V57.4453C75.2781 52.7422 79.0249 49.7188 83.1124 49.7188H137.612C142.381 49.7188 146.128 53.4141 146.128 58.1172V87.0078C145.447 89.0234 143.744 91.0391 140.678 91.0391Z" fill="black" />
 
         {/* Cara en reposo: ojos y boca. Se funden mientras habla. */}
-        <motion.g animate={{ opacity: hablando ? 0 : 1 }} transition={{ duration: 0.2 }}>
+        <motion.g
+          animate={{ opacity: hablando ? 0 : 1, x: mirada }}
+          transition={{ opacity: { duration: 0.2 }, x: transicion }}
+        >
         <motion.rect
           x={89.925}
           y={OJO_NORMAL.y}
