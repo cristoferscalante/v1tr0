@@ -140,6 +140,17 @@ export default function HomeScrollSnap({
 
       // Control de wheel events - lógica simple como en /about
       const handleWheel = (e: WheelEvent) => {
+        // Un panel con scroll propio (chat, formulario) consume la rueda
+        // mientras le quede recorrido en esa dirección; al tope, vuelve el snap.
+        const panel = (e.target as HTMLElement | null)?.closest?.<HTMLElement>("[data-scroll-inside]")
+        if (panel) {
+          const puedeBajar = panel.scrollTop + panel.clientHeight < panel.scrollHeight - 1
+          const puedeSubir = panel.scrollTop > 0
+          if ((e.deltaY > 0 && puedeBajar) || (e.deltaY < 0 && puedeSubir)) {
+            return
+          }
+        }
+
         e.preventDefault()
         if (isAnimatingRef.current) {
           console.log('[DEBUG] Wheel blocked - animation in progress')
@@ -183,7 +194,13 @@ export default function HomeScrollSnap({
         if (isAnimatingRef.current) {
           return
         }
-        
+
+        // Las flechas dentro de un campo mueven el cursor, no la página.
+        const objetivo = e.target as HTMLElement | null
+        if (objetivo?.closest?.("input, textarea, select, [contenteditable='true']")) {
+          return
+        }
+
         switch (e.key) {
           case "ArrowDown":
           case "PageDown":

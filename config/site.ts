@@ -45,6 +45,8 @@ export const siteConfig = {
     phone: '+57 315 817 3818',
     /** Mismo número en formato E.164, para `tel:` y para los datos estructurados. */
     phoneE164: '+573158173818',
+    /** Línea de WhatsApp (distinta del teléfono de llamadas), sin '+' para `wa.me`. */
+    whatsapp: '573222237026',
     /**
      * Ficha NAP (Name-Address-Phone). Es la fuente única del `LocalBusiness`
      * de `lib/seo/site-graph.ts`: Google y los motores de respuesta cruzan
