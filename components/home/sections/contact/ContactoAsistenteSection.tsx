@@ -16,13 +16,15 @@ import {
   type Brief,
   type CampoBrief,
 } from "@/lib/asistente/brief"
+import { CIERRE, PASOS, responderPregunta } from "@/lib/asistente/guion"
 import useSnapAnimations from "@/hooks/use-snap-animations"
 
 /**
  * Cierre del home: el asistente de V1TR0.
  *
- * Lo principal es la conversación. Mientras avanza, el brief del proyecto se
- * llena por detrás; solo sale a la vista si la persona quiere revisarlo, y el
+ * Lo principal es la conversación, que es guionada (ver lib/asistente/guion):
+ * sin modelo de lenguaje, sin costo por mensaje y sin respuestas fuera de
+ * libreto. Mientras avanza, el brief del proyecto se llena por detrás; solo sale a la vista si la persona quiere revisarlo, y el
  * envío abre WhatsApp con el mensaje ya redactado. Nada se guarda en el
  * servidor, así que no hay datos personales que custodiar.
  *
@@ -30,13 +32,6 @@ import useSnapAnimations from "@/hooks/use-snap-animations"
  */
 
 type Mensaje = { rol: "usuario" | "asistente"; texto: string }
-
-const SALUDO: Mensaje = {
-  rol: "asistente",
-  texto: "Hola, somos el equipo de V1TR0. Cuéntanos qué te gustaría construir o qué problema quieres resolver.",
-}
-
-const SUGERENCIAS = ["Una tienda en línea", "Un sistema para mi empresa", "Automatizar una tarea", "Sensores en campo"]
 
 /**
  * Los modelos de la marca, reunidos. `alto` es relativo al grupo y `z` decide
@@ -61,13 +56,14 @@ const botonPildora =
   "inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-textPrimary transition-colors duration-300 hover:border-[#26FFDF]/50 hover:text-[#26FFDF]"
 
 export default function ContactoAsistenteSection() {
-  const [mensajes, setMensajes] = useState<Mensaje[]>([SALUDO])
+  const [mensajes, setMensajes] = useState<Mensaje[]>([{ rol: "asistente", texto: PASOS[0]!.pregunta("") }])
   const [brief, setBrief] = useState<Brief>(briefVacio)
+  const [paso, setPaso] = useState(0)
   const [entrada, setEntrada] = useState("")
   const [cargando, setCargando] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [revisando, setRevisando] = useState(false)
   const listaRef = useRef<HTMLDivElement>(null)
+  const temporizador = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useSnapAnimations({
     sections: [".contacto-asistente-section"],
@@ -83,52 +79,62 @@ export default function ContactoAsistenteSection() {
     }
   }, [mensajes, cargando])
 
-  async function enviar(texto: string) {
-    const limpio = texto.trim()
+  useEffect(() => () => clearTimeout(temporizador.current), [])
+
+  /** El asistente "escribe" un momento antes de contestar. */
+  function contestar(texto: string) {
+    setCargando(true)
+    temporizador.current = setTimeout(() => {
+      setMensajes((actual) => [...actual, { rol: "asistente", texto }])
+      setCargando(false)
+    }, 450 + Math.min(texto.length * 8, 700))
+  }
+
+  function responder(texto: string, esOpcion = false) {
+    const limpio = texto.trim().slice(0, 600)
     if (!limpio || cargando) {
       return
     }
-
-    const historial = [...mensajes, { rol: "usuario" as const, texto: limpio.slice(0, 800) }]
-    setMensajes(historial)
+    setMensajes((actual) => [...actual, { rol: "usuario", texto: limpio }])
     setEntrada("")
-    setError(null)
-    setCargando(true)
 
-    try {
-      const respuesta = await fetch("/api/asistente", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mensajes: historial, brief }),
-      })
-      const datos = await respuesta.json().catch(() => null)
-
-      if (!respuesta.ok || !datos?.respuesta) {
-        throw new Error(datos?.error ?? "El asistente no pudo responder.")
-      }
-
-      // Solo se aceptan valores no vacíos: el modelo nunca borra lo que ya hay.
-      const cambios: Partial<Brief> = {}
-      for (const campo of CAMPOS_BRIEF) {
-        const valor = String(datos.brief?.[campo.id] ?? "").trim()
-        if (valor && valor !== brief[campo.id]) {
-          cambios[campo.id] = valor
-        }
-      }
-      setBrief((actual) => ({ ...actual, ...cambios }))
-      setMensajes((actual) => [...actual, { rol: "asistente", texto: datos.respuesta }])
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "El asistente no pudo responder.")
-    } finally {
-      setCargando(false)
+    const actual = PASOS[paso]
+    // Guion terminado: solo quedan las dudas y el envío.
+    if (!actual) {
+      contestar(responderPregunta(limpio) ?? "Tu resumen ya está listo. Cuando quieras, envíalo por WhatsApp.")
+      return
     }
+
+    // Una pregunta no avanza el guion: se contesta y se retoma el paso.
+    const aclaracion = esOpcion ? null : responderPregunta(limpio)
+    if (aclaracion) {
+      contestar(`${aclaracion}\n\n${actual.pregunta(brief.nombre)}`)
+      return
+    }
+
+    const valor = limpio === actual.omitir ? "" : limpio
+    const invalido = valor && !esOpcion ? actual.validar?.(valor) : null
+    if (invalido) {
+      contestar(invalido)
+      return
+    }
+
+    const siguiente = { ...brief, [actual.campo]: valor }
+    setBrief(siguiente)
+    setPaso(paso + 1)
+    const proximo = PASOS[paso + 1]
+    contestar(proximo ? proximo.pregunta(siguiente.nombre) : CIERRE(siguiente.nombre))
   }
 
   function alEnviar(evento: FormEvent) {
     evento.preventDefault()
-    void enviar(entrada)
+    responder(entrada)
   }
 
+  const pasoActual = PASOS[paso]
+  const respuestasRapidas = pasoActual && !cargando
+    ? [...(pasoActual.opciones ?? []), ...(pasoActual.omitir ? [pasoActual.omitir] : [])]
+    : []
   const listo = briefListo(brief)
   const hayDatos = CAMPOS_BRIEF.some((campo) => brief[campo.id].trim())
 
@@ -214,16 +220,16 @@ export default function ContactoAsistenteSection() {
               </motion.div>
             ))}
 
-            {mensajes.length === 1 && (
+            {respuestasRapidas.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
-                {SUGERENCIAS.map((sugerencia) => (
+                {respuestasRapidas.map((opcion) => (
                   <button
-                    key={sugerencia}
+                    key={opcion}
                     type="button"
-                    onClick={() => void enviar(sugerencia)}
+                    onClick={() => responder(opcion, true)}
                     className={`rounded-full px-3.5 py-1.5 text-xs text-textMuted transition-colors duration-300 hover:border-[#26FFDF]/40 hover:text-[#26FFDF] ${tarjetaOscura}`}
                   >
-                    {sugerencia}
+                    {opcion}
                   </button>
                 ))}
               </div>
@@ -235,11 +241,6 @@ export default function ContactoAsistenteSection() {
               </div>
             )}
 
-            {error && (
-              <p className="self-start text-xs text-red-400">
-                {error} Si prefieres, escríbenos directo por WhatsApp.
-              </p>
-            )}
           </div>
 
           <form onSubmit={alEnviar} className="flex items-center gap-2 pt-2">

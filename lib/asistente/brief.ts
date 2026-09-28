@@ -1,12 +1,9 @@
-import { z } from "zod"
-
 /**
  * El brief: la información primaria de un proyecto que el asistente del home
  * recopila conversando y que termina en un mensaje de WhatsApp para V1TR0.
  *
- * Vive en un módulo sin dependencias de servidor porque lo usan los dos lados:
- * el formulario lo muestra y lo edita, y la ruta `/api/asistente` lo valida y
- * se lo pasa al modelo para que no vuelva a preguntar lo que ya se sabe.
+ * El guion (./guion) llena cada campo y el formulario de revisión lo muestra
+ * y lo deja editar.
  */
 
 export const CAMPOS_BRIEF = [
@@ -38,20 +35,6 @@ export const TIPOS_PROYECTO = [
 export const briefVacio: Brief = Object.fromEntries(
   CAMPOS_BRIEF.map((campo) => [campo.id, ""]),
 ) as Brief
-
-/** Recorta en vez de rechazar: un campo largo no debe tumbar la conversación. */
-const texto = (max: number) =>
-  z
-    .string()
-    .catch("")
-    .transform((valor) => valor.trim().slice(0, max))
-
-export const briefSchema = z.object(
-  Object.fromEntries(CAMPOS_BRIEF.map((campo) => [campo.id, texto(campo.max)])) as Record<
-    CampoBrief,
-    ReturnType<typeof texto>
-  >,
-)
 
 /** Lo mínimo para que el mensaje sirva: saber quién escribe y qué busca. */
 export const CAMPOS_REQUERIDOS: CampoBrief[] = ["nombre", "necesidad"]
