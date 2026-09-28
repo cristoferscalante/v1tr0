@@ -43,7 +43,11 @@ interface Gesto {
   boca: string
   /** Inclinación de la cabeza, en grados. */
   cabeza: number
-  /** Color de las piezas verdes. */
+  /**
+   * Color de las piezas. Sale de la paleta del sitio: el destacado
+   * (`highlight.dark`, #26ffdf) cuando está atento, y tonos más apagados del
+   * primario cuando piensa o no entiende.
+   */
   color: string
   /** Altura del rebote de la antena, en px del viewBox. */
   antena: number
@@ -57,7 +61,7 @@ const GESTOS: Record<Animo, Gesto> = {
     derecho: OJO_NORMAL,
     boca: "M100 85.5 Q109 85.5 118 85.5",
     cabeza: 0,
-    color: "#43DD93",
+    color: "#26ffdf",
     antena: 1.5,
   },
   pensando: {
@@ -65,7 +69,7 @@ const GESTOS: Record<Animo, Gesto> = {
     derecho: { y: 64, alto: 12, rx: 3 },
     boca: "M103 85.5 Q109 84 115 85.5",
     cabeza: -4,
-    color: "#3FB9A8",
+    color: "#5fc7bd",
     antena: 4,
   },
   contento: {
@@ -73,7 +77,7 @@ const GESTOS: Record<Animo, Gesto> = {
     derecho: { y: 66, alto: 10, rx: 5 },
     boca: "M100 84 Q109 89.5 118 84",
     cabeza: 2,
-    color: "#43DD93",
+    color: "#26ffdf",
     antena: 3,
   },
   sorprendido: {
@@ -81,7 +85,7 @@ const GESTOS: Record<Animo, Gesto> = {
     derecho: { y: 59, alto: 22, rx: 11 },
     boca: "M105 85.5 Q109 89 113 85.5",
     cabeza: 0,
-    color: "#26FFDF",
+    color: "#26ffdf",
     antena: 6,
   },
   confundido: {
@@ -89,7 +93,7 @@ const GESTOS: Record<Animo, Gesto> = {
     derecho: { y: 68, alto: 7, rx: 3.5 },
     boca: "M100 86.5 Q109 83 118 86.5",
     cabeza: 7,
-    color: "#3FB9A8",
+    color: "#08a696",
     antena: 2,
   },
   celebrando: {
@@ -97,7 +101,7 @@ const GESTOS: Record<Animo, Gesto> = {
     derecho: { y: 67, alto: 8, rx: 4 },
     boca: "M99 83.5 Q109 91 119 83.5",
     cabeza: -2,
-    color: "#26FFDF",
+    color: "#26ffdf",
     antena: 8,
   },
 }
