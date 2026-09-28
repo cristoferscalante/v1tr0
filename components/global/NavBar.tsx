@@ -30,19 +30,13 @@ export default function Navbar() {
   return (
     <>
     <motion.nav
-      className={`relative bg-backgroundSecondary/85 backdrop-blur-xl text-textPrimary rounded-full transition-all duration-300 ease-in-out max-w-7xl mx-auto`}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
+      // Al scrollear se separa del fondo con un filo fino, no con un halo
+      className={`relative bg-backgroundSecondary/85 backdrop-blur-xl text-textPrimary rounded-full border transition-all duration-300 ease-in-out max-w-7xl mx-auto ${
+        scrolled ? "border-white/[0.08]" : "border-transparent"
+      }`}
     >
       <div
-        className="px-4 sm:px-6 lg:px-10 relative mx-auto"
-        style={{
-          borderRadius: "9999px",
-          boxShadow: scrolled
-            ? "0 4px 8px rgba(38, 255, 223, 0.20)"
-            : "none",
-        }}
+        className="px-4 sm:px-6 lg:px-10 relative mx-auto rounded-full"
       >
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-6 lg:gap-10 h-16">
           {/* Logo/Brand - Columna izquierda */}
@@ -73,10 +67,9 @@ export default function Navbar() {
             {/* Login Button - Desktop Only */}
             <Link
               href="/login"
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:border-[#08A696] hover:bg-[#02505950] text-[#26FFDF] hover:text-white shadow-md hover:shadow-lg hover:shadow-[#08A696]/10 whitespace-nowrap"
+              className="group hidden lg:flex items-center gap-2.5 rounded-full border border-white/15 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-white/80 whitespace-nowrap transition-colors duration-300 hover:border-white/35 hover:text-white focus:outline-none focus-visible:border-[#26FFDF]"
             >
-              <LogIn className="w-4 h-4" />
-              <span className="text-sm font-medium">Login</span>
+              <LogIn className="h-3.5 w-3.5 text-[#26FFDF]" />
             </Link>
 
             {/* Mobile menu button */}
@@ -130,7 +123,7 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2.5 rounded-xl bg-[#02505931] border border-[#08A696]/30 text-[#26FFDF] hover:text-white hover:border-[#08A696] hover:bg-[#02505950] focus:outline-none transition-all duration-300"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors duration-300 hover:border-white/35 hover:text-white focus:outline-none focus-visible:border-[#26FFDF]"
               aria-label="Cerrar menú"
             >
               <X className="h-5 w-5" />
@@ -209,23 +202,17 @@ export default function Navbar() {
 
           {/* Footer del menú con botón de login */}
           <div className="p-6 border-t border-[#08A696]/20 bg-gradient-to-t from-[#02505920] to-transparent">
-            <div className="relative group inline-flex w-full">
-              {/* Gradiente de fondo con blur */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-40 group-hover:opacity-60 transition-all duration-300" />
-              
-              {/* Botón principal */}
-              <Link
-                href="/login"
-                className="relative flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#02505931] backdrop-blur-sm border border-[#08A696]/30 rounded-2xl transition-all duration-300 group-hover:border-[#08A696] group-hover:bg-[#02505950] text-[#26FFDF] font-semibold shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transform group-hover:scale-[1.02]"
-                onClick={() => setIsOpen(false)}
-              >
-                <LogIn className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                <span className="transition-colors duration-300">Iniciar Sesión</span>
-                <span className="ml-auto inline-block transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-              </Link>
-            </div>
+            <Link
+              href="/login"
+              className="group flex w-full items-center gap-3 rounded-full border border-white/15 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-white/80 transition-colors duration-300 hover:border-white/35 hover:text-white focus:outline-none focus-visible:border-[#26FFDF]"
+              onClick={() => setIsOpen(false)}
+            >
+              <LogIn className="h-4 w-4 text-[#26FFDF]" />
+              <span>Iniciar sesión</span>
+              <span aria-hidden="true" className="ml-auto transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
           </div>
         </div>
       </motion.div>,
@@ -288,9 +275,7 @@ const MobileNavLink: FC<{ href: string; children: ReactNode; onClick?: () => voi
       )}
       
       <span className={isService ? "text-sm" : "text-base"}>{children}</span>
-      
-      {/* Efecto de brillo en hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
+
     </Link>
   )
 }

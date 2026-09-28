@@ -105,6 +105,7 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.179.0",
+    "tone": "^15.1.22",
     "uploadthing": "^7.7.4",
     "vaul": "^0.9.6",
     "zod": "^3.24.1"

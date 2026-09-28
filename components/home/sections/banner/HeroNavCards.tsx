@@ -238,7 +238,7 @@ const odiseoFrames = Array.from(
  * Sin hover (táctil) o con reduced-motion se queda en el último fotograma, el
  * que muestra el gesto completo.
  */
-function HoverFrameSequence({
+export function HoverFrameSequence({
   frames,
   active,
   alt,
@@ -292,7 +292,7 @@ function HoverFrameSequence({
           alt={i === last ? alt : ""}
           aria-hidden={i !== last}
           fill
-          sizes="(min-width: 640px) 33vw, 100vw"
+          sizes="(min-width: 768px) 33vw, 50vw"
           // Todos montados y solo cambia cuál se ve: alternar el `src` parpadea.
           className={`object-contain ${i === frame ? "opacity-100" : "opacity-0"}`}
           // Solo se precarga el fotograma que se muestra primero.
@@ -332,7 +332,7 @@ type HeroCard = (typeof CARDS)[number]
  * Tarjeta del hero. La figura reacciona al cursor: crece un poco y se inclina
  * hacia el lado donde está el puntero dentro de la tarjeta.
  */
-function HeroNavCard({ card }: { card: HeroCard }) {
+function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: boolean; asLink?: boolean }) {
   const { href, title, Illustration, figure, turntable, sequence } = card
   const [hovered, setHovered] = useState(false)
 
@@ -341,7 +341,11 @@ function HeroNavCard({ card }: { card: HeroCard }) {
   const hoverScale = useMotionValue(1)
   const scale = useSpring(hoverScale, { stiffness: 220, damping: 22, mass: 0.4 })
 
-  const handlePointerMove = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handlePointerMove = (event: React.MouseEvent<HTMLElement>) => {
+    // Fuera del hero la figura no crece: solo hace su gesto.
+    if (!asLink) {
+      return
+    }
     const rect = event.currentTarget.getBoundingClientRect()
     const dx = (event.clientX - rect.left) / rect.width - 0.5
     const dy = (event.clientY - rect.top) / rect.height - 0.5
@@ -354,8 +358,12 @@ function HeroNavCard({ card }: { card: HeroCard }) {
     setHovered(false)
   }
 
+  // Fuera del hero (p. ej. en /servicios) la tarjeta es solo la figura: sin
+  // mockups ni título, y sin enlace a la página en la que ya estás.
+  const Wrapper = asLink ? Link : "div"
+
   return (
-    <Link
+    <Wrapper
       href={href}
       aria-label={title}
       onMouseEnter={() => setHovered(true)}
@@ -363,13 +371,29 @@ function HeroNavCard({ card }: { card: HeroCard }) {
       onMouseLeave={handlePointerLeave}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
-      className={`relative flex flex-col h-full min-h-[380px] sm:min-h-[400px] text-left rounded-3xl p-4 sm:p-6 transition-colors duration-300 bg-[#02505912] hover:bg-[#0250592a] hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60`}
+      // El personaje de Tienda solo sigue al cursor dentro de su tarjeta.
+      data-turntable-area=""
+      // En la home la tarjeta cambia de forma según el ancho: en móvil es una
+      // fila (figura a la izquierda, animación y título a la derecha) para no
+      // apilar tres tarjetas altas; desde md vuelve a ser columna, con la
+      // figura a una altura acotada por el viewport y no estirada a pantalla.
+      className={
+        asLink
+          ? "relative overflow-hidden grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 md:flex md:flex-col md:items-stretch text-left rounded-[2rem] md:rounded-[2.5rem] border border-white/[0.07] bg-white/[0.015] p-4 md:p-5 lg:p-6 transition-colors duration-300 hover:border-white/15 hover:bg-white/[0.03] hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+          : "relative flex flex-col h-full min-h-[200px] sm:min-h-[215px]"
+      }
     >
-      {/* Figura de la categoría: ocupa todo el espacio libre sobre la animación
-          y asoma por el borde superior. El transform de motion va dentro para
-          no pisar los márgenes negativos del contenedor. */}
+      {/* Figura de la categoría. En la home queda dentro de la tarjeta, con alto
+          acotado; fuera de ella ocupa el espacio libre y asoma por arriba. El
+          transform de motion va dentro para no pisar los márgenes del contenedor. */}
       {figure && (
-        <div className="pointer-events-none relative flex-1 min-h-[200px] -mt-12 sm:-mt-16 -mx-2 sm:-mx-4 z-10">
+        <div
+          className={`pointer-events-none relative z-10 ${
+            asLink
+              ? "h-[200px] mt-2 md:h-[clamp(220px,36vh,360px)] md:mt-5 lg:mt-7"
+              : "flex-1 min-h-[200px] -mt-12 sm:-mt-16 -mx-2 sm:-mx-4"
+          }`}
+        >
           <motion.div
             style={{ scale }}
             animate={{ y: [0, -10, 0] }}
@@ -387,21 +411,26 @@ function HeroNavCard({ card }: { card: HeroCard }) {
                 }}
               >
                 <HeroTurntableCharacter
-                  frames={turntable.frames}
-                  frontIndex={turntable.frontIndex}
+                  frames={primed ? turntable.frames : [turntable.frames[turntable.frontIndex]!]}
+                  frontIndex={primed ? turntable.frontIndex : 0}
                   alt={title}
-                  sizes="(min-width: 640px) 33vw, 100vw"
+                  sizes="(min-width: 768px) 33vw, 50vw"
+                  area="[data-turntable-area]"
                   className="h-full w-full"
                 />
               </div>
             ) : sequence ? (
-              <HoverFrameSequence frames={sequence.frames} active={hovered} alt={figure.imageAlt} />
+              <HoverFrameSequence
+                frames={primed ? sequence.frames : [sequence.frames[sequence.frames.length - 1]!]}
+                active={hovered}
+                alt={figure.imageAlt}
+              />
             ) : (
               <Image
                 src={figure.imageSrc}
                 alt={figure.imageAlt}
                 fill
-                sizes="(min-width: 640px) 33vw, 100vw"
+                sizes="(min-width: 768px) 33vw, 50vw"
                 className="object-contain"
               />
             )}
@@ -409,25 +438,70 @@ function HeroNavCard({ card }: { card: HeroCard }) {
         </div>
       )}
 
-      {/* La animación baja del centro y queda bajo la figura */}
-      <div className="relative mt-3 flex items-end justify-center">
-        <div className="w-full max-w-[280px] aspect-[2/1]">
-          <Illustration glow={false} />
+      {asLink && (
+        // Animación y título: columna derecha en móvil, pie de la tarjeta desde md
+        <div className="flex flex-col items-center md:mt-3">
+          <div className="w-full max-w-[240px] aspect-[2/1]">
+            <Illustration glow={false} />
+          </div>
+          <h3 className={`mt-3 md:mt-4 text-center text-base md:text-lg font-bold ${accentText}`}>{title}</h3>
         </div>
-      </div>
+      )}
+    </Wrapper>
+  )
+}
 
-      {/* Título al pie, centrado bajo el gráfico */}
-      <h3 className={`mt-4 text-center text-lg font-bold ${accentText}`}>{title}</h3>
-    </Link>
+/**
+ * Las secuencias suman decenas de fotogramas. Hasta que el elemento se ve,
+ * cada figura carga solo su fotograma de reposo.
+ */
+function usePrimed(ref: React.RefObject<HTMLElement | null>) {
+  const [primed, setPrimed] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || primed) {
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setPrimed(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [ref, primed])
+
+  return primed
+}
+
+/** La figura de Desarrollo de software del hero (solo Odiseo), para reutilizarla. */
+export function DevServiceCard({ className = "" }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const primed = usePrimed(ref)
+  return (
+    <div ref={ref} className={className}>
+      <HeroNavCard card={CARDS[0]!} primed={primed} asLink={false} />
+    </div>
   )
 }
 
 export default function HeroNavCards() {
+  // Priming diferido: así los fotogramas no compiten con la intro del hero,
+  // que está justo encima.
+  const gridRef = useRef<HTMLDivElement>(null)
+  const primed = usePrimed(gridRef)
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-16 sm:gap-6 w-full flex-1 min-h-0">
+    // Una columna de filas hasta md; tres columnas desde ahí. Entre 640 y
+    // 768 px tres tarjetas verticales quedaban de ~190 px de ancho.
+    <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-y-4 md:gap-x-5 lg:gap-x-6 w-full">
       {CARDS.map((card) => (
-        <HeroNavCard key={card.href} card={card} />
+        <HeroNavCard key={card.href} card={card} primed={primed} />
       ))}
     </div>
   )

@@ -1,32 +1,36 @@
 "use client"
 
-import ServiciosHero from "@/components/servicios/ServiciosHero"
-import ServicioSnapSection from "@/components/servicios/ServicioSnapSection"
-import { servicesData } from "@/components/home/sections/ServicesTabSection"
-import { useScrollSnapEnabled, useDeviceDetection } from "@/hooks/use-device-detection"
+import { useEffect } from "react"
+import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
+import ServiciosIntro from "@/components/servicios/scroll/ServiciosIntro"
+import ServiciosShowcase from "@/components/servicios/scroll/ServiciosShowcase"
+import ServiciosChapters from "@/components/servicios/scroll/ServiciosChapters"
+import ServiciosAnatomia from "@/components/servicios/scroll/ServiciosAnatomia"
+import ServiciosCta from "@/components/servicios/scroll/ServiciosCta"
 
+/**
+ * /servicios como un recorrido guiado por el scroll (GSAP ScrollTrigger):
+ * quiénes somos, proyectos en producción, un capítulo por línea de
+ * desarrollo, la anatomía por capas y cierre. Sin scroll-snap: choca con las secciones fijadas de GSAP.
+ */
 export default function ServiciosPage() {
-  const snapEnabled = useScrollSnapEnabled()
-  const { isReady } = useDeviceDetection()
-  // Hasta que la detección resuelva se asume "sin snap" para no secuestrar el scroll táctil
-  const shouldEnableScrollSnap = isReady && snapEnabled
+  // Barra de scroll sobria solo mientras esta página está montada
+  useEffect(() => {
+    const root = document.documentElement
+    root.classList.add("servicios-scroll")
+    return () => root.classList.remove("servicios-scroll")
+  }, [])
 
   return (
-    <main
-      className={`text-textPrimary overflow-x-hidden ${
-        shouldEnableScrollSnap
-          ? "md:snap-y md:snap-mandatory overflow-y-scroll h-[100dvh] md:h-screen scroll-smooth"
-          : "overflow-y-auto"
-      }`}
-    >
-      <div className={shouldEnableScrollSnap ? "snap-start" : ""}>
-        <ServiciosHero />
-      </div>
-      {servicesData.map((service) => (
-        <div key={service.id} className={shouldEnableScrollSnap ? "snap-start" : ""}>
-          <ServicioSnapSection service={service} />
-        </div>
-      ))}
-    </main>
+    <div className="text-textPrimary overflow-x-clip">
+      {/* Lluvia binaria del apartado V1TR0: se ve en la intro, que no tiene
+          fondo propio; el resto de secciones la tapan con el suyo. */}
+      <BackgroundAnimation density={0.3} intensity={0.7} />
+      <ServiciosIntro />
+      <ServiciosShowcase />
+      <ServiciosChapters />
+      <ServiciosAnatomia />
+      <ServiciosCta />
+    </div>
   )
 }

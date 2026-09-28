@@ -12,6 +12,12 @@ interface HeroTurntableCharacterProps {
   className?: string;
   /** `sizes` de cada fotograma; el default es el del hero de la tienda. */
   sizes?: string;
+  /**
+   * Selector (para `closest`) del área que manda sobre el giro. Si se pasa, el
+   * personaje solo sigue al cursor dentro de ella y vuelve al frente al salir.
+   * Sin él, se mide contra la `section` que lo contiene.
+   */
+  area?: string;
 }
 
 /**
@@ -36,6 +42,7 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
   alt,
   className = "",
   sizes = "(max-width: 1024px) 90vw, 45vw",
+  area,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState(frontIndex);
@@ -76,8 +83,18 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
       }
       // Se mide contra toda la sección del hero, no contra la imagen: así el
       // personaje reacciona aunque el cursor esté sobre el texto.
-      const area = (host.closest("section") ?? host).getBoundingClientRect();
-      target.x = Math.min(1, Math.max(0, (event.clientX - area.left) / area.width));
+      const rect = (host.closest(area ?? "section") ?? host).getBoundingClientRect();
+      if (
+        area &&
+        (event.clientX < rect.left ||
+          event.clientX > rect.right ||
+          event.clientY < rect.top ||
+          event.clientY > rect.bottom)
+      ) {
+        target.x = 0.5;
+        return;
+      }
+      target.x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
     };
 
     const onPointerLeave = () => {
@@ -93,7 +110,7 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeave);
     };
-  }, [frames.length, frontIndex]);
+  }, [frames.length, frontIndex, area]);
 
   if (frames.length === 0) {
     return null;

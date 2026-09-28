@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { TikTokIcon, LinkedInIcon } from "@/lib/icons";
 import { SVGProps } from "react";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+import { useIntroActive } from "@/lib/intro-store";
 
 // WhatsApp SVG (inline, ya que no hay export en lib/icons)
 const WhatsAppSvg = (props: React.SVGProps<SVGSVGElement>) => (
@@ -68,37 +70,37 @@ const socialLinks = [
   {
     name: "Instagram",
     href: "https://www.instagram.com/v1tr0.dev/",
-  icon: (props: SVGProps<SVGSVGElement>) => <InstagramIcon {...props} width={22} height={22} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF] drop-shadow-[0_3px_8px_rgba(38,255,223,0.12)]" />,
+  icon: (props: SVGProps<SVGSVGElement>) => <InstagramIcon {...props} width={22} height={22} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF]" />,
     tooltip: "Instagram",
   },
   {
     name: "Facebook",
     href: "https://www.facebook.com/v1tr0.tech",
-  icon: (props: SVGProps<SVGSVGElement>) => <FacebookIcon {...props} width={22} height={22} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF] drop-shadow-[0_3px_8px_rgba(38,255,223,0.12)]" />,
+  icon: (props: SVGProps<SVGSVGElement>) => <FacebookIcon {...props} width={22} height={22} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF]" />,
     tooltip: "Facebook",
   },
   {
     name: "TikTok",
     href: "https://www.tiktok.com/@v1tr0_tech",
-  icon: (props: SVGProps<SVGSVGElement>) => <TikTokIcon width={22} height={22} {...props} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF] drop-shadow-[0_3px_8px_rgba(38,255,223,0.12)]" />,
+  icon: (props: SVGProps<SVGSVGElement>) => <TikTokIcon width={22} height={22} {...props} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF]" />,
     tooltip: "TikTok",
   },
   {
     name: "LinkedIn",
     href: "https://www.linkedin.com/company/v1tr0/?viewAsMember=true",
-  icon: (props: SVGProps<SVGSVGElement>) => <LinkedInIcon width={22} height={22} {...props} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF] drop-shadow-[0_3px_8px_rgba(38,255,223,0.12)]" />,
+  icon: (props: SVGProps<SVGSVGElement>) => <LinkedInIcon width={22} height={22} {...props} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF]" />,
     tooltip: "LinkedIn",
   },
   {
     name: "YouTube",
     href: "https://www.youtube.com/@v1tr0-h4p",
-  icon: (props: SVGProps<SVGSVGElement>) => <YouTubeIcon {...props} width={22} height={16} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF] drop-shadow-[0_3px_8px_rgba(38,255,223,0.12)]" />,
+  icon: (props: SVGProps<SVGSVGElement>) => <YouTubeIcon {...props} width={22} height={16} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF]" />,
     tooltip: "YouTube",
   },
   {
     name: "Discord",
     href: "https://discord.gg/j43sKghd",
-  icon: (props: SVGProps<SVGSVGElement>) => <DiscordIcon {...props} width={22} height={22} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF] drop-shadow-[0_3px_8px_rgba(38,255,223,0.12)]" />,
+  icon: (props: SVGProps<SVGSVGElement>) => <DiscordIcon {...props} width={22} height={22} className="transition-colors duration-200 text-[#08A696] dark:text-[#26FFDF]" />,
     tooltip: "Discord",
   },
 ];
@@ -113,6 +115,7 @@ const RUTAS_SIN_BOTON = ["/admin", "/client-dashboard", "/dashboard"];
 const FloatingSocialButton: React.FC = () => {
   const [hovered, setHovered] = useState<number | null>(null);
   const pathname = usePathname();
+  const introActive = useIntroActive(pathname);
 
   // El CTA de WhatsApp es para visitantes del sitio público. Dentro de los
   // paneles cubría la esquina inferior izquierda, justo donde el tablero
@@ -123,18 +126,26 @@ const FloatingSocialButton: React.FC = () => {
 
   return (
   // En móvil se acerca al borde y respeta la home-indicator de iOS vía safe-area.
-  <div className="fixed z-50 left-4 md:left-12 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] md:bottom-12">
+  // Descuenta el relleno de .tooltip-container (0.7em ≈ 0.75rem) para quedar
+  // alineado con el control de música de la esquina opuesta.
+  // Vive en la esquina izquierda: entra desde ese borde, tras la intro del home.
+  <motion.div
+    className="fixed z-50 left-1 md:left-9 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-9"
+    initial={{ opacity: 0, x: -120 }}
+    animate={introActive ? { opacity: 0, x: -120 } : { opacity: 1, x: 0 }}
+    transition={{ duration: 1, delay: introActive ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
+  >
       <div className="tooltip-container relative group">
         <a
           href="https://wa.me/573222237026?text=Hola%20V1TR0%2C%20quiero%20agendar%20una%20reuni%C3%B3n%20o%20saber%20m%C3%A1s%20sobre%20sus%20servicios."
           target="_blank"
           rel="noopener noreferrer"
-          className="text flex items-center justify-center gap-2 px-4 py-2 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] shadow-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10"
-          style={{boxShadow: '0 6px 15px rgba(8, 166, 150, 0.05), 0 3px 8px rgba(38, 255, 223, 0.05)', borderColor: '#08A696'}}
+          // Mismo lenguaje sobrio que el control de música: círculo, filo fino, sin sombras
+          className="text flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white/90 text-[#08A696] backdrop-blur-sm transition-colors duration-300 hover:border-[#08A696]/50 dark:border-white/10 dark:bg-[#0c0f10]/80 dark:text-[#26FFDF] dark:hover:border-[#26FFDF]/40"
           tabIndex={0}
           aria-label="WhatsApp"
         >
-          <WhatsAppSvg width={28} height={28} style={{ color: 'inherit' }} />
+          <WhatsAppSvg width={20} height={20} style={{ color: 'inherit' }} />
         </a>
         {socialLinks.map((link, idx) => {
           // Media luna aún más abierta y separada: arco de -110° a 20°
@@ -390,7 +401,7 @@ const FloatingSocialButton: React.FC = () => {
           color: #fff !important;
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 };
 

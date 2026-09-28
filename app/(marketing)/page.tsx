@@ -2,11 +2,13 @@
 
 // Corrigiendo las rutas de importación
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
+import HomeHero from "@/components/home/sections/banner/HomeHero"
 import HomeBanner from "@/components/home/sections/banner/HomeBanner"
 import HomeTaglineSection from "@/components/home/sections/banner/HomeTaglineSection"
 import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
-import ServicesTabSection from "@/components/home/sections/ServicesTabSection"
+import ProyectosEnProduccion from "@/components/home/sections/ProyectosEnProduccion"
 import PathChoiceSection from "@/components/home/sections/PathChoiceSection"
+import ContactoAsistenteSection from "@/components/home/sections/contact/ContactoAsistenteSection"
 
 import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
@@ -22,22 +24,28 @@ export default function Home() {
       <BackgroundAnimation />
       
       <HomeScrollSnap>
-        {/* Sección 1: Hero */}
+        {/* Sección 1: Hero de aterrizaje con el h1 */}
+        <HomeHero />
+
+        {/* Sección 2: Tarjetas de navegación */}
         <HomeBanner />
 
-        {/* Sección 2: Texto dinámico */}
+        {/* Sección 3: Texto dinámico */}
         <HomeTaglineSection />
 
-        {/* Sección 3: Servicios con Tabs */}
-        <ServicesTabSection />
+        {/* Sección 4: Proyectos de clientes publicados */}
+        <ProyectosEnProduccion />
         
-        {/* Sección 4: Bifurcación software / hardware */}
+        {/* Sección 5: Bifurcación software / hardware */}
         <PathChoiceSection />
+
+        {/* Sección 6: Contacto con asistente que llena el brief */}
+        <ContactoAsistenteSection />
         
-        {/* Sección 5: Tecnologías */}
+        {/* Sección 7: Tecnologías. HomeScrollSnap la reconoce por ser la penúltima. */}
         <TechnologiesSection />
         
-        {/* Sección 6: Footer */}
+        {/* Sección 8: Footer */}
         <FooterSection />
       </HomeScrollSnap>
       

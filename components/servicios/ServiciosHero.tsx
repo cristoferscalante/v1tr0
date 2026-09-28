@@ -2,35 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { CheckCircle2, Network, LineChart, Bot, ShoppingCart, Globe, Smartphone, Settings } from "lucide-react"
+import { Bot, ShoppingCart, Globe, Smartphone, Settings } from "lucide-react"
 import { servicesData } from "@/components/home/sections/ServicesTabSection"
+import { ServiciosCategoryRail, ServiciosCategoryTabs } from "@/components/servicios/ServiciosCategoryRail"
+import ServiceProjectsGrid from "@/components/servicios/ServiceProjectsGrid"
 
 const AUTOPLAY_MS = 6000
 const CARD_EXAMPLE_MS = 2800
-
-// Contenido propio del hero: un titular con una palabra acentuada
-// y 3 features rápidas por servicio.
-// Alineado por posición con servicesData (desarrollo, sistemas, automatizacion).
-const SLIDE_COPY = [
-  {
-    prefix: "Desarrollo de",
-    accent: "Software",
-    suffix: "a tu medida.",
-    icon: Network,
-  },
-  {
-    prefix: "Sistemas de",
-    accent: "Información",
-    suffix: "que iluminan decisiones.",
-    icon: LineChart,
-  },
-  {
-    prefix: "",
-    accent: "Automatización",
-    suffix: "de tareas que libera tiempo.",
-    icon: Bot,
-  },
-] as const
 
 // ============================================================================
 // ILUSTRACIONES ANIMADAS POR TARJETA
@@ -243,7 +221,7 @@ function AutomationIllustration() {
         className="absolute w-24 h-24 rounded-full blur-2xl pointer-events-none"
         style={{ backgroundColor: stroke, opacity: 0.16 }}
       />
-      <svg viewBox="0 0 100 100" className="relative w-32 h-32">
+      <svg viewBox="0 0 100 100" className="relative h-full max-h-32 w-auto aspect-square">
         <circle cx="50" cy="50" r="42" fill="none" stroke={stroke} strokeOpacity="0.2" strokeWidth="1.5" strokeDasharray="4 5" className="auto-ring-outer" />
         <circle cx="50" cy="50" r="29" fill="none" stroke={stroke} strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="3 4" className="auto-ring-inner" />
         {[0, 90, 180, 270].map((deg) => (
@@ -376,9 +354,17 @@ export default function ServiciosHero() {
   const [activeIndex, setActiveIndex] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Filtro por subcategoría; se guarda con su categoría para que al cambiar
+  // de categoría (a mano o por el autoplay) deje de aplicar solo.
+  const [filter, setFilter] = useState<{ serviceIndex: number; subcategoryId: string } | null>(null)
+
+  const [railExpanded, setRailExpanded] = useState(true)
+
   const safeIndex = activeIndex % servicesData.length
+  const activeSubcategory = filter?.serviceIndex === safeIndex ? filter.subcategoryId : null
+  const handleFilter = (subcategoryId: string | null) =>
+    setFilter(subcategoryId ? { serviceIndex: safeIndex, subcategoryId } : null)
   const activeService = servicesData[safeIndex]!
-  const activeCopy = SLIDE_COPY[safeIndex]!
 
   const restartAutoplay = useCallback(() => {
     if (timerRef.current) {
@@ -398,87 +384,99 @@ export default function ServiciosHero() {
     }
   }, [restartAutoplay])
 
-  const goTo = (index: number) => {
-    setActiveIndex(index)
+  const pausedRef = useRef(false)
+
+  const pauseAutoplay = () => {
+    pausedRef.current = true
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+  }
+
+  const resumeAutoplay = () => {
+    pausedRef.current = false
     restartAutoplay()
   }
 
+  const goTo = (index: number) => {
+    setActiveIndex(index)
+    if (!pausedRef.current) {
+      restartAutoplay()
+    }
+  }
+
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex flex-col items-center px-4 pb-16 pt-28 sm:pt-32 lg:pt-36">
+    <section
+      // overflow-x-clip y no overflow-hidden: este último rompe el sticky del riel
+      className="relative min-h-screen w-full overflow-x-clip border-t border-white/[0.06] px-4 pb-20 pt-24 sm:pt-28 lg:pt-32 lg:px-0"
+      // Mientras el usuario recorre los proyectos, la categoría no cambia sola
+      onMouseEnter={pauseAutoplay}
+      onMouseLeave={resumeAutoplay}
+      onFocusCapture={pauseAutoplay}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          resumeAutoplay()
+        }
+      }}
+    >
       {/* Glow de fondo */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className={`absolute left-1/2 top-[15%] -translate-x-1/2 w-[70%] h-[50%] rounded-full blur-[120px] bg-[#08A696]/10`} />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center text-center">
-        {/* Título dinámico + subtítulo (crossfade entre servicios) */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeService.id}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full"
-          >
-            <h1 className={`max-w-3xl mx-auto text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold leading-[1.1] tracking-tight text-white`}>
-              {activeCopy.prefix ? `${activeCopy.prefix} ` : ""}
-              <em className={`font-serif italic text-[#26FFDF]`}>
-                {activeCopy.accent}
-              </em>{" "}
-              {activeCopy.suffix}
-            </h1>
+      {/* Con el riel plegado el contenido se centra en toda la pantalla; al
+          desplegarse se corre a la izquierda para dejarle sitio. */}
+      <div
+        className={`relative z-10 w-full transition-[padding] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          railExpanded ? "lg:pl-8 lg:pr-[23rem] xl:pr-[25rem]" : "lg:px-28"
+        }`}
+      >
+        <div className="max-w-5xl mx-auto w-full flex flex-col items-center text-center min-w-0">
+          {/* Encabezado de sección, con el mismo formato que el resto del recorrido */}
+          <div className="mb-10 flex w-full flex-col gap-3 text-left sm:flex-row sm:items-baseline sm:justify-between">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-white/50">
+              <span className="text-white/30">01</span>&nbsp;&nbsp;Catálogo
+            </p>
+            <p className="max-w-md text-sm leading-relaxed text-textMuted">
+              Elige una línea de desarrollo y filtra por especialidad. Lo que aún no tiene proyecto publicado aparece como maqueta.
+            </p>
+          </div>
+          {/* Móvil y tablet: las categorías van en una fila sobre los proyectos */}
+          <div className="w-full lg:hidden">
+            <ServiciosCategoryTabs
+              services={servicesData}
+              activeIndex={safeIndex}
+              onSelect={goTo}
+              activeSubcategory={activeSubcategory}
+              onFilter={handleFilter}
+              illustrations={CARD_ILLUSTRATIONS}
+            />
+          </div>
 
-            {/* Checkmarks */}
-            <div className={`mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm text-gray-400`}>
-              {activeService.subcategories.slice(0, 3).map((sub) => (
-                <span key={sub.id} className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className={`w-4 h-4 text-[#26FFDF]`} />
-                  {sub.name}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+          {/* Proyectos de la categoría activa; maquetas donde aún no hay */}
+          <div className="mt-6 lg:mt-0 w-full">
+            <ServiceProjectsGrid service={activeService} subcategoryId={activeSubcategory} />
+          </div>
+        </div>
+      </div>
 
-
-        {/* Tarjetas de los 3 servicios — cada una con un mini carrusel de proyectos */}
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
-          {servicesData.map((service, index) => {
-            const Illustration = CARD_ILLUSTRATIONS[index]!
-            const isActive = index === safeIndex
-            const examples: ProjectExample[] = service.subcategories.flatMap((sub) =>
-              sub.examples.map((ex) => ({ ...ex, subcategory: sub.name }))
-            )
-
-            return (
-              <div
-                key={service.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => goTo(index)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    goTo(index)
-                  }
-                }}
-                className={`relative flex flex-col min-h-[400px] text-left rounded-3xl border p-6 cursor-pointer transition-all duration-300 ${
-                  isActive
-                    ? "bg-[#02505950] border-[#26FFDF]/60 shadow-lg shadow-[#08A696]/20"
-                    : "bg-[#02505920] border-[#08A696]/15 hover:border-[#08A696]/40"
-                }`}
-              >
-                <h3 className={`text-lg font-bold mb-2 text-[#26FFDF]`}>
-                  {service.title}
-                </h3>
-
-                <div className="relative flex-1 min-h-[140px] mt-3">
-                  <Illustration />
-                  <ServiceProjectsBadge examples={examples} />
-                </div>
-              </div>
-            )
-          })}
+      {/* Escritorio: marco pegado al borde derecho. Se ancla por arriba para
+          que al desplegarse crezca hacia abajo y no se mueva: plegado (~15rem)
+          queda centrado, y el tope se limita para que desplegado (~39rem)
+          siga cabiendo en la ventana sin pasar por debajo del header. */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-20 hidden lg:block">
+        <div className="pointer-events-auto sticky top-[clamp(6.5rem,calc(50vh-7.5rem),calc(100vh-39.5rem))]">
+          <ServiciosCategoryRail
+            services={servicesData}
+            activeIndex={safeIndex}
+            onSelect={goTo}
+            activeSubcategory={activeSubcategory}
+            onFilter={handleFilter}
+            illustrations={CARD_ILLUSTRATIONS}
+            expanded={railExpanded}
+            onExpandedChange={setRailExpanded}
+          />
         </div>
       </div>
     </section>

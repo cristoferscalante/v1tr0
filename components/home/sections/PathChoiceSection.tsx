@@ -3,7 +3,7 @@
 import React, { useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Code2, Cpu, Radio, RadioTower, ShieldCheck, Workflow } from 'lucide-react'
+import { ArrowRight, Code2, Cpu } from 'lucide-react'
 import useSnapAnimations from '@/hooks/use-snap-animations'
 import { accentText, eyebrow, sectionTitle, surface, surfaceInteractive, surfaceInner } from '@/components/home/shared/surface'
 
@@ -21,11 +21,7 @@ const paths = [
     icon: Code2,
     eyebrowText: 'Ruta 1',
     title: 'Necesito software',
-    tagline: 'Una web, una tienda, un sistema interno o automatizar algo que hoy se hace a mano.',
-    bullets: [
-      { icon: Workflow, text: 'Alcance, precio y fecha por escrito' },
-      { icon: ShieldCheck, text: 'El repositorio queda a tu nombre' },
-    ],
+    tagline: 'Alcance, precio y fecha por escrito. El repositorio queda a tu nombre.',
     cta: 'Ver cómo es contratar software',
   },
   {
@@ -33,11 +29,7 @@ const paths = [
     icon: Cpu,
     eyebrowText: 'Ruta 2',
     title: 'Necesito hardware',
-    tagline: 'Medir algo que pasa en campo —suelo, tanques, temperatura— donde no hay internet.',
-    bullets: [
-      { icon: Radio, text: 'Comunicación LoRa: kilómetros sin plan de datos' },
-      { icon: RadioTower, text: 'Nodos, gateway y panel de monitoreo' },
-    ],
+    tagline: 'Medición en campo sin plan de datos: suelo, tanques y temperatura donde no hay internet.',
     cta: 'Ver alcances de hardware e IoT',
   },
 ] as const
@@ -105,18 +97,6 @@ export default function PathChoiceSection() {
                     {path.title}
                   </h3>
                   <p className="mt-2.5 text-sm leading-relaxed text-textMuted">{path.tagline}</p>
-
-                  <ul className="mt-5 flex flex-col gap-2.5">
-                    {path.bullets.map((bullet) => {
-                      const BulletIcon = bullet.icon
-                      return (
-                        <li key={bullet.text} className="flex items-start gap-2.5 text-sm text-textMuted">
-                          <BulletIcon className={`mt-0.5 h-4 w-4 shrink-0 ${accentText}`} aria-hidden="true" />
-                          <span>{bullet.text}</span>
-                        </li>
-                      )
-                    })}
-                  </ul>
 
                   <span className={`mt-auto flex items-center gap-1.5 pt-6 text-sm font-semibold ${accentText}`}>
                     {path.cta}
