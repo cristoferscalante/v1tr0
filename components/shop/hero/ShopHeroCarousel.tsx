@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ShoppingBag, Radio } from "lucide-react";
 import { Hero3DCharacter } from "./Hero3DCharacter";
 import { HeroTurntableCharacter } from "./HeroTurntableCharacter";
+import { HoverFrameSequence } from "@/components/home/sections/banner/HeroNavCards";
 import { CircuitNetworkBackground } from "@/components/ui/circuit-network-background";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -58,6 +59,9 @@ const imageVariants = {
 export const ShopHeroCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  // El personaje de Comunicación IoT enciende el visor mientras el cursor
+  // está sobre la figura.
+  const [figureHovered, setFigureHovered] = useState(false);
   // Sin auto-play por ahora: el hero solo cambia cuando el usuario elige un paquete.
 
   const goToSlide = (index: number) => {
@@ -88,6 +92,13 @@ export const ShopHeroCarousel: React.FC = () => {
   const posTurnFrames = Array.from(
     { length: 68 },
     (_, i) => `/imagenes/tienda/pos-turn/pos-${String(i).padStart(2, "0")}.webp`,
+  );
+
+  // Comunicación IoT: la estatua arranca con el visor apagado y al pasar el
+  // cursor se enciende. El último fotograma es el destello.
+  const iotFrames = Array.from(
+    { length: 93 },
+    (_, i) => `/imagenes/tienda/iot-visor/iot-${String(i).padStart(2, "0")}.webp`,
   );
 
   // Mapeo de imágenes disponibles
@@ -200,11 +211,25 @@ export const ShopHeroCarousel: React.FC = () => {
                     alt={currentPackage.name}
                     className="h-full w-full"
                   />
+                ) : currentIndex === 1 ? (
+                  <div
+                    className="h-full w-full"
+                    onMouseEnter={() => setFigureHovered(true)}
+                    onMouseLeave={() => setFigureHovered(false)}
+                  >
+                    <HoverFrameSequence
+                      frames={iotFrames}
+                      active={figureHovered}
+                      alt={currentPackage.name}
+                      forwardMs={5000}
+                      backwardMs={2500}
+                    />
+                  </div>
                 ) : (
                   <Hero3DCharacter
                     src={carouselImages[currentIndex] || "/imagenes/home/carrusel/sistemas_de_informacion.webp"}
                     alt={currentPackage.name}
-                    className={`h-full w-full ${currentIndex === 1 ? 'animate-float-iot' : ''}`}
+                    className="h-full w-full"
                     priority
                   />
                 )}
