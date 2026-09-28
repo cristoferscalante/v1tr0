@@ -1,12 +1,10 @@
 "use client"
 
 import { useRef } from "react"
-import Image from "next/image"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useGSAP } from "@gsap/react"
-import { servicesData } from "@/components/home/sections/ServicesTabSection"
-import { pad, publishedProjects, subcategoryCount } from "./data"
+import { DevServiceCard } from "@/components/home/sections/banner/HeroNavCards"
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -16,12 +14,6 @@ const STATEMENT =
 const ACCENT = new Set(["software.", "medida", "tiempo."])
 
 const MARQUEE = "Desarrollo de software a medida · "
-
-const STATS = [
-  { value: pad(publishedProjects.length), label: "proyectos en producción, diseñados y programados desde cero" },
-  { value: pad(servicesData.length), label: "líneas de desarrollo: producto web, datos y automatización" },
-  { value: pad(subcategoryCount), label: "especialidades para cubrir tu operación de punta a punta" },
-]
 
 /**
  * Apertura de /servicios: un titular gigante que se desliza con el scroll y
@@ -49,10 +41,9 @@ export default function ServiciosIntro() {
           ease: "none",
           scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
         })
-        gsap.from(".intro-stat", {
+        gsap.from(".intro-stats", {
           y: 40,
           opacity: 0,
-          stagger: 0.12,
           duration: 0.9,
           ease: "power3.out",
           scrollTrigger: { trigger: ".intro-stats", start: "top 85%" },
@@ -70,27 +61,8 @@ export default function ServiciosIntro() {
       </div>
 
       <div className="mx-auto mt-10 grid max-w-7xl gap-14 px-4 sm:px-6 lg:mt-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-20 lg:px-10">
-        <aside className="intro-stats order-2 lg:order-1">
-          {/* Escudo de V1TR0 como sello del estudio */}
-          <div className="flex items-center gap-4">
-            <Image
-              src="/imagenes/logos/escudo-logo.png"
-              alt="Escudo de V1TR0"
-              width={551}
-              height={634}
-              className="h-14 w-auto drop-shadow-[0_0_18px_rgba(38,255,223,0.25)]"
-            />
-            <p className="font-serif text-lg italic text-textMuted">(Servicios)</p>
-          </div>
-          <dl className="mt-10">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="intro-stat border-t border-white/10 py-7">
-                <dt className="font-serif text-6xl italic leading-none text-white">{stat.value}</dt>
-                <dd className="mt-3 max-w-[16rem] text-sm leading-relaxed text-textMuted">{stat.label}</dd>
-              </div>
-            ))}
-          </dl>
-        </aside>
+        {/* La tarjeta de Desarrollo de software del hero, con su reacción al cursor */}
+        <DevServiceCard className="intro-stats order-2 mx-auto w-full max-w-[10rem] lg:order-1 lg:mt-8" />
 
         <h1 className="intro-statement order-1 text-[2rem] font-bold leading-[1.12] tracking-tight text-white sm:text-5xl lg:order-2 lg:text-[3.6rem]">
           {STATEMENT.split(" ").map((word, index) => (

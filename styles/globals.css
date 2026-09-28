@@ -575,6 +575,30 @@ a:focus-visible {
   60%, 100% { transform: translateY(300%); }
 }
 
+/* Capa entre el escudo y el texto del hero. El fondo es una sombra desde la
+   izquierda que asienta el texto; ::before es una retícula fina que cruza por
+   encima del modelo y se desvanece en círculo alrededor de él. */
+.hero-veil {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 15, 16, 0.7) 0%,
+    rgba(15, 15, 16, 0.45) 32%,
+    rgba(15, 15, 16, 0) 58%
+  );
+}
+
+.hero-veil::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 42% 58% at 70% 50%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(ellipse 42% 58% at 70% 50%, #000 30%, transparent 100%);
+}
+
 /* ===== BIENVENIDA DEL HOME =====
    Primer momento de la intro. Va en CSS y no en JS para que se mueva desde
    el primer pintado, sin esperar a que React hidrate la página; el hero sabe

@@ -1,8 +1,6 @@
 "use client"
 import HeroNavCards from "@/components/home/sections/banner/HeroNavCards"
 import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
 
 // Variantes de animación
 const containerVariants = {
@@ -33,8 +31,10 @@ const itemVariants = {
 export default function HomeBanner() {
 
   return (
+    // pb amplio: los botones flotantes (WhatsApp, sonido) viven en las esquinas
+    // de abajo y las tarjetas no deben quedar detrás de ellos
     <section
-      className="relative min-h-[100svh] md:min-h-[100dvh] w-full overflow-hidden grid grid-rows-[var(--header-safe)_1fr] px-4 sm:px-6 pb-10 md:pb-12"
+      className="relative min-h-[100svh] md:min-h-[100dvh] w-full overflow-hidden grid grid-rows-[var(--header-safe)_1fr] px-4 sm:px-6 pb-24 md:pb-28"
     >
       {/* Fondo con gradiente */}
       <div className="absolute inset-0 z-0" />
@@ -43,37 +43,15 @@ export default function HomeBanner() {
       <div aria-hidden="true" className="row-start-1" />
 
       <motion.div
-        className="row-start-2 max-w-5xl mx-auto z-10 flex flex-col items-center gap-6 sm:gap-8 text-center w-full min-h-0"
+        className="row-start-2 max-w-7xl 2xl:max-w-[88rem] mx-auto z-10 flex flex-col items-center justify-center text-center w-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* Tarjetas de navegación: Servicios, Tienda y Blog. Ocupan todo el
-            alto que deja el botón; el texto dinámico vive en la sección 2. */}
-        <motion.div className="w-full flex-1 min-h-0 flex flex-col pt-10 sm:pt-14" variants={itemVariants}>
+        {/* Tarjetas de navegación: Servicios, Tienda y Blog. Toman su alto del
+            contenido y se centran; el texto dinámico vive en la sección 2. */}
+        <motion.div className="w-full pt-4 sm:pt-6" variants={itemVariants}>
           <HeroNavCards />
-        </motion.div>
-        {/* Escudo de V1TR0: lleva a /about y muestra "Sobre nosotros" debajo al pasar el cursor */}
-        <motion.div variants={itemVariants}>
-          <Link
-            href="/about"
-            aria-label="Sobre nosotros"
-            className="relative group inline-flex flex-col items-center rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
-          >
-            <Image
-              src="/imagenes/logos/escudo-logo.png"
-              alt=""
-              width={551}
-              height={634}
-              className="h-16 sm:h-20 w-auto transition-all duration-300 group-hover:scale-110"
-            />
-            <span
-              role="tooltip"
-              className="pointer-events-none absolute top-full mt-2 whitespace-nowrap rounded-full border border-[#08A696]/30 bg-[#02505980] backdrop-blur-sm px-3 py-1 text-xs font-semibold text-[#26FFDF] opacity-0 -translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0"
-            >
-              Sobre nosotros
-            </span>
-          </Link>
         </motion.div>
       </motion.div>
     </section>

@@ -10,7 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 // CONSTANTS
 // ============================================================================
 
-const MODEL_PATH = '/imagenes/3d/models/vtr-logo-perfect.glb'
+export const MODEL_PATH = '/imagenes/3d/models/vtr-logo-perfect.glb'
 
 // Ángulo máximo de oscilación pasiva (±30°)
 const PASSIVE_SWING_RAD = Math.PI / 6
@@ -40,7 +40,7 @@ const FLOAT = {
 // LIGHTING
 // ============================================================================
 
-function CinematicLighting() {
+export function CinematicLighting() {
   return (
     <>
       <ambientLight intensity={CINEMATIC_LIGHTING.ambient.intensity} color={CINEMATIC_LIGHTING.ambient.color} />

@@ -29,6 +29,8 @@ type Layer = {
 /**
  * Las capas de un proyecto de software, de arriba (la más especializada) a
  * abajo (la base). Las herramientas son las que usa este mismo sitio.
+ * Colores de la marca: turquesas a la derecha y grises a la izquierda, así
+ * alternan a lo largo de la figura.
  */
 const LAYERS: Layer[] = [
   {
@@ -36,7 +38,7 @@ const LAYERS: Layer[] = [
     text: "Bots, flujos e integraciones conectados a tu operación",
     level: "crecimiento",
     tools: "Webhooks · React Flow · Socket.io",
-    color: "#B57BFF",
+    color: "#26FFDF",
     y: 0.21,
     side: "right",
   },
@@ -45,7 +47,7 @@ const LAYERS: Layer[] = [
     text: "Usable por todos, encontrable en buscadores",
     level: "produccion",
     tools: "Radix UI · metadatos · sitemaps",
-    color: "#4A9DFF",
+    color: "#E4E4E7",
     y: 0.295,
     side: "left",
   },
@@ -54,7 +56,7 @@ const LAYERS: Layer[] = [
     text: "Jerarquía, tipografía y prototipo antes del código",
     level: "diario",
     tools: "Sistemas de diseño · Tailwind",
-    color: "#26FFDF",
+    color: "#81D3CB",
     y: 0.38,
     side: "right",
   },
@@ -63,7 +65,7 @@ const LAYERS: Layer[] = [
     text: "Interfaces rápidas, animadas y listas para crecer",
     level: "diario",
     tools: "Next.js · React · GSAP",
-    color: "#4ADE80",
+    color: "#A1A1AA",
     y: 0.465,
     side: "left",
   },
@@ -72,7 +74,7 @@ const LAYERS: Layer[] = [
     text: "Autenticación, pagos e integraciones seguras",
     level: "produccion",
     tools: "Rutas API · NextAuth · Zod",
-    color: "#FACC15",
+    color: "#08A696",
     y: 0.55,
     side: "right",
   },
@@ -81,7 +83,7 @@ const LAYERS: Layer[] = [
     text: "Modelado, consultas y reportes que escalan",
     level: "produccion",
     tools: "Postgres · Drizzle · Recharts",
-    color: "#FB923C",
+    color: "#D4D4D8",
     y: 0.635,
     side: "left",
   },
@@ -90,7 +92,7 @@ const LAYERS: Layer[] = [
     text: "Despliegue, dominios, archivos y monitoreo",
     level: "diario",
     tools: "Vercel · Neon · Uploadthing",
-    color: "#F43F5E",
+    color: "#C5EBE7",
     y: 0.72,
     side: "right",
   },
@@ -262,7 +264,7 @@ export default function ServiciosAnatomia() {
             {/* Resplandor del eje, como una columna de energía */}
             <div
               aria-hidden="true"
-              className="absolute top-[17%] h-[60%] w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#B57BFF]/50 via-[#26FFDF]/50 to-[#F43F5E]/50 blur-[2px]"
+              className="absolute top-[17%] h-[60%] w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#26FFDF]/50 via-white/25 to-[#08A696]/50 blur-[2px]"
               style={{ left: `${BODY_AXIS * 100}%` }}
             />
             <Image

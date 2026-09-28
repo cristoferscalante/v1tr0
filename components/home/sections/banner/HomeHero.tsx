@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import {
   AnimatePresence,
   LayoutGroup,
@@ -10,7 +10,9 @@ import {
   useTransform,
 } from "framer-motion"
 import Image from "next/image"
-import { SOUND_CONTROL_ATTR, useSound } from "@/components/global/sound/SoundProvider"
+import { Contrast } from "lucide-react"
+import dynamic from "next/dynamic"
+import { useSound } from "@/components/global/sound/SoundProvider"
 import { setIntroActive } from "@/lib/intro-store"
 
 /**
@@ -22,15 +24,9 @@ let introPlayed = false
 /** Pausa con la bienvenida ya escrita antes de pasar al escudo. */
 const WELCOME_HOLD_MS = 300
 const FILL_SECONDS = 3.2
-/** Pausa con el escudo lleno antes de ofrecer la entrada. */
-const HOLD_MS = 500
+/** Pausa con el escudo lleno antes de entrar solo al hero. */
+const HOLD_MS = 1000
 const EASE_OUT = [0.16, 1, 0.3, 1] as const
-/**
- * Si nadie pulsa "Entrar" en este tiempo, la puerta entra sola. Sin gesto el
- * navegador no deja sonar: la música (encendida por defecto) arranca con el
- * primer clic o toque del usuario.
- */
-const GATE_AUTO_ENTER_MS = 3000
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -65,6 +61,9 @@ const itemVariants = {
   }
 }
 
+/** Escudo 3D que sigue al cursor. Sin SSR: WebGL solo existe en el navegador. */
+const HeroShield3D = dynamic(() => import("@/components/3d/HeroShield3D"), { ssr: false })
+
 /** Copia del escudo sin el fondo punteado del PNG original, que a este tamaño se ve como un recuadro. */
 const SHIELD = { src: "/imagenes/logos/escudo-logo-hero.png", width: 551, height: 634 }
 
@@ -97,11 +96,8 @@ function WelcomeBracket({ mirrored = false }: { mirrored?: boolean }) {
   )
 }
 
-/**
- * welcome: "Bienvenido a V1TR0" · loading: el escudo se llena ·
- * gate: espera la entrada · ready: hero armado
- */
-type Phase = "welcome" | "loading" | "gate" | "ready"
+/** welcome: "Bienvenido a V1TR0" · loading: el escudo se llena · ready: hero armado */
+type Phase = "welcome" | "loading" | "ready"
 
 /**
  * Primera sección del home: el hero de aterrizaje, con el único <h1> de la
@@ -121,13 +117,31 @@ export default function HomeHero() {
   const sound = useSound()
   // Mismo corte que el grid (lg): decide desde qué borde entra cada elemento
   const [desktop, setDesktop] = useState(false)
+  // El escudo 3D solo tiene sentido con un cursor que seguir: escritorio con
+  // puntero fino y sin reduced-motion. En el resto se queda el PNG.
+  const [pointerFine, setPointerFine] = useState(false)
+  // El PNG hace el vuelo de la intro; el 3D lo reemplaza cuando ya aterrizó y
+  // pintó su primer fotograma
+  const [landed, setLanded] = useState(() => introPlayed)
+  const [modelReady, setModelReady] = useState(false)
+  const handleModelReady = useCallback(() => setModelReady(true), [])
+  // Lente ASCII del escudo invertida: todo en caracteres y el cursor descubre el modelo
+  const [asciiInverted, setAsciiInverted] = useState(false)
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)")
-    const sync = () => setDesktop(query.matches)
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const sync = () => {
+      setDesktop(query.matches)
+      setPointerFine(fine.matches)
+    }
     sync()
     query.addEventListener("change", sync)
-    return () => query.removeEventListener("change", sync)
+    fine.addEventListener("change", sync)
+    return () => {
+      query.removeEventListener("change", sync)
+      fine.removeEventListener("change", sync)
+    }
   }, [])
 
   // El header y los botones flotantes esperan fuera de pantalla hasta que la intro termina
@@ -167,7 +181,15 @@ export default function HomeHero() {
           delay: 0.5,
           ease: [0.65, 0, 0.35, 1],
           onComplete: () => {
-            hold = setTimeout(() => setPhase("gate"), HOLD_MS)
+            // Sin gesto el navegador no deja sonar: la música (encendida por
+            // defecto) arranca con el primer clic o toque; se deja precargada
+            sound.preload()
+            hold = setTimeout(() => {
+              // Se marca al entrar y no al montar: StrictMode monta el efecto dos
+              // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
+              introPlayed = true
+              setPhase("ready")
+            }, HOLD_MS)
           },
         })
       }, WELCOME_HOLD_MS)
@@ -180,54 +202,14 @@ export default function HomeHero() {
         clearTimeout(hold)
       }
     }
-  }, [progress])
-
-  /**
-   * sound: enciende la música · silent: la apaga y lo recuerda ·
-   * skip: entra sin tocar la preferencia (la música, encendida por defecto,
-   * arranca con el primer clic).
-   */
-  const enter = (mode: "sound" | "silent" | "skip") => {
-    if (mode === "sound") {
-      sound.enable()
-    } else if (mode === "silent") {
-      sound.disable()
-    }
-    // Se marca al entrar y no al montar: StrictMode monta el efecto dos veces
-    // y, marcada de entrada, la segunda pasada se saltaría la intro.
-    introPlayed = true
-    setPhase("ready")
-  }
-
-  // En la puerta, quien scrollea o usa el teclado entra directo; y si nadie
-  // hace nada, entra sola a los pocos segundos
-  useEffect(() => {
-    if (phase !== "gate") {
-      return
-    }
-    sound.preload()
-    const skip = () => enter("skip")
-    const onKey = (e: KeyboardEvent) => {
-      if (["ArrowDown", "PageDown", " ", "Escape"].includes(e.key)) {
-        skip()
-      }
-    }
-    window.addEventListener("wheel", skip, { once: true, passive: true })
-    window.addEventListener("touchmove", skip, { once: true, passive: true })
-    window.addEventListener("keydown", onKey)
-    const autoEnter = setTimeout(skip, GATE_AUTO_ENTER_MS)
-    return () => {
-      clearTimeout(autoEnter)
-      window.removeEventListener("wheel", skip)
-      window.removeEventListener("touchmove", skip)
-      window.removeEventListener("keydown", onKey)
-    }
-    // `enter` y `sound` cambian de identidad en cada render; solo importa la fase
+    // `sound` cambia de identidad en cada render; la intro corre una sola vez
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase])
+  }, [progress])
 
   const shieldTransition = instant ? { duration: 0 } : { duration: 1.3, ease: EASE_OUT }
   const ready = phase === "ready"
+  const use3D = desktop && pointerFine && !reduceMotion
+  const show3D = use3D && landed && modelReady
 
   return (
     <section
@@ -239,7 +221,7 @@ export default function HomeHero() {
       <div aria-hidden="true" className="row-start-1" />
 
       <LayoutGroup>
-        {/* Momento 1 y 2: arranque y puerta de entrada */}
+        {/* Momento 1 y 2: bienvenida y arranque; al llenarse el escudo entra solo */}
         <AnimatePresence>
           {!ready && (
             <motion.div
@@ -247,14 +229,14 @@ export default function HomeHero() {
               className="absolute inset-0 z-20 flex items-center justify-center"
               exit={{ opacity: 1 }}
             >
-              {/* El marco se queda de la bienvenida a la puerta: lo que cambia es
+              {/* El marco se queda de la bienvenida al arranque: lo que cambia es
                   lo de adentro. Al entrar se desvanece y el escudo sale de él. */}
               <div
                 ref={welcomeRef}
-                className="relative flex h-[24rem] w-[min(88vw,38rem)] sm:h-[28rem] items-center justify-center"
+                // En escritorio crece con el escudo, que ya carga a su tamaño final
+                className="relative flex h-[24rem] w-[min(88vw,38rem)] sm:h-[28rem] lg:h-[min(80vh,46rem)] lg:w-[min(88vw,42rem)] items-center justify-center"
               >
-                {/* pointer-events-none: el marco va posicionado encima del contenido y,
-                    sin esto, se tragaba los clics de "Entrar" */}
+                {/* pointer-events-none: el marco va posicionado encima del contenido */}
                 <motion.div className="pointer-events-none absolute inset-0" exit={{ opacity: 0, transition: { duration: 0.5 } }}>
                   <WelcomeBracket />
                   <WelcomeBracket mirrored />
@@ -288,7 +270,9 @@ export default function HomeHero() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, ease: EASE_OUT }}
                     >
-                      <motion.div layoutId="hero-shield" transition={shieldTransition} className="relative h-48 sm:h-56 aspect-[551/634]">
+                      {/* Mismo tamaño que en su sitio final del hero: al entrar solo se
+                          desliza, sin crecer ni achicarse */}
+                      <motion.div layoutId="hero-shield" transition={shieldTransition} className="relative h-32 sm:h-40 lg:h-[min(62vh,36rem)] aspect-[551/634]">
                         {/* Silueta apagada */}
                         <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.1] grayscale" />
                         {/* Relleno a color que sube */}
@@ -297,40 +281,6 @@ export default function HomeHero() {
                         </motion.div>
                       </motion.div>
 
-                      <motion.div
-                        // Reserva el alto de la puerta: así el escudo no salta cuando aparece
-                        className="mt-10 flex h-24 w-56 flex-col items-center font-mono text-[10px] uppercase tracking-[0.28em] text-white/45"
-                        exit={{ opacity: 0, transition: { duration: 0.25 } }}
-                      >
-                        <AnimatePresence initial={false}>
-                          {phase === "gate" && (
-                            <motion.div
-                              key="gate"
-                              className="flex flex-col items-center gap-5"
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.6, ease: EASE_OUT }}
-                            >
-                              <button
-                                type="button"
-                                autoFocus
-                                onClick={() => enter("sound")}
-                                className="rounded-full border border-white/15 bg-white/[0.03] px-9 py-3.5 text-[11px] tracking-[0.32em] text-white transition-colors duration-300 hover:border-[#26FFDF]/50 hover:bg-[#26FFDF]/[0.06] focus:outline-none focus-visible:border-[#26FFDF]"
-                              >
-                                Entrar
-                              </button>
-                              <button
-                                type="button"
-                                {...{ [SOUND_CONTROL_ATTR]: "" }}
-                                onClick={() => enter("silent")}
-                                className="text-[9px] tracking-[0.28em] text-white/35 transition-colors hover:text-white/70 focus:outline-none focus-visible:text-white"
-                              >
-                                Entrar sin sonido
-                              </button>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -341,8 +291,19 @@ export default function HomeHero() {
 
         {/* Momento 3: el hero armado, con el escudo ya a la derecha */}
         <div className="row-start-2 relative z-10 mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)] lg:gap-20">
+          {/* Capa entre el escudo (z-0) y el texto (z-10): una retícula fina que
+              pasa por encima del modelo y se desvanece hacia los bordes, y una
+              sombra suave desde la izquierda que asienta el texto. Solo en
+              escritorio, donde el escudo queda detrás del texto. */}
           <motion.div
-            className="flex flex-col items-center text-center lg:items-start lg:text-left"
+            aria-hidden="true"
+            className="hero-veil pointer-events-none absolute -inset-x-[12vw] -inset-y-[18vh] z-[5] hidden lg:block"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: ready ? 1 : 0 }}
+            transition={{ duration: instant ? 0 : 1.2, delay: instant ? 0 : 1 }}
+          />
+          <motion.div
+            className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left"
             variants={containerVariants}
             initial="hidden"
             animate={ready ? "visible" : "hidden"}
@@ -364,28 +325,23 @@ export default function HomeHero() {
               Diseñamos y programamos aplicaciones web, tiendas en línea, sistemas de
               información y automatizaciones, y los dejamos funcionando en producción.
             </motion.p>
-
-
           </motion.div>
 
-          {/* Sitio final del escudo, dentro de un marco redondeado. En móvil no cabe
-              junto al texto: se queda arriba, pequeño, como sello. */}
-          <div className="order-first flex justify-center lg:order-none">
-            <div className="relative flex items-center justify-center lg:aspect-square lg:w-full lg:max-w-[32rem]">
-              <motion.div
-                aria-hidden="true"
-                className="absolute inset-0 hidden rounded-[2.5rem] border border-white/[0.07] bg-white/[0.015] lg:block"
-                // El marco vive a la derecha: entra desde ese borde
-                initial={{ opacity: 0, x: 140 }}
-                animate={ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 140 }}
-                transition={{ duration: instant ? 0 : 1, delay: instant ? 0 : 0.9, ease: EASE_OUT }}
-              />
-
+          {/* Sitio final del escudo, sin marco: en escritorio es grande y desborda
+              su columna por debajo del texto, como parte del fondo. En móvil no
+              cabe junto al texto: se queda arriba, pequeño, como sello. */}
+          {/* Sin z-index propio: así el escudo queda bajo la capa (z-5) y el
+              control, dentro de esta misma columna, puede quedar encima (z-10) */}
+          <div className="relative order-first flex justify-center lg:order-none">
+            {/* group: el control de la lente aparece con el cursor sobre el escudo */}
+            <div className="group relative flex items-center justify-center lg:h-[min(62vh,36rem)] lg:w-full">
               {ready && (
                 <motion.div
                   layoutId="hero-shield"
                   transition={shieldTransition}
-                  className="relative h-32 sm:h-40 lg:h-[82%] aspect-[551/634]"
+                  onLayoutAnimationComplete={() => setLanded(true)}
+                  // Alto igual al del escudo de la intro (lg: el de esta caja)
+                  className="relative h-32 sm:h-40 lg:h-full aspect-[551/634]"
                 >
                   {/* Flotación lenta una vez asentado */}
                   <motion.div
@@ -393,10 +349,62 @@ export default function HomeHero() {
                     animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
                     transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: instant ? 0 : 1.3 }}
                   >
-                    <Image {...SHIELD} alt="Escudo de V1TR0" priority className="h-full w-full" />
+                    <Image
+                      {...SHIELD}
+                      alt="Escudo de V1TR0"
+                      priority
+                      className={`h-full w-full transition-opacity duration-300 ${show3D ? "opacity-0" : "opacity-100"}`}
+                    />
+                    {/* Se monta al entrar para que cargue durante el vuelo. El lienzo
+                        desborda la caja del PNG: al inclinarse el escudo no se recorta.
+                        No recibe eventos: pasa por encima del texto y no debe taparlo. */}
+                    {use3D && (
+                      <div
+                        aria-hidden="true"
+                        className={`pointer-events-none absolute -inset-[18%] transition-opacity duration-300 ${show3D ? "opacity-100" : "opacity-0"}`}
+                      >
+                        {/* Cruce corto: lo que integra el cambio es la distorsión con la
+                            que el escudo se asienta al quedar a la vista */}
+                        <HeroShield3D onReady={handleModelReady} inverted={asciiInverted} revealed={show3D} />
+                      </div>
+                    )}
                   </motion.div>
                 </motion.div>
               )}
+
+              {/* Control de la lente: invierte el efecto (todo ASCII, el cursor
+                  descubre el modelo) y lo revierte. Solo con el escudo 3D a la
+                  vista; entra desde abajo, el borde más cercano. Oculto hasta
+                  que el cursor pasa por el escudo (o llega con el teclado). */}
+              <AnimatePresence>
+                {show3D && (
+                  <motion.div
+                    className="absolute inset-x-0 -bottom-6 z-10 flex justify-center"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 24 }}
+                    transition={{ duration: 0.8, ease: EASE_OUT }}
+                  >
+                    <button
+                      type="button"
+                      aria-pressed={asciiInverted}
+                      aria-label={asciiInverted ? "Revertir el efecto ASCII" : "Invertir el efecto ASCII"}
+                      title={asciiInverted ? "Revertir efecto" : "Invertir efecto"}
+                      onClick={() => setAsciiInverted((value) => !value)}
+                      className={`flex h-10 w-10 translate-y-2 items-center justify-center rounded-full border bg-white/[0.03] opacity-0 transition-[opacity,transform,color,border-color] duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:border-[#26FFDF]/50 hover:text-white focus:outline-none focus-visible:translate-y-0 focus-visible:border-[#26FFDF] focus-visible:opacity-100 ${
+                        asciiInverted ? "border-[#26FFDF]/40 text-[#26FFDF]" : "border-white/15 text-white/70"
+                      }`}
+                    >
+                      {/* Medio lleno: al invertir se da vuelta */}
+                      <Contrast
+                        aria-hidden="true"
+                        className={`h-[18px] w-[18px] transition-transform duration-500 ${asciiInverted ? "rotate-180" : ""}`}
+                        strokeWidth={1.5}
+                      />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

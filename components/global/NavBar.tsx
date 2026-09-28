@@ -70,7 +70,6 @@ export default function Navbar() {
               className="group hidden lg:flex items-center gap-2.5 rounded-full border border-white/15 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-white/80 whitespace-nowrap transition-colors duration-300 hover:border-white/35 hover:text-white focus:outline-none focus-visible:border-[#26FFDF]"
             >
               <LogIn className="h-3.5 w-3.5 text-[#26FFDF]" />
-              <span>Login</span>
             </Link>
 
             {/* Mobile menu button */}
