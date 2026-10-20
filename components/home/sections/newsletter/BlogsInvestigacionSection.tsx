@@ -181,8 +181,9 @@ export default function BlogsInvestigacionSection() {
           </p>
         </div>
 
-        {/* Columna derecha: catálogo 3D de artículos (misma caja, con divisor) */}
-        <div className="relative flex min-h-[380px] flex-col border-t border-white/[0.07] p-5 lg:min-h-0 lg:border-l lg:border-t-0">
+        {/* Columna derecha: catálogo 3D de artículos (misma caja, con divisor).
+            Alto generoso para que el carrusel respire y no se vea aplastado. */}
+        <div className="relative flex min-h-[380px] flex-col border-t border-white/[0.07] p-5 lg:min-h-[480px] lg:border-l lg:border-t-0">
           <div className="pointer-events-none relative z-10 flex items-center justify-between px-1">
             <p className={eyebrow}>Catálogo</p>
             <span className="text-[10px] uppercase tracking-[0.18em] text-textMuted/70">arrastra para explorar</span>
