@@ -21,11 +21,10 @@ import { setIntroActive } from "@/lib/intro-store"
  * el hero aparece armado. Vive en el módulo: una recarga lo reinicia.
  */
 let introPlayed = false
-/** Respiro mínimo antes de arrancar el relleno, para que monte el primer fotograma. */
-const START_HOLD_MS = 120
-const FILL_SECONDS = 2.6
-/** Pausa con el escudo lleno antes de entrar solo al hero. */
-const HOLD_MS = 700
+/** El escudo se llena de color (como una carga). Rápido, para que no haya rato muerto. */
+const FILL_SECONDS = 1.4
+/** Pausa breve con el escudo lleno antes de entrar al hero. */
+const HOLD_MS = 500
 const EASE_OUT = [0.16, 1, 0.3, 1] as const
 
 const containerVariants = {
@@ -149,7 +148,7 @@ export default function HomeHero() {
   }, [phase])
   useEffect(() => () => setIntroActive(false), [])
 
-  // Avance del relleno del escudo (0–100)
+  // Avance del relleno del escudo (0–100): el color sube como una carga.
   const progress = useMotionValue(0)
   const clipPath = useTransform(progress, (v) => `inset(${100 - v}% 0 0 0)`)
 
@@ -159,32 +158,27 @@ export default function HomeHero() {
     }
 
     let hold: ReturnType<typeof setTimeout> | undefined
-    let controls: ReturnType<typeof animate> | undefined
 
-    // Un solo momento: el escudo se llena mientras entra el texto de bienvenida.
-    // Sin esperar a una pantalla de bienvenida previa: un respiro mínimo para
-    // que monte el primer fotograma y arranca el relleno.
-    const start = setTimeout(() => {
-      controls = animate(progress, 100, {
-        duration: FILL_SECONDS,
-        ease: [0.65, 0, 0.35, 1],
-        onComplete: () => {
-          // Sin gesto el navegador no deja sonar: la música (encendida por
-          // defecto) arranca con el primer clic o toque; se deja precargada
-          sound.preload()
-          hold = setTimeout(() => {
-            // Se marca al entrar y no al montar: StrictMode monta el efecto dos
-            // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
-            introPlayed = true
-            setPhase("ready")
-          }, HOLD_MS)
-        },
-      })
-    }, START_HOLD_MS)
+    // El relleno de color arranca de golpe, desde el primer fotograma del
+    // montaje: sin espera previa, para no perder tiempo.
+    const controls = animate(progress, 100, {
+      duration: FILL_SECONDS,
+      ease: [0.4, 0, 0.2, 1],
+      onComplete: () => {
+        // Sin gesto el navegador no deja sonar: la música (encendida por
+        // defecto) arranca con el primer clic o toque; se deja precargada
+        sound.preload()
+        hold = setTimeout(() => {
+          // Se marca al entrar y no al montar: StrictMode monta el efecto dos
+          // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
+          introPlayed = true
+          setPhase("ready")
+        }, HOLD_MS)
+      },
+    })
 
     return () => {
-      clearTimeout(start)
-      controls?.stop()
+      controls.stop()
       if (hold) {
         clearTimeout(hold)
       }
@@ -228,27 +222,28 @@ export default function HomeHero() {
                   <WelcomeBracket mirrored />
                 </motion.div>
 
-                {/* Un solo momento: el texto de bienvenida aparece junto con el
-                    escudo que se llena, sin pantalla previa de solo texto. */}
+                {/* Un solo momento: el escudo aparece a todo color de golpe
+                    junto con el texto, sin relleno gradual ni pantalla de carga. */}
                 <div className="flex flex-col items-center text-center">
                   <motion.span
                     aria-hidden="true"
                     className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.42em] text-white/50"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT }}
+                    transition={{ duration: 0.4, delay: 0.05, ease: EASE_OUT }}
                   >
                     Bienvenido a
                   </motion.span>
 
-                  {/* El escudo se llena (layoutId: al entrar vuela a su sitio del hero) */}
+                  {/* El escudo se llena de color como una carga (layoutId: al
+                      salir vuela a su sitio del hero). */}
                   <motion.div
                     layoutId="hero-shield"
                     transition={shieldTransition}
                     className="relative mt-3 h-40 sm:h-48 lg:h-[min(52vh,28rem)] aspect-[551/634]"
                   >
-                    {/* Silueta apagada */}
-                    <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.1] grayscale" />
+                    {/* Silueta de base, visible desde el inicio (no un recuadro vacío) */}
+                    <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.22] grayscale" />
                     {/* Relleno a color que sube */}
                     <motion.div className="absolute inset-0" style={{ clipPath }}>
                       <Image {...SHIELD} alt="" priority className="h-full w-full" />
