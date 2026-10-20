@@ -102,10 +102,10 @@ export default function BlogsInvestigacionSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-2 lg:items-stretch"
+        className="relative z-10 mx-auto grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/[0.07] bg-white/[0.015] backdrop-blur-sm transition-colors duration-300 hover:border-white/15 sm:rounded-[2.5rem] lg:grid-cols-2 lg:items-stretch"
       >
         {/* Columna izquierda: newsletter */}
-        <div className="flex flex-col overflow-hidden rounded-[2rem] border border-white/[0.07] bg-white/[0.015] p-7 text-center backdrop-blur-sm transition-colors duration-300 hover:border-white/15 sm:rounded-[2.5rem] sm:p-10">
+        <div className="flex flex-col p-7 text-center sm:p-10">
           <p className={eyebrow}>V1TR0 · Newsletter</p>
           <h2 className={`mt-3 ${sectionTitle}`}>
             Blogs <span className={accentText}>&amp;</span> Investigación
@@ -199,8 +199,8 @@ export default function BlogsInvestigacionSection() {
           </p>
         </div>
 
-        {/* Columna derecha: catálogo 3D de artículos */}
-        <div className="relative flex min-h-[380px] flex-col overflow-hidden rounded-[2rem] border border-white/[0.07] bg-white/[0.015] p-5 backdrop-blur-sm transition-colors duration-300 hover:border-white/15 sm:rounded-[2.5rem] lg:min-h-0">
+        {/* Columna derecha: catálogo 3D de artículos (misma caja, con divisor) */}
+        <div className="relative flex min-h-[380px] flex-col border-t border-white/[0.07] p-5 lg:min-h-0 lg:border-l lg:border-t-0">
           <div className="pointer-events-none relative z-10 flex items-center justify-between px-1">
             <p className={eyebrow}>Catálogo</p>
             <span className="text-[10px] uppercase tracking-[0.18em] text-textMuted/70">arrastra para explorar</span>
