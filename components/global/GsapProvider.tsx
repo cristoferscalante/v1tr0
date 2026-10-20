@@ -108,6 +108,34 @@ export function GsapProvider({
     initializeGsap()
   }, [initializeGsap])
 
+  // Las secciones fijadas (showcase horizontal, anatomía) calculan su recorrido
+  // a partir del ancho real del contenido, que depende de las fuentes. Si los
+  // triggers se crean antes de que las fuentes terminen de cargar, el `end` del
+  // pin queda mal medido y la animación parece cortarse o desalinearse. Un
+  // refresh tras `fonts.ready` (y tras `load`) lo vuelve a medir sobre el
+  // layout definitivo. Es idempotente y barato.
+  useEffect(() => {
+    if (!isReady || typeof window === 'undefined') {
+      return
+    }
+    let cancelled = false
+    const refresh = () => {
+      if (!cancelled) {
+        ScrollTrigger.refresh()
+      }
+    }
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(refresh).catch(() => {})
+    }
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', refresh, { once: true })
+    }
+    return () => {
+      cancelled = true
+      window.removeEventListener('load', refresh)
+    }
+  }, [isReady])
+
   const contextValue: GsapContextType = {
     isReady,
     isLoading,

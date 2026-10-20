@@ -25,7 +25,7 @@ const teamMembersData = [
     name: "Alvaro Efren B.S.",
     role: "CEO & Fundador",
     image: "/imagenes/about/cards/card-efren.webp",
-    biography: "Soy politólogo y desarrollador de software apasionado por transformar datos en soluciones con impacto social. He trabajado con varias agencias de Cooperación Internacional creando sistemas de información y dashboards que fortalecen la coordinación humanitaria en contextos de emergencia. Domino Python, bases de datos relacionales y NoSQL, además de front-end con Next.js y TailwindCSS. Mi enfoque une tecnología y análisis social para diseñar herramientas que generan decisiones estratégicas y valor sostenible que aporten al desarrollo de las comunidades y las empresas.",
+    biography: "Politólogo y desarrollador de software. Transformo datos en soluciones con impacto social: he creado sistemas de información y dashboards para agencias de Cooperación Internacional en contextos de emergencia. Uno tecnología y análisis social para generar decisiones estratégicas y valor sostenible.",
     specialties: [
       "Python",
       "Next.js",
@@ -38,7 +38,8 @@ const teamMembersData = [
       "Análisis Social"
     ],
     github: "https://github.com/alvaroefren",
-    linkedin: "https://www.linkedin.com/in/alvaro-efren"
+    linkedin: "https://www.linkedin.com/in/alvaro-efren",
+    portfolio: "https://efren-portafolio.v1tr0.com/"
   },
   {
     name: "Cristofer Bolaños Scalante",
