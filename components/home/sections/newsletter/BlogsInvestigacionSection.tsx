@@ -24,8 +24,6 @@ import type { ProyectoCarrusel } from "@/components/home/sections/proyectos/Carr
 // El carrusel es WebGL: solo en el navegador.
 const CarruselCurvo = dynamic(() => import("@/components/home/sections/proyectos/CarruselCurvo"), { ssr: false })
 
-const TEMAS = ["Inteligencia Artificial", "Ciencia de Datos", "Desarrollo de Software"]
-
 /** Reserva si /api/blog falla: artículos destacados con portada conocida. */
 const FALLBACK: ProyectoCarrusel[] = [
   { title: "Programación con IA", image: "/imagenes/blog/no_es_magia.webp", href: "/blog/programacion-ia-revolucion" },
@@ -104,28 +102,12 @@ export default function BlogsInvestigacionSection() {
         transition={{ duration: 0.6 }}
         className="relative z-10 mx-auto grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/[0.07] bg-white/[0.015] backdrop-blur-sm transition-colors duration-300 hover:border-white/15 sm:rounded-[2.5rem] lg:grid-cols-2 lg:items-stretch"
       >
-        {/* Columna izquierda: newsletter */}
-        <div className="flex flex-col p-7 text-center sm:p-10">
+        {/* Columna izquierda: newsletter (centrado verticalmente) */}
+        <div className="flex flex-col justify-center p-7 text-center sm:p-10">
           <p className={eyebrow}>V1TR0 · Newsletter</p>
           <h2 className={`mt-3 ${sectionTitle}`}>
             Blogs <span className={accentText}>&amp;</span> Investigación
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-textMuted sm:text-base">
-            Publicamos investigación sobre inteligencia artificial, ciencia de datos y
-            desarrollo de software. Déjanos tu correo y te avisamos cuando salga en el blog.
-          </p>
-
-          {/* Temas que cubre el newsletter */}
-          <ul className="mt-6 flex flex-wrap justify-center gap-2">
-            {TEMAS.map((tema) => (
-              <li
-                key={tema}
-                className="rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-[#26FFDF]/90"
-              >
-                {tema}
-              </li>
-            ))}
-          </ul>
 
           {estado === "ok" ? (
             <div
