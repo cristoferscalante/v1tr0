@@ -11,6 +11,7 @@ export interface TeamMemberProfileProps {
   specialties: string[]
   github?: string
   linkedin?: string
+  portfolio?: string
   isMobile: boolean
   animationDelay?: string
 }
@@ -23,6 +24,7 @@ const TeamMemberProfile = ({
   specialties,
   github,
   linkedin,
+  portfolio,
   isMobile,
   animationDelay = "0s"
 }: TeamMemberProfileProps) => {
@@ -107,6 +109,13 @@ const TeamMemberProfile = ({
           </p>
         </div>
 
+        {/* Biography */}
+        <div className={`text-textMuted leading-relaxed ${
+          isMobile ? 'text-sm' : 'text-base md:text-lg'
+        }`}>
+          <p>{biography}</p>
+        </div>
+
         {/* Specialties - Binary Pattern Style */}
         <div className={`${cardBase} ${cardBorder} ${cardTheme} p-4 relative overflow-hidden`}>
           {/* Animated Background Pattern */}
@@ -167,13 +176,24 @@ const TeamMemberProfile = ({
             </div>
           </div>
         </div>
-        
-        {/* Biography */}
-        <div className={`text-textMuted leading-relaxed ${
-          isMobile ? 'text-sm' : 'text-base md:text-lg'
-        }`}>
-          <p>{biography}</p>
-        </div>
+
+        {/* Portfolio link */}
+        {portfolio && (
+          <div className={isMobile ? 'flex justify-center' : ''}>
+            <a
+              href={portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-full border border-[#08A696]/40 bg-[#08A696]/10 px-5 py-2.5 text-sm font-semibold text-[#26FFDF] transition-colors duration-300 hover:border-[#08A696] hover:bg-[#08A696]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c2.5 2.5 3.8 6 3.8 10S14.5 19.5 12 22M12 2c-2.5 2.5-3.8 6-3.8 10S9.5 19.5 12 22" />
+              </svg>
+              Ver mi portafolio
+              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </a>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
