@@ -225,8 +225,10 @@ const odiseoFrames = Array.from(
 
 // La tarjeta de Blog usa a Apolo: al pasar el cursor se acerca al lente y el
 // monitor holográfico termina de dibujarse. Fotogramas de apolonew.mp4.
+// Secuencia decimada (1 de cada 2 del original de 116) y a 360 px de ancho: el
+// gesto es lento (6 s), así que menos fotogramas no se nota y pesa ~1/3.
 const apoloFrames = Array.from(
-  { length: 116 },
+  { length: 58 },
   (_, i) => `/imagenes/home/apolo-blog/apolo-${String(i).padStart(2, "0")}.webp`,
 )
 
