@@ -6,6 +6,8 @@ import Link from "next/link"
 import { X, LogIn } from "lucide-react"
 import Image from "next/image"
 import { motion } from "framer-motion"
+import ContactoAsistenteSection from "@/components/home/sections/contact/ContactoAsistenteSection"
+import RobotAsistente from "@/components/home/sections/contact/RobotAsistente"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,6 +16,29 @@ export default function Navbar() {
   // quedaba atrapado en su stacking context y la barra de promo de la tienda
   // (z-60) y el carrito flotante (z-75) se dibujaban encima.
   const [mounted, setMounted] = useState(false)
+  // Asistente en móvil: panel flotante que baja del header. Se monta la primera
+  // vez que se abre y luego solo se oculta, para no perder la conversación.
+  const [chatAbierto, setChatAbierto] = useState(false)
+  const [chatMontado, setChatMontado] = useState(false)
+
+  const alternarChat = () => {
+    setChatMontado(true)
+    setIsOpen(false)
+    setChatAbierto((abierto) => !abierto)
+  }
+
+  useEffect(() => {
+    if (!chatAbierto) {
+      return
+    }
+    const alTeclear = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setChatAbierto(false)
+      }
+    }
+    window.addEventListener("keydown", alTeclear)
+    return () => window.removeEventListener("keydown", alTeclear)
+  }, [chatAbierto])
 
   useEffect(() => {
     setMounted(true)
@@ -62,6 +87,22 @@ export default function Navbar() {
             </div>
           </nav>
 
+          {/* Asistente (solo móvil): el robot ocupa el centro, que en móvil
+              queda libre porque los enlaces viven en el menú. */}
+          <div className="flex justify-center md:hidden">
+            <button
+              type="button"
+              onClick={alternarChat}
+              aria-label={chatAbierto ? "Cerrar asistente" : "Abrir asistente V1TR0"}
+              aria-expanded={chatAbierto}
+              className={`flex h-11 w-14 items-center justify-center rounded-full border transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60 ${
+                chatAbierto ? "border-[#26FFDF]/50 bg-[#26FFDF]/10" : "border-white/10"
+              }`}
+            >
+              <RobotAsistente className="h-7 w-10" />
+            </button>
+          </div>
+
           {/* Login Button (Desktop) & Mobile Menu Button - Columna derecha */}
           <div className="flex items-center justify-end gap-2">
             {/* Login Button - Desktop Only */}
@@ -74,7 +115,10 @@ export default function Navbar() {
 
             {/* Mobile menu button */}
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                setChatAbierto(false)
+                setIsOpen(!isOpen)
+              }}
               className="md:hidden inline-flex items-center justify-center p-2 text-[#26FFDF] hover:text-white focus:outline-none transition-colors"
             >
               <svg 
@@ -101,6 +145,37 @@ export default function Navbar() {
 
     </motion.nav>
     
+    {/* Panel flotante del asistente (móvil). En <body> por el mismo motivo
+        que el menú: fuera del stacking context del header. */}
+    {chatMontado && mounted && createPortal(
+      <div className="md:hidden">
+        {/* Fondo: tocar fuera cierra */}
+        <motion.div
+          aria-hidden="true"
+          className="fixed inset-0 z-[9997] bg-black/45 backdrop-blur-[2px]"
+          initial={false}
+          animate={{ opacity: chatAbierto ? 1 : 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ pointerEvents: chatAbierto ? "auto" : "none" }}
+          onClick={() => setChatAbierto(false)}
+        />
+        <motion.div
+          role="dialog"
+          aria-label="Asistente V1TR0"
+          aria-hidden={!chatAbierto}
+          data-lenis-prevent
+          className="fixed inset-x-3 top-[5.5rem] z-[9998] flex h-[min(72svh,580px)] origin-top flex-col overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-[#0b0f10]/95 shadow-2xl shadow-black/60 backdrop-blur-xl"
+          initial={false}
+          animate={chatAbierto ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -18, scale: 0.96 }}
+          transition={{ type: "spring", stiffness: 320, damping: 30 }}
+          style={{ pointerEvents: chatAbierto ? "auto" : "none" }}
+        >
+          <ContactoAsistenteSection modo="panel" onCerrar={() => setChatAbierto(false)} />
+        </motion.div>
+      </div>,
+      document.body
+    )}
+
     {/* Mobile menu - Overlay mejorado con animaciones */}
     {isOpen && mounted && createPortal(
       <motion.div 

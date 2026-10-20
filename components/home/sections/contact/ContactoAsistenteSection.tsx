@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowUp, Loader2 } from "lucide-react"
+import { ArrowUp, Loader2, X } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
 import { siteConfig } from "@/config/site"
 import {
@@ -78,7 +78,18 @@ const campoBase = `w-full rounded-xl px-3 py-2 text-sm text-textPrimary placehol
 const botonPildora =
   "inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-textPrimary transition-colors duration-300 hover:border-[#26FFDF]/50 hover:text-[#26FFDF]"
 
-export default function ContactoAsistenteSection() {
+export default function ContactoAsistenteSection({
+  modo = "seccion",
+  onCerrar,
+}: {
+  /**
+   * "seccion": la sección del home a pantalla completa, con el robot volando.
+   * "panel": el mismo chat en formato compacto (el panel flotante del header
+   * en móvil), con el robot pequeño en la cabecera.
+   */
+  modo?: "seccion" | "panel"
+  onCerrar?: () => void
+} = {}) {
   const [mensajes, setMensajes] = useState<Mensaje[]>([{ rol: "asistente", texto: PASOS[0]!.pregunta("") }])
   const [brief, setBrief] = useState<Brief>(briefVacio)
   const [paso, setPaso] = useState(0)
@@ -221,54 +232,11 @@ export default function ContactoAsistenteSection() {
   const posicion = vista === "datos" ? RINCON : VUELOS[vuelo % VUELOS.length]!
   const hayDatos = CAMPOS_BRIEF.some((campo) => brief[campo.id].trim())
 
-  return (
-    <section className="contacto-asistente-section relative flex min-h-[100dvh] w-full items-center justify-center px-4 pb-10 pt-24">
-      {/* Capa de vuelo: el robot va por detrás de todo, sin estorbar al chat. */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.8 }}
-        onViewportEnter={() => setEntrado(true)}
-        aria-hidden="true"
-      >
+  // Chat: marco sin relleno, para que el robot se vea volar por detrás. Se
+  // comparte entre la sección del home y el panel flotante del header.
+  const chat = (
         <motion.div
-          className="absolute w-[46vw] max-w-[320px] sm:w-[34vw]"
-          // Entra desde el fondo: lejos y desenfocado, y se acomoda al frente.
-          initial={{ left: "50%", top: "52%", x: "-50%", y: "-50%", scale: 0.15, opacity: 0, filter: "blur(14px)" }}
-          animate={
-            entrado
-              ? {
-                  left: `${posicion.x}%`,
-                  top: `${posicion.y}%`,
-                  x: "-50%",
-                  y: "-50%",
-                  scale: posicion.escala,
-                  rotate: posicion.giro,
-                  opacity: 1,
-                  filter: "blur(0px)",
-                }
-              : undefined
-          }
-          transition={{ type: "spring", stiffness: 42, damping: 15, mass: 1.1 }}
-        >
-          {/* Vuelo estacionario: cabeceo y balanceo suaves, siempre encendidos.
-              En pantalla estrecha vuela detrás del chat, así que se atenúa. */}
-          <motion.div
-            className="opacity-25 sm:opacity-100"
-            animate={{ y: [0, -16, 0, 10, 0], rotate: [0, 2.5, 0, -2.5, 0] }}
-            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <RobotAsistente animo={animo} hablando={hablando} className="w-full" />
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
-      <div className="relative z-10 mx-auto flex h-[min(760px,calc(100dvh-140px))] w-full max-w-3xl">
-        {/* Chat: marco sin relleno, para que el robot se vea volar por detrás. */}
-        <motion.div
-          className="relative flex min-h-0 w-full min-w-0 flex-col p-5 sm:p-6"
+          className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col p-5 sm:p-6"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -381,6 +349,80 @@ export default function ContactoAsistenteSection() {
             )}
           </AnimatePresence>
         </motion.div>
+  )
+
+  // Panel flotante (móvil): cabecera con el robot y el mismo chat debajo.
+  if (modo === "panel") {
+    return (
+      <div className="flex h-full min-h-0 flex-col">
+        <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3">
+          <RobotAsistente animo={animo} hablando={hablando} className="h-9 w-12 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-white">Asistente V1TR0</p>
+            <p className="text-[11px] text-white/45">{cargando ? "Escribiendo…" : "Cuéntanos qué quieres construir"}</p>
+          </div>
+          {onCerrar && (
+            <button
+              type="button"
+              onClick={onCerrar}
+              aria-label="Cerrar asistente"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/70 transition-colors hover:border-[#26FFDF]/50 hover:text-[#26FFDF]"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          )}
+        </div>
+        <div className="flex min-h-0 flex-1 flex-col">{chat}</div>
+      </div>
+    )
+  }
+
+  return (
+    <section className="contacto-asistente-section relative flex min-h-[100dvh] w-full items-center justify-center px-4 pb-10 pt-24">
+      {/* Capa de vuelo: el robot va por detrás de todo, sin estorbar al chat. */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.8 }}
+        onViewportEnter={() => setEntrado(true)}
+        aria-hidden="true"
+      >
+        <motion.div
+          className="absolute w-[46vw] max-w-[320px] sm:w-[34vw]"
+          // Entra desde el fondo: lejos y desenfocado, y se acomoda al frente.
+          initial={{ left: "50%", top: "52%", x: "-50%", y: "-50%", scale: 0.15, opacity: 0, filter: "blur(14px)" }}
+          animate={
+            entrado
+              ? {
+                  left: `${posicion.x}%`,
+                  top: `${posicion.y}%`,
+                  x: "-50%",
+                  y: "-50%",
+                  scale: posicion.escala,
+                  rotate: posicion.giro,
+                  opacity: 1,
+                  filter: "blur(0px)",
+                }
+              : undefined
+          }
+          transition={{ type: "spring", stiffness: 42, damping: 15, mass: 1.1 }}
+        >
+          {/* Vuelo estacionario: cabeceo y balanceo suaves, siempre encendidos.
+              En pantalla estrecha vuela detrás del chat, así que se atenúa. */}
+          <motion.div
+            className="opacity-25 sm:opacity-100"
+            animate={{ y: [0, -16, 0, 10, 0], rotate: [0, 2.5, 0, -2.5, 0] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <RobotAsistente animo={animo} hablando={hablando} className="w-full" />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      <div className="relative z-10 mx-auto flex h-[min(760px,calc(100dvh-140px))] w-full max-w-3xl">
+        {chat}
       </div>
     </section>
   )
