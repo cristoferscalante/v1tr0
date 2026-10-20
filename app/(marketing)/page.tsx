@@ -11,6 +11,7 @@ import ContactoAsistenteSection from "@/components/home/sections/contact/Contact
 import BlogsInvestigacionSection from "@/components/home/sections/newsletter/BlogsInvestigacionSection"
 
 import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
+import SmoothScroll from "@/components/home/layout/SmoothScroll"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
 import UnifiedContactModal from "@/components/home/sections/contact/UnifiedContactModal"
 import FooterSection from "@/components/global/FooterSection"
@@ -21,6 +22,8 @@ export default function Home() {
 
   return (
     <ScrollProvider>
+      {/* Scroll suave en móvil (Lenis). En escritorio no se activa. */}
+      <SmoothScroll />
       <BackgroundAnimation />
       
       <HomeScrollSnap>
