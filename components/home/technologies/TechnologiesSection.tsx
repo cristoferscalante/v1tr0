@@ -2,12 +2,13 @@
 
 import React, { useRef } from 'react';
 import { TechCarousel } from '@/components/ui/tech-carousel';
-import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiPostgresql, SiSupabase, SiGit, SiGithub } from "react-icons/si";
+import { SiReact, SiNextdotjs, SiAstro, SiTypescript, SiTailwindcss, SiNodedotjs, SiMongodb, SiPostgresql, SiSupabase, SiGit, SiGithub } from "react-icons/si";
 import useSnapAnimations from '@/hooks/use-snap-animations';
 
 const techLogos = [
   { name: "React", icon: <SiReact className="text-[#61DAFB]" /> },
   { name: "Next.js", icon: <SiNextdotjs className="text-foreground" /> },
+  { name: "Astro", icon: <SiAstro className="text-[#BC52EE]" /> },
   { name: "TypeScript", icon: <SiTypescript className="text-[#3178C6]" /> },
   { name: "Tailwind CSS", icon: <SiTailwindcss className="text-[#06B6D4]" /> },
   { name: "Node.js", icon: <SiNodedotjs className="text-[#339933]" /> },

@@ -17,6 +17,8 @@ export interface ProductPackage {
   category: "package";
   badge?: string;
   productsIncluded: string[]; // IDs de productos incluidos
+  /** Si el paquete apunta a un sitio externo (p. ej. el POS), su URL. */
+  externalHref?: string;
 }
 
 export interface ProductVariant {
@@ -67,6 +69,7 @@ export const heroPackages: ProductPackage[] = [
     category: "package",
     badge: "Más Popular",
     productsIncluded: ["7", "pos-tablet", "pos-printer", "pos-scanner", "pos-cash-drawer"],
+    externalHref: "https://pos.v1tr0.com/",
   },
   {
     id: "pkg-iot-communication",

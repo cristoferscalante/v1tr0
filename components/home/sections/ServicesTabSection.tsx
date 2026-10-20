@@ -32,7 +32,7 @@ export const servicesData = [
         examples: [
           { title: "Pet Gourmet", description: "Tienda de alimento natural para mascotas.", image: "/imagenes/proyectos/petgourmet.png", href: "https://www.petgourmet.mx/" },
           { title: "Mister LYA", description: "E-commerce de marca con catálogo y pagos.", image: "/imagenes/proyectos/misterlya.png", href: "https://www.misterlya.com/" },
-          { title: "Casa de Fiestas", description: "Catálogo y pedidos para eventos.", image: "/imagenes/proyectos/casadefiesta.png", href: "http://casadefiesta.co/" },
+          { title: "V1TR0 POS", description: "Punto de venta en el celular: vende, cobra e inventaría.", image: "/imagenes/proyectos/pos.png", href: "https://pos.v1tr0.com/" },
         ],
       },
       {
@@ -45,6 +45,7 @@ export const servicesData = [
         examples: [
           { title: "Portafolio", description: "Sitio personal con identidad y 3D.", image: "/imagenes/proyectos/portafolio.png", href: "https://efren-portafolio.v1tr0.com/" },
           { title: "Megudan", description: "Constructora en guadua con modelo 3D interactivo.", image: "/imagenes/proyectos/megudan.png", href: "https://www.megudan.com/" },
+          { title: "TecnoCrypter", description: "Herramientas y guías de seguridad, gratis y sin registro.", image: "/imagenes/proyectos/tecnocrypter.png", href: "https://tecnocrypter.com/" },
         ],
       },
       {

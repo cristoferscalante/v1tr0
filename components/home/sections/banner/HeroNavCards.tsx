@@ -225,6 +225,9 @@ const odiseoFrames = Array.from(
 
 // La tarjeta de Blog usa a Apolo: al pasar el cursor se acerca al lente y el
 // monitor holográfico termina de dibujarse. Fotogramas de apolonew.mp4.
+// 116 fotogramas para que el gesto largo (6 s) corra fluido, pero reescalados
+// a 360 px de ancho (lo que muestra la tarjeta) para pesar menos sin perder
+// suavidad. En táctil solo se monta el de reposo (ver HoverFrameSequence).
 const apoloFrames = Array.from(
   { length: 116 },
   (_, i) => `/imagenes/home/apolo-blog/apolo-${String(i).padStart(2, "0")}.webp`,
@@ -255,6 +258,11 @@ export function HoverFrameSequence({
   const last = frames.length - 1
   const [frame, setFrame] = useState(last)
   const [animated, setAnimated] = useState(false)
+  // Solo los dispositivos que pueden reproducir el gesto (puntero fino, con
+  // hover y sin reduced-motion) montan toda la secuencia. En táctil o con
+  // reduced-motion basta el fotograma de reposo, así no se descargan decenas
+  // de imágenes (la de Apolo son 116 ≈ 6.4 MB) que nunca se verían animadas.
+  const [playable, setPlayable] = useState(false)
   const activeRef = useRef(active)
   activeRef.current = active
 
@@ -265,6 +273,7 @@ export function HoverFrameSequence({
     if (!enabled) {
       return
     }
+    setPlayable(true)
     setAnimated(true)
     setFrame(0)
 
@@ -286,22 +295,28 @@ export function HoverFrameSequence({
     return () => cancelAnimationFrame(raf)
   }, [last, forwardMs, backwardMs])
 
+  // Sin capacidad de reproducir: solo el fotograma de reposo (el último).
+  const montados = playable ? frames : [frames[last]!]
+
   return (
     <div className="relative h-full w-full">
-      {frames.map((src, i) => (
-        <Image
-          key={src}
-          src={src}
-          alt={i === last ? alt : ""}
-          aria-hidden={i !== last}
-          fill
-          sizes="(min-width: 768px) 33vw, 50vw"
-          // Todos montados y solo cambia cuál se ve: alternar el `src` parpadea.
-          className={`object-contain ${i === frame ? "opacity-100" : "opacity-0"}`}
-          // Solo se precarga el fotograma que se muestra primero.
-          priority={i === (animated ? 0 : last)}
-        />
-      ))}
+      {montados.map((src, i) => {
+        const idx = playable ? i : last
+        return (
+          <Image
+            key={src}
+            src={src}
+            alt={idx === last ? alt : ""}
+            aria-hidden={idx !== last}
+            fill
+            sizes="(min-width: 768px) 33vw, 50vw"
+            // Todos montados y solo cambia cuál se ve: alternar el `src` parpadea.
+            className={`object-contain ${idx === frame ? "opacity-100" : "opacity-0"}`}
+            // Solo se precarga el fotograma que se muestra primero.
+            priority={idx === (animated ? 0 : last)}
+          />
+        )
+      })}
     </div>
   )
 }

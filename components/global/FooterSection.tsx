@@ -83,6 +83,10 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
 
   const tituloColumna = `text-[11px] font-semibold uppercase tracking-[0.18em] mb-4 text-[#08A696]/80 dark:text-[#26FFDF]/70`
 
+  // En escritorio las columnas de enlaces bajan su título hasta quedar alineadas
+  // debajo del logo de la columna de marca (logo h-20 + mb-5 ≈ 6.25rem).
+  const navColumna = "lg:pt-[6.25rem]"
+
   const enlaceColumna =
     "text-sm text-[#04423c] dark:text-white/55 transition-colors duration-200 hover:text-[#08A696] dark:hover:text-[#26FFDF]"
 
@@ -105,15 +109,6 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
       aria-label="Pie de página V1TR0"
     >
       <div className="max-w-7xl mx-auto w-full">
-        <div className="footer-header animate-element text-center mb-12 sm:mb-14 relative z-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#04423c] dark:text-white">
-            Impulsando tu <span className="text-[#08A696] dark:text-[#26FFDF]">Éxito Digital</span>
-          </h2>
-          <div
-            className={`w-16 sm:w-20 h-1 bg-gradient-to-r from-[#08A696] to-[#26FFDF] mx-auto mt-5 rounded-full`}
-          />
-        </div>
-
         {/*
           Cuatro columnas en escritorio, dos en tableta, una en celular.
           La de marca va primera porque es la que carga la ficha NAP: si el
@@ -132,7 +127,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
               aria-hidden="true"
               width={56}
               height={48}
-              className="mb-4 h-12 w-auto"
+              className="mb-5 h-20 w-auto"
               priority={false}
             />
             <p className="text-lg font-bold text-[#04423c] dark:text-white">{siteConfig.company.legalName}</p>
@@ -161,7 +156,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             </div>
           </address>
 
-          <nav aria-label="Servicios">
+          <nav aria-label="Servicios" className={navColumna}>
             <h3 className={tituloColumna}>Servicios</h3>
             <ul className="space-y-2.5">
               {serviciosLinks.map((link) => (
@@ -174,7 +169,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             </ul>
           </nav>
 
-          <nav aria-label="Cobertura">
+          <nav aria-label="Cobertura" className={navColumna}>
             <h3 className={tituloColumna}>Cobertura</h3>
             {/*
               Sin estos enlaces las páginas por ubicación serían huérfanas:
@@ -192,7 +187,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             </ul>
           </nav>
 
-          <nav aria-label="Empresa">
+          <nav aria-label="Empresa" className={navColumna}>
             <h3 className={tituloColumna}>Empresa</h3>
             <ul className="space-y-2.5">
               {empresaLinks.map((link) => (

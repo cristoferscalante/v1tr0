@@ -68,11 +68,35 @@ function usePointer() {
       pointer.current.y = 0
       pointer.current.inside = false
     }
+    // Giroscopio (móvil): inclinar el teléfono mueve el escudo. gamma es el
+    // vuelco izquierda/derecha y beta el frontal; se acotan a un rango suave.
+    // El arrastre con el dedo ya funciona por `pointermove`; si ambos están
+    // activos, el último en disparar manda (al tocar, el drag; en reposo, el giro).
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (typeof e.gamma !== "number" || typeof e.beta !== "number") {
+        return
+      }
+      pointer.current.x = Math.max(-1, Math.min(1, e.gamma / 28))
+      pointer.current.y = Math.max(-1, Math.min(1, (e.beta - 42) / 28))
+      pointer.current.inside = true
+    }
     window.addEventListener("pointermove", onMove, { passive: true })
     document.documentElement.addEventListener("pointerleave", onLeave)
+    window.addEventListener("deviceorientation", onOrient)
+    // iOS exige pedir permiso de sensores dentro de un gesto: se solicita al
+    // primer toque. En Android y escritorio no hace falta (no existe el método).
+    const pedirPermiso = () => {
+      const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> }
+      if (typeof DOE.requestPermission === "function") {
+        DOE.requestPermission().catch(() => {})
+      }
+    }
+    window.addEventListener("touchend", pedirPermiso, { once: true })
     return () => {
       window.removeEventListener("pointermove", onMove)
       document.documentElement.removeEventListener("pointerleave", onLeave)
+      window.removeEventListener("deviceorientation", onOrient)
+      window.removeEventListener("touchend", pedirPermiso)
     }
   }, [])
   return pointer

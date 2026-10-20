@@ -30,19 +30,19 @@ export default function Home() {
         {/* Sección 2: Tarjetas de navegación */}
         <HomeBanner />
 
-        {/* Sección 3: Proyectos de clientes publicados */}
+        {/* Sección 3: Proyectos de clientes publicados (carrusel curvo) */}
         <ProyectosEnProduccion />
 
-        {/* Sección 4: Texto dinámico */}
+        {/* Sección 4: Tecnologías, justo después del carrusel. HomeScrollSnap la
+            reconoce por su tipo, no por su posición. */}
+        <TechnologiesSection />
+
+        {/* Sección 5: Texto dinámico */}
         <HomeTaglineSection />
-        
-        {/* Sección 5: el asistente. Ocupa el lugar de la vieja bifurcación
+
+        {/* Sección 6: el asistente. Ocupa el lugar de la vieja bifurcación
             software / hardware; las dos rutas siguen a mano como enlaces. */}
         <ContactoAsistenteSection />
-
-        {/* Sección 6: Tecnologías. HomeScrollSnap la reconoce por su posición
-            (antepenúltima, con el newsletter y el footer después). */}
-        <TechnologiesSection />
 
         {/* Sección 7: Newsletter de Blogs & Investigación, justo antes del footer. */}
         <BlogsInvestigacionSection />

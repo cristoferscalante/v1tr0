@@ -21,11 +21,10 @@ import { setIntroActive } from "@/lib/intro-store"
  * el hero aparece armado. Vive en el módulo: una recarga lo reinicia.
  */
 let introPlayed = false
-/** Respiro mínimo antes de arrancar el relleno, para que monte el primer fotograma. */
-const START_HOLD_MS = 120
-const FILL_SECONDS = 2.6
-/** Pausa con el escudo lleno antes de entrar solo al hero. */
-const HOLD_MS = 700
+/** El escudo se llena de color (como una carga). Rápido, para que no haya rato muerto. */
+const FILL_SECONDS = 1.4
+/** Pausa breve con el escudo lleno antes de entrar al hero. */
+const HOLD_MS = 500
 const EASE_OUT = [0.16, 1, 0.3, 1] as const
 
 const containerVariants = {
@@ -127,6 +126,16 @@ export default function HomeHero() {
   // Lente ASCII del escudo invertida: todo en caracteres y el cursor descubre el modelo
   const [asciiInverted, setAsciiInverted] = useState(false)
 
+  // Reloj de la barra de estado del hero móvil (estilo editorial).
+  const [hora, setHora] = useState("")
+  useEffect(() => {
+    const leer = () =>
+      new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: false })
+    setHora(leer())
+    const id = setInterval(() => setHora(leer()), 30000)
+    return () => clearInterval(id)
+  }, [])
+
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)")
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)")
@@ -149,7 +158,7 @@ export default function HomeHero() {
   }, [phase])
   useEffect(() => () => setIntroActive(false), [])
 
-  // Avance del relleno del escudo (0–100)
+  // Avance del relleno del escudo (0–100): el color sube como una carga.
   const progress = useMotionValue(0)
   const clipPath = useTransform(progress, (v) => `inset(${100 - v}% 0 0 0)`)
 
@@ -159,32 +168,27 @@ export default function HomeHero() {
     }
 
     let hold: ReturnType<typeof setTimeout> | undefined
-    let controls: ReturnType<typeof animate> | undefined
 
-    // Un solo momento: el escudo se llena mientras entra el texto de bienvenida.
-    // Sin esperar a una pantalla de bienvenida previa: un respiro mínimo para
-    // que monte el primer fotograma y arranca el relleno.
-    const start = setTimeout(() => {
-      controls = animate(progress, 100, {
-        duration: FILL_SECONDS,
-        ease: [0.65, 0, 0.35, 1],
-        onComplete: () => {
-          // Sin gesto el navegador no deja sonar: la música (encendida por
-          // defecto) arranca con el primer clic o toque; se deja precargada
-          sound.preload()
-          hold = setTimeout(() => {
-            // Se marca al entrar y no al montar: StrictMode monta el efecto dos
-            // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
-            introPlayed = true
-            setPhase("ready")
-          }, HOLD_MS)
-        },
-      })
-    }, START_HOLD_MS)
+    // El relleno de color arranca de golpe, desde el primer fotograma del
+    // montaje: sin espera previa, para no perder tiempo.
+    const controls = animate(progress, 100, {
+      duration: FILL_SECONDS,
+      ease: [0.4, 0, 0.2, 1],
+      onComplete: () => {
+        // Sin gesto el navegador no deja sonar: la música (encendida por
+        // defecto) arranca con el primer clic o toque; se deja precargada
+        sound.preload()
+        hold = setTimeout(() => {
+          // Se marca al entrar y no al montar: StrictMode monta el efecto dos
+          // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
+          introPlayed = true
+          setPhase("ready")
+        }, HOLD_MS)
+      },
+    })
 
     return () => {
-      clearTimeout(start)
-      controls?.stop()
+      controls.stop()
       if (hold) {
         clearTimeout(hold)
       }
@@ -195,7 +199,10 @@ export default function HomeHero() {
 
   const shieldTransition = instant ? { duration: 0 } : { duration: 1.3, ease: EASE_OUT }
   const ready = phase === "ready"
-  const use3D = desktop && pointerFine && !reduceMotion
+  // El escudo 3D ahora también en móvil: sin cursor, lo mueven el arrastre
+  // táctil y el giroscopio (ver HeroShield3D). En escritorio sigue pidiendo
+  // puntero fino.
+  const use3D = !reduceMotion && (desktop ? pointerFine : true)
   const show3D = use3D && landed && modelReady
 
   return (
@@ -228,27 +235,28 @@ export default function HomeHero() {
                   <WelcomeBracket mirrored />
                 </motion.div>
 
-                {/* Un solo momento: el texto de bienvenida aparece junto con el
-                    escudo que se llena, sin pantalla previa de solo texto. */}
+                {/* Un solo momento: el escudo aparece a todo color de golpe
+                    junto con el texto, sin relleno gradual ni pantalla de carga. */}
                 <div className="flex flex-col items-center text-center">
                   <motion.span
                     aria-hidden="true"
                     className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.42em] text-white/50"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT }}
+                    transition={{ duration: 0.4, delay: 0.05, ease: EASE_OUT }}
                   >
                     Bienvenido a
                   </motion.span>
 
-                  {/* El escudo se llena (layoutId: al entrar vuela a su sitio del hero) */}
+                  {/* El escudo se llena de color como una carga (layoutId: al
+                      salir vuela a su sitio del hero). */}
                   <motion.div
                     layoutId="hero-shield"
                     transition={shieldTransition}
                     className="relative mt-3 h-40 sm:h-48 lg:h-[min(52vh,28rem)] aspect-[551/634]"
                   >
-                    {/* Silueta apagada */}
-                    <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.1] grayscale" />
+                    {/* Silueta de base, visible desde el inicio (no un recuadro vacío) */}
+                    <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.22] grayscale" />
                     {/* Relleno a color que sube */}
                     <motion.div className="absolute inset-0" style={{ clipPath }}>
                       <Image {...SHIELD} alt="" priority className="h-full w-full" />
@@ -286,8 +294,29 @@ export default function HomeHero() {
             animate={{ opacity: ready ? 1 : 0 }}
             transition={{ duration: instant ? 0 : 1.2, delay: instant ? 0 : 1 }}
           />
+
+          {/* Barra de estado editorial (solo móvil): hora local + celda de acento.
+              Le da el tono brutalista/editorial de la referencia sin duplicar el
+              menú, que ya vive en el header flotante. */}
           <motion.div
-            className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left"
+            className="order-1 w-full lg:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: ready ? 1 : 0 }}
+            transition={{ duration: instant ? 0 : 0.6, delay: instant ? 0 : 1 }}
+          >
+            <div className="flex items-stretch overflow-hidden rounded-xl border border-white/10 text-[11px] uppercase tracking-[0.18em]">
+              <span className="flex items-center gap-2 px-3 py-2 font-mono text-white/55">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#26FFDF]" />
+                {hora || "--:--"} · Pitalito, CO
+              </span>
+              <span className="ml-auto flex items-center bg-[#26FFDF]/15 px-3 py-2 font-semibold text-[#26FFDF]">
+                Dev · IoT
+              </span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="order-3 relative z-10 flex w-full flex-col items-start text-left lg:order-none lg:items-start lg:text-left"
             variants={containerVariants}
             initial="hidden"
             animate={ready ? "visible" : "hidden"}
@@ -296,7 +325,7 @@ export default function HomeHero() {
               id="home-hero-title"
               custom={desktop}
               variants={itemVariants}
-              className="text-[2.6rem] sm:text-6xl xl:text-7xl font-semibold leading-[1.02] tracking-[-0.035em] text-white"
+              className="w-full border-t border-white/15 pt-5 text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.03em] text-white sm:text-6xl lg:border-0 lg:pt-0 lg:leading-[1.02] lg:tracking-[-0.035em] xl:text-7xl"
             >
               Desarrollo de software <span className="text-[#26FFDF]">a medida</span> para tu negocio
             </motion.h1>
@@ -307,7 +336,13 @@ export default function HomeHero() {
               cabe junto al texto: se queda arriba, pequeño, como sello. */}
           {/* Sin z-index propio: así el escudo queda bajo la capa (z-5) y el
               control, dentro de esta misma columna, puede quedar encima (z-10) */}
-          <div className="relative order-first flex justify-center lg:order-none">
+          <div className="relative order-2 my-6 flex justify-center lg:order-none lg:my-0">
+            {/* Marco editorial del escudo en móvil: una celda con borde tenue y
+                un aviso de que se puede mover (arrastre o inclinando el teléfono). */}
+            <div className="pointer-events-none absolute inset-x-[-0.5rem] inset-y-[-1rem] rounded-2xl border border-white/[0.07] lg:hidden" aria-hidden="true" />
+            <span className="pointer-events-none absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] uppercase tracking-[0.22em] text-white/35 lg:hidden">
+              Arrastra · inclina
+            </span>
             {/* group: el control de la lente aparece con el cursor sobre el escudo */}
             <div className="group relative flex items-center justify-center lg:h-[min(62vh,36rem)] lg:w-full">
               {ready && (

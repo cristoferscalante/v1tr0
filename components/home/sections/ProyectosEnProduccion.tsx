@@ -20,7 +20,7 @@ import useSnapAnimations from "@/hooks/use-snap-animations"
 
 const CarruselCurvo = dynamic(() => import("@/components/home/sections/proyectos/CarruselCurvo"), { ssr: false })
 
-const SELECCION = ["Megudan", "Pet Gourmet", "Mister LYA", "Casa de Fiestas"]
+const SELECCION = ["Megudan", "Pet Gourmet", "Mister LYA", "V1TR0 POS", "Portafolio", "TecnoCrypter"]
 
 const publicados = servicesData.flatMap((servicio) =>
   servicio.subcategories.flatMap((subcategoria) => subcategoria.examples.filter((ejemplo) => ejemplo.href)),

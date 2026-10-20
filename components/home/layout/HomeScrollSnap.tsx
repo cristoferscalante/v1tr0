@@ -1,11 +1,22 @@
 "use client"
 
-import { useEffect, useRef } from 'react'
+import { isValidElement, useEffect, useRef, type ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { useScrollContext } from '../shared/ScrollContext'
 import { useScrollSnapEnabled, useDeviceDetection } from '@/hooks/use-device-detection'
+import TechnologiesSection from '@/components/home/technologies/TechnologiesSection'
+import BlogsInvestigacionSection from '@/components/home/sections/newsletter/BlogsInvestigacionSection'
+import FooterSection from '@/components/global/FooterSection'
+
+// Secciones con tratamiento de alto propio. Se reconocen por tipo, no por
+// posición: así reordenar el home (p. ej. mover Tecnologías tras el carrusel)
+// no rompe sus alturas. FooterSection es forwardRef, por eso se compara también
+// con su envoltura.
+function sectionTypeOf(child: ReactNode): unknown {
+  return isValidElement(child) ? child.type : undefined
+}
 
 // Registrar los plugins
 if (typeof window !== 'undefined') {
@@ -259,9 +270,10 @@ export default function HomeScrollSnap({
     return (
       <div ref={containerRef} className={`relative ${className}`}>
         {children.map((child, index) => {
-          const isFooterSection = index === children.length - 1 // FooterSection
-          const isNewsletterSection = index === children.length - 2 // BlogsInvestigaciónSection (trae su propio min-h)
-          const isTechSection = index === children.length - 3 // TechnologiesSection
+          const type = sectionTypeOf(child)
+          const isFooterSection = type === FooterSection
+          const isNewsletterSection = type === BlogsInvestigacionSection // trae su propio min-h
+          const isTechSection = type === TechnologiesSection
 
           const heightClass = isFooterSection || isNewsletterSection
             ? ''
@@ -289,7 +301,7 @@ export default function HomeScrollSnap({
     <div ref={containerRef} className={`relative ${className}`}>
       {children.map((child, index) => {
         const isHorizontalSection = index === 1 // PinnedScrollSection
-        const isFooterSection = index === children.length - 1 // FooterSection
+        const isFooterSection = sectionTypeOf(child) === FooterSection
 
         if (isFooterSection) {
           return (
