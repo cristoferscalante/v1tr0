@@ -8,6 +8,7 @@ import HomeTaglineSection from "@/components/home/sections/banner/HomeTaglineSec
 import TechnologiesSection from "@/components/home/technologies/TechnologiesSection"
 import ProyectosEnProduccion from "@/components/home/sections/ProyectosEnProduccion"
 import ContactoAsistenteSection from "@/components/home/sections/contact/ContactoAsistenteSection"
+import BlogsInvestigacionSection from "@/components/home/sections/newsletter/BlogsInvestigacionSection"
 
 import HomeScrollSnap from "@/components/home/layout/HomeScrollSnap"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
@@ -39,10 +40,14 @@ export default function Home() {
             software / hardware; las dos rutas siguen a mano como enlaces. */}
         <ContactoAsistenteSection />
 
-        {/* Sección 6: Tecnologías. HomeScrollSnap la reconoce por ser la penúltima. */}
+        {/* Sección 6: Tecnologías. HomeScrollSnap la reconoce por su posición
+            (antepenúltima, con el newsletter y el footer después). */}
         <TechnologiesSection />
-        
-        {/* Sección 7: Footer */}
+
+        {/* Sección 7: Newsletter de Blogs & Investigación, justo antes del footer. */}
+        <BlogsInvestigacionSection />
+
+        {/* Sección 8: Footer */}
         <FooterSection />
       </HomeScrollSnap>
       

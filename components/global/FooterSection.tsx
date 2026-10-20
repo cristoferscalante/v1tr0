@@ -81,10 +81,10 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
     }
   })
 
-  const tituloColumna = `text-xs font-semibold uppercase tracking-wider mb-4 text-[#26FFDF]/70`
+  const tituloColumna = `text-[11px] font-semibold uppercase tracking-[0.18em] mb-4 text-[#08A696]/80 dark:text-[#26FFDF]/70`
 
   const enlaceColumna =
-    "text-sm text-[#04423c] dark:text-[#b2fff6] transition-colors duration-200 hover:text-[#08A696] dark:hover:text-[#26FFDF]"
+    "text-sm text-[#04423c] dark:text-white/55 transition-colors duration-200 hover:text-[#08A696] dark:hover:text-[#26FFDF]"
 
   return (
     <footer
@@ -100,14 +100,14 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
       className={`footer-section w-full ${
         isShop
           ? ("bg-[#1e2123]")
-          : ("bg-[#02505931] backdrop-blur-sm")
-      } pt-16 sm:pt-20 pb-24 sm:pb-12 px-4 sm:px-6 font-sans relative`}
+          : ("bg-white/[0.015] backdrop-blur-sm border-t border-white/[0.07]")
+      } pt-16 sm:pt-20 pb-24 sm:pb-14 px-4 sm:px-6 font-sans relative`}
       aria-label="Pie de página V1TR0"
     >
       <div className="max-w-7xl mx-auto w-full">
         <div className="footer-header animate-element text-center mb-12 sm:mb-14 relative z-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#04423c] dark:text-[#26FFDF]">
-            Impulsando tu Éxito Digital
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#04423c] dark:text-white">
+            Impulsando tu <span className="text-[#08A696] dark:text-[#26FFDF]">Éxito Digital</span>
           </h2>
           <div
             className={`w-16 sm:w-20 h-1 bg-gradient-to-r from-[#08A696] to-[#26FFDF] mx-auto mt-5 rounded-full`}
@@ -119,8 +119,8 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
           La de marca va primera porque es la que carga la ficha NAP: si el
           espacio obliga a apilar, el dato de contacto queda arriba.
         */}
-        <div className="footer-grid animate-element relative z-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-          <address className="not-italic">
+        <div className="footer-grid animate-element relative z-10 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          <address className="not-italic col-span-2 lg:col-span-1">
             {/*
               El isotipo tiene dos versiones: la de modo claro lleva el trazo
               en verde oscuro para que contraste sobre fondo blanco. Va marcado
@@ -135,11 +135,11 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
               className="mb-4 h-12 w-auto"
               priority={false}
             />
-            <p className="text-lg font-bold text-[#04423c] dark:text-[#26FFDF]">{siteConfig.company.legalName}</p>
-            <p className="mt-2 max-w-xs text-sm leading-relaxed text-[#04423c]/80 dark:text-[#b2fff6]/80">
+            <p className="text-lg font-bold text-[#04423c] dark:text-white">{siteConfig.company.legalName}</p>
+            <p className="mt-2 max-w-xs text-sm leading-relaxed text-[#04423c]/80 dark:text-white/55">
               Software a medida, hardware e IoT desde {siteConfig.company.address.city}, {siteConfig.company.address.region}.
             </p>
-            <div className="mt-5 space-y-1.5 text-sm text-[#04423c] dark:text-[#b2fff6]">
+            <div className="mt-5 space-y-1.5 text-sm text-[#04423c] dark:text-white/60">
               <p>{siteConfig.company.address.street}</p>
               <p>
                 {siteConfig.company.address.city}, {siteConfig.company.address.region}, {siteConfig.company.address.country}
@@ -157,7 +157,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
                   {siteConfig.company.email}
                 </a>
               </p>
-              <p className="text-[#04423c]/60 dark:text-[#b2fff6]/60">Lunes a viernes, 8:00 a 18:00</p>
+              <p className="text-[#04423c]/60 dark:text-white/40">Lunes a viernes, 8:00 a 18:00</p>
             </div>
           </address>
 
@@ -213,10 +213,10 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
             que es `fixed` y por tanto se monta sobre lo que quede al final del
             scroll: sin esto, tapaba el aviso de copyright.
           */
-          className={`footer-bottom animate-element relative z-10 mt-12 flex flex-col items-center gap-6 border-t pt-8 sm:mt-14 md:flex-row md:justify-between md:pl-20 border-[#08A696]/20`}
+          className={`footer-bottom animate-element relative z-10 mt-12 flex flex-col items-center gap-6 border-t pt-8 sm:mt-14 md:flex-row md:justify-between md:pl-20 border-[#08A696]/20 dark:border-white/10`}
         >
           <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-5 sm:text-left">
-            <p className="text-sm font-medium text-[#04423c] dark:text-[#b2fff6]">
+            <p className="text-sm font-medium text-[#04423c] dark:text-white/55">
               &copy; {new Date().getFullYear()} {siteConfig.name}
             </p>
             <nav className="flex gap-4" aria-label="Navegación legal">
@@ -236,7 +236,7 @@ const FooterSection = forwardRef<HTMLDivElement, FooterSectionProps>(() => {
                 target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                 aria-label={link.label}
-                className="flex items-center justify-center rounded-xl border border-[#08A696]/60 bg-white/70 p-2.5 text-[#085c54] transition-colors duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:border-[#08A696]/40 dark:bg-[#08A696]/15 dark:text-[#26FFDF] dark:hover:border-[#26FFDF] dark:hover:bg-[#08A696]/30"
+                className="flex items-center justify-center rounded-xl border border-[#08A696]/60 bg-white/70 p-2.5 text-[#085c54] transition-colors duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:border-white/10 dark:bg-white/[0.02] dark:text-white/70 dark:hover:border-[#26FFDF]/50 dark:hover:bg-white/[0.04] dark:hover:text-[#26FFDF]"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
               >

@@ -260,9 +260,10 @@ export default function HomeScrollSnap({
       <div ref={containerRef} className={`relative ${className}`}>
         {children.map((child, index) => {
           const isFooterSection = index === children.length - 1 // FooterSection
-          const isTechSection = index === children.length - 2 // TechnologiesSection
+          const isNewsletterSection = index === children.length - 2 // BlogsInvestigaciónSection (trae su propio min-h)
+          const isTechSection = index === children.length - 3 // TechnologiesSection
 
-          const heightClass = isFooterSection
+          const heightClass = isFooterSection || isNewsletterSection
             ? ''
             : isTechSection
               ? 'min-h-[50vh] flex items-center justify-center'

@@ -378,13 +378,12 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
       onBlur={() => setHovered(false)}
       // El personaje de Tienda solo sigue al cursor dentro de su tarjeta.
       data-turntable-area=""
-      // En la home la tarjeta cambia de forma según el ancho: en móvil es una
-      // fila (figura a la izquierda, animación y título a la derecha) para no
-      // apilar tres tarjetas altas; desde md vuelve a ser columna, con la
-      // figura a una altura acotada por el viewport y no estirada a pantalla.
+      // En la home la tarjeta es siempre una columna: en móvil se oculta la
+      // figura animada y solo quedan el mazo/carrusel y el título; desde md
+      // reaparece la figura arriba, a una altura acotada por el viewport.
       className={
         asLink
-          ? "relative overflow-hidden grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 md:flex md:flex-col md:items-stretch text-left rounded-[2rem] md:rounded-[2.5rem] border border-white/[0.07] bg-white/[0.015] p-4 md:p-5 lg:p-6 transition-colors duration-300 hover:border-white/15 hover:bg-white/[0.03] hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
+          ? "relative overflow-hidden flex flex-col items-stretch text-left rounded-[2rem] md:rounded-[2.5rem] border border-white/[0.07] bg-white/[0.015] p-4 md:p-5 lg:p-6 transition-colors duration-300 hover:border-white/15 hover:bg-white/[0.03] hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF]/60"
           : "relative flex flex-col h-full min-h-[200px] sm:min-h-[215px]"
       }
     >
@@ -395,7 +394,7 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
         <div
           className={`pointer-events-none relative z-10 ${
             asLink
-              ? "h-[200px] mt-2 md:h-[clamp(220px,36vh,360px)] md:mt-5 lg:mt-7"
+              ? "hidden md:block md:h-[clamp(220px,36vh,360px)] md:mt-5 lg:mt-7"
               : "flex-1 min-h-[200px] -mt-12 sm:-mt-16 -mx-2 sm:-mx-4"
           }`}
         >
