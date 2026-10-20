@@ -141,6 +141,23 @@ export default function ProyectosEnProduccion() {
 
       <h2 className="sr-only">Proyectos en producción</h2>
 
+      {/* Mensaje clave del beat (solo móvil): sobre el carrusel, sin tapar las tarjetas */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-safe,5rem)+0.5rem)] z-10 px-5 lg:hidden"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+      >
+        <p className="text-[10px] uppercase tracking-[0.22em] text-[#26FFDF]/80">En producción</p>
+        <p className="mt-2 text-[2.2rem] font-semibold leading-[0.98] tracking-[-0.03em] text-white">
+          Pruebas,
+          <br />
+          no promesas.
+        </p>
+      </motion.div>
+
       {/* Enlaces accesibles: el lienzo no es navegable por teclado ni lector. */}
       <ul className="sr-only">
         {proyectos.map((p) => (
