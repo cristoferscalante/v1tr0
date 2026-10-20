@@ -83,18 +83,7 @@ export default function ServiciosCta() {
         className="pointer-events-none absolute bottom-[-20%] left-1/2 h-[70%] w-[80%] -translate-x-1/2 rounded-full bg-[#26FFDF]/[0.06] blur-3xl"
       />
 
-      {/* El escudo que abre la página también la cierra */}
-      <Image
-        src="/imagenes/logos/escudo-logo.png"
-        alt=""
-        width={551}
-        height={634}
-        className="relative mb-6 h-16 w-auto drop-shadow-[0_0_18px_rgba(38,255,223,0.25)]"
-      />
-      <p className="relative text-[11px] uppercase tracking-[0.2em] text-white/50">
-        <span className="text-white/30">04</span>&nbsp;&nbsp;Tu proyecto
-      </p>
-      <h2 className="cta-title relative mt-8 text-[14vw] font-bold leading-[0.85] tracking-tighter text-white lg:text-[10vw]">
+      <h2 className="cta-title relative mt-16 text-[14vw] font-bold leading-[0.85] tracking-tighter text-white lg:text-[10vw]">
         ¿Empezamos<span className="font-serif font-normal italic text-[#26FFDF]">?</span>
       </h2>
       <p className="relative mt-8 max-w-md text-base leading-relaxed text-textMuted">
