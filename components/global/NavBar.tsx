@@ -27,6 +27,25 @@ export default function Navbar() {
     setChatAbierto((abierto) => !abierto)
   }
 
+  // El robot del header "habla" cada tanto (aparece la onda) para invitar a
+  // abrirlo. Parpadea solo, por su cuenta. Con el panel abierto se calla.
+  const [iconoHablando, setIconoHablando] = useState(false)
+  useEffect(() => {
+    if (chatAbierto || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIconoHablando(false)
+      return
+    }
+    let fin: ReturnType<typeof setTimeout> | undefined
+    const ciclo = setInterval(() => {
+      setIconoHablando(true)
+      fin = setTimeout(() => setIconoHablando(false), 1400)
+    }, 3200)
+    return () => {
+      clearInterval(ciclo)
+      clearTimeout(fin)
+    }
+  }, [chatAbierto])
+
   useEffect(() => {
     if (!chatAbierto) {
       return
@@ -99,7 +118,7 @@ export default function Navbar() {
                 chatAbierto ? "border-[#26FFDF]/50 bg-[#26FFDF]/10" : "border-white/10"
               }`}
             >
-              <RobotAsistente className="h-7 w-10" />
+              <RobotAsistente hablando={iconoHablando} rapido className="h-7 w-10" />
             </button>
           </div>
 
