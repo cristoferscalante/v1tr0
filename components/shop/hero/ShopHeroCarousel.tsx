@@ -184,10 +184,12 @@ export const ShopHeroCarousel: React.FC = () => {
             {/* CTA - Minimalista */}
             <motion.div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 pt-2 md:pt-4" custom={direction} variants={textVariants}>
               <Link
-                href={`/tienda/${currentPackage.slug}`}
+                href={currentPackage.externalHref ?? `/tienda/${currentPackage.slug}`}
+                target={currentPackage.externalHref ? "_blank" : undefined}
+                rel={currentPackage.externalHref ? "noopener noreferrer" : undefined}
                 className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white/90 dark:bg-[#02505931] backdrop-blur-sm border border-[#08A696]/60 dark:border-[#08A696]/30 rounded-2xl text-[#08A696] dark:text-[#26FFDF] font-semibold text-base md:text-lg transition-all duration-300 hover:border-[#08A696] hover:bg-[#08A696]/10 dark:hover:bg-[#02505950] hover:shadow-xl hover:shadow-[#08A696]/10 hover:scale-105 inline-flex items-center justify-center gap-2"
               >
-                Ver Paquete
+                {currentPackage.externalHref ? "Probar el POS" : "Ver Paquete"}
                 <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
               </Link>
             </motion.div>
