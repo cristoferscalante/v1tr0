@@ -40,8 +40,8 @@ const MINIMO_BUCLE = 8
 const CAMARA = { z: 3.2, fov: 38 }
 /** Lente del cursor: radio (en alturas de tarjeta), abombado y aumento. */
 const LENTE = { radio: 0.36, abombado: 0.3, hundido: 0.09, aumento: 0.38 }
-/** Duración de la entrada a un proyecto: centrar, aplanar y llenar la pantalla. */
-const DURACION_ENTRADA = 1.1
+/** Duración de la desintegración en bloques de la tarjeta elegida. */
+const DURACION_ENTRADA = 0.9
 /** Antes de entrar: salto de la tarjeta y ola que sale del punto del clic. */
 const OLA = { duracion: 0.55, salto: 0.07, amplitud: 0.06, velocidad: 3.2, frecuencia: 9 }
 
@@ -119,6 +119,7 @@ const fragment = /* glsl */ `
   uniform float uHover;
   uniform float uFoco;
   uniform float uSalida;
+  uniform float uDissolve;
   uniform vec2 uTam;
   uniform float uFuerza;
   uniform float uRadioLente;
@@ -148,6 +149,21 @@ const fragment = /* glsl */ `
     // Profundidad: la tarjeta en foco va plena; las demás se apagan y se
     // vuelven translúcidas.
     color *= mix(0.6, 1.0, uFoco) * (0.94 + 0.06 * uHover);
+
+    // Desintegración en bloques tipo píxeles: al entrar, la tarjeta elegida se
+    // rompe en celdas cuadradas que desaparecen al azar; cada bloque destella
+    // (pequeña explosión cúbica) justo antes de irse.
+    if (uDissolve > 0.0) {
+      vec2 grid = vec2(floor(uAspecto * 26.0), 26.0);
+      vec2 celda = floor(vUv * grid);
+      float azar = fract(sin(dot(celda, vec2(41.3, 289.1))) * 43758.5453);
+      float umbral = uDissolve * 1.2 - 0.1;
+      if (azar < umbral) discard;
+      float destello = 1.0 - smoothstep(0.0, 0.11, azar - umbral);
+      color = mix(color, vec3(0.15, 1.0, 0.87), destello * 0.9);
+      color += destello * 0.6;
+    }
+
     gl_FragColor = vec4(color, alfa * mix(0.32, 1.0, uFoco) * uSalida);
     #include <colorspace_fragment>
   }
@@ -338,6 +354,7 @@ function Escena({
               uHover: { value: 0 },
               uFoco: { value: 1 },
               uSalida: { value: 1 },
+              uDissolve: { value: 0 },
               uTam: { value: new THREE.Vector2(1, 1) },
             },
           }),
@@ -411,12 +428,12 @@ function Escena({
       ? THREE.MathUtils.clamp((transcurrido - OLA.duracion * 0.7) / DURACION_ENTRADA, 0, 1)
       : 0
     const k = suavizar(progreso)
-    const tanMedio = Math.tan(THREE.MathUtils.degToRad(CAMARA.fov / 2))
-    const aspecto = size.width / Math.max(size.height, 1)
-    const zLleno = (Math.min(altoTarjeta, anchoTarjeta / aspecto) / (2 * tanMedio)) * 0.96
-    camera.position.z = THREE.MathUtils.lerp(CAMARA.z, zLleno, k)
-    uniformesCompartidos.uPlano.value = Math.min(1, k * 1.6)
-    materialPiso.uniforms.uAlfa!.value = 1 - k
+    // Sin zoom: la tarjeta elegida se queda en su sitio y se desintegra en
+    // bloques (uDissolve, más abajo). La cámara, el cilindro y el piso no se
+    // tocan durante la entrada.
+    camera.position.z = CAMARA.z
+    uniformesCompartidos.uPlano.value = 0
+    materialPiso.uniforms.uAlfa!.value = 1
 
     // Cursor: se intersecta el rayo con el cilindro de las tarjetas y el
     // punto se expresa como longitud de arco, igual que en el vertex shader.
@@ -464,10 +481,11 @@ function Escena({
       // 1 en el centro, 0 a partir de una tarjeta de distancia.
       material.uniforms.uFoco!.value = 1 - THREE.MathUtils.smoothstep(Math.abs(x), 0, paso * 0.85)
       const elegida = e.entrada?.indice === i
-      material.uniforms.uSalida!.value = e.entrada && !elegida ? 1 - k : 1
-      material.uniforms.uRadioEsquina!.value = 0.045 * (elegida ? 1 - k : 1)
+      // Las demás tarjetas no se desvanecen; solo la elegida se desintegra.
+      material.uniforms.uSalida!.value = 1
+      material.uniforms.uDissolve!.value = elegida ? k : 0
       material.uniforms.uTam!.value.set(anchoTarjeta, altoTarjeta)
-      // La elegida se dibuja encima de todo mientras crece.
+      // La elegida se dibuja encima de todo mientras se desintegra.
       malla.renderOrder = elegida ? 10 : 0
       const meta = hover.current === i ? 1 : 0
       material.uniforms.uHover!.value += (meta - material.uniforms.uHover!.value) * 0.15
