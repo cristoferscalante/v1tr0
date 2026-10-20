@@ -27,7 +27,7 @@ const BLOG_POSTS = [
  * gramática que el mazo de webs de Servicios, pero con la silueta de una
  * tarjeta de artículo (portada arriba, titular abajo) en vez de un navegador.
  */
-function BlogIllustration({ }: { glow?: boolean }) {
+export function BlogIllustration({ }: { glow?: boolean }) {
   return (
     <div className="relative h-full w-full flex items-center justify-center">
       <div className="relative h-[72%] aspect-[3/4]">
@@ -98,7 +98,7 @@ const SHELF_POSES = [
  * Servicios: mazo fijo de mini-navegadores con webs publicadas, Megudan al
  * frente. No rota ni reacciona al cursor: en la tarjeta solo se mueve el personaje.
  */
-function WebDeckIllustration({ }: { glow?: boolean }) {
+export function WebDeckIllustration({ }: { glow?: boolean }) {
   return (
     <div className="relative h-full w-full flex items-center justify-center">
       <div className="relative h-[60%] aspect-[16/10]">
@@ -149,7 +149,7 @@ interface DeckProduct {
  * /api/products). El del medio va al frente y en grande. No rota ni reacciona
  * al cursor: en la tarjeta solo se mueve el personaje.
  */
-function ProductDeckIllustration({ }: { glow?: boolean }) {
+export function ProductDeckIllustration({ }: { glow?: boolean }) {
   const [images, setImages] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -325,6 +325,8 @@ const CARDS = [
   {
     href: "/servicios",
     title: "Desarrollo de software",
+    // Mensaje clave del beat (se muestra en móvil, bajo el título).
+    message: "Lo diseñamos, programamos y dejamos en producción.",
     Illustration: WebDeckIllustration,
     figure: devService,
     sequence: { frames: odiseoFrames },
@@ -332,6 +334,7 @@ const CARDS = [
   {
     href: "/tienda",
     title: "Tienda",
+    message: "Hardware y sistemas POS listos para vender.",
     Illustration: ProductDeckIllustration,
     figure: dataService,
     turntable: { frames: posTurnFrames, frontIndex: POS_FRONT_FRAME },
@@ -339,6 +342,7 @@ const CARDS = [
   {
     href: "/blog",
     title: "Blog",
+    message: "Investigación en IA, datos y software.",
     Illustration: BlogIllustration,
     figure: autoService,
     // Gesto lento, cerca del ritmo del video original.
@@ -353,7 +357,7 @@ type HeroCard = (typeof CARDS)[number]
  * hacia el lado donde está el puntero dentro de la tarjeta.
  */
 function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: boolean; asLink?: boolean }) {
-  const { href, title, Illustration, figure, turntable, sequence } = card
+  const { href, title, message, Illustration, figure, turntable, sequence } = card
   const [hovered, setHovered] = useState(false)
 
   // La figura sólo crece: no se desplaza, para que siga centrada.
@@ -471,6 +475,16 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
             <Illustration glow={false} />
           </div>
           <h3 className={`mt-3 md:mt-4 text-center text-base md:text-lg font-bold ${accentText}`}>{title}</h3>
+          {/* Mensaje clave del beat, solo móvil */}
+          <motion.p
+            className="mt-1.5 max-w-[16rem] text-center text-sm leading-snug text-white/60 md:hidden"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            {message}
+          </motion.p>
         </div>
       )}
     </Wrapper>

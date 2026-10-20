@@ -133,8 +133,11 @@ const PARPADEO = { duration: 0.18, repeat: Infinity, repeatDelay: 4.5, repeatTyp
 export default function RobotAsistente({
   animo = "neutral",
   hablando = false,
+  rapido = false,
   className = "",
 }: {
+  /** Versión ícono (header): parpadea y se balancea más seguido. */
+  rapido?: boolean
   animo?: Animo
   /** Mientras habla, la cara pasa a ser una onda de sonido. */
   hablando?: boolean
@@ -167,7 +170,7 @@ export default function RobotAsistente({
       role="img"
       aria-label="Robot del asistente V1TR0"
       animate={{ y: [0, -5, 0], rotate: enReposo ? [0, 1.2, 0, -1.2, 0] : 0 }}
-      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      transition={{ duration: rapido ? 2.2 : 5, repeat: Infinity, ease: "easeInOut" }}
     >
       {/* Brazos y cuerpo: quietos, sostienen la composición. */}
       <motion.g animate={{ fill: gesto.color }} transition={{ duration: 0.4 }}>
@@ -254,6 +257,7 @@ export default function RobotAsistente({
           height={OJO_NORMAL.alto}
           rx={OJO_NORMAL.rx}
           fill="white"
+          initial={{ attrY: OJO_NORMAL.y, height: OJO_NORMAL.alto, rx: OJO_NORMAL.rx }}
           animate={{ attrY: gesto.izquierdo.y, height: gesto.izquierdo.alto, rx: gesto.izquierdo.rx }}
           transition={transicion}
         />
@@ -264,6 +268,7 @@ export default function RobotAsistente({
           height={OJO_NORMAL.alto}
           rx={OJO_NORMAL.rx}
           fill="white"
+          initial={{ attrY: OJO_NORMAL.y, height: OJO_NORMAL.alto, rx: OJO_NORMAL.rx }}
           animate={{ attrY: gesto.derecho.y, height: gesto.derecho.alto, rx: gesto.derecho.rx }}
           transition={transicion}
         />
@@ -275,12 +280,13 @@ export default function RobotAsistente({
           fill="black"
           initial={{ height: 0 }}
           animate={{ height: [0, 32] }}
-          transition={PARPADEO}
+          transition={rapido ? { ...PARPADEO, repeatDelay: 1.6 } : PARPADEO}
         />
 
         {/* Boca */}
         <motion.path
           d={GESTOS.neutral.boca}
+          initial={{ d: GESTOS.neutral.boca, stroke: GESTOS.neutral.color }}
           animate={{ d: gesto.boca, stroke: gesto.color }}
           transition={transicion}
           strokeWidth={3}
