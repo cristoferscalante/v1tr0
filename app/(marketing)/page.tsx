@@ -24,7 +24,13 @@ export default function Home() {
   // (mismo corte que el resto del sitio, lg = 1024 px) para no montar los dos.
   const [modo, setModo] = useState<"movil" | "escritorio" | null>(null)
   useEffect(() => {
-    setModo(window.matchMedia("(max-width: 1023px)").matches ? "movil" : "escritorio")
+    // Se re-evalúa al cruzar el corte (girar la tablet, redimensionar,
+    // abrir/cerrar DevTools): cada ancho ve su versión sin recargar.
+    const consulta = window.matchMedia("(max-width: 1023px)")
+    const sincronizar = () => setModo(consulta.matches ? "movil" : "escritorio")
+    sincronizar()
+    consulta.addEventListener("change", sincronizar)
+    return () => consulta.removeEventListener("change", sincronizar)
   }, [])
 
   if (modo === null) {
@@ -39,7 +45,12 @@ export default function Home() {
         <BackgroundAnimation />
         <MobileHome />
         <TechnologiesSection />
-        {/* El asistente en móvil vive en el panel flotante del header (robot del centro) */}
+        {/* En teléfono el asistente vive en el panel flotante del header (robot
+            del centro). En tablet (md) el header ya muestra los enlaces y no el
+            robot, así que ahí vuelve como sección. */}
+        <div className="hidden md:block">
+          <ContactoAsistenteSection />
+        </div>
         <BlogsInvestigacionSection />
         <FooterSection />
       </ScrollProvider>
