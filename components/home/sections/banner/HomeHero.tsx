@@ -272,7 +272,7 @@ export default function HomeHero() {
                     >
                       {/* Mismo tamaño que en su sitio final del hero: al entrar solo se
                           desliza, sin crecer ni achicarse */}
-                      <motion.div layoutId="hero-shield" transition={shieldTransition} className="relative h-32 sm:h-40 lg:h-[min(62vh,36rem)] aspect-[551/634]">
+                      <motion.div layoutId="hero-shield" transition={shieldTransition} className="relative h-48 sm:h-56 lg:h-[min(62vh,36rem)] aspect-[551/634]">
                         {/* Silueta apagada */}
                         <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.1] grayscale" />
                         {/* Relleno a color que sube */}
@@ -316,15 +316,6 @@ export default function HomeHero() {
             >
               Desarrollo de software <span className="text-[#26FFDF]">a medida</span> para tu negocio
             </motion.h1>
-
-            <motion.p
-              custom={desktop}
-              variants={itemVariants}
-              className="mt-7 max-w-xl text-base sm:text-lg leading-relaxed text-white/55"
-            >
-              Diseñamos y programamos aplicaciones web, tiendas en línea, sistemas de
-              información y automatizaciones, y los dejamos funcionando en producción.
-            </motion.p>
           </motion.div>
 
           {/* Sitio final del escudo, sin marco: en escritorio es grande y desborda
@@ -341,7 +332,7 @@ export default function HomeHero() {
                   transition={shieldTransition}
                   onLayoutAnimationComplete={() => setLanded(true)}
                   // Alto igual al del escudo de la intro (lg: el de esta caja)
-                  className="relative h-32 sm:h-40 lg:h-full aspect-[551/634]"
+                  className="relative h-48 sm:h-56 lg:h-full aspect-[551/634]"
                 >
                   {/* Flotación lenta una vez asentado */}
                   <motion.div
