@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef, useState, type CSSProperties } from "react"
-import Image from "next/image"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useGSAP } from "@gsap/react"
@@ -103,6 +102,94 @@ const BODY_AXIS = 0.5
 
 /** Esquinas recortadas del panel, estilo HUD. */
 const CHAMFER = "polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)"
+
+/**
+ * Ilustración central: en vez de la estatua, un emblema de código `</>` sobre
+ * una espina de energía vertical, el eje donde se anclan los nodos de cada
+ * capa. Todo es SVG inline y las animaciones son CSS (se dibujan los trazos,
+ * late el cursor, fluyen los datos hacia arriba, giran los anillos HUD). Con
+ * reduced-motion queda estático en su estado final. El viewBox 240×360 calza
+ * exacto con el contenedor aspect-[2/3], así que no hay bandas.
+ */
+function CodeEmblem() {
+  return (
+    <div className="code-emblem relative h-full w-full">
+      <svg viewBox="0 0 240 360" className="h-full w-full" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="anatomy-spine" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#26FFDF" stopOpacity="0.05" />
+            <stop offset="0.18" stopColor="#26FFDF" stopOpacity="0.85" />
+            <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.55" />
+            <stop offset="0.82" stopColor="#08A696" stopOpacity="0.85" />
+            <stop offset="1" stopColor="#08A696" stopOpacity="0.05" />
+          </linearGradient>
+          <filter id="anatomy-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="2.4" result="b" />
+            <feMerge>
+              <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Anillos HUD detrás del símbolo */}
+        <g>
+          <circle className="em-ring em-ring-a" cx="120" cy="178" r="82" stroke="#26FFDF" strokeWidth="1" opacity="0.18" strokeDasharray="70 240" />
+          <circle className="em-ring em-ring-b" cx="120" cy="178" r="60" stroke="#08A696" strokeWidth="1" opacity="0.22" strokeDasharray="4 10" />
+        </g>
+
+        {/* Espina de energía: el eje donde viven los nodos */}
+        <line x1="120" y1="34" x2="120" y2="332" stroke="url(#anatomy-spine)" strokeWidth="2" />
+        {/* Datos que fluyen hacia arriba por la espina */}
+        <line className="em-flow" x1="120" y1="34" x2="120" y2="332" stroke="#26FFDF" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="1 20" opacity="0.9" />
+
+        {/* El símbolo </> flota suave y se dibuja al entrar */}
+        <g className="em-symbol" filter="url(#anatomy-glow)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round">
+          <polyline className="em-draw em-d1" points="86,146 56,178 86,210" stroke="#26FFDF" pathLength={1} />
+          <line className="em-draw em-d2" x1="135" y1="134" x2="105" y2="222" stroke="#ffffff" pathLength={1} />
+          <polyline className="em-draw em-d3" points="154,146 184,178 154,210" stroke="#08A696" pathLength={1} />
+        </g>
+
+        {/* Cursor que parpadea bajo el símbolo */}
+        <rect className="em-caret" x="117.5" y="236" width="5" height="18" rx="1.5" fill="#26FFDF" />
+      </svg>
+
+      <style jsx>{`
+        .em-draw {
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          animation: em-draw 1s ease forwards;
+        }
+        .em-d1 { animation-delay: 0.1s; }
+        .em-d2 { animation-delay: 0.3s; }
+        .em-d3 { animation-delay: 0.5s; }
+        @keyframes em-draw { to { stroke-dashoffset: 0; } }
+
+        .em-symbol { animation: em-float 5.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+        @keyframes em-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+
+        .em-flow { animation: em-flow 1.6s linear infinite; }
+        @keyframes em-flow { to { stroke-dashoffset: -21; } }
+
+        .em-ring { transform-box: fill-box; transform-origin: center; }
+        .em-ring-a { animation: em-spin 34s linear infinite; }
+        .em-ring-b { animation: em-spin 22s linear infinite reverse; }
+        @keyframes em-spin { to { transform: rotate(360deg); } }
+
+        .em-caret { animation: em-blink 1.1s steps(1) infinite; }
+        @keyframes em-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+        @media (prefers-reduced-motion: reduce) {
+          .em-draw, .em-symbol, .em-flow, .em-ring, .em-caret { animation: none; }
+          .em-draw { stroke-dashoffset: 0; }
+        }
+      `}</style>
+    </div>
+  )
+}
 
 function LayerCard({
   layer,
@@ -261,19 +348,14 @@ export default function ServiciosAnatomia() {
           <div
             className="anatomy-figure relative mx-auto mb-6 aspect-[2/3] h-[55vh] lg:absolute lg:left-1/2 lg:top-0 lg:mb-0 lg:h-full lg:-translate-x-1/2"
           >
-            {/* Resplandor del eje, como una columna de energía */}
+            {/* Resplandor del eje, como una columna de energía (halo detrás del
+                emblema SVG) */}
             <div
               aria-hidden="true"
-              className="absolute top-[17%] h-[60%] w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#26FFDF]/50 via-white/25 to-[#08A696]/50 blur-[2px]"
+              className="absolute top-[9%] h-[82%] w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#26FFDF]/40 via-white/20 to-[#08A696]/40 blur-[3px]"
               style={{ left: `${BODY_AXIS * 100}%` }}
             />
-            <Image
-              src="/imagenes/home/carrusel/desarrollo_web_end_backup.webp"
-              alt="Odiseo, la estatua de V1TR0, con las capas del software marcadas sobre su eje"
-              fill
-              sizes="(min-width: 1024px) 40rem, 70vw"
-              className="object-contain opacity-90 [filter:grayscale(0.3)_brightness(0.8)]"
-            />
+            <CodeEmblem />
             {LAYERS.map((layer, index) => (
               // Anclaje sin tamaño en el eje; el nodo se centra con márgenes
               // negativos para que GSAP pueda escalarlo sin pisar un translate
