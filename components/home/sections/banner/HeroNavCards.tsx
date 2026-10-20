@@ -27,7 +27,7 @@ const BLOG_POSTS = [
  * gramática que el mazo de webs de Servicios, pero con la silueta de una
  * tarjeta de artículo (portada arriba, titular abajo) en vez de un navegador.
  */
-function BlogIllustration({ }: { glow?: boolean }) {
+export function BlogIllustration({ }: { glow?: boolean }) {
   return (
     <div className="relative h-full w-full flex items-center justify-center">
       <div className="relative h-[72%] aspect-[3/4]">
@@ -98,7 +98,7 @@ const SHELF_POSES = [
  * Servicios: mazo fijo de mini-navegadores con webs publicadas, Megudan al
  * frente. No rota ni reacciona al cursor: en la tarjeta solo se mueve el personaje.
  */
-function WebDeckIllustration({ }: { glow?: boolean }) {
+export function WebDeckIllustration({ }: { glow?: boolean }) {
   return (
     <div className="relative h-full w-full flex items-center justify-center">
       <div className="relative h-[60%] aspect-[16/10]">
@@ -149,7 +149,7 @@ interface DeckProduct {
  * /api/products). El del medio va al frente y en grande. No rota ni reacciona
  * al cursor: en la tarjeta solo se mueve el personaje.
  */
-function ProductDeckIllustration({ }: { glow?: boolean }) {
+export function ProductDeckIllustration({ }: { glow?: boolean }) {
   const [images, setImages] = useState<Record<string, string>>({})
 
   useEffect(() => {

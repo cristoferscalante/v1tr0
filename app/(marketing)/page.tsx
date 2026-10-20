@@ -15,17 +15,41 @@ import SmoothScroll from "@/components/home/layout/SmoothScroll"
 import { ScrollProvider } from "@/components/home/shared/ScrollContext"
 import UnifiedContactModal from "@/components/home/sections/contact/UnifiedContactModal"
 import FooterSection from "@/components/global/FooterSection"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import MobileHome from "@/components/home/mobile/MobileHome"
 
 export default function Home() {
   const [isUnifiedModalOpen, setIsUnifiedModalOpen] = useState(false)
+  // Móvil y escritorio son dos recorridos distintos: se decide al montar
+  // (mismo corte que el resto del sitio, lg = 1024 px) para no montar los dos.
+  const [modo, setModo] = useState<"movil" | "escritorio" | null>(null)
+  useEffect(() => {
+    setModo(window.matchMedia("(max-width: 1023px)").matches ? "movil" : "escritorio")
+  }, [])
+
+  if (modo === null) {
+    return <div className="min-h-[100svh]" />
+  }
+
+  if (modo === "movil") {
+    return (
+      <ScrollProvider>
+        {/* Scroll suave (Lenis) sincronizado con GSAP */}
+        <SmoothScroll />
+        <BackgroundAnimation />
+        <MobileHome />
+        <TechnologiesSection />
+        {/* El asistente en móvil vive en el panel flotante del header (robot del centro) */}
+        <BlogsInvestigacionSection />
+        <FooterSection />
+      </ScrollProvider>
+    )
+  }
 
   return (
     <ScrollProvider>
-      {/* Scroll suave en móvil (Lenis). En escritorio no se activa. */}
-      <SmoothScroll />
       <BackgroundAnimation />
-      
+
       <HomeScrollSnap>
         {/* Sección 1: Hero de aterrizaje con el h1 */}
         <HomeHero />
