@@ -254,6 +254,7 @@ export default function RobotAsistente({
           height={OJO_NORMAL.alto}
           rx={OJO_NORMAL.rx}
           fill="white"
+          initial={{ attrY: OJO_NORMAL.y, height: OJO_NORMAL.alto, rx: OJO_NORMAL.rx }}
           animate={{ attrY: gesto.izquierdo.y, height: gesto.izquierdo.alto, rx: gesto.izquierdo.rx }}
           transition={transicion}
         />
@@ -264,6 +265,7 @@ export default function RobotAsistente({
           height={OJO_NORMAL.alto}
           rx={OJO_NORMAL.rx}
           fill="white"
+          initial={{ attrY: OJO_NORMAL.y, height: OJO_NORMAL.alto, rx: OJO_NORMAL.rx }}
           animate={{ attrY: gesto.derecho.y, height: gesto.derecho.alto, rx: gesto.derecho.rx }}
           transition={transicion}
         />
@@ -281,6 +283,7 @@ export default function RobotAsistente({
         {/* Boca */}
         <motion.path
           d={GESTOS.neutral.boca}
+          initial={{ d: GESTOS.neutral.boca, stroke: GESTOS.neutral.color }}
           animate={{ d: gesto.boca, stroke: gesto.color }}
           transition={transicion}
           strokeWidth={3}
