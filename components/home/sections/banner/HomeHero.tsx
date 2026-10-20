@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
   AnimatePresence,
   LayoutGroup,
@@ -21,11 +21,11 @@ import { setIntroActive } from "@/lib/intro-store"
  * el hero aparece armado. Vive en el módulo: una recarga lo reinicia.
  */
 let introPlayed = false
-/** Pausa con la bienvenida ya escrita antes de pasar al escudo. */
-const WELCOME_HOLD_MS = 300
-const FILL_SECONDS = 3.2
+/** Respiro mínimo antes de arrancar el relleno, para que monte el primer fotograma. */
+const START_HOLD_MS = 120
+const FILL_SECONDS = 2.6
 /** Pausa con el escudo lleno antes de entrar solo al hero. */
-const HOLD_MS = 1000
+const HOLD_MS = 700
 const EASE_OUT = [0.16, 1, 0.3, 1] as const
 
 const containerVariants = {
@@ -109,8 +109,7 @@ type Phase = "welcome" | "loading" | "ready"
 export default function HomeHero() {
   // En una carga completa arranca siempre en la bienvenida (así coincide con el
   // HTML del servidor); solo al volver navegando, montado en el cliente, nace armado
-  const [phase, setPhase] = useState<Phase>(() => (introPlayed ? "ready" : "welcome"))
-  const welcomeRef = useRef<HTMLDivElement>(null)
+  const [phase, setPhase] = useState<Phase>(() => (introPlayed ? "ready" : "loading"))
   // Sin intro el escudo no viaja: aparece en su sitio
   const [instant] = useState(() => introPlayed)
   const reduceMotion = useReducedMotion()
@@ -159,44 +158,32 @@ export default function HomeHero() {
       return
     }
 
-    let cancelled = false
     let hold: ReturnType<typeof setTimeout> | undefined
     let controls: ReturnType<typeof animate> | undefined
 
-    // La bienvenida es CSS y pudo avanzar o terminar antes de hidratar: se
-    // espera a que sus animaciones acaben, no un tiempo fijo desde el montaje.
-    // Los rizos giran en loop (iteraciones infinitas): esos nunca terminan y no se esperan.
-    const animations = (welcomeRef.current?.getAnimations({ subtree: true }) ?? []).filter(
-      (animation) => animation.effect?.getTiming().iterations !== Infinity,
-    )
-    void Promise.all(animations.map((animation) => animation.finished)).then(() => {
-      if (cancelled) {
-        return
-      }
-      hold = setTimeout(() => {
-        setPhase("loading")
-        controls = animate(progress, 100, {
-          duration: FILL_SECONDS,
-          // Deja que la salida de la bienvenida y la entrada del escudo se crucen
-          delay: 0.5,
-          ease: [0.65, 0, 0.35, 1],
-          onComplete: () => {
-            // Sin gesto el navegador no deja sonar: la música (encendida por
-            // defecto) arranca con el primer clic o toque; se deja precargada
-            sound.preload()
-            hold = setTimeout(() => {
-              // Se marca al entrar y no al montar: StrictMode monta el efecto dos
-              // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
-              introPlayed = true
-              setPhase("ready")
-            }, HOLD_MS)
-          },
-        })
-      }, WELCOME_HOLD_MS)
-    })
+    // Un solo momento: el escudo se llena mientras entra el texto de bienvenida.
+    // Sin esperar a una pantalla de bienvenida previa: un respiro mínimo para
+    // que monte el primer fotograma y arranca el relleno.
+    const start = setTimeout(() => {
+      controls = animate(progress, 100, {
+        duration: FILL_SECONDS,
+        ease: [0.65, 0, 0.35, 1],
+        onComplete: () => {
+          // Sin gesto el navegador no deja sonar: la música (encendida por
+          // defecto) arranca con el primer clic o toque; se deja precargada
+          sound.preload()
+          hold = setTimeout(() => {
+            // Se marca al entrar y no al montar: StrictMode monta el efecto dos
+            // veces y, marcada de entrada, la segunda pasada se saltaría la intro.
+            introPlayed = true
+            setPhase("ready")
+          }, HOLD_MS)
+        },
+      })
+    }, START_HOLD_MS)
 
     return () => {
-      cancelled = true
+      clearTimeout(start)
       controls?.stop()
       if (hold) {
         clearTimeout(hold)
@@ -232,7 +219,6 @@ export default function HomeHero() {
               {/* El marco se queda de la bienvenida al arranque: lo que cambia es
                   lo de adentro. Al entrar se desvanece y el escudo sale de él. */}
               <div
-                ref={welcomeRef}
                 // En escritorio crece con el escudo, que ya carga a su tamaño final
                 className="relative flex h-[24rem] w-[min(88vw,38rem)] sm:h-[28rem] lg:h-[min(80vh,46rem)] lg:w-[min(88vw,42rem)] items-center justify-center"
               >
@@ -241,49 +227,47 @@ export default function HomeHero() {
                   <WelcomeBracket />
                   <WelcomeBracket mirrored />
                 </motion.div>
-                <AnimatePresence mode="wait">
-                  {phase === "welcome" ? (
-                    <motion.div
-                      key="welcome"
-                      aria-hidden="true"
-                      className="flex flex-col items-center text-center"
-                      initial={false}
-                      exit={{ opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.45, ease: EASE_OUT } }}
-                    >
-                      <span className="welcome-label font-mono text-[10px] sm:text-xs uppercase tracking-[0.42em] text-white/50">
-                        Bienvenido a
-                      </span>
-                      <span className="mt-5 flex overflow-hidden text-7xl sm:text-8xl lg:text-9xl font-semibold leading-[1.05] tracking-[-0.04em] text-white">
-                        {WELCOME_WORD.split("").map((letter, i) => (
-                          <span key={i} className="welcome-letter inline-block" style={{ ["--i" as string]: i }}>
-                            {letter}
-                          </span>
-                        ))}
-                      </span>
-                      <span className="welcome-rule mt-7 block h-px w-28 origin-center bg-[#26FFDF]" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="boot"
-                      className="flex flex-col items-center"
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, ease: EASE_OUT }}
-                    >
-                      {/* Mismo tamaño que en su sitio final del hero: al entrar solo se
-                          desliza, sin crecer ni achicarse */}
-                      <motion.div layoutId="hero-shield" transition={shieldTransition} className="relative h-48 sm:h-56 lg:h-[min(62vh,36rem)] aspect-[551/634]">
-                        {/* Silueta apagada */}
-                        <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.1] grayscale" />
-                        {/* Relleno a color que sube */}
-                        <motion.div className="absolute inset-0" style={{ clipPath }}>
-                          <Image {...SHIELD} alt="" priority className="h-full w-full" />
-                        </motion.div>
-                      </motion.div>
 
+                {/* Un solo momento: el texto de bienvenida aparece junto con el
+                    escudo que se llena, sin pantalla previa de solo texto. */}
+                <div className="flex flex-col items-center text-center">
+                  <motion.span
+                    aria-hidden="true"
+                    className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.42em] text-white/50"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT }}
+                  >
+                    Bienvenido a
+                  </motion.span>
+
+                  {/* El escudo se llena (layoutId: al entrar vuela a su sitio del hero) */}
+                  <motion.div
+                    layoutId="hero-shield"
+                    transition={shieldTransition}
+                    className="relative mt-3 h-40 sm:h-48 lg:h-[min(52vh,28rem)] aspect-[551/634]"
+                  >
+                    {/* Silueta apagada */}
+                    <Image {...SHIELD} alt="" priority className="absolute inset-0 h-full w-full opacity-[0.1] grayscale" />
+                    {/* Relleno a color que sube */}
+                    <motion.div className="absolute inset-0" style={{ clipPath }}>
+                      <Image {...SHIELD} alt="" priority className="h-full w-full" />
                     </motion.div>
-                  )}
-                </AnimatePresence>
+                  </motion.div>
+
+                  <motion.div
+                    aria-hidden="true"
+                    className="mt-4 flex flex-col items-center"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.25, ease: EASE_OUT }}
+                  >
+                    <span className="flex text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[-0.04em] text-white">
+                      {WELCOME_WORD}
+                    </span>
+                    <span className="mt-4 block h-px w-24 origin-center bg-[#26FFDF]" />
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
           )}
