@@ -123,7 +123,7 @@ const FloatingSocialButton: React.FC = () => {
   >
       <div className="tooltip-container relative group">
         <a
-          href="https://t.me/+573228836494"
+          href="https://t.me/cristoferscalante"
           target="_blank"
           rel="noopener noreferrer"
           // Mismo lenguaje sobrio que el control de música: círculo, filo fino, sin sombras
