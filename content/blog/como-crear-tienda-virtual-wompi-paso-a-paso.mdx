@@ -1,0 +1,110 @@
+---
+title: "Cómo crear una tienda virtual con Wompi paso a paso en Colombia"
+date: "2026-11-22"
+excerpt: "Aprende a crear y conectar tu tienda virtual con Wompi en Colombia: requisitos, comisiones, medios de pago como PSE y Nequi, pruebas y salida a producción."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/como-crear-tienda-virtual-wompi-paso-a-paso.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Comercio electrónico en Colombia"
+tags: ["tienda virtual Wompi", "pasarela de pagos Colombia", "integrar Wompi", "comercio electrónico Colombia", "cobrar con PSE y Nequi"]
+resumen: "Para crear una tienda virtual con Wompi en Colombia necesitas un catálogo web con carrito de compras, una cuenta de comercio verificada en Wompi asociada a una cuenta bancaria de Bancolombia y la integración técnica mediante plugin o API con llaves de prueba y producción. Así podrás recibir pagos con PSE, Nequi, tarjetas y corresponsales bancarios con confirmación automática."
+faqs:
+  - q: "¿Necesito tener cuenta en Bancolombia para usar Wompi en mi tienda virtual?"
+    a: "Sí. Wompi es la pasarela de pagos del Grupo Bancolombia y exige que la cuenta bancaria donde se deposita el dinero recaudado por tus ventas sea una cuenta de ahorros o corriente de Bancolombia a nombre del titular del comercio."
+  - q: "¿Puedo registrarme en Wompi como persona natural o necesito empresa constituida?"
+    a: "Puedes registrarte tanto como persona natural con RUT actualizado como con persona jurídica (SAS, Ltda. u otra sociedad) con certificado de existencia y representación legal de la Cámara de Comercio."
+  - q: "¿Cómo sabe mi tienda virtual que un cliente ya pagó en Wompi?"
+    a: "Mediante una notificación automática llamada webhook o URL de eventos. Cuando el banco aprueba la transacción, Wompi envía un mensaje cifrado a tu servidor para que el pedido pase a estado pagado y se descuente el inventario sin intervención manual."
+  - q: "¿Qué medios de pago habilita Wompi para mis compradores?"
+    a: "Permite cobrar con tarjetas de crédito y débito (Visa, Mastercard, American Express), PSE desde cualquier banco colombiano, botón directo de Nequi, Botón Bancolombia, pago en efectivo en corresponsales bancarios y cuotas con BNPL (compra ahora y paga después)."
+---
+
+Montar una **tienda virtual con Wompi** es una de las rutas más directas para que una pyme colombiana deje de confirmar transferencias por captura de pantalla en WhatsApp y pase a vender las 24 horas con conciliación automática. Wompi, la pasarela de pagos desarrollada por el Grupo Bancolombia, se ha vuelto un estándar en el país porque reúne en un solo checkout los métodos que más usan los compradores locales: Nequi, PSE, tarjetas y efectivo en corresponsales.
+
+Sin embargo, abrir la cuenta en la pasarela es apenas una parte del proceso. Para que la tienda funcione sin pedidos perdidos ni cobros duplicados, necesitas preparar tu catálogo, superar la validación documental, elegir el método de conexión adecuado y configurar las notificaciones automáticas de pago. En esta guía recorremos el paso a paso completo desde cero hasta la primera venta en firme.
+
+## 1. Requisitos previos antes de abrir la cuenta en Wompi
+
+Antes de iniciar el registro técnico, asegúrate de tener listos dos frentes: el bancario y el comercial. Si te falta alguno, el proceso de activación quedará detenido en revisión.
+
+En el frente documental y bancario necesitarás:
+
+- **Cuenta bancaria en Bancolombia:** debe ser una cuenta de ahorros o corriente activa a nombre de la misma persona natural o empresa que se registra en la pasarela.
+- **RUT actualizado:** expedido por la [DIAN](https://www.dian.gov.co) con fecha de generación reciente y con la actividad económica acorde a la venta de tus productos o servicios.
+- **Cámara de Comercio (si eres persona jurídica):** certificado de existencia y representación legal con menos de 30 días de expedición, junto con el documento de identidad del representante legal.
+- **Certificación bancaria:** documento emitido por el banco no mayor a 30 días donde conste la titularidad y el número de la cuenta de desembolso.
+
+En el frente digital, tu sitio web ya debe estar publicado bajo un dominio propio con certificado de seguridad SSL (`https://`), mostrar un catálogo real con precios en pesos colombianos (COP) e incluir páginas visibles de términos y condiciones, política de cambios y devoluciones, y política de tratamiento de datos personales conforme a las reglas de protección al consumidor de la [Superintendencia de Industria y Comercio (SIC)](https://www.sic.gov.co).
+
+## 2. Elegir la base tecnológica de tu tienda virtual
+
+Wompi no es una tienda por sí sola; es el cajero que procesa el pago cuando el cliente ya armó su carrito. Dependiendo del tamaño de tu catálogo y de tu operación logística, tienes tres caminos principales para construir la tienda donde irá conectada la pasarela:
+
+| Opción de plataforma | Cuándo conviene | Cómo se conecta con Wompi |
+|---|---|---|
+| Tienda a medida (Next.js, React, Node, Python) | Cuando manejas reglas propias de precios por volumen, múltiples bodegas, facturación integrada o catálogos muy rápidos | Mediante el Widget de Checkout web o la API REST directa de Wompi |
+| WooCommerce (WordPress) | Catálogos pequeños o medianos de hasta 500 referencias con flujo de venta estándar | Con el plugin oficial de Wompi para WooCommerce |
+| Shopify / VTEX | Marcas de comercio minorista que prefieren pagar suscripción mensual en dólares y comisiones por plataforma | Mediante la aplicación oficial de Wompi en el marketplace respectivo |
+
+Si tu negocio vende productos sencillos sin conexión a un sistema de inventario externo, un plugin estándar cumple su función. Si necesitas que cada venta descuente existencias en tu bodega local, liquide fletes por municipio o genere documentos contables al instante, un desarrollo de [comercio electrónico a medida](/servicios/ecommerce) evita que la tienda se vuelva lenta a medida que creces.
+
+## 3. Registro y verificación del comercio en Wompi
+
+Con los documentos en PDF y la tienda visible en su dominio, el registro en el portal de comercios de Wompi sigue cuatro etapas:
+
+1. **Creación de usuario y perfil de negocio:** ingresas a [Wompi](https://wompi.com), registras el correo corporativo del administrador, defines el nombre comercial que verán tus clientes en el extracto bancario y seleccionas el modelo de tarifas (recuerda que existen planes según la frecuencia con que quieras recibir el dinero en tu cuenta, desde abono diario hasta semanal).
+2. **Carga de documentos legales:** subes el RUT, la cédula, la certificación bancaria y el certificado de Cámara de Comercio. El sistema valida que el NIT o cédula coincida exactamente en todos los archivos.
+3. **Revisión de seguridad del sitio web:** el equipo de riesgo de la pasarela entra a la URL de tu tienda para verificar que los productos sean lícitos, que los precios sean claros y que existan canales de atención al cliente.
+4. **Habilitación del comercio:** una vez aprobado (suele tardar entre 1 y 4 días hábiles), tu panel tendrá acceso tanto al **ambiente de pruebas (Sandbox)** como al **ambiente de producción**.
+
+## 4. Cómo integrar Wompi en tu tienda paso a paso
+
+Aquí es donde ocurren la mayoría de los errores cuando no hay acompañamiento técnico. Una integración completa no consiste en pegar un enlace de pago estático, porque con un enlace suelto tú no sabes qué productos compró cada persona ni en qué talla o color.
+
+La integración profesional de carrito sigue cinco pasos técnicos:
+
+### Paso A: Obtener las llaves del ambiente de pruebas (Sandbox)
+
+En el panel de desarrolladores de Wompi encontrarás cuatro credenciales de prueba (`_test_`):
+
+- **Llave pública (`pub_test_...`):** identifica a tu comercio cuando se abre la ventana de pago en el navegador.
+- **Llave privada (`prv_test_...`):** se guarda en el servidor (nunca en el código público) para consultar transacciones desde el backend.
+- **Secreto de integridad:** clave oculta con la que tu servidor firma con SHA-256 la referencia del pedido, el monto en centavos y la moneda (`COP`), impidiendo que alguien altere el precio antes de pagar.
+- **Secreto de eventos:** sirve para verificar que los avisos de pago aprobado provienen realmente de Wompi.
+
+### Paso B: Generar la referencia única y la firma de integridad
+
+Cada vez que un comprador hace clic en «Ir a pagar», tu tienda debe crear una orden con código único (por ejemplo, `PED-2026-00481`), calcular el total con envío, multiplicarlo por 100 (Wompi recibe los valores en centavos: \$50.000 COP se envían como `5000000`) y generar el hash de integridad en el servidor.
+
+### Paso C: Desplegar el Widget o redirigir al Web Checkout
+
+Con esos datos, tu página abre el **Widget de Wompi** o redirige al **Web Checkout**. El cliente elige si paga con Nequi, PSE, tarjeta o Botón Bancolombia, completa la autenticación bancaria y finaliza la operación.
+
+### Paso D: Configurar la URL de eventos (Webhook)
+
+Muchos compradores cierran la pestaña apenas aprueban el pago en Nequi o PSE, sin esperar a volver a tu tienda. Si solo confirmas el pedido cuando el usuario regresa a la pantalla de agradecimiento, perderás el rastro de ventas ya cobradas.
+
+Para evitarlo, configura en el panel de Wompi la **URL de Eventos (Webhook)**: una dirección de tu servidor que recibe en segundo plano el aviso oficial `transaction.updated`. Cuando llega con estado `APPROVED`, tu servidor valida la firma, marca el pedido como pagado, descuenta el stock y envía el correo de confirmación.
+
+### Paso E: Pruebas de aprobación, rechazo y paso a producción
+
+En el modo Sandbox puedes simular todos los escenarios sin dinero real:
+
+- Prueba un pago con PSE en estado aprobado y verifica que el pedido cambie de estado en tu panel.
+- Prueba una transacción rechazada (`DECLINED`) o con error (`ERROR`) y confirma que el inventario no se descuente y permita reintentar el pago.
+- Cuando todo responda sin fallos, reemplaza las llaves `_test_` por las de producción (`pub_prod_`, `prv_prod_` y sus secretos) y realiza una compra real de bajo monto para certificar el ciclo.
+
+## Errores frecuentes al conectar Wompi y cómo evitarlos
+
+En los proyectos de comercio electrónico que auditamos o reconstruimos en V1TR0, vemos repetirse cuatro fallas que frenan las ventas:
+
+- **No enviar el monto en centavos:** enviar `45000` en lugar de `4500000` hace que la pasarela cobre \$450 pesos o rechace la firma de integridad.
+- **Reutilizar referencias de pago:** Wompi exige que cada intento de cobro tenga una referencia única. Si un cliente falla en su primer intento con tarjeta y vuelve a intentar con PSE, tu tienda debe generar un sufijo o una nueva referencia vinculada al mismo pedido.
+- **Exponer el secreto de integridad en el navegador:** si calculas la firma SHA-256 en el JavaScript público del navegador, cualquier persona con conocimientos básicos puede ver tu secreto y modificar precios. Ese cálculo siempre va en el servidor.
+- **Olvidar los pagos pendientes en efectivo o PSE:** un pago por corresponsal bancario queda en estado `PENDING` hasta que la persona va al punto físico. Tu tienda debe reservar el inventario por un tiempo prudencial o avisar al comprador que el despacho se activa al confirmarse el recaudo.
+
+## Cuánto cuesta mantener y operar la tienda
+
+Operar una tienda con Wompi tiene dos tipos de costos: la comisión por transacción exitosa (usualmente entre el 2,65 % y el 3,29 % más un fijo cercano a \$700 u \$800 COP más IVA por cobro aprobado, sin mensualidad fija en planes estándar) y la inversión en el desarrollo y alojamiento web. Si quieres revisar cuánto vale la construcción completa del sistema, consulta [cuánto cuesta un software a medida en Colombia](/blog/cuanto-cuesta-software-a-medida-colombia).
+
+Si estás listo para lanzar tu canal de ventas propio con Wompi bien integrado desde el primer día, con control real de inventario, cálculo de envíos por ciudad y panel administrativo rápido, en V1TR0 diseñamos y programamos tu tienda lista para vender. Puedes [cotizar tu tienda virtual](/contratar-software) o escribirnos directamente por Telegram a [@V1tr0](https://t.me/V1tr0).

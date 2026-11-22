@@ -5,7 +5,7 @@ Orden sugerido: tomar 1 tema de pilares distintos cada día. Las keywords son hi
 Territorio: software a medida, e-commerce, web, IoT, automatización, transformación digital (ver skill `blog-v1tr0`).
 
 ## Software a medida
-- [ ] Cuánto cuesta desarrollar un software a medida en Colombia | cuánto cuesta un software a medida | comercial
+- [x] Cuánto cuesta desarrollar un software a medida en Colombia | cuánto cuesta un software a medida | comercial → cuanto-cuesta-software-a-medida-colombia (2026-11-22)
 - [ ] Software a medida o software de caja: cómo decidir en tu empresa | software a medida vs software comercial | comparativa
 - [ ] Qué debe incluir un contrato de desarrollo de software | contrato desarrollo de software | comercial
 - [ ] Cuánto tarda desarrollar una aplicación web empresarial | cuánto tarda desarrollar una aplicación | informativa
@@ -17,7 +17,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Cómo elegir una empresa de desarrollo de software en Colombia | empresa de desarrollo de software Colombia | comercial
 
 ## Comercio electrónico en Colombia
-- [ ] Cómo crear una tienda virtual con Wompi paso a paso | tienda virtual Wompi | informativa
+- [x] Cómo crear una tienda virtual con Wompi paso a paso | tienda virtual Wompi | informativa → como-crear-tienda-virtual-wompi-paso-a-paso (2026-11-22)
 - [ ] Wompi, PayU o Mercado Pago: qué pasarela conviene en Colombia | pasarela de pagos Colombia | comparativa
 - [ ] Cuánto cuesta una tienda virtual en Colombia | cuánto cuesta una tienda virtual | comercial
 - [ ] Catálogo con pedidos por WhatsApp o tienda con pasarela | catálogo WhatsApp vs tienda online | comparativa
@@ -27,7 +27,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Qué necesita legalmente una tienda virtual en Colombia | requisitos tienda virtual Colombia | informativa
 
 ## Páginas web y landing pages
-- [ ] Cuánto cuesta una página web para empresa en Colombia | cuánto cuesta una página web | comercial
+- [x] Cuánto cuesta una página web para empresa en Colombia | cuánto cuesta una página web | comercial → cuanto-cuesta-pagina-web-empresa-colombia (2026-11-22)
 - [ ] Landing page: qué es y cuándo la necesita tu negocio | qué es una landing page | informativa
 - [ ] SEO local: cómo aparecer en Google en tu ciudad | SEO local Colombia | informativa
 - [ ] Google Business Profile: guía para negocios del Huila | Google Business Profile | informativa
@@ -37,7 +37,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Hosting en Colombia: compartido, VPS o nube | hosting para empresas | comparativa
 
 ## Hardware, IoT y LoRa
-- [ ] Qué es LoRaWAN y para qué sirve en el campo colombiano | qué es LoRaWAN | informativa
+- [x] Qué es LoRaWAN y para qué sirve en el campo colombiano | qué es LoRaWAN | informativa → que-es-lorawan-para-que-sirve-campo-colombiano (2026-11-22)
 - [ ] Monitoreo de cultivos con sensores: cómo empezar | sensores para cultivos | informativa
 - [ ] IoT para fincas cafeteras: humedad, temperatura y alertas | IoT café | informativa
 - [ ] Trazabilidad de productos agrícolas con tecnología | trazabilidad agrícola | informativa

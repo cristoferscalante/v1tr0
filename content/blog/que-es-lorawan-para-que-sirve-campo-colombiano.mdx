@@ -1,0 +1,83 @@
+---
+title: "Qué es LoRaWAN y para qué sirve en el campo colombiano"
+date: "2026-11-22"
+excerpt: "Entiende qué es LoRaWAN, cómo permite conectar sensores agrícolas a kilómetros sin pagar datos móviles por equipo y qué usos reales tiene en Colombia."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/que-es-lorawan-para-que-sirve-campo-colombiano.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Hardware, IoT y LoRa"
+tags: ["qué es LoRaWAN", "IoT agrícola Colombia", "sensores LoRa", "telemetría rural", "agricultura de precisión"]
+resumen: "LoRaWAN es un protocolo de comunicación inalámbrica de largo alcance y bajo consumo energético que permite conectar sensores en fincas y plantas industriales a distancias de 2 a 15 kilómetros sin depender de cobertura celular en cada punto. En el campo colombiano se utiliza para monitorear humedad del suelo, secado de café, cadena de frío y niveles de agua con baterías que duran años."
+faqs:
+  - q: "¿Necesito tener señal de celular en toda la finca para que funcione LoRaWAN?"
+    a: "No. Los sensores en los lotes se comunican por radiofrecuencia con una antena central (gateway) ubicada en la casa principal o en un punto alto. Solo ese gateway central necesita conexión a internet (por fibra, radioenlace, satélite o red móvil) para subir los datos a la nube."
+  - q: "¿Hay que pagar permiso al Estado para usar frecuencias LoRaWAN en Colombia?"
+    a: "No. LoRaWAN opera en Colombia dentro de la banda ISM de 915 MHz (902 a 928 MHz), que es de uso libre según la regulación de la Agencia Nacional del Espectro, siempre que los equipos respeten los límites de potencia de transmisión autorizados."
+  - q: "¿Qué diferencia hay entre LoRa y LoRaWAN?"
+    a: "LoRa es la tecnología física de radio que transmite la señal a larga distancia, mientras que LoRaWAN es el protocolo de red y seguridad que organiza cómo se comunican cientos de sensores con las antenas y los servidores sin mezclarse ni perder datos."
+  - q: "¿Cuánto dura la batería de un sensor LoRaWAN en el campo?"
+    a: "Como el sensor permanece dormido la mayor parte del tiempo y solo despierta unos milisegundos cada 10 o 30 minutos para enviar un paquete pequeño de datos, una batería industrial de litio suele durar entre 2 y 5 años sin recarga."
+---
+
+Para entender **qué es LoRaWAN** y por qué está cambiando la forma de medir lo que pasa en las fincas y agroindustrias de Colombia, basta con mirar el problema clásico del campo: el cultivo, el tanque de agua o el secadero están a dos kilómetros de la casa principal, allá no llega el Wi-Fi, la señal de celular se cae cuando llueve y tender cables eléctricos por la montaña cuesta más que los mismos equipos.
+
+LoRaWAN (sigla de *Long Range Wide Area Network* o red de área amplia de largo alcance) resuelve exactamente ese obstáculo. Es una tecnología inalámbrica diseñada para que pequeños sensores a batería envíen datos puntuales —como temperatura, humedad, nivel de un reservorio o apertura de una válvula— a varios kilómetros de distancia, gastando una fracción mínima de energía y sin pagar un plan de datos móviles por cada aparato.
+
+## Cómo funciona una red LoRaWAN en una finca o empresa
+
+A diferencia de una cámara de video que transmite megabytes por segundo, un sensor agrícola o industrial solo necesita enviar unos pocos bytes cada diez o quince minutos (por ejemplo: `Humedad: 64 %, Temperatura: 21,4 °C, Batería: 3,6 V`). LoRaWAN aprovecha esa ligereza para lograr alcances que el Wi-Fi o el Bluetooth nunca podrían cubrir.
+
+Una instalación completa se compone de cuatro elementos sencillos:
+
+1. **Los nodos o sensores en campo:** pequeños dispositivos sellados contra lluvia y polvo que miden la variable física (sonda de suelo, termómetro de silo, medidor de caudal, estación meteorológica) y la transmiten por radiofrecuencia mediante un chip LoRa.
+2. **El concentrador o Gateway LoRaWAN:** una antena receptora que se instala en un lugar con corriente eléctrica y buena altura (como el techo de la oficina, el beneficiadero o una torre). Un solo gateway puede escuchar a cientos de sensores ubicados a su alrededor en un radio de 2 a 15 kilómetros, dependiendo de la topografía de la vereda.
+3. **El servidor de red:** el software que recibe los paquetes del gateway, verifica las llaves de seguridad para confirmar que el sensor es tuyo, elimina mensajes duplicados y decodifica la lectura.
+4. **El panel de control y alertas:** la aplicación web o móvil donde el productor o jefe de planta ve las gráficas en tiempo real y recibe alertas automáticas por Telegram, WhatsApp o correo cuando un valor se sale del rango seguro.
+
+Si quieres conocer cómo diseñamos e integramos estas arquitecturas de telemetría en Colombia, puedes revisar nuestra línea de [hardware e IoT industrial](/hardware-iot).
+
+## LoRaWAN frente a Wi-Fi, Bluetooth y red celular (4G/NB-IoT)
+
+Ninguna tecnología inalámbrica sirve para todo. Elegir bien ahorra millones de pesos en baterías, antenas y mensualidades de operadores. Esta tabla resume cuándo conviene cada opción en proyectos rurales o industriales:
+
+| Característica | LoRaWAN | Wi-Fi | Red celular (4G / LTE) |
+|---|---|---|---|
+| Alcance típico por antena | 2 a 5 km en montaña / hasta 15 km en llano con línea de vista | 30 a 80 metros | Depende de las torres del operador móvil en la vereda |
+| Duración de batería del sensor | 2 a 5 años (bajo consumo extremo) | Días o pocas semanas (requiere corriente o panel solar grande) | Meses (consume bastante energía al buscar señal) |
+| Costo recurrente por sensor | \$0 en planes de datos (la red es privada de la finca) | \$0 | Requiere SIM card y plan de datos activo por cada punto |
+| Tipo de datos que transporta | Lecturas numéricas, estados, alertas y coordenadas GPS | Video, voz, archivos pesados y navegación web | Video, fotos, telemetría pesada o vehículos en ruta nacional |
+
+La conclusión práctica para un gerente agrícola es clara: usa Wi-Fi o cable dentro de la oficina y la bodega de empaque; usa red celular para camiones que viajan por las carreteras del país; y usa LoRaWAN para cubrir los lotes, invernaderos, estanques y cuartos fríos de tu propiedad sin pagarle una factura mensual de telefonía a cada sensor.
+
+## Qué banda de frecuencia usa LoRaWAN en Colombia y si es legal
+
+Una duda frecuente al importar o fabricar equipos de telemetría es la regulación del espectro radioeléctrico. En Colombia, el uso del espectro está reglamentado por la [Agencia Nacional del Espectro (ANE)](https://www.ane.gov.co) y el [Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC)](https://www.mintic.gov.co).
+
+LoRaWAN opera en las bandas ISM (*Industrial, Scientific and Medical*), que son frecuencias de **uso libre** destinadas a aplicaciones industriales y científicas sin costo de licencia. Para Colombia y el continente americano rige el plan de frecuencias **US915 / AU915** (en el rango de 902 MHz a 928 MHz).
+
+Dos reglas técnicas que debes exigir a tu proveedor al comprar equipos para Colombia:
+
+- **Frecuencia de 915 MHz:** nunca compres sensores o gateways configurados para Europa (868 MHz) ni para Asia (433 MHz o 923 MHz), porque o no se conectarán entre sí o operarán fuera de la banda libre asignada en el país.
+- **Límites de potencia:** los equipos deben cumplir los límites de potencia radiada establecidos para bandas libres, algo que cualquier módulo certificado por la [LoRa Alliance](https://lora-alliance.org) ya trae configurado de fábrica.
+
+## 5 usos reales de LoRaWAN en el campo colombiano
+
+Desde el sur del Huila hasta la Sabana de Bogotá y los Llanos Orientales, esta tecnología resuelve problemas cotidianos donde equivocarse por unas horas significa perder una cosecha o un lote de exportación:
+
+- **Café especial (secado, fermentación y almacenamiento):** controlar la temperatura del tanque de fermentación y la humedad relativa en las marquesinas o silos de secado. Si la temperatura sube más de lo debido a las dos de la mañana, el caficultor recibe una alerta en el celular antes de que se dañe el perfil de taza del lote.
+- **Riego inteligente y humedad de suelo:** en cultivos de aguacate Hass, cítricos, flores o caña, enterrar sondas de humedad y conductividad eléctrica a distintas profundidades permite regar solo cuando la raíz lo pide, ahorrando agua y fertilizante.
+- **Piscicultura y calidad de agua:** en estanques de tilapia o trucha, una caída del oxígeno disuelto o un cambio brusco de temperatura durante la madrugada puede matar miles de peces en un par de horas. Un nodo LoRaWAN flotante vigila el oxígeno y activa una alarma sonora o enciende los aireadores a tiempo.
+- **Cadena de frío y cuartos de acopio:** monitoreo continuo de cavas de lácteos, cárnicos, fruta de exportación o medicamentos veterinarios, guardando el historial auditable de temperatura cada diez minutos aunque se corte la energía eléctrica del predio.
+- **Control de tanques, bebederos y cercas en ganadería extensiva:** saber desde el teléfono si el bebedero del potrero más lejano se quedó sin agua o si abrieron un portón perimetral, ahorrando horas de recorridos diarios en moto o a caballo.
+
+## Cómo influye la topografía andina y cómo planear la instalación
+
+En una llanura plana de Córdoba o Casanare, una antena LoRaWAN puesta a doce metros de altura cubre fácilmente diez kilómetros a la redonda. En cambio, en la cordillera del Huila, Antioquia, Cauca o el Eje Cafetero, las montañas bloquean la señal de radio si un lote queda detrás de un filo rocoso.
+
+Por eso, antes de comprar veinte sensores a ciegas, un proyecto bien hecho sigue tres pasos de ingeniería:
+
+1. **Estudio de línea de vista y ubicación del gateway:** se busca el punto más alto del predio que tenga acceso a energía (o se instala un pequeño sistema solar para el gateway) desde donde se «vean» la mayoría de los lotes. Si una cañada queda oculta tras una loma, se instala un segundo gateway secundario o se reubica la antena con un mástil adecuado.
+2. **Pruebas de cobertura en campo:** se lleva un nodo transmisor de prueba a los puntos más críticos de la finca y se mide la intensidad de señal recibida (RSSI y relación señal/ruido SNR) para garantizar que los paquetes lleguen incluso bajo lluvia intensa.
+3. **Integración con el software de tu empresa:** los datos del sensor no sirven de mucho si quedan encerrados en una aplicación genérica en inglés que nadie mira. El verdadero valor aparece cuando las lecturas se conectan con tu sistema de trazabilidad, costos de cosecha o panel gerencial. Si estás evaluando desarrollar ese panel centralizado, revisa nuestra guía sobre [cuánto cuesta un software a medida en Colombia](/blog/cuanto-cuesta-software-a-medida-colombia).
+
+En V1TR0 diseñamos y desplegamos soluciones de telemetría LoRaWAN adaptadas a la geografía colombiana, combinando hardware robusto en campo con paneles de control claros y alertas instantáneas. Si quieres automatizar la medición en tu finca, planta de proceso o bodega, puedes [cotizar tu proyecto de IoT y software](/contratar-software) o escribirnos directamente por Telegram a [@V1tr0](https://t.me/V1tr0).
