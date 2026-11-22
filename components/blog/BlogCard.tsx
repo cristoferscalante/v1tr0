@@ -7,123 +7,107 @@ import type { PostMetadata } from "@/lib/mdx"
 
 interface BlogCardProps {
   post: { meta: PostMetadata }
+  /** Tarjeta grande para el artículo más reciente: imagen a la izquierda en escritorio. */
+  featured?: boolean
+  /** Carga prioritaria (solo la primera imagen visible de la página). */
+  priority?: boolean
 }
 
-export default function BlogCard({ post }: BlogCardProps) {
+// Corta el texto en la última palabra completa antes del límite.
+const normalizeExcerpt = (text: string, targetLength = 150) => {
+  if (!text || text.length <= targetLength) return text
+  const truncated = text.substring(0, targetLength)
+  return truncated.substring(0, truncated.lastIndexOf(" ")) + "…"
+}
 
-  // Validar que el post y sus metadatos existan
+export default function BlogCard({ post, featured = false, priority = false }: BlogCardProps) {
   if (!post?.meta || !post.meta.slug) {
     console.error("Post inválido o sin slug:", post)
     return null
   }
 
-  // Función para normalizar el texto a una longitud aproximada (3 líneas = ~150 caracteres)
-  const normalizeExcerpt = (text: string, targetLength: number = 150) => {
-    if (text.length <= targetLength) {
-      return text
-    }
-    // Encontrar el último espacio antes del límite para no cortar palabras
-    const truncated = text.substring(0, targetLength)
-    const lastSpace = truncated.lastIndexOf(' ')
-    return truncated.substring(0, lastSpace) + '...'
-  }
-
-  const normalizedExcerpt = normalizeExcerpt(post.meta.excerpt)
-
-  const formattedDate = new Date(post.meta.date).toLocaleDateString("es-ES", {
+  const { meta } = post
+  const coverImage = meta.coverImage || "/post/post.png"
+  const authorImage = meta.authorImage || "/imagenes/logos/v1tr0-logo.svg"
+  const formattedDate = new Date(meta.date).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "long",
     day: "numeric",
     timeZone: "UTC",
   })
 
-  // Usar imágenes reales como fallback
-  const coverImage = post.meta.coverImage || `/post/post.png`;
-  const authorImage = post.meta.authorImage || `/imagenes/logos/v1tr0-logo.svg`;
-
   return (
     <Link
-      href={`/blog/${encodeURIComponent(post.meta.slug)}`}
-      className="relative group w-full h-full text-left focus:outline-none focus:ring-2 focus:ring-[#08A696] focus:ring-opacity-50 focus:ring-offset-2 rounded-2xl block transition-all duration-300 hover:transform hover:-translate-y-1"
-      aria-label={post.meta.title}
+      href={`/blog/${encodeURIComponent(meta.slug)}`}
+      className="relative group block h-full rounded-2xl text-left transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#26FFDF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#030707]"
+      aria-label={meta.title}
       prefetch={true}
     >
-      {/* Gradiente exterior igual a CardBanner */}
       <div
-        className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
-      ></div>
-      
-      {/* Card principal con mismo estilo que CardBanner */}
+        aria-hidden="true"
+        className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#08A696]/20 to-[#26FFDF]/20 blur opacity-30 transition-opacity duration-300 group-hover:opacity-70"
+      />
+
       <article
-        className={`relative h-full flex flex-col bg-[#02505931] backdrop-blur-sm rounded-2xl border border-[#08A696]/20 transition-all duration-300 transform scale-95 group-hover:scale-100 group-hover:border-[#08A696] group-hover:bg-[#02505950] shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 overflow-hidden`}
+        className={`relative h-full overflow-hidden rounded-2xl border border-[#08A696]/20 bg-[#02505931] backdrop-blur-sm shadow-lg transition-colors duration-300 group-hover:border-[#08A696] group-hover:bg-[#02505950] ${
+          featured ? "flex flex-col lg:grid lg:grid-cols-[1.35fr_1fr]" : "flex flex-col"
+        }`}
       >
-        {/* Imagen de portada */}
-        <div className="relative aspect-video w-full overflow-hidden">
+        {/* Portada en proporción 1200×630: se ve completa, sin franjas oscuras encima */}
+        <div className={`relative aspect-[1200/630] w-full overflow-hidden bg-[#030707] ${featured ? "lg:self-center lg:rounded-xl lg:m-4 lg:w-auto lg:border lg:border-[#26FFDF]/15" : ""}`}>
           <Image
-            src={coverImage || "/imagenes/icons/svg/placeholder.svg"}
-            alt={post.meta.title}
+            src={coverImage}
+            alt={meta.title}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={priority}
+            quality={80}
+            className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+            sizes={featured ? "(max-width: 1024px) 100vw, 640px" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"}
           />
-          {/* Gradiente overlay */}
-          <div 
-            className="absolute inset-0 transition-opacity duration-500"
-            style={{
-              background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%)",
-            }}
-          />
+          {meta.category && (
+            <span className="absolute left-3 top-3 rounded-full border border-[#26FFDF]/40 bg-[#030707]/75 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#26FFDF] backdrop-blur-sm">
+              {meta.category}
+            </span>
+          )}
         </div>
 
-        <div className="flex-1 flex flex-col p-6">
-          {/* Tags and reading time */}
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            {post.meta.tags?.slice(0, 3).map((tag) => (
+        <div className={`flex flex-1 flex-col ${featured ? "p-6 lg:p-8" : "p-6"}`}>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            {meta.tags?.slice(0, featured ? 3 : 2).map((tag) => (
               <span
                 key={tag}
-                className={`text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-300 bg-[#08A696]/10 text-[#26FFDF] border-[#08a696]/50 border`}
+                className="rounded-full border border-[#08a696]/50 bg-[#08A696]/10 px-3 py-1 text-xs font-medium text-[#26FFDF]"
               >
                 {tag}
               </span>
             ))}
-            <div className={`ml-auto flex items-center text-xs text-[#a0a0a0]`}>
-              <ClockIcon className="w-3 h-3 mr-1" />
-              <span>{post.meta.readingTime}</span>
+            <div className="ml-auto flex items-center text-xs text-[#a0a0a0]">
+              <ClockIcon className="mr-1 h-3 w-3" />
+              <span>{meta.readingTime}</span>
             </div>
           </div>
 
-          {/* Title */}
-          <h2 
-            className={`text-xl font-bold mb-3 line-clamp-2 transition-colors duration-300 group-hover:opacity-90 text-[#26FFDF] group-hover:text-[#26FFDF]`}
+          <h2
+            className={`mb-3 font-bold text-[#26FFDF] ${
+              featured ? "text-2xl leading-tight lg:text-3xl line-clamp-3" : "text-xl line-clamp-2"
+            }`}
           >
-            {post.meta.title}
+            {meta.title}
           </h2>
 
-          {/* Excerpt - longitud normalizada para uniformidad */}
-          <p 
-            className={`text-sm mb-4 flex-1 text-[#a0a0a0]`}
-            style={{
-              lineHeight: '1.5rem',
-              minHeight: '4.5rem', // Espacio para 3 líneas
-              maxHeight: '4.5rem',
-              overflow: 'hidden',
-            }}
-          >
-            {normalizedExcerpt}
+          <p className={`mb-4 flex-1 text-sm leading-6 text-[#a0a0a0] ${featured ? "lg:text-base line-clamp-4" : "line-clamp-3"}`}>
+            {normalizeExcerpt(meta.resumen && featured ? meta.resumen : meta.excerpt, featured ? 260 : 150)}
           </p>
 
-          {/* Author and date - siempre al final */}
-          <div 
-            className={`flex items-center pt-4 border-t mt-auto border-[#08A696]/20`}
-          >
-            <div className={`relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#08A696]/30`}>
-              <Image src={authorImage || "/imagenes/icons/svg/placeholder.svg"} alt={post.meta.author} fill sizes="(max-width:768px) 100vw, 800px" className="object-cover" />
+          <div className="mt-auto flex items-center border-t border-[#08A696]/20 pt-4">
+            <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-[#08A696]/30">
+              <Image src={authorImage} alt={meta.author} fill sizes="40px" className="object-cover" />
             </div>
             <div className="ml-3">
-              <p className={`text-sm font-medium text-[#26FFDF]`}>{post.meta.author}</p>
-              <div className={`flex items-center text-xs text-[#a0a0a0]`}>
-                <CalendarIcon className="w-3 h-3 mr-1" />
-                <time dateTime={post.meta.date}>{formattedDate}</time>
+              <p className="text-sm font-medium text-[#26FFDF]">{meta.author}</p>
+              <div className="flex items-center text-xs text-[#a0a0a0]">
+                <CalendarIcon className="mr-1 h-3 w-3" />
+                <time dateTime={meta.date}>{formattedDate}</time>
               </div>
             </div>
           </div>

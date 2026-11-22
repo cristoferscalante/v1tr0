@@ -61,24 +61,25 @@ export default function PostHeader({ title, date, author, coverImage, readingTim
         </div>
       </div>
 
-      {/* Cover image */}
-      <div className="relative group">
-        {/* Gradiente exterior */}
+      {/* Portada: completa en su proporción nativa 1200×630 (la de las portadas generadas
+          y la de Open Graph), sin recortes, sin oscurecer y sin encoger. */}
+      <figure className="relative group m-0">
         <div
-          className={`absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-300`}
-        ></div>
-        
-        {/* Imagen con glassmorphism */}
-        <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl shadow-lg group-hover:shadow-xl group-hover:shadow-[#08A696]/10 transition-all duration-300 transform scale-95 group-hover:scale-100">
-          <Image src={imageToUse} alt={title} fill priority sizes="(max-width:768px) 100vw, 800px" className="object-cover" />
-          <div 
-            className="absolute inset-0 transition-opacity duration-500"
-            style={{
-              background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%)",
-            }}
+          aria-hidden="true"
+          className="absolute -inset-1 rounded-[1.25rem] bg-gradient-to-r from-[#08A696]/25 via-[#26FFDF]/15 to-[#025159]/25 blur-lg opacity-60 transition-opacity duration-500 group-hover:opacity-90"
+        />
+        <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-2xl border border-[#26FFDF]/20 bg-[#030707] shadow-2xl shadow-black/40">
+          <Image
+            src={imageToUse}
+            alt={title}
+            fill
+            priority
+            quality={85}
+            sizes="(max-width: 1024px) 100vw, 1024px"
+            className="object-cover object-center"
           />
         </div>
-      </div>
+      </figure>
     </header>
   )
 }

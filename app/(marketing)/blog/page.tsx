@@ -17,7 +17,7 @@ function PostsLoading() {
       {[...Array(6)].map((_, i) => (
         <div key={i} className="h-full">
           <div className="animate-pulse rounded-xl bg-backgroundSecondary border border-custom-2/20 shadow-md overflow-hidden h-full flex flex-col">
-            <div className="aspect-video w-full bg-gray-300 dark:bg-gray-700"></div>
+            <div className="aspect-[1200/630] w-full bg-gray-300 dark:bg-gray-700"></div>
             <div className="p-6 flex-1 flex flex-col">
               <div className="flex gap-2 mb-4">
                 <div className="h-6 w-16 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
@@ -54,14 +54,23 @@ async function PostsList() {
     )
   }
 
+  // posts.length > 0 ya se comprobó arriba
+  const [destacado, ...resto] = posts as [(typeof posts)[number], ...typeof posts]
+
   return (
-    <div id="posts-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
-      {posts.map((post) => (
-        <div key={post.slug} className="h-full">
-          <BlogCard post={{ meta: post }} />
-        </div>
-      ))}
-    </div>
+    <>
+      {/* El artículo más reciente, grande y con la imagen completa */}
+      <div className="mb-10">
+        <BlogCard post={{ meta: destacado }} featured priority />
+      </div>
+      <div id="posts-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
+        {resto.map((post) => (
+          <div key={post.slug} className="h-full">
+            <BlogCard post={{ meta: post }} />
+          </div>
+        ))}
+      </div>
+    </>
   )
 }
 
