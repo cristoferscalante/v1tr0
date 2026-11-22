@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState, type FormEvent } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowUp, Loader2, X } from "lucide-react"
-import { FaWhatsapp } from "react-icons/fa"
+import { FaTelegramPlane } from "react-icons/fa"
 import { siteConfig } from "@/config/site"
 import {
   briefListo,
   briefVacio,
   CAMPOS_BRIEF,
   CAMPOS_REQUERIDOS,
-  enlaceWhatsApp,
+  copiarMensaje,
   TIPOS_PROYECTO,
   type Brief,
   type CampoBrief,
@@ -27,7 +27,7 @@ import ConmutadorVista, { type Vista } from "./ConmutadorVista"
  * Lo principal es la conversación, que es guionada (ver lib/asistente/guion):
  * sin modelo de lenguaje, sin costo por mensaje y sin respuestas fuera de
  * libreto. Mientras avanza, el brief del proyecto se llena por detrás; solo sale a la vista si la persona quiere revisarlo, y el
- * envío abre WhatsApp con el mensaje ya redactado. Nada se guarda en el
+ * envío copia el mensaje ya redactado y abre Telegram para pegarlo. Nada se guarda en el
  * servidor, así que no hay datos personales que custodiar.
  *
  * El robot de la marca hace de cara del asistente: dibujo vectorial, sin
@@ -177,7 +177,7 @@ export default function ContactoAsistenteSection({
     // Guion terminado: solo quedan las dudas y el envío.
     if (!actual) {
       setReaccion("sorprendido")
-      contestar(responderPregunta(limpio) ?? "Tu resumen ya está listo. Cuando quieras, envíalo por WhatsApp.")
+      contestar(responderPregunta(limpio) ?? "Tu resumen ya está listo. Cuando quieras, envíalo por Telegram: lo copiamos para que solo lo pegues.")
       return
     }
 
@@ -547,13 +547,14 @@ function FichaDatos({
       <div className="flex justify-center pt-2">
         {listo ? (
           <a
-            href={enlaceWhatsApp(siteConfig.company.whatsapp, brief)}
+            href={siteConfig.company.telegram}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => { void copiarMensaje(brief) }}
             className={botonPildora}
           >
-            <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
-            Enviar por WhatsApp
+            <FaTelegramPlane className="h-4 w-4" aria-hidden="true" />
+            Copiar resumen y abrir Telegram
           </a>
         ) : (
           <p className="text-xs text-textMuted">Falta nombre o qué necesitas resolver.</p>

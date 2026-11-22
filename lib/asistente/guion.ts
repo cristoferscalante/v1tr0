@@ -60,14 +60,14 @@ export const PASOS: Paso[] = [
   {
     campo: "correo",
     pregunta: () => "Por último, si quieres, déjanos un correo para enviarte la propuesta.",
-    omitir: "Prefiero solo WhatsApp",
+    omitir: "Prefiero solo Telegram",
     validar: (texto) =>
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(texto) ? null : "Ese correo no parece válido. ¿Lo revisas?",
   },
 ]
 
 export const CIERRE = (nombre: string) =>
-  `Gracias, ${nombre}. Ya tenemos lo necesario: envíanos el resumen por WhatsApp y te respondemos con una propuesta.`
+  `Gracias, ${nombre}. Ya tenemos lo necesario: envíanos el resumen por Telegram y te respondemos con una propuesta.`
 
 /** Dudas que el asistente sí responde. El orden importa: gana la primera que coincide. */
 const DUDAS: Array<{ claves: RegExp; respuesta: string }> = [
@@ -103,7 +103,7 @@ const DUDAS: Array<{ claves: RegExp; respuesta: string }> = [
 ]
 
 const DECLINAR =
-  "Con gusto te ayudaría, pero en este espacio solo podemos conversar sobre tu proyecto. Cualquier otra consulta la atendemos personalmente por WhatsApp."
+  "Con gusto te ayudaría, pero en este espacio solo podemos conversar sobre tu proyecto. Cualquier otra consulta la atendemos personalmente por Telegram."
 
 const normalizar = (texto: string) =>
   texto

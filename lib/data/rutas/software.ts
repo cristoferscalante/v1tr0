@@ -386,6 +386,6 @@ export const softwarePage: RoutePage = {
     description:
       "El diagnóstico no tiene costo y termina en un documento con alcance, rango de precio y tiempos. Si después decides no seguir, el documento es tuyo igual.",
     label: "Agendar diagnóstico",
-    href: "https://wa.me/573107811719?text=Hola%20V1TR0%2C%20quiero%20agendar%20un%20diagn%C3%B3stico%20de%20software.",
+    href: "https://t.me/+573228836494",
   },
 }

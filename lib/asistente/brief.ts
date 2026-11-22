@@ -1,6 +1,6 @@
 /**
  * El brief: la información primaria de un proyecto que el asistente del home
- * recopila conversando y que termina en un mensaje de WhatsApp para V1TR0.
+ * recopila conversando y que termina en un mensaje de Telegram para V1TR0.
  *
  * El guion (./guion) llena cada campo y el formulario de revisión lo muestra
  * y lo deja editar.
@@ -43,13 +43,22 @@ export function briefListo(brief: Brief) {
   return CAMPOS_REQUERIDOS.every((campo) => brief[campo].trim().length > 0)
 }
 
-export function mensajeWhatsApp(brief: Brief) {
+export function mensajeContacto(brief: Brief) {
   const lineas = CAMPOS_BRIEF.filter((campo) => brief[campo.id].trim()).map(
-    (campo) => `*${campo.etiqueta}:* ${brief[campo.id].trim()}`,
+    (campo) => `${campo.etiqueta}: ${brief[campo.id].trim()}`,
   )
   return ["Hola V1TR0, quiero contarles sobre un proyecto.", "", ...lineas].join("\n")
 }
 
-export function enlaceWhatsApp(numero: string, brief: Brief) {
-  return `https://wa.me/${numero}?text=${encodeURIComponent(mensajeWhatsApp(brief))}`
+/**
+ * Telegram no permite precargar el mensaje en un chat por número, así que el
+ * botón copia el resumen al portapapeles y abre el chat para pegarlo.
+ */
+export async function copiarMensaje(brief: Brief) {
+  try {
+    await navigator.clipboard.writeText(mensajeContacto(brief))
+    return true
+  } catch {
+    return false
+  }
 }

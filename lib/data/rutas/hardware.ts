@@ -321,7 +321,7 @@ export const hardwarePage: RoutePage = {
     title: "Cuéntanos qué necesitas medir y dónde",
     description:
       "Con la ubicación y la distancia aproximada podemos decirte si LoRa es la tecnología correcta —a veces no lo es, y también te lo decimos— y qué implicaría una prueba en tu terreno.",
-    label: "Escribir por WhatsApp",
-    href: "https://wa.me/573107811719?text=Hola%20V1TR0%2C%20quiero%20consultar%20por%20hardware%20IoT%20con%20LoRa.",
+    label: "Escribir por Telegram",
+    href: "https://t.me/+573228836494",
   },
 }

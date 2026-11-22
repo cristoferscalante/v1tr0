@@ -292,6 +292,6 @@ export const landingPages: SubcategoryPage = {
     description:
       "Cuéntanos a quién quieres llegar y qué debería hacer esa persona al entrar. De ahí sale si necesitas una landing de captación, un sitio de autoridad o una página de campaña.",
     label: "Hablemos de tu página",
-    href: "https://wa.me/573107811719?text=Hola%20V1TR0%2C%20quiero%20una%20landing%20page%20para%20mi%20negocio.",
+    href: "https://t.me/+573228836494",
   },
 }
