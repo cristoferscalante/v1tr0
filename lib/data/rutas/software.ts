@@ -1,4 +1,5 @@
 import type { RoutePage } from "./tipos"
+import { telegramLink } from "@/lib/contacto"
 
 /**
  * Ruta "software": qué es contratar desarrollo con nosotros.
@@ -386,6 +387,6 @@ export const softwarePage: RoutePage = {
     description:
       "El diagnóstico no tiene costo y termina en un documento con alcance, rango de precio y tiempos. Si después decides no seguir, el documento es tuyo igual.",
     label: "Agendar diagnóstico",
-    href: "https://t.me/V1tr0",
+    href: telegramLink("desarrollar un software a medida"),
   },
 }

@@ -9,6 +9,7 @@ import { X, Send } from 'lucide-react'
 import { useEffect } from "react"
 import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
+import { enviarContacto } from "@/lib/enviarContacto"
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -96,8 +97,8 @@ export default function InformationSystems() {
     setIsSubmitting(true)
 
     try {
-      // Simular envío del formulario
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // Envío real a buzon@v1tr0.com (respaldo: Telegram con el mensaje escrito)
+      await enviarContacto(formData)
       setSubmitSuccess(true)
       setTimeout(() => {
         setIsContactPopupOpen(false)

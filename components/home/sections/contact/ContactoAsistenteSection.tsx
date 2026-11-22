@@ -11,6 +11,7 @@ import {
   CAMPOS_BRIEF,
   CAMPOS_REQUERIDOS,
   copiarMensaje,
+  mensajeContacto,
   TIPOS_PROYECTO,
   type Brief,
   type CampoBrief,
@@ -177,7 +178,7 @@ export default function ContactoAsistenteSection({
     // Guion terminado: solo quedan las dudas y el envío.
     if (!actual) {
       setReaccion("sorprendido")
-      contestar(responderPregunta(limpio) ?? "Tu resumen ya está listo. Cuando quieras, envíalo por Telegram: lo copiamos para que solo lo pegues.")
+      contestar(responderPregunta(limpio) ?? "Tu resumen ya está listo. Cuando quieras, envíalo por Telegram: el mensaje ya va escrito, solo toca enviar.")
       return
     }
 
@@ -544,18 +545,27 @@ function FichaDatos({
         })}
       </div>
 
-      <div className="flex justify-center pt-2">
+      <div className="flex flex-col items-center gap-3 pt-2">
         {listo ? (
-          <a
-            href={siteConfig.company.telegram}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => { void copiarMensaje(brief) }}
-            className={botonPildora}
-          >
-            <FaTelegramPlane className="h-4 w-4" aria-hidden="true" />
-            Copiar resumen y abrir Telegram
-          </a>
+          <>
+            {/* El resumen va escrito en el chat (t.me/<usuario>?text=); también se copia por si la app no lo precarga */}
+            <a
+              href={`${siteConfig.company.telegram}?text=${encodeURIComponent(mensajeContacto(brief))}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => { void copiarMensaje(brief) }}
+              className={botonPildora}
+            >
+              <FaTelegramPlane className="h-4 w-4" aria-hidden="true" />
+              Enviar resumen por Telegram
+            </a>
+            <a
+              href={`mailto:${siteConfig.company.email}?subject=${encodeURIComponent("Proyecto: " + (brief.necesidad || "quiero más información").slice(0, 80))}&body=${encodeURIComponent(mensajeContacto(brief))}`}
+              className="text-xs text-textMuted underline-offset-4 hover:text-highlight hover:underline"
+            >
+              o envíalo por correo a {siteConfig.company.email}
+            </a>
+          </>
         ) : (
           <p className="text-xs text-textMuted">Falta nombre o qué necesitas resolver.</p>
         )}

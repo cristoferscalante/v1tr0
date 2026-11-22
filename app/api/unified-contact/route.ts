@@ -13,7 +13,8 @@ const serviceAreaNames: { [key: string]: string } = {
   sistemas: 'Sistemas de Información',
   automatizacion: 'Automatización de Tareas',
   gestion: 'Gestión de Proyectos',
-  datos: 'Ciencia de Datos y Análisis Avanzado'
+  datos: 'Ciencia de Datos y Análisis Avanzado',
+  general: 'Consulta general'
 }
 
 const createEmailTemplate = (data: ContactFormData, isClientEmail: boolean = false) => {
@@ -78,7 +79,7 @@ const createEmailTemplate = (data: ContactFormData, isClientEmail: boolean = fal
                 </p>
                 <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(38, 255, 223, 0.1);">
                     <p style="margin: 0; color: rgba(255,255,255,0.6); font-size: 12px;">
-                        Este es un mensaje automático. Por favor, no respondas a este correo.
+                        ¿Prefieres hablar ya? Escríbenos por Telegram: <a href="https://t.me/V1tr0" style="color:#26FFDF;font-weight:bold;">@V1tr0</a> o al correo <a href="mailto:buzon@v1tr0.com" style="color:#26FFDF;">buzon@v1tr0.com</a>. Este es un mensaje automático.
                     </p>
                 </div>
             </div>

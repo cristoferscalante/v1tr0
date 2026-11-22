@@ -9,6 +9,7 @@ import { useEffect } from "react"
 import { useScrollSnapEnabled } from "@/hooks/use-device-detection"
 import CharacterBackground from "@/components/about/CharacterBackground"
 import FooterSection from "@/components/global/FooterSection"
+import { enviarContacto } from "@/lib/enviarContacto"
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -88,8 +89,8 @@ export default function SoftwareDevelopment() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // Envío real a buzon@v1tr0.com (respaldo: Telegram con el mensaje escrito)
+    await enviarContacto(formData)
 
     setSubmitSuccess(true)
     setIsSubmitting(false)

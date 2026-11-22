@@ -6,6 +6,7 @@ import { accentText, eyebrow, sectionTitle } from "@/components/home/shared/surf
 import type { SubcategoryPage } from "@/lib/data/servicios/tipos"
 import { iconMap } from "./iconos"
 import { Wireframe } from "./Wireframe"
+import { CORREO, correoLink } from "@/lib/contacto"
 
 /**
  * Secciones de una página de subcategoría.
@@ -363,6 +364,12 @@ export function CtaSection({ page }: { page: SubcategoryPage }) {
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
+      <p className="mt-4 text-center text-sm text-textMuted md:text-right">
+        ¿Prefieres correo? Escríbenos a{" "}
+        <a href={correoLink(page.name)} className="font-semibold text-highlight underline-offset-4 hover:underline">
+          {CORREO}
+        </a>
+      </p>
     </section>
   )
 }

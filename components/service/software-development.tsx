@@ -8,6 +8,7 @@ import { Code, Database, Layers, Rocket, Server, Zap, X, Send } from "lucide-rea
 
 // Add the import for BokehBackground at the top of the file, after the other imports
 import BokehBackground from "@/components/about/BokehBackground"
+import { enviarContacto } from "@/lib/enviarContacto"
 
 
 export default function SoftwareDevelopment() {
@@ -34,8 +35,8 @@ export default function SoftwareDevelopment() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simular envío de datos
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // Envío real a buzon@v1tr0.com (respaldo: Telegram con el mensaje escrito)
+    await enviarContacto(formData)
 
     // Mostrar mensaje de éxito
     setSubmitSuccess(true)

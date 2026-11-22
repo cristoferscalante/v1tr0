@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useIntroActive } from "@/lib/intro-store";
 import { FaTelegramPlane } from "react-icons/fa";
+import { telegramLink } from "@/lib/contacto"
 
 
 // Inline SVGs for Instagram, Facebook, YouTube, Discord (from user attachments)
@@ -123,7 +124,12 @@ const FloatingSocialButton: React.FC = () => {
   >
       <div className="tooltip-container relative group">
         <a
-          href="https://t.me/V1tr0"
+          href={telegramLink()}
+          onClick={(e) => {
+            // Mensaje con la página que está viendo la persona (título sin " | V1TR0")
+            const pagina = document.title.replace(/\s*\|\s*V1TR0\s*$/i, "").trim()
+            e.currentTarget.href = telegramLink(pagina ? `lo que vi en «${pagina}»` : undefined)
+          }}
           target="_blank"
           rel="noopener noreferrer"
           // Mismo lenguaje sobrio que el control de música: círculo, filo fino, sin sombras

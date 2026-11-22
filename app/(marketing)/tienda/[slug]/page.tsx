@@ -3,6 +3,7 @@
 import { use, useState, useEffect } from "react"
 import { notFound, useRouter } from "next/navigation"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
+import ContactoDirecto from "@/components/global/ContactoDirecto"
 import { getProductBySlug, getRelatedProducts } from "@/lib/data/mockProducts"
 import type { ProductDetailed } from "@/lib/data/mockProducts"
 import { ProductGallery } from "@/components/shop/product-detail/ProductGallery"
@@ -208,6 +209,12 @@ export default function TiendaSlugPage({ params }: PageProps) {
               />
               <ProductInfo product={product} onAddToCart={handleAddToCart} />
             </div>
+            <ContactoDirecto
+              className="mb-8 lg:mb-16"
+              interes={`el producto «${product.name}»`}
+              titulo="¿Dudas con este producto o prefieres pedirlo directo?"
+              descripcion="Escríbenos por Telegram (el mensaje ya va escrito con el producto) o por correo, y te ayudamos con la compra, el envío o la instalación."
+            />
             {product.uses && product.uses.length > 0 && <ProductUses uses={product.uses} />}
             {product.specifications && <ProductSpecifications specifications={product.specifications} />}
             {related.length > 0 && (

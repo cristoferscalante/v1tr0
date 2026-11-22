@@ -1,4 +1,5 @@
 import type { RoutePage } from "./tipos"
+import { telegramLink } from "@/lib/contacto"
 
 /**
  * Ruta "hardware": productos IoT con comunicación LoRa.
@@ -322,6 +323,6 @@ export const hardwarePage: RoutePage = {
     description:
       "Con la ubicación y la distancia aproximada podemos decirte si LoRa es la tecnología correcta —a veces no lo es, y también te lo decimos— y qué implicaría una prueba en tu terreno.",
     label: "Escribir por Telegram",
-    href: "https://t.me/V1tr0",
+    href: telegramLink("una solución de hardware e IoT (sensores, LoRa)"),
   },
 }

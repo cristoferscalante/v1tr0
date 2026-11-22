@@ -51,8 +51,8 @@ export function mensajeContacto(brief: Brief) {
 }
 
 /**
- * Telegram no permite precargar el mensaje en un chat por número, así que el
- * botón copia el resumen al portapapeles y abre el chat para pegarlo.
+ * Respaldo: el botón abre t.me/V1tr0?text=<resumen> (Telegram deja el mensaje escrito con el
+ * usuario @V1tr0) y además copia el resumen, por si alguna app no precarga el borrador.
  */
 export async function copiarMensaje(brief: Brief) {
   try {

@@ -12,6 +12,7 @@ import { X, Send } from "lucide-react"
 import { gsap } from "gsap"
 import { useGSAP } from "@gsap/react"
 import { useRouter } from "next/navigation"
+import { enviarContacto } from "@/lib/enviarContacto"
 
 // Registrar el plugin useGSAP
 gsap.registerPlugin(useGSAP)
@@ -221,7 +222,8 @@ export default function ServiceBanner({
     e.preventDefault()
     setIsSubmitting(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // Envío real a buzon@v1tr0.com (respaldo: Telegram con el mensaje escrito)
+    await enviarContacto(formData)
 
     setSubmitSuccess(true)
     setIsSubmitting(false)

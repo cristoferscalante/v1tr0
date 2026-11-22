@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import { ExternalLink, GitBranch, X, Send } from "lucide-react"
 import { useState } from "react"
+import { enviarContacto } from "@/lib/enviarContacto"
 
 // Definimos categorías de proyectos
 const categories = [
@@ -114,8 +115,8 @@ export default function PortfolioPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simular envío de datos
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // Envío real a buzon@v1tr0.com (respaldo: Telegram con el mensaje escrito)
+    await enviarContacto(formData)
 
     // Mostrar mensaje de éxito
     setSubmitSuccess(true)

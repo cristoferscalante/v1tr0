@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ChevronRight, MapPin, Check } from "lucide-react"
 
 import type { UbicacionPage } from "@/lib/data/ubicaciones"
+import { CORREO, correoLink, telegramLink } from "@/lib/contacto"
 
 /**
  * Secciones de las páginas por ubicación.
@@ -193,6 +194,16 @@ export function UbicacionCta({ page }: { page: UbicacionPage }) {
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
+      <p className="mt-4 text-center text-sm text-textMuted md:text-right">
+        O escríbenos directo:{" "}
+        <a href={telegramLink(`desarrollo de software en ${page.lugar}`)} target="_blank" rel="noopener noreferrer" className="font-semibold text-highlight underline-offset-4 hover:underline">
+          Telegram @V1tr0
+        </a>{" "}
+        ·{" "}
+        <a href={correoLink(`desarrollo de software en ${page.lugar}`)} className="font-semibold text-highlight underline-offset-4 hover:underline">
+          {CORREO}
+        </a>
+      </p>
     </section>
   )
 }

@@ -9,6 +9,7 @@ import Link from "next/link"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { MDXContent } from "@/components/blog/MDXContent"
 import { siteConfig } from "@/config/site"
+import ContactoDirecto from "@/components/global/ContactoDirecto"
 
 /** Fecha YYYY-MM-DD a ISO con la zona de Colombia. */
 const isoDate = (d: string) => new Date(/T/.test(d) ? d : `${d}T12:00:00-05:00`).toISOString()
@@ -166,6 +167,12 @@ async function PostContent({ slug }: { slug: string }) {
           )}
         </div>
       </div>
+      <ContactoDirecto
+        className="mt-12"
+        interes={`lo que leí en el artículo «${post.meta.title}»`}
+        titulo="¿Quieres aplicarlo en tu empresa?"
+        descripcion="Cuéntanos tu caso por Telegram (el mensaje ya va escrito) o por correo, y te decimos cómo lo haríamos y cuánto costaría."
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: postJsonLd(post.meta) }} />
     </article>
   )
