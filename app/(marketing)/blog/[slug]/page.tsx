@@ -186,7 +186,7 @@ function PostLoading() {
           <div className="h-5 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
           <div className="h-5 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
         </div>
-        <div className="aspect-[21/9] w-full bg-gray-300 dark:bg-gray-700 rounded-xl mb-4"></div>
+        <div className="aspect-[1200/630] w-full bg-gray-300 dark:bg-gray-700 rounded-2xl mb-4"></div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
