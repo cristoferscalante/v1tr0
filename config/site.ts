@@ -45,8 +45,8 @@ export const siteConfig = {
     phone: '+57 322 883 6494',
     /** Mismo número en formato E.164, para `tel:` y para los datos estructurados. */
     phoneE164: '+573228836494',
-    /** Canal de contacto: Telegram (t.me/cristoferscalante, mismo número). No se usa WhatsApp. */
-    telegram: 'https://t.me/cristoferscalante',
+    /** Canal de contacto: Telegram @V1tr0 (t.me/V1tr0). No se usa WhatsApp. */
+    telegram: 'https://t.me/V1tr0',
     /**
      * Ficha NAP (Name-Address-Phone). Es la fuente única del `LocalBusiness`
      * de `lib/seo/site-graph.ts`: Google y los motores de respuesta cruzan

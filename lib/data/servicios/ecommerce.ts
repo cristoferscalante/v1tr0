@@ -324,6 +324,6 @@ export const ecommerce: SubcategoryPage = {
     description:
       "Cuéntanos qué vendes y cómo atiendes hoy. En una conversación corta sabemos si tu negocio necesita pasarela o si le rinde más un catálogo que cierre por WhatsApp.",
     label: "Hablemos de tu tienda",
-    href: "https://t.me/cristoferscalante",
+    href: "https://t.me/V1tr0",
   },
 }
