@@ -1,0 +1,94 @@
+---
+title: "Propiedad del código fuente: qué exigir al contratar software"
+date: "2026-11-22"
+excerpt: "Quién es dueño del código cuando contratas un desarrollo en Colombia, qué dice la ley y qué cláusulas, accesos y entregables exigir para no quedar amarrado."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/propiedad-codigo-fuente-contratar-desarrollo.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Software a medida"
+tags: ["propiedad del código fuente", "contrato de desarrollo de software", "software a medida", "derechos de autor software"]
+resumen: "En Colombia, si contratas un desarrollo por escrito, la ley presume que los derechos patrimoniales del software pasan a tu empresa, salvo que el contrato diga otra cosa. Aun así, exige por escrito la cesión, el código fuente completo, el repositorio a tu nombre y la documentación, porque sin acceso real al código la propiedad no sirve de mucho."
+faqs:
+  - q: "¿Quién es el dueño del software que le pagué a un desarrollador?"
+    a: "El desarrollador es el autor, pero si hubo un contrato escrito de prestación de servicios, la ley colombiana presume que los derechos patrimoniales pasaron a quien encargó la obra, salvo pacto en contrario. Por eso conviene que el contrato lo diga de forma expresa."
+  - q: "¿Es obligatorio que me entreguen el código fuente?"
+    a: "Solo si el contrato lo establece. Hay proveedores que entregan el sistema funcionando pero conservan el código. Si quieres poder cambiar de proveedor, el contrato debe exigir la entrega del código fuente completo y de todo lo necesario para desplegarlo."
+  - q: "¿Qué pasa con las librerías de código abierto que usa mi software?"
+    a: "No pasan a ser tuyas: se usan bajo su propia licencia. Pide un listado de las dependencias con su licencia para confirmar que permiten el uso comercial que le vas a dar."
+  - q: "¿Puedo registrar mi software en Colombia?"
+    a: "Sí. La Dirección Nacional de Derecho de Autor permite registrar el soporte lógico. El registro no es obligatorio para tener los derechos, pero sirve como prueba de la titularidad."
+---
+
+Cuando una empresa paga por un software a medida, suele dar por hecho que el sistema es suyo. En la práctica, **la propiedad del código fuente** depende de lo que diga el contrato y de algo más concreto: si tienes o no acceso al código, al repositorio y a los servidores donde corre. Una empresa puede ser dueña "en el papel" y aun así no poder cambiar una coma sin el proveedor original.
+
+Esta guía explica qué dice la ley colombiana, qué cláusulas y entregables exigir, y cómo verificar que de verdad tienes el control. No reemplaza la asesoría de un abogado, pero te da las preguntas correctas para hacerle.
+
+## Qué dice la ley en Colombia
+
+En Colombia el software se protege como una obra, bajo el régimen de derecho de autor (Ley 23 de 1982 y sus normas complementarias). Eso implica dos clases de derechos:
+
+- **Derechos morales:** el reconocimiento de quién es el autor. Pertenecen siempre a las personas que lo crearon y no se venden.
+- **Derechos patrimoniales:** usar, copiar, modificar, distribuir y explotar el software. Estos son los que le importan a tu empresa.
+
+El artículo 20 de la Ley 23 de 1982, modificado por la Ley 1450 de 2011, establece que en las obras creadas por encargo, bajo contrato de prestación de servicios o de trabajo, **se presume que los derechos patrimoniales se transfieren a quien encarga**, en la medida necesaria para sus actividades habituales, salvo pacto en contrario. Para que esa presunción opere, **el contrato debe constar por escrito**.
+
+Dos consecuencias prácticas:
+
+1. Sin contrato escrito, la discusión sobre quién es dueño se vuelve difícil.
+2. La presunción tiene límites ("en la medida necesaria" y "salvo pacto en contrario"). Una cesión expresa en el contrato elimina la duda.
+
+Puedes consultar el marco y el registro de software en la [Dirección Nacional de Derecho de Autor](https://www.derechodeautor.gov.co).
+
+## Las cláusulas que no pueden faltar
+
+Al revisar un contrato de desarrollo, busca que diga de forma expresa:
+
+| Cláusula | Qué debe decir | Por qué importa |
+|---|---|---|
+| Cesión de derechos patrimoniales | Que se ceden a tu empresa, sin límite de tiempo ni territorio, para usar, modificar y explotar el software | Evita depender de la presunción legal |
+| Entrega del código fuente | Que se entrega el código completo, no solo el programa instalado | Sin código no hay forma de cambiar de proveedor |
+| Repositorio | Que el repositorio (GitHub, GitLab u otro) queda a nombre de tu empresa | El historial de cambios también es parte del activo |
+| Infraestructura | Que dominios, servidores y cuentas de servicios se registran a tu nombre | Si el proveedor desaparece, el sistema sigue en pie |
+| Documentación | Manual técnico, instrucciones de instalación y despliegue | Otro equipo debe poder continuar el trabajo |
+| Componentes de terceros | Listado de librerías y servicios con su licencia | Lo que no es tuyo debe estar identificado |
+| Confidencialidad | Que el proveedor no reutiliza tu lógica de negocio ni tus datos | Protege lo que te diferencia |
+
+Si el proveedor trabaja con una base propia (un "framework" o producto que reutiliza con varios clientes), es razonable que conserve esa base. Lo importante es que quede claro qué parte es tuya, qué parte es licenciada y en qué condiciones puedes seguir usándola si terminas la relación.
+
+## Propiedad no es lo mismo que control
+
+El error más común no está en el contrato, sino en la operación. Revisa estos puntos al iniciar el proyecto, no al final:
+
+- **Accesos de administrador:** tu empresa debe tener usuario propietario en el repositorio, el hosting, el dominio y la base de datos. El proveedor puede tener acceso, pero no ser el único.
+- **Credenciales fuera del código:** contraseñas y llaves deben estar en un gestor o en variables de entorno documentadas, no escritas en el código ni en un chat.
+- **Entregas periódicas:** cada fase debería terminar con el código en tu repositorio, no solo con una demostración.
+- **Copias de seguridad:** pregunta dónde se guardan y si puedes restaurarlas sin ayuda.
+
+En V1TR0 trabajamos así por defecto: el repositorio y la infraestructura quedan a nombre del cliente desde el primer día, y cada entrega queda en ese repositorio. Es la forma más sencilla de que la propiedad sea real.
+
+## Cómo verificar que de verdad tienes el código
+
+Antes del pago final, haz esta prueba sencilla con alguien de tu equipo o con un técnico de confianza:
+
+- Entra al repositorio con la cuenta de tu empresa y confirma que ves todo el historial.
+- Pide que un tercero siga la documentación para instalar el sistema en un entorno de prueba. Si no puede, la documentación está incompleta.
+- Revisa que el dominio y el hosting aparezcan a nombre de tu empresa en el panel del proveedor del servicio.
+- Solicita el listado de dependencias y sus licencias.
+
+Si alguno de estos pasos falla, todavía estás a tiempo de exigirlo, porque el último pago es tu mejor argumento.
+
+## Señales de alerta al contratar
+
+- El proveedor se niega a entregar el código fuente "por seguridad".
+- El dominio o el hosting se registran a nombre de la agencia.
+- El contrato habla de "licencia de uso" pero no de cesión.
+- No hay documentación técnica prevista en el alcance.
+- Toda la operación depende de una sola persona sin respaldo.
+
+Ninguna de estas señales significa que el proveedor actúe de mala fe, pero sí que tu empresa podría quedar amarrada. Si quieres entender cómo se organiza un proyecto por fases con entregas verificables, revisa nuestra guía sobre [metodologías ágiles](/blog/metodologias-agiles-gestion-proyectos).
+
+## Antes de firmar
+
+La propiedad del código fuente se define en el contrato y se asegura en la operación diaria. Pide la cesión por escrito, el código completo, el repositorio y la infraestructura a tu nombre y documentación suficiente para que otro equipo pueda continuar. Y para cualquier duda legal específica, consulta con un abogado de propiedad intelectual.
+
+Si estás evaluando un desarrollo a medida o una [tienda en línea](/servicios/ecommerce), en V1TR0 te explicamos el alcance, los entregables y quién queda dueño de cada pieza antes de empezar. Puedes [cotizar tu proyecto](/contratar-software) o escribirnos por Telegram a [@V1tr0](https://t.me/V1tr0).

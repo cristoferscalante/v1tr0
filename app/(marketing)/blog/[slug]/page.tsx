@@ -3,11 +3,62 @@ import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import TableOfContents from "@/components/blog/TableOfContents"
 import PostHeader from "@/components/blog/PostHeader"
-import { getPostBySlug, getAllPostSlugs } from "@/lib/mdx"
+import { getPostBySlug, getAllPostSlugs, type PostMetadata } from "@/lib/mdx"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import { MDXContent } from "@/components/blog/MDXContent"
+import { siteConfig } from "@/config/site"
+
+/** Fecha YYYY-MM-DD a ISO con la zona de Colombia. */
+const isoDate = (d: string) => new Date(/T/.test(d) ? d : `${d}T12:00:00-05:00`).toISOString()
+
+/** Datos estructurados del artículo: BlogPosting + migas + FAQPage (si hay preguntas). */
+function postJsonLd(meta: PostMetadata) {
+  const url = `${siteConfig.url}/blog/${meta.slug}`
+  const image = meta.coverImage.startsWith("http") ? meta.coverImage : `${siteConfig.url}${meta.coverImage}`
+  const publisher = {
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    logo: { "@type": "ImageObject", url: `${siteConfig.url}/imagenes/logos/v1tr0-logo.svg` },
+  }
+  const graph: Record<string, unknown>[] = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: meta.title,
+      description: meta.excerpt,
+      image: [image],
+      datePublished: isoDate(meta.date),
+      dateModified: isoDate(meta.updated || meta.date),
+      inLanguage: "es-CO",
+      mainEntityOfPage: url,
+      author: { "@type": "Person", name: meta.author },
+      publisher,
+      keywords: meta.tags?.join(", "),
+      ...(meta.category && { articleSection: meta.category }),
+      ...(meta.resumen && { abstract: meta.resumen }),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: siteConfig.url },
+        { "@type": "ListItem", position: 2, name: "Blog", item: `${siteConfig.url}/blog` },
+        { "@type": "ListItem", position: 3, name: meta.title, item: url },
+      ],
+    },
+  ]
+  if (meta.faqs?.length) {
+    graph.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: meta.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    })
+  }
+  return JSON.stringify(graph).replace(/</g, "\\u003c")
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -27,6 +78,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     return {
       title: post.meta.title,
       description: post.meta.excerpt,
+      alternates: { canonical: `${siteConfig.url}/blog/${slug}` },
       openGraph: {
         title: post.meta.title,
         description: post.meta.excerpt,
@@ -92,11 +144,29 @@ async function PostContent({ slug }: { slug: string }) {
         </aside>
 
         <div className="flex-1 order-1 md:order-2">
+          {post.meta.resumen && (
+            <aside className="mb-8 rounded-xl border border-[#26FFDF]/40 bg-[#025159]/20 p-5">
+              <p className="mb-1 text-xs font-bold uppercase tracking-[0.14em] text-[#26FFDF]">Respuesta corta</p>
+              <p className="m-0 text-base leading-relaxed">{post.meta.resumen}</p>
+            </aside>
+          )}
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <MDXContent content={post.content} />
           </div>
+          {post.meta.faqs && post.meta.faqs.length > 0 && (
+            <section className="mt-12" aria-labelledby="preguntas-frecuentes">
+              <h2 id="preguntas-frecuentes" className="mb-4 text-2xl font-bold">Preguntas frecuentes</h2>
+              {post.meta.faqs.map((f) => (
+                <details key={f.q} className="mb-3 rounded-xl border border-[#26FFDF]/20 p-4">
+                  <summary className="cursor-pointer font-semibold">{f.q}</summary>
+                  <p className="mt-3 mb-0 leading-relaxed">{f.a}</p>
+                </details>
+              ))}
+            </section>
+          )}
         </div>
       </div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: postJsonLd(post.meta) }} />
     </article>
   )
 }

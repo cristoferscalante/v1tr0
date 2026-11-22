@@ -3,6 +3,7 @@ import type { MetadataRoute } from "next"
 import { siteConfig } from "@/config/site"
 import { subcategoryPages } from "@/lib/data/servicios"
 import { ubicacionPages } from "@/lib/data/ubicaciones"
+import { getAllPostsMetadata } from "@/lib/mdx"
 
 /**
  * Sitemap del sitio público.
@@ -27,8 +28,10 @@ const staticRoutes: Array<{ path: string; priority: number; changeFrequency: Met
   { path: "/cookies", priority: 0.2, changeFrequency: "yearly" },
 ]
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date()
+  // Artículos del blog: cada uno con su fecha real (la de revisión si la tiene).
+  const posts = await getAllPostsMetadata()
 
   return [
     ...staticRoutes.map((route) => ({
@@ -50,6 +53,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.9,
+    })),
+    ...posts.map((post) => ({
+      url: `${siteConfig.url}/blog/${post.slug}`,
+      lastModified: new Date(`${String(post.updated || post.date).slice(0, 10)}T12:00:00-05:00`),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
   ]
 }

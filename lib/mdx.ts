@@ -19,6 +19,27 @@ export interface PostMetadata {
   tags?: string[]
   slug: string
   readingTime?: string
+  /** Respuesta directa de 1-3 frases: se muestra arriba del artículo y es lo que más citan los buscadores con IA. */
+  resumen?: string
+  /** Preguntas frecuentes: se muestran al final y generan el schema FAQPage. */
+  faqs?: Array<{ q: string; a: string }>
+  /** Fecha de la última revisión de fondo (YYYY-MM-DD). */
+  updated?: string
+  category?: string
+  /** Borrador: no se publica salvo con BLOG_DRAFTS=1 (vista previa local). */
+  draft?: boolean
+}
+
+const SHOW_DRAFTS = process.env.BLOG_DRAFTS === "1"
+
+function isPublishable(fileName: string) {
+  if (SHOW_DRAFTS) return true
+  try {
+    const { data } = matter(fs.readFileSync(path.join(postsDirectory, fileName), "utf8"))
+    return data.draft !== true
+  } catch {
+    return false
+  }
 }
 
 // Tipo para el post completo
@@ -44,7 +65,7 @@ export async function getAllPostSlugs() {
     const fileNames = fs.readdirSync(postsDirectory)
 
     return fileNames
-      .filter((fileName) => fileName.endsWith(".mdx"))
+      .filter((fileName) => fileName.endsWith(".mdx") && isPublishable(fileName))
       .map((fileName) => ({
         slug: fileName.replace(/\.mdx$/, ""),
       }))
@@ -62,7 +83,7 @@ export async function getAllPostsMetadata(): Promise<PostMetadata[]> {
     const fileNames = fs.readdirSync(postsDirectory)
 
     const allPostsData = fileNames
-      .filter((fileName) => fileName.endsWith(".mdx"))
+      .filter((fileName) => fileName.endsWith(".mdx") && isPublishable(fileName))
       .map((fileName) => {
         try {
           // Eliminar la extensión ".mdx" para obtener el slug
@@ -163,7 +184,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
     const fullPath = path.join(postsDirectory, `${slug}.mdx`)
 
-    if (!fs.existsSync(fullPath)) {
+    if (!fs.existsSync(fullPath) || !isPublishable(`${slug}.mdx`)) {
       return null
     }
 

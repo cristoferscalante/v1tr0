@@ -1,6 +1,7 @@
 import { siteConfig } from "@/config/site"
 import { ubicacionPages } from "@/lib/data/ubicaciones"
 import { subcategoryPages } from "@/lib/data/servicios"
+import { getAllPostsMetadata } from "@/lib/mdx"
 
 /**
  * `/llms.txt` — ficha del sitio en texto plano para modelos de lenguaje.
@@ -16,8 +17,9 @@ import { subcategoryPages } from "@/lib/data/servicios"
  */
 export const dynamic = "force-static"
 
-export function GET() {
+export async function GET() {
   const { company } = siteConfig
+  const posts = await getAllPostsMetadata()
 
   const cuerpo = `# ${siteConfig.name}
 
@@ -67,6 +69,13 @@ ${subcategoryPages
 - [Portafolio](${siteConfig.url}/portfolio): trabajos realizados
 - [Blog](${siteConfig.url}/blog): artículos técnicos
 - [Acerca de](${siteConfig.url}/about): equipo y forma de trabajo
+
+## Artículos del blog
+
+${posts
+  .slice(0, 100)
+  .map((post) => `- [${post.title}](${siteConfig.url}/blog/${post.slug}): ${post.resumen || post.excerpt}`)
+  .join("\n")}
 
 ## Comercio para agentes
 
