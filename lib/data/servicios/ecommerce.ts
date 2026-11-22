@@ -324,6 +324,6 @@ export const ecommerce: SubcategoryPage = {
     description:
       "Cuéntanos qué vendes y cómo atiendes hoy. En una conversación corta sabemos si tu negocio necesita pasarela o si le rinde más un catálogo que cierre por WhatsApp.",
     label: "Hablemos de tu tienda",
-    href: "https://wa.me/573222237026?text=Hola%20V1TR0%2C%20quiero%20una%20tienda%20en%20l%C3%ADnea%20para%20mi%20negocio.",
+    href: "https://wa.me/573107811719?text=Hola%20V1TR0%2C%20quiero%20una%20tienda%20en%20l%C3%ADnea%20para%20mi%20negocio.",
   },
 }

@@ -79,11 +79,11 @@ function MockupCard({ item }: { item: Extract<GridItem, { kind: "mockup" }> }) {
           </MiniWindow>
         </div>
         <span className="absolute right-3 top-4 rounded-full border border-[#26FFDF]/25 bg-black/60 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#26FFDF]/80">
-          Maqueta
+          A la medida
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-3">
-        <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-[#26FFDF]/50">Próximamente</span>
+        <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-[#26FFDF]/50">Disponible bajo pedido</span>
         <span className="text-sm font-semibold leading-tight text-[#26FFDF]/80">{item.subcategory}</span>
         <span className="text-xs leading-snug text-textMuted/80 line-clamp-2">{item.description}</span>
       </div>

@@ -57,7 +57,7 @@ function SubcategoryCard({ sub, index }: { sub: Service["subcategories"][number]
       </div>
       <p className="mt-2 text-[13px] leading-relaxed text-textMuted">{sub.description}</p>
       <p className="mt-3 text-[10px] uppercase tracking-[0.16em] text-[#26FFDF]/60">
-        {count > 0 ? `${pad(count)} ${count === 1 ? "proyecto publicado" : "proyectos publicados"}` : "En maqueta"}
+        {count > 0 ? `${pad(count)} ${count === 1 ? "proyecto publicado" : "proyectos publicados"}` : "A la medida · cotízalo"}
         {slug && <span className="text-white/40"> · ver detalle →</span>}
       </p>
     </>

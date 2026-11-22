@@ -203,11 +203,11 @@ export default function ServiciosShowcase() {
             <div className="flex items-baseline gap-3">
               <span className="text-[10px] tabular-nums text-white/35">{pad(total)}</span>
               <span className="text-2xl font-bold uppercase tracking-tight text-white transition-colors group-hover:text-[#26FFDF]">
-                Lo que viene
+                A la medida
               </span>
             </div>
             <p className="mt-1 pl-7 text-xs text-white/45">
-              {upcomingSubcategories.length} especialidades en desarrollo · ver cómo trabajamos ↓
+              {upcomingSubcategories.length} especialidades más, a la medida · ver cómo trabajamos ↓
             </p>
           </div>
         </a>

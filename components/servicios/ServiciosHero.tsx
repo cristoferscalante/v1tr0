@@ -439,7 +439,7 @@ export default function ServiciosHero() {
               <span className="text-white/30">01</span>&nbsp;&nbsp;Catálogo
             </p>
             <p className="max-w-md text-sm leading-relaxed text-textMuted">
-              Elige una línea de desarrollo y filtra por especialidad. Lo que aún no tiene proyecto publicado aparece como maqueta.
+              Elige una línea de desarrollo y filtra por especialidad. Lo que aún no tiene proyecto publicado lo desarrollamos a la medida.
             </p>
           </div>
           {/* Móvil y tablet: las categorías van en una fila sobre los proyectos */}

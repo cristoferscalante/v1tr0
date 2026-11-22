@@ -42,11 +42,11 @@ export const siteConfig = {
     legalName: 'V1TR0 SAS',
     email: 'buzon@v1tr0.com',
     /** Debe escribirse idéntico aquí, en Google Business Profile y en el footer. */
-    phone: '+57 315 817 3818',
+    phone: '+57 310 781 1719',
     /** Mismo número en formato E.164, para `tel:` y para los datos estructurados. */
-    phoneE164: '+573158173818',
-    /** Línea de WhatsApp (distinta del teléfono de llamadas), sin '+' para `wa.me`. */
-    whatsapp: '573222237026',
+    phoneE164: '+573107811719',
+    /** Línea de WhatsApp (el mismo número comercial), sin '+' para `wa.me`. */
+    whatsapp: '573107811719',
     /**
      * Ficha NAP (Name-Address-Phone). Es la fuente única del `LocalBusiness`
      * de `lib/seo/site-graph.ts`: Google y los motores de respuesta cruzan
