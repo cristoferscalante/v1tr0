@@ -19,11 +19,22 @@ export default function ContactoDirecto({
   return (
     <section
       aria-label="Contacto directo"
-      className={`rounded-2xl border border-[#26FFDF]/25 bg-[#025159]/20 p-6 md:p-8 ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-[#26FFDF]/25 bg-gradient-to-br from-[#0B302D] via-[#062B2D] to-[#030707] p-6 shadow-lg shadow-black/30 md:p-8 ${className}`}
     >
+      {/* Isotipo de marca como fondo sutil */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/imagenes/logos/v1tr0-isotipo-linea.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-8 -bottom-10 hidden h-56 w-56 opacity-[0.08] md:block"
+      />
+      <span className="mb-2 inline-block rounded-full border border-[#26FFDF]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#26FFDF]/80">
+        Contacto directo · V1TR0
+      </span>
       <h2 className="m-0 text-xl font-bold text-[#26FFDF] md:text-2xl">{titulo}</h2>
       <p className="mt-2 mb-5 text-sm leading-relaxed text-[#b9c9c8] md:text-base">{descripcion}</p>
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="relative flex flex-col gap-3 sm:flex-row">
         <a
           href={telegramLink(interes)}
           target="_blank"

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { boton, caja, correoV1tr0, esc, fila } from "@/lib/email/plantilla"
 
 // Interfaz para los datos del formulario
 interface ContactFormData {
@@ -48,108 +49,33 @@ const generateEmailHTML = (data: ContactFormData) => {
     'gestion': 'Gestión de Proyectos',
     'automatizacion': 'Automatización de Tareas'
   }
-
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <title>Nuevo mensaje de contacto - V1tr0</title>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
-        .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
-        .field { margin-bottom: 15px; }
-        .label { font-weight: bold; color: #555; }
-        .value { margin-top: 5px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #667eea; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>🚀 Nuevo mensaje de contacto</h1>
-          <p>Has recibido un nuevo mensaje desde el formulario de contacto de V1tr0</p>
-        </div>
-        <div class="content">
-          <div class="field">
-            <div class="label">👤 Nombre:</div>
-            <div class="value">${data.name}</div>
-          </div>
-          <div class="field">
-            <div class="label">📧 Email:</div>
-            <div class="value">${data.email}</div>
-          </div>
-          <div class="field">
-            <div class="label">🎯 Área de Servicio:</div>
-            <div class="value">${serviceAreaNames[data.serviceArea] || data.serviceArea}</div>
-          </div>
-          <div class="field">
-            <div class="label">💬 Mensaje:</div>
-            <div class="value">${data.message.replace(/\n/g, '<br>')}</div>
-          </div>
-          <div class="field">
-            <div class="label">🕒 Fecha:</div>
-            <div class="value">${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}</div>
-          </div>
-        </div>
-      </div>
-    </body>
-    </html>
-  `
+  const servicio = serviceAreaNames[data.serviceArea] || data.serviceArea
+  const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota', dateStyle: 'long', timeStyle: 'short' })
+  return correoV1tr0({
+    preencabezado: `${data.name} · ${servicio}: ${data.message.slice(0, 90)}`,
+    etiqueta: 'Nuevo contacto desde la web',
+    titulo: `${data.name} quiere hablar de ${servicio}`,
+    interno: true,
+    cuerpo: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+${fila('Nombre', esc(data.name))}
+${fila('Correo', `<a href="mailto:${esc(data.email)}" style="color:#025159;font-weight:bold">${esc(data.email)}</a>`)}
+${fila('Servicio', esc(servicio))}
+${fila('Recibido', esc(fecha))}
+</table>
+${caja(esc(data.message))}
+${boton('Responder al cliente', `mailto:${esc(data.email)}?subject=${encodeURIComponent('Re: tu mensaje a V1TR0')}`)}`,
+  })
 }
 
-// Función para generar el email de respuesta automática
-const generateAutoReplyHTML = (name: string) => {
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <title>Gracias por contactarnos - V1tr0</title>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
-        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
-        .logo { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-        .message { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <div class="logo">V1tr0</div>
-          <h1>¡Gracias por contactarnos!</h1>
-        </div>
-        <div class="content">
-          <p>Hola <strong>${name}</strong>,</p>
-          
-          <div class="message">
-            <p>Hemos recibido tu mensaje y queremos agradecerte por contactar con V1tr0.</p>
-            
-            <p>Nuestro equipo revisará tu consulta y te responderemos lo antes posible, generalmente dentro de las próximas 24 horas.</p>
-            
-            <p>Mientras tanto, te invitamos a:</p>
-            <ul>
-              <li>🌐 Explorar nuestros servicios en <a href="https://v1tr0.com">v1tr0.com</a></li>
-              <li>📱 Seguirnos en nuestras redes sociales</li>
-              <li>📖 Leer nuestro blog para conocer las últimas tendencias tecnológicas</li>
-            </ul>
-          </div>
-          
-          <p>Si tienes alguna pregunta urgente, no dudes en contactarnos directamente.</p>
-          
-          <p>¡Gracias por confiar en V1tr0!</p>
-          
-          <p><strong>El equipo de V1tr0</strong><br>
-          🚀 Transformando ideas en soluciones digitales</p>
-        </div>
-      </div>
-    </body>
-    </html>
-  `
-}
+const generateAutoReplyHTML = (name: string) =>
+  correoV1tr0({
+    preencabezado: 'Recibimos tu mensaje. Te respondemos en menos de 24 horas hábiles.',
+    etiqueta: 'Mensaje recibido',
+    titulo: `¡Gracias, ${name}!`,
+    cuerpo: `<p style="margin:0 0 12px;font:16px/1.6 Arial,sans-serif;color:#1A2324">Recibimos tu mensaje. Lo revisamos y te respondemos lo antes posible, normalmente en menos de <strong>24 horas hábiles</strong>.</p>
+<p style="margin:0;font:15px/1.6 Arial,sans-serif;color:#1A2324">Mientras tanto, puedes conocer cómo trabajamos y nuestros servicios:</p>
+${boton('Ver servicios de V1TR0', 'https://v1tr0.com/servicios')}`,
+  })
 
 export async function POST(request: NextRequest) {
   try {
@@ -184,7 +110,8 @@ export async function POST(request: NextRequest) {
     const adminMailOptions = {
       from: process.env.SMTP_FROM,
       to: process.env.SMTP_TO || process.env.SMTP_FROM,
-      subject: `🚀 Nuevo contacto desde V1tr0 - ${formData.name}`,
+      replyTo: formData.email,
+      subject: `Nuevo contacto: ${formData.name}`,
       html: generateEmailHTML(formData),
       text: `
         Nuevo mensaje de contacto:
@@ -201,7 +128,8 @@ export async function POST(request: NextRequest) {
     const userMailOptions = {
       from: process.env.SMTP_FROM,
       to: formData.email,
-      subject: '✅ Hemos recibido tu mensaje - V1tr0',
+      replyTo: 'buzon@v1tr0.com',
+      subject: 'Recibimos tu mensaje · V1TR0',
       html: generateAutoReplyHTML(formData.name),
       text: `
         Hola ${formData.name},

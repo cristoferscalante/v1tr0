@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
+import { correoV1tr0, esc, fila } from "@/lib/email/plantilla"
 
 // Suscripción al newsletter de V1TR0 (Blogs & Investigación). No hay tabla de
 // suscriptores todavía: se notifica al equipo por correo, igual que el
@@ -73,7 +74,13 @@ export async function POST(request: NextRequest) {
       to,
       subject: "Nueva suscripción · Blogs & Investigación",
       text: `Nuevo suscriptor al newsletter de V1TR0: ${email}`,
-      html: `<p>Nuevo suscriptor al newsletter <strong>Blogs &amp; Investigación</strong>:</p><p><a href="mailto:${email}">${email}</a></p>`,
+      html: correoV1tr0({
+        preencabezado: `Nuevo suscriptor: ${email}`,
+        etiqueta: "Newsletter Blogs & Investigación",
+        titulo: "Nuevo suscriptor",
+        interno: true,
+        cuerpo: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${fila("Correo", `<a href="mailto:${esc(email)}" style="color:#025159;font-weight:bold">${esc(email)}</a>`)}${fila("Fecha", esc(new Date().toLocaleString("es-CO", { timeZone: "America/Bogota", dateStyle: "long", timeStyle: "short" })))}</table>`,
+      }),
     })
     return NextResponse.json({ ok: true })
   } catch (error) {
