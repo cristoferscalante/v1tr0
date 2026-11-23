@@ -6,7 +6,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 
 ## Software a medida
 - [x] Cuánto cuesta desarrollar un software a medida en Colombia | cuánto cuesta un software a medida | comercial → cuanto-cuesta-software-a-medida-colombia (2026-11-22)
-- [ ] Software a medida o software de caja: cómo decidir en tu empresa | software a medida vs software comercial | comparativa
+- [x] Software a medida o software de caja: cómo decidir en tu empresa | software a medida vs software comercial | comparativa → software-a-medida-vs-software-comercial-como-decidir (2026-11-23)
 - [ ] Qué debe incluir un contrato de desarrollo de software | contrato desarrollo de software | comercial
 - [ ] Cuánto tarda desarrollar una aplicación web empresarial | cuánto tarda desarrollar una aplicación | informativa
 - [x] Propiedad del código fuente: qué exigir al contratar un desarrollo | propiedad del código fuente | comercial → propiedad-codigo-fuente-contratar-desarrollo (2026-11-22)
@@ -21,7 +21,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Wompi, PayU o Mercado Pago: qué pasarela conviene en Colombia | pasarela de pagos Colombia | comparativa
 - [ ] Cuánto cuesta una tienda virtual en Colombia | cuánto cuesta una tienda virtual | comercial
 - [ ] Catálogo con pedidos por WhatsApp o tienda con pasarela | catálogo WhatsApp vs tienda online | comparativa
-- [ ] Cómo cobrar con PSE y Nequi en tu página web | cobrar con PSE en página web | informativa
+- [x] Cómo cobrar con PSE y Nequi en tu página web | cobrar con PSE en página web | informativa → como-cobrar-con-pse-y-nequi-en-tu-pagina-web (2026-11-23)
 - [ ] Envíos para tiendas virtuales en Colombia: opciones y costos | envíos tienda virtual Colombia | informativa
 - [ ] WooCommerce o desarrollo propio para vender en línea | WooCommerce o tienda a medida | comparativa
 - [ ] Qué necesita legalmente una tienda virtual en Colombia | requisitos tienda virtual Colombia | informativa
@@ -48,13 +48,13 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Automatizar procesos con n8n: ejemplos para pymes | automatización n8n | informativa
 - [ ] Chatbot para empresa: cuándo sirve y cuándo no | chatbot para empresas | informativa
 - [ ] Cómo integrar tus sistemas: facturación, inventario y ventas | integración de sistemas | informativa
-- [ ] Inteligencia artificial en pymes colombianas: usos reales | IA para pymes | informativa
+- [x] Inteligencia artificial en pymes colombianas: usos reales | IA para pymes | informativa → inteligencia-artificial-pymes-colombianas-usos-reales (2026-11-23)
 - [ ] Automatizar cotizaciones y seguimiento de clientes | automatizar cotizaciones | informativa
 - [ ] Dashboards de gestión: qué medir en tu empresa | dashboard empresarial | informativa
 
 ## Transformación digital por sector y ciudad
 - [ ] Empresas de software en Pitalito: qué ofrecen y cómo elegir | empresa de software Pitalito | comercial-local
-- [ ] Transformación digital para empresas del Huila | transformación digital Huila | informativa
+- [x] Transformación digital para empresas del Huila | transformación digital Huila | informativa → transformacion-digital-empresas-del-huila (2026-11-23)
 - [ ] Digitalizar una cooperativa: por dónde empezar | digitalizar cooperativa | informativa
 - [ ] Software para distribuidoras: pedidos, rutas e inventario | software para distribuidoras | comercial
 - [ ] Software para constructoras pequeñas: obras y materiales | software para constructoras | comercial

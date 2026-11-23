@@ -1,0 +1,86 @@
+---
+title: "Cómo cobrar con PSE en página web, Nequi y Bre-B en Colombia"
+date: "2026-11-23"
+excerpt: "Aprende a cobrar con PSE en página web junto a Nequi y Bre-B en Colombia: requisitos bancarios, comisiones por pasarela y pasos técnicos de integración."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/como-cobrar-con-pse-y-nequi-en-tu-pagina-web.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Comercio electrónico en Colombia"
+tags: ["cobrar con PSE en página web", "pagos con Nequi tienda virtual", "Bre-B pagos inmediatos", "pasarelas de pago Colombia"]
+resumen: "Para cobrar con PSE en página web y habilitar Nequi o llaves de Bre-B en Colombia, la vía más rápida es integrar una pasarela agregadora como Wompi, Mercado Pago o PayU, que activa todos los bancos desde el primer día por una comisión del 2,65 % al 3,49 % más un fijo por transacción. Si superas los 80 millones mensuales, puedes tramitar un convenio recaudador directo con tu banco y ACH Colombia."
+faqs:
+  - q: "¿Necesito tener empresa constituida (SAS) para cobrar con PSE y Nequi en mi web?"
+    a: "No es obligatorio tener una SAS. Tanto personas naturales con RUT actualizado como personas jurídicas pueden abrir cuenta de comercio en pasarelas agregadoras como Wompi, Mercado Pago o ePayco y recibir el dinero en su cuenta de ahorros o corriente."
+  - q: "¿Cuánto tarda en llegar a mi cuenta bancaria el dinero cobrado por PSE o Nequi?"
+    a: "En el modelo agregador de Wompi el abono a cuentas Bancolombia suele reflejarse al siguiente día hábil, mientras que en otras pasarelas toma entre 24 y 72 horas hábiles. En el modelo gateway directo con convenio propio, el dinero entra en tiempo real a tu cuenta."
+  - q: "¿Qué diferencia hay entre cobrar con QR en WhatsApp y tener Nequi o PSE integrados en la web?"
+    a: "Cuando cobras por QR o transferencia manual debes verificar pantallazos uno por uno y cambiar el estado del pedido a mano. Con la integración vía API y webhook en tu página web, el sistema confirma el pago en segundos, descuenta el inventario y emite la factura sin intervención humana."
+  - q: "¿Cómo cambia Bre-B el recaudo en páginas web frente a PSE tradicional?"
+    a: "Bre-B, el sistema de pagos inmediatos interoperables del Banco de la República, permite liquidar transferencias entre cualquier banco o billetera en segundos las 24 horas usando llaves o códigos QR interoperables, complementando a PSE en montos cotidianos con confirmación instantánea."
+---
+
+Habilitar la opción de **cobrar con PSE en página web** junto con Nequi y pagos inmediatos es la decisión que más sube la tasa de conversión de cualquier comercio electrónico en Colombia. A diferencia de otros mercados donde la tarjeta de crédito domina las compras por internet, más de la mitad de los compradores colombianos prefiere pagar con débito directo desde su cuenta de ahorros o billetera digital sin endeudarse ni digitar códigos de seguridad de tarjetas plásticas.
+
+Si un cliente entra a tu sitio a las nueve de la noche, elige un producto y al momento de pagar solo encuentra tarjetas internacionales o un mensaje que dice «envíanos el comprobante por WhatsApp», la probabilidad de que abandone la compra supera el 60 %. A continuación explicamos las dos vías legales y técnicas para activar el botón de [PSE de ACH Colombia](https://www.achcolombia.com.co), el botón de [Nequi](https://www.nequi.com.co) y los flujos de pago inmediato interoperable de **Bre-B** impulsados por el [Banco de la República](https://www.banrep.gov.co), cuánto cuesta cada transacción y qué exige una integración segura.
+
+## Cómo funcionan hoy PSE, Nequi y Bre-B dentro de una tienda virtual
+
+Aunque para el comprador los tres métodos consisten en sacar plata de su saldo disponible, por dentro operan sobre rieles tecnológicos distintos que conviene conocer antes de contratar tu pasarela:
+
+- **PSE (Pagos Seguros en Línea):** desarrollado y operado por ACH Colombia, conecta tu página web con la sucursal virtual de todos los bancos comerciales y cooperativas financieras del país. El comprador elige su banco en tu sitio, es redirigido al entorno seguro de su entidad para autorizar el débito y regresa automáticamente a tu web con el estado aprobado o rechazado.
+- **Botón Nequi directo (Push y débito automático):** en lugar de obligar al usuario a entrar a PSE y buscar a Nequi en una lista de treinta bancos, la integración directa pide únicamente el número de celular del cliente y envía una notificación *push* a su aplicación Nequi para que acepte el cobro con su huella o clave en cinco segundos.
+- **Bre-B (Sistema de pagos inmediatos interoperables):** con la entrada en operación y consolidación de Bre-B bajo la regulación del Banco de la República, cualquier persona o comercio en Colombia puede transferir y recibir dinero en tiempo real, las 24 horas de los 7 días de la semana, entre cuentas de cualquier banco y billeteras digitales mediante llaves (celular, cédula, correo o código alfanumérico) y códigos QR interoperables. Las pasarelas locales ya integran este riel en sus pantallas de pago web para confirmar recaudos en menos de diez segundos.
+
+Tener los tres caminos visibles en tu pantalla de pago cubre tanto al gerente de compras que paga una factura de cinco millones desde el portal empresarial de su banco por PSE, como al comprador joven que paga sesenta mil pesos desde el celular con Nequi o con su llave de Bre-B.
+
+## Las dos formas de activarlos: pasarela agregadora vs. convenio directo
+
+Para poner estos botones en tu página web no necesitas hablar por separado con veinte bancos si estás empezando. En Colombia existen dos esquemas contractuales y la elección depende de tu volumen mensual de facturación:
+
+| Criterio | Modelo Agregador (Wompi, Mercado Pago, PayU, ePayco) | Modelo Gateway Directo (Convenio propio + ACH / Nequi Negocios) |
+|---|---|---|
+| Para quién conviene | Empresas o comercios que facturan menos de \$80.000.000 COP al mes por la web | Empresas consolidadas que superan los \$80.000.000 o \$100.000.000 COP mensuales |
+| Tiempo de activación | 1 a 3 días hábiles (registro 100 % en línea) | 3 a 6 semanas (estudio bancario, convenio de recaudo y certificación técnica con ACH) |
+| Quién recauda el dinero | La pasarela recibe el pago a su nombre y luego lo transfiere a tu cuenta bancaria | El dinero entra directo del banco del comprador a la cuenta recaudadora de tu empresa |
+| Costo fijo mensual | \$0 en la mayoría de planes estándar | Cuota fija mensual de gateway + tarifa por transacción pactada con tu banco |
+| Comisión por venta aprobada | Entre 2,65 % y 3,49 % + \$700 a \$900 COP (+ IVA sobre la comisión) | Tarifa fija por transacción PSE (usualmente entre \$1.200 y \$2.800 COP sin porcentaje sobre el total) |
+
+Mira con lupa la última fila de la tabla: si vendes tiquetes, maquinaria o paquetes mayoristas cuyo ticket promedio es de \$3.000.000 COP, pagar el 2,8 % en modelo agregador te cuesta \$84.000 COP por venta. En cambio, cuando pasas a convenio recaudador propio (Gateway), el banco te cobra una tarifa plana cercana a los \$2.000 COP por ese mismo débito PSE, ahorrándote más de ochenta mil pesos en una sola transacción.
+
+Para una tienda nueva o una pyme en crecimiento, lo más sensato es arrancar en modelo agregador —sin costos fijos mensuales ni trámites bancarios largos— y migrar a convenio directo cuando el volumen lo justifique. Si quieres ver cómo se configura una de las opciones más usadas del país, consulta nuestro tutorial sobre [cómo crear una tienda virtual con Wompi paso a paso](/blog/como-crear-tienda-virtual-wompi-paso-a-paso).
+
+## Qué documentos necesitas para abrir la cuenta de comercio
+
+Abrir una cuenta en una pasarela colombiana regulada exige superar la validación de conocimiento del cliente (SARLAFT) para prevención de lavado de activos. Ten listos estos cuatro archivos en PDF antes de iniciar el registro:
+
+1. **RUT actualizado:** descargado directamente del portal de la [DIAN](https://www.dian.gov.co) con fecha de generación inferior a 30 o 60 días según la pasarela, donde conste tu actividad económica comercial o de servicios.
+2. **Certificado de existencia y representación legal:** expedido por tu Cámara de Comercio (con menos de 30 días de vigencia) si te registras como persona jurídica (SAS, Ltda.).
+3. **Documento de identidad:** cédula de ciudadanía o de extranjería por ambas caras del representante legal o del titular del RUT.
+4. **Certificación bancaria activa:** expedida por tu banco o por Nequi, con fecha reciente, donde aparezca el número de cuenta y coincida exactamente con el NIT o la cédula del titular registrado.
+
+Un detalle que retrasa la aprobación de muchas pymes: si el RUT está a nombre de la sociedad (`Comercializadora El Cóndor SAS`), la certificación bancaria no puede estar a nombre personal del socio; ambos documentos deben pertenecer a la misma persona natural o jurídica.
+
+## Cómo se conecta técnicamente PSE y Nequi a tu página web
+
+Una vez aprobada tu cuenta comercial, existen tres niveles técnicos para integrar el cobro en tu sitio web según cómo esté construido tu portal:
+
+### 1. Enlaces de pago o plugins para WooCommerce y Shopify
+
+Cuando vendes servicios puntuales o pocos paquetes de valor fijo, puedes generar un link desde el panel de la pasarela y pegarlo en un botón, aunque no descontará inventario ni marcará facturas como pagadas por sí solo. Si tienes un catálogo montado sobre WooCommerce o Shopify, las pasarelas colombianas ofrecen plugins oficiales gratuitos que se conectan copiando las llaves criptográficas de producción (`Public Key`, `Private Key` y secreto de eventos). Aun así, conviene que un desarrollador ajuste los estados de retorno para evitar que un pedido pagado por PSE quede marcado como «cancelado» por tiempo de espera bancario.
+
+### 2. Integración a medida por API REST y Webhooks
+
+Cuando tu empresa opera una plataforma propia —un portal donde los clientes consultan su cartera y pagan facturas vencidas, un motor de reservas turísticas o una [tienda virtual a medida](/servicios/ecommerce)— la conexión se programa directamente contra la API de la pasarela. Para evitar reclamos de clientes a los que «les descontaron del banco pero la página no registró el pedido», el ingeniero debe programar tres mecanismos obligatorios:
+
+- **Consulta dinámica de la lista de bancos PSE:** por norma de ACH Colombia, la lista desplegable de bancos debe consultarse por API y guardarse en caché para mostrar qué entidades están en línea en ese instante.
+- **Confirmación asíncrona por Webhook firmado:** en pagos con PSE o Nequi, muchos usuarios autorizan el débito en su banco y cierran la pestaña antes de volver a tu web. El *webhook* es un aviso directo entre el servidor de la pasarela y tu servidor que confirma la aprobación con una firma criptográfica (`SHA-256`) imposible de falsificar.
+- **Conciliación de estados pendientes:** cuando un banco tarda minutos en responder una transacción PSE (`PENDING`), tu servidor debe consultar periódicamente el estado hasta que pase a `APPROVED` o `DECLINED` y notificar al comprador con el código único de seguimiento (`CUS`).
+
+## Retenciones e impuestos que debes calcular en tu margen
+
+Al recibir pagos digitales en Colombia, lo que entra a tu cuenta bancaria es el valor de la venta menos dos tipos de descuentos que debes tener claros en tu flujo de caja:
+
+- **La tarifa de la pasarela + IVA:** si la pasarela cobra $2,85\ \% + \$800$ sobre una venta de \$100.000 COP, la comisión es de \$3.650 COP más el 19 % de IVA (\$693 COP), para un costo total de \$4.343 COP.
+- **Ventaja en retenciones frente a tarjetas:** cobrar por PSE, Nequi o Bre-B evita las retenciones automáticas en el abono bancario que sí sufren las tarjetas débito o crédito tradicionales, mejorando la liquidez inmediata del comercio.
+
+Si necesitas integrar pagos automáticos con PSE, Nequi y Bre-B en tu portal de recaudo de cartera, plataforma de reservas o catálogo en línea para que cada pago actualice tu inventario y tu facturación en segundos, en V1TR0 construimos e integramos toda la pasarela de principio a fin. Puedes [cotizar tu integración o tienda virtual](/contratar-software) en nuestro sitio o escribirnos por Telegram a [@V1tr0](https://t.me/V1tr0).
