@@ -1,0 +1,87 @@
+---
+title: "IoT para fincas cafeteras: humedad, temperatura y alertas"
+date: "2026-11-24"
+excerpt: "Monitoreo IoT y LoRaWAN para fincas cafeteras en Pitalito, el Huila y Colombia: sensores de fermentación, temperatura en marquesinas y humedad del grano."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/iot-para-fincas-cafeteras-humedad-temperatura-alertas.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Hardware, IoT y LoRa"
+tags: ["IoT café", "fincas cafeteras Huila", "sensores café Pitalito", "LoRaWAN Colombia", "humedad y temperatura café"]
+resumen: "Un sistema IoT para fincas cafeteras utiliza sensores inalámbricos conectados por red LoRaWAN para medir en tiempo real la temperatura y el pH en tanques de fermentación, el microclima dentro de marquesinas de secado y la humedad del pergamino, enviando alertas al celular del caficultor sin depender de cobertura celular en los lotes."
+faqs:
+  - q: "¿Cómo funcionan los sensores en una finca de Pitalito o Acevedo si en los lotes no hay señal celular ni Wi-Fi?"
+    a: "Los sensores en los tanques, marquesinas o lotes transmiten por radiofrecuencia LoRaWAN en la banda libre de 915 MHz hasta una antena central (gateway) ubicada en la casa principal o punto alto de la finca, con alcance de 2 a 8 kilómetros en montaña sin pagar planes de datos por cada sensor."
+  - q: "¿Qué rango de humedad debe alcanzar el café pergamino seco para no perder puntaje ni peso?"
+    a: "De acuerdo con los estándares técnicos de comercialización en Colombia y Cenicafé, el café pergamino seco debe estabilizarse entre el 10 % y el 12 % de humedad. Por encima del 12,5 % hay riesgo de hongos y descuentos en trilla; por debajo del 10 % el grano se cristaliza y el productor pierde kilos al vender."
+  - q: "¿Cuánto cuesta instalar monitoreo IoT en una finca o central de beneficio en el Huila?"
+    a: "Un kit inicial para beneficiadero y secado solar (gateway LoRaWAN, sondas de fermentación, sensores de temperatura/humedad relativa en marquesina y panel web con alertas a Telegram/WhatsApp) parte de $5.500.000 a $14.000.000 COP, dependiendo del número de tanques y módulos de secado."
+  - q: "¿El sistema guarda el historial para mostrar trazabilidad a compradores internacionales de café especial?"
+    a: "Sí. Cada lote procesado queda registrado con sus curvas reales de temperatura de fermentación, horas de secado y humedad final, exportables en reportes o vinculados a un código QR para exportadores y tostadores."
+---
+
+En las montañas de **Pitalito** —especialmente en el corregimiento de Bruselas—, **Acevedo, San Agustín, Palestina, Oporapa, Timaná, Isnos y Garzón**, el departamento del Huila produce algunos de los cafés especiales mejor puntuados de Colombia y del mundo. Sin embargo, cualquier productor de café de especialidad sabe que el trabajo de todo un año en el cultivo se puede dañar o devaluar en cuestión de 36 horas durante la poscosecha: una fermentación que se pasa de temperatura durante la madrugada o una marquesina que supera los 48 °C al mediodía pueden arruinar un microlote de más de 85 puntos en taza.
+
+Implementar **IoT para fincas cafeteras** (Internet de las Cosas aplicado al beneficio y secado del café) permite pasar del cálculo al ojo a la ingeniería de precisión. En **V1TR0**, desde nuestra sede en Pitalito (Huila), diseñamos e integramos redes de sensores industriales y telemetría LoRaWAN pensadas para la topografía real de la cordillera colombiana. En esta guía técnica y de negocio explicamos qué variables conviene medir, cómo transmitir los datos desde veredas sin cobertura móvil y cuánto cuesta implementar un sistema de monitoreo con alertas automáticas.
+
+## Por qué el café especial del Huila y Colombia se juega su rentabilidad en los datos de poscosecha
+
+El Huila lidera la producción cafetera nacional tanto en volumen como en cafés de alta calidad, con presencia constante en los primeros lugares de la Taza de la Excelencia organizada junto a la [Federación Nacional de Cafeteros de Colombia](https://federaciondecafeteros.org). Cuando un caficultor o una asociación en el sur del Huila vende café convencional, el margen es estrecho; pero cuando produce microlotes diferenciados (Geisha, Bourbon Rosado, Tabi, Pacamara o Caturra con fermentaciones controladas), cada punto adicional en la escala SCA representa primas de precio significativas por carga.
+
+El problema operativo en la mayoría de fincas cafeteras de Pitalito, Acevedo o el Eje Cafetero es que las mediciones críticas siguen siendo manuales y esporádicas:
+
+- **Fermentaciones a ciegas durante la noche:** en procesos anaeróbicos, prolongados o en cereza, la actividad microbiana eleva la temperatura dentro de la masa de café. Si nadie mide el tanque entre las 10:00 p. m. y las 6:00 a. m., se generan notas avinagradas o defectos irreversibles.
+- **Sobrecalentamiento en marquesinas, parabólicos o silos:** las investigaciones de [Cenicafé](https://www.cenicafe.org) muestran que cuando la temperatura en secado solar supera umbrales críticos sin ventilación, el embrión muere, el grano se blanquea y cae su puntaje en catación.
+- **Pérdida por humedad fuera del rango 10 % – 12 %:** si el productor saca el café al 13 % o 14 %, el comprador en Pitalito o la cooperativa aplica descuento por riesgo de *Aspergillus*; si lo baja al 8,5 %, pierde peso comercializable al 12 %.
+
+## Las 4 etapas de la finca cafetera que se controlan con sensores IoT
+
+Un proyecto de telemetría cafetera bien diseñado no llena la finca de aparatos innecesarios: ubica sondas robustas exactamente donde una alerta a tiempo salva la calidad de la cosecha.
+
+### 1. Tanques y biorreactores de fermentación (temperatura y pH)
+En el beneficiadero se instalan sondas de acero inoxidable grado alimenticio sumergidas en la masa de café (en baba o cereza). Los sensores registran cada 5 o 10 minutos la evolución térmica y la caída del pH. Si un lote de Bourbon Rosado en Bruselas o San Agustín debe cortar fermentación cuando el pH llegue a `4.1` o si la temperatura interna supera los `28 °C`, el sistema envía una alerta al celular del administrador para lavar el café a tiempo.
+
+### 2. Marquesinas, secaderos parabólicos y silos mecánicos
+Dentro del secadero solar se instalan nodos con sensores calibrados de temperatura ambiente, humedad relativa del aire (`% HR`) y punto de rocío para medir la deshidratación del pergamino:
+
+- Si al mediodía la temperatura en la marquesina sube de `42 °C`, el sistema avisa al operario para abrir cortinas laterales o activa extractores.
+- Si en la tarde cae un aguacero en el Macizo Colombiano y la humedad relativa dentro del parabólico sube del `85 %`, el caficultor detecta si el grano se está rehumedeciendo en la noche.
+
+### 3. Almacenamiento en bodega de pergamino seco
+Una vez empacado el café en sacos de fique o bolsas tipo GrainPro mientras espera despacho hacia la trilladora en Pitalito, Neiva o puerto de exportación, los sensores de bodega vigilan que la humedad ambiental no supere el `65 %` y que la temperatura sea estable, evitando que el grano seco reabsorba humedad.
+
+### 4. Microclima en lote de cultivo y alerta agroclimática
+En lotes entre 1.600 y 1.900 metros sobre el nivel del mar, una estación agrometeorológica mide precipitación, humedad del suelo a nivel radicular, radiación solar y hoja mojada. Estos datos ayudan a programar fertilizaciones con humedad real en el suelo y anticipar presión de roya o broca.
+
+## Tabla técnica: sensores, variables y alertas en una finca cafetera
+
+En **V1TR0** estructuramos la arquitectura de hardware y software seleccionando componentes industriales sellados contra humedad y polvo (`IP65` / `IP67`). Esta tabla resume qué instalamos en campo:
+
+| Punto de la finca | Variable medida | Rango / Umbral de referencia en café | Acción o alerta automática del sistema |
+| :--- | :--- | :--- | :--- |
+| **Tanque de fermentación** | Temperatura interna de la masa y pH del mucílago | `18 °C – 30 °C` · pH `3.8 – 5.5` según perfil de taza | Alerta por Telegram/SMS al llegar al punto de corte de lavado o si hay pico térmico nocturno. |
+| **Marquesina / Secadero solar** | Temperatura del aire, humedad relativa (`% HR`) y déficit de presión de vapor | Máximo `40 °C – 45 °C` en secado solar; evitar rehumedecimiento nocturno | Aviso para abrir/cerrar cortinas o encendido automático de ventiladores de extracción. |
+| **Control de grano en secado / trilla** | Humedad del grano pergamino seco (integración de lecturas por lote) | Rango comercial objetivo: `10,0 % – 12,0 %` de humedad | Registro en bitácora digital del lote e indicador de momento exacto de recolección. |
+| **Bodega de acopio o trilladora** | Temperatura y humedad relativa de almacenamiento | `< 22 °C` y humedad relativa `< 65 %` | Alerta de condensación o riesgo de pérdida de calidad en sacos almacenados. |
+| **Lote de cultivo (1.400 – 2.100 m s. n. m.)** | Humedad de suelo, lluvia acumulada y temperatura foliar | Según curva de floración y llenado de grano | Calendario técnico de nutrición y correlación de floraciones con cosecha a 32 semanas. |
+
+## Cómo conectar una finca en Bruselas, Acevedo o el Cauca sin pagar planes de datos por sensor
+
+El error más frecuente al montar telemetría agrícola con equipos caseros es usar sensores Wi-Fi, que apenas atraviesan muros y agotan las baterías en horas. El segundo error es poner una tarjeta SIM a cada sensor: en las veredas cafeteras del sur del Huila la señal móvil cae en las cañadas y pagar diez planes de datos mensuales encarece la operación.
+
+La solución de ingeniería que implementamos en nuestra línea de [hardware e IoT industrial y agrícola](/hardware-iot) se basa en **LoRaWAN** (Long Range Wide Area Network):
+
+1. **Nodos sensores autónomos:** cada sensor en el tanque, marquesina o lote transmite paquetes de datos por radiofrecuencia libre (`915 MHz` en Colombia). Sus baterías internas duran entre 2 y 5 años sin cableado eléctrico.
+2. **Un solo Gateway LoRaWAN en la casa o punto alto:** una antena receptora en el techo de la casa principal o central de beneficio recoge las señales de 5, 20 o 100 sensores en un radio de varios kilómetros con cafetales y montaña de por medio.
+3. **Salida a internet por un solo punto:** solo el Gateway requiere internet (Starlink, radioenlace rural o módem 4G en parte alta). Lee nuestra guía sobre [qué es LoRaWAN y para qué sirve en el campo colombiano](/blog/que-es-lorawan-para-que-sirve-campo-colombiano) para ver su alcance en detalle.
+
+## Del sensor al comprador extranjero: trazabilidad por lote para exportar mejor
+
+Para las fincas productoras de cafés especiales en Pitalito, San Agustín, Acevedo, Palestina o Garzón, y para las asociaciones y trilladoras que exportan a Estados Unidos, Europa o Asia, el sistema IoT cumple una segunda función comercial: **demostrar la historia técnica del lote**.
+
+El software web de **V1TR0** grafica los sensores en vivo y permite crear una orden de beneficio digital (por ejemplo: *«Lote 14 - Geisha - Vereda El Porvenir, Bruselas - 48 horas de fermentación controlada»*). Cuando el lote termina su secado al `11,2 %` de humedad, el sistema genera una ficha técnica con las curvas reales de fermentación y secado. Esa trazabilidad respalda tu negociación frente a importadores y tostadores que pagan primas altas por cafés con procesos repetibles.
+
+## Diseña el sistema IoT de tu finca o central de beneficio con V1TR0 en Pitalito
+
+No necesitas importar plataformas cerradas en dólares ni depender de técnicos que desconocen un beneficiadero colombiano en cosecha. En **V1TR0** tenemos laboratorio e ingeniería en **Pitalito (Huila)** para visitar tu finca o central de acopio en el sur del Huila, medir cobertura LoRaWAN en terreno, instalar sensores calibrados y adaptar el panel a tu proceso, además de despachar proyectos IoT para empresas agroindustriales en toda Colombia.
+
+Conoce otros desarrollos de nuestra firma en el [portafolio de proyectos](/portfolio). Si quieres cotizar el monitoreo de tus tanques, marquesinas o bodegas de café, agenda una visita técnica en nuestra página para [contratar desarrollo de software e IoT a medida](/contratar-software) o escríbenos por Telegram a [@V1tr0](https://t.me/V1tr0).

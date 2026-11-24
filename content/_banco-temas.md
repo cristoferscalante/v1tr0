@@ -14,7 +14,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Cómo escribir los requisitos de un software sin ser programador | requisitos de software | informativa
 - [ ] MVP: cómo validar una idea de software sin gastar de más | qué es un MVP | informativa
 - [ ] Sistema de inventarios a medida para empresas medianas | sistema de inventarios a medida | comercial
-- [ ] Cómo elegir una empresa de desarrollo de software en Colombia | empresa de desarrollo de software Colombia | comercial
+- [x] Cómo elegir una empresa de desarrollo de software en Colombia | empresa de desarrollo de software Colombia | comercial → como-elegir-empresa-desarrollo-de-software-colombia (2026-11-24)
 
 ## Comercio electrónico en Colombia
 - [x] Cómo crear una tienda virtual con Wompi paso a paso | tienda virtual Wompi | informativa → como-crear-tienda-virtual-wompi-paso-a-paso (2026-11-22)
@@ -30,7 +30,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [x] Cuánto cuesta una página web para empresa en Colombia | cuánto cuesta una página web | comercial → cuanto-cuesta-pagina-web-empresa-colombia (2026-11-22)
 - [ ] Landing page: qué es y cuándo la necesita tu negocio | qué es una landing page | informativa
 - [ ] SEO local: cómo aparecer en Google en tu ciudad | SEO local Colombia | informativa
-- [ ] Google Business Profile: guía para negocios del Huila | Google Business Profile | informativa
+- [x] Google Business Profile: guía para negocios del Huila | Google Business Profile | informativa → google-business-profile-guia-negocios-del-huila (2026-11-24)
 - [ ] Correo corporativo con tu dominio: opciones y costos | correo corporativo | comercial
 - [ ] Por qué tu página web carga lento y cómo arreglarlo | página web lenta | informativa
 - [ ] Qué páginas debe tener el sitio web de una empresa | estructura sitio web empresa | informativa
@@ -39,7 +39,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 ## Hardware, IoT y LoRa
 - [x] Qué es LoRaWAN y para qué sirve en el campo colombiano | qué es LoRaWAN | informativa → que-es-lorawan-para-que-sirve-campo-colombiano (2026-11-22)
 - [ ] Monitoreo de cultivos con sensores: cómo empezar | sensores para cultivos | informativa
-- [ ] IoT para fincas cafeteras: humedad, temperatura y alertas | IoT café | informativa
+- [x] IoT para fincas cafeteras: humedad, temperatura y alertas | IoT café | informativa → iot-para-fincas-cafeteras-humedad-temperatura-alertas (2026-11-24)
 - [ ] Trazabilidad de productos agrícolas con tecnología | trazabilidad agrícola | informativa
 - [ ] Cuánto cuesta un sistema IoT para una empresa pequeña | costo sistema IoT | comercial
 - [ ] Monitoreo de cadena de frío con sensores inalámbricos | monitoreo cadena de frío | informativa
@@ -53,7 +53,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Dashboards de gestión: qué medir en tu empresa | dashboard empresarial | informativa
 
 ## Transformación digital por sector y ciudad
-- [ ] Empresas de software en Pitalito: qué ofrecen y cómo elegir | empresa de software Pitalito | comercial-local
+- [x] Empresas de software en Pitalito: qué ofrecen y cómo elegir | empresa de software Pitalito | comercial-local → empresas-de-software-en-pitalito-como-elegir (2026-11-24)
 - [x] Transformación digital para empresas del Huila | transformación digital Huila | informativa → transformacion-digital-empresas-del-huila (2026-11-23)
 - [ ] Digitalizar una cooperativa: por dónde empezar | digitalizar cooperativa | informativa
 - [ ] Software para distribuidoras: pedidos, rutas e inventario | software para distribuidoras | comercial
