@@ -263,8 +263,7 @@ export function HoverFrameSequence({
   // reduced-motion basta el fotograma de reposo, así no se descargan decenas
   // de imágenes (la de Apolo son 116 ≈ 6.4 MB) que nunca se verían animadas.
   const [playable, setPlayable] = useState(false)
-  const activeRef = useRef(active)
-  activeRef.current = active
+  const progressRef = useRef(0)
 
   useEffect(() => {
     const enabled =
@@ -276,24 +275,37 @@ export function HoverFrameSequence({
     setPlayable(true)
     setAnimated(true)
     setFrame(0)
+  }, [])
 
-    let progress = 0
+  // El bucle solo corre mientras el gesto avanza o retrocede: en reposo
+  // (gesto completo o de vuelta al inicio) se detiene y no gasta CPU.
+  useEffect(() => {
+    if (!playable) {
+      return
+    }
+    const target = active ? 1 : 0
+    if (progressRef.current === target) {
+      return
+    }
     let prev = performance.now()
     let raf = 0
 
     const tick = (now: number) => {
       const dt = now - prev
       prev = now
-      progress = activeRef.current
-        ? Math.min(1, progress + dt / forwardMs)
-        : Math.max(0, progress - dt / backwardMs)
-      const index = Math.round(progress * last)
-      setFrame((p) => (p === index ? p : index))
-      raf = requestAnimationFrame(tick)
+      const p = active
+        ? Math.min(1, progressRef.current + dt / forwardMs)
+        : Math.max(0, progressRef.current - dt / backwardMs)
+      progressRef.current = p
+      const index = Math.round(p * last)
+      setFrame((f) => (f === index ? f : index))
+      if (p !== target) {
+        raf = requestAnimationFrame(tick)
+      }
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [last, forwardMs, backwardMs])
+  }, [active, playable, last, forwardMs, backwardMs])
 
   // Sin capacidad de reproducir: solo el fotograma de reposo (el último).
   const montados = playable ? frames : [frames[last]!]
@@ -310,6 +322,9 @@ export function HoverFrameSequence({
             aria-hidden={idx !== last}
             fill
             sizes="(min-width: 768px) 33vw, 50vw"
+            // Los fotogramas ya son .webp a su tamaño final: pasarlos por el
+            // optimizador solo añade un reprocesado por fotograma.
+            unoptimized
             // Todos montados y solo cambia cuál se ve: alternar el `src` parpadea.
             className={`object-contain ${idx === frame ? "opacity-100" : "opacity-0"}`}
             // Solo se precarga el fotograma que se muestra primero.
@@ -359,6 +374,10 @@ type HeroCard = (typeof CARDS)[number]
 function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: boolean; asLink?: boolean }) {
   const { href, title, message, Illustration, figure, turntable, sequence } = card
   const [hovered, setHovered] = useState(false)
+  // Si el cursor llega antes que la precarga diferida, esta tarjeta pide ya
+  // sus fotogramas (las otras siguen esperando).
+  const [wanted, setWanted] = useState(false)
+  const ready = primed || wanted
 
   // La figura sólo crece: no se desplaza, para que siga centrada.
   // Cuanto más cerca del centro está el cursor, un poco más grande se hace.
@@ -390,7 +409,10 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
     <Wrapper
       href={href}
       aria-label={title}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => {
+        setWanted(true)
+        setHovered(true)
+      }}
       onMouseMove={handlePointerMove}
       onMouseLeave={handlePointerLeave}
       onFocus={() => setHovered(true)}
@@ -434,8 +456,8 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
                 }}
               >
                 <HeroTurntableCharacter
-                  frames={primed ? turntable.frames : [turntable.frames[turntable.frontIndex]!]}
-                  frontIndex={primed ? turntable.frontIndex : 0}
+                  frames={ready ? turntable.frames : [turntable.frames[turntable.frontIndex]!]}
+                  frontIndex={ready ? turntable.frontIndex : 0}
                   alt={title}
                   sizes="(min-width: 768px) 33vw, 50vw"
                   area="[data-turntable-area]"
@@ -456,7 +478,7 @@ function HeroNavCard({ card, primed, asLink = true }: { card: HeroCard; primed: 
                 }
               >
                 <HoverFrameSequence
-                  frames={primed ? sequence.frames : [sequence.frames[sequence.frames.length - 1]!]}
+                  frames={ready ? sequence.frames : [sequence.frames[sequence.frames.length - 1]!]}
                   active={hovered}
                   alt={figure.imageAlt}
                   forwardMs={sequence.forwardMs}
@@ -506,14 +528,30 @@ function usePrimed(ref: React.RefObject<HTMLElement | null>) {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          setPrimed(true)
           observer.disconnect()
+          // Visible no basta: se espera a que el navegador quede libre, para
+          // que los fotogramas no compitan con lo que la página está pintando.
+          // Si el cursor entra antes, la tarjeta se ceba sola (ver HeroNavCard).
+          const prime = () => setPrimed(true)
+          if ("requestIdleCallback" in window) {
+            idle = window.requestIdleCallback(prime, { timeout: 2500 })
+          } else {
+            timer = setTimeout(prime, 1200)
+          }
         }
       },
       { threshold: 0.15 },
     )
+    let idle = 0
+    let timer: ReturnType<typeof setTimeout> | undefined
     observer.observe(el)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      if (idle) {
+        window.cancelIdleCallback(idle)
+      }
+      clearTimeout(timer)
+    }
   }, [ref, primed])
 
   return primed
