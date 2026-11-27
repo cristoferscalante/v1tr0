@@ -34,7 +34,34 @@ export default function Home() {
   }, [])
 
   if (modo === null) {
-    return <div className="min-h-[100svh]" />
+    return (
+      <div className="min-h-[100svh]">
+        <main className="sr-only">
+          <h1>V1TR0 — Empresa de desarrollo de software a medida, comercio electrónico e IoT en Pitalito, Huila y Colombia</h1>
+          <p>
+            Casa de ingeniería con sede en Pitalito (Huila), Colombia. Desarrollamos software empresarial a medida,
+            tiendas virtuales con pasarelas colombianas (Wompi, PSE, Nequi, Bre-B), landing pages de alta conversión,
+            automatización de procesos y telemetría IoT / LoRaWAN con entrega del 100 % del código fuente.
+          </p>
+          <nav aria-label="Secciones principales de V1TR0">
+            <ul>
+              <li><a href="/contratar-software">Contratar desarrollo de software a medida en Colombia</a></li>
+              <li><a href="/servicios">Servicios de ingeniería y desarrollo de software</a></li>
+              <li><a href="/servicios/tiendas-online-ecommerce">Desarrollo de tiendas virtuales y e-commerce en Colombia</a></li>
+              <li><a href="/servicios/landing-pages">Diseño y desarrollo de páginas web y landing pages</a></li>
+              <li><a href="/hardware-iot">Soluciones de Hardware, Sensórica, IoT y LoRaWAN</a></li>
+              <li><a href="/tienda">Tienda de paquetes de software, POS y hardware IoT</a></li>
+              <li><a href="/portfolio">Portafolio de proyectos de software en producción</a></li>
+              <li><a href="/blog">Blog de tecnología, software, e-commerce e IoT en Colombia</a></li>
+              <li><a href="/empresa-de-software-en-pitalito">Empresa de desarrollo de software en Pitalito, Huila</a></li>
+              <li><a href="/desarrollo-de-software-en-el-huila">Desarrollo de software para empresas del Huila</a></li>
+              <li><a href="/desarrollo-de-software-en-colombia">Empresa de desarrollo de software en Colombia</a></li>
+              <li><a href="/about">Acerca de V1TR0 SAS</a></li>
+            </ul>
+          </nav>
+        </main>
+      </div>
+    )
   }
 
   if (modo === "movil") {

@@ -1,5 +1,13 @@
+import type { Metadata } from "next"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Términos y Condiciones de Servicio",
+  description:
+    "Términos y condiciones de uso de los servicios de desarrollo de software, comercio electrónico y productos digitales de V1TR0 SAS en Colombia.",
+  alternates: { canonical: "/terminos" },
+}
 
 export default function TerminosPage() {
   return (
@@ -73,8 +81,9 @@ export default function TerminosPage() {
           <section>
             <h2 className="text-xl font-semibold mb-3 text-textPrimary">6. Ley Aplicable</h2>
             <p>
-              Estos términos y condiciones se rigen e interpretan de acuerdo con las leyes de España y te sometes
-              irrevocablemente a la jurisdicción exclusiva de los tribunales en ese estado o localidad.
+              Estos términos y condiciones se rigen e interpretan de acuerdo con las leyes de la República de Colombia,
+              con domicilio principal en el municipio de Pitalito (Huila), y las partes se someten a la jurisdicción de
+              los tribunales competentes en Colombia.
             </p>
           </section>
         </div>

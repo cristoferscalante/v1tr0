@@ -1,5 +1,13 @@
+import type { Metadata } from "next"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Política de Cookies",
+  description:
+    "Información sobre el uso de cookies esenciales, de funcionalidad y analítica en el sitio web de V1TR0 SAS (v1tr0.com).",
+  alternates: { canonical: "/cookies" },
+}
 
 export default function CookiesPage() {
   return (

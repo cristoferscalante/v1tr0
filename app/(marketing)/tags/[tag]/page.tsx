@@ -12,7 +12,8 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
 
   return {
     title: `Artículos sobre ${displayTag}`,
-    description: `Explora todos nuestros artículos relacionados con ${displayTag}. Contenido optimizado para SEO.`,
+    description: `Explora todos nuestros artículos relacionados con ${displayTag}. Contenido técnico y de negocio por V1TR0 en Colombia.`,
+    alternates: { canonical: `/tags/${encodeURIComponent(tag)}` },
   }
 }
 

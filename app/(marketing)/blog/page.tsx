@@ -6,8 +6,17 @@ import { Suspense } from "react"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 
 export const metadata: Metadata = {
-  title: "Blog | Artículos sobre desarrollo web y tecnología",
-  description: "Explora todos nuestros artículos sobre desarrollo web, tecnología y más.",
+  title: "Blog de Desarrollo de Software, E-commerce e IoT en Colombia",
+  description:
+    "Guías técnicas y de negocio sobre desarrollo de software a medida, tiendas virtuales, pasarelas de pago, SEO local e IoT en Pitalito, el Huila y toda Colombia.",
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Blog de Desarrollo de Software, E-commerce e IoT | V1TR0",
+    description:
+      "Artículos prácticos para gerentes y empresas en Pitalito, el Huila y Colombia: costos de software, pasarelas PSE/Wompi/Bre-B, automatización e IoT.",
+    url: "https://v1tr0.com/blog",
+    type: "website",
+  },
 }
 
 // Componente de carga para usar con Suspense

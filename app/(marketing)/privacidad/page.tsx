@@ -1,5 +1,13 @@
+import type { Metadata } from "next"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Política de Privacidad y Tratamiento de Datos (Ley 1581)",
+  description:
+    "Política de privacidad y tratamiento de datos personales de V1TR0 SAS en cumplimiento de la Ley 1581 de 2012 (Habeas Data en Colombia).",
+  alternates: { canonical: "/privacidad" },
+}
 
 export default function PrivacidadPage() {
   return (
