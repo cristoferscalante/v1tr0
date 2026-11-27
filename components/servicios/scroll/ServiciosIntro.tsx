@@ -54,7 +54,7 @@ export default function ServiciosIntro() {
   )
 
   return (
-    <section ref={root} className="relative overflow-x-clip pt-28 pb-24 lg:pt-32 lg:pb-40">
+    <section ref={root} className="relative overflow-hidden pt-28 pb-24 lg:pt-32 lg:pb-40">
       {/* Titular gigante y apagado que corre con el scroll */}
       <div aria-hidden="true" className="intro-marquee whitespace-nowrap text-[18vw] lg:text-[12vw] font-bold leading-none tracking-tighter text-white/[0.05] select-none">
         {MARQUEE.repeat(3)}

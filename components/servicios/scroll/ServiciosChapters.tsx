@@ -117,6 +117,23 @@ export default function ServiciosChapters() {
         })
       })
 
+      // Capítulos fijos sin cortar contenido: si uno es más alto que la
+      // pantalla, se fija cuando su borde inferior toca el de la ventana
+      // (top negativo) en vez de esconder el final detrás del siguiente.
+      mm.add("(min-width: 1024px)", () => {
+        const chapters = gsap.utils.toArray<HTMLElement>(".chapter")
+        const fit = () =>
+          chapters.forEach((chapter) => {
+            chapter.style.top = `${Math.min(0, window.innerHeight - chapter.offsetHeight)}px`
+          })
+        fit()
+        ScrollTrigger.addEventListener("refreshInit", fit)
+        return () => {
+          ScrollTrigger.removeEventListener("refreshInit", fit)
+          chapters.forEach((chapter) => (chapter.style.top = ""))
+        }
+      })
+
       mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
         const chapters = gsap.utils.toArray<HTMLElement>(".chapter")
         chapters.forEach((chapter, index) => {
@@ -180,11 +197,11 @@ export default function ServiciosChapters() {
         <article
           key={service.id}
           id={service.id}
-          className="chapter relative lg:sticky lg:top-0 lg:h-screen"
+          className="chapter relative lg:sticky lg:top-0"
           style={{ zIndex: index + 1 }}
         >
           <div
-            className="chapter-inner relative flex h-full flex-col overflow-hidden border-t border-white/[0.08]"
+            className="chapter-inner relative flex flex-col overflow-hidden border-t border-white/[0.08] lg:min-h-screen"
             style={{ backgroundColor: TONES[index % TONES.length] }}
           >
             {/* Velo que oscurece el capítulo cuando el siguiente lo tapa */}
@@ -206,7 +223,7 @@ export default function ServiciosChapters() {
                   {/* Flex en vez de líneas de texto: cada palabra es una caja con su
                       máscara y el acento de la Ó no abre hueco entre renglones.
                       La máscara recorta solo en vertical: nunca corta una palabra. */}
-                  <h3 className="flex flex-wrap gap-x-[0.22em] text-[12vw] font-bold uppercase leading-[0.9] tracking-tighter text-white lg:text-[clamp(2.75rem,4vw,4rem)]">
+                  <h3 className="flex flex-wrap gap-x-[0.22em] text-[10vw] font-bold uppercase leading-[0.9] tracking-tighter text-white lg:text-[clamp(2.75rem,4vw,4rem)]">
                     {service.title.split(" ").map((word, i) => (
                       <span key={i} className="block pt-[0.1em] pb-[0.04em] [overflow-x:visible] [overflow-y:clip]">
                         <span className="chapter-word block">{word}</span>

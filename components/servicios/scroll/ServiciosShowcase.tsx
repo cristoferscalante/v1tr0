@@ -57,6 +57,9 @@ export default function ServiciosShowcase() {
           },
         })
 
+        // Los finales de cada tramo deben alcanzarse aun para la última
+        // tarjeta, que nunca pasa de ~71% de la pantalla (la pista termina
+        // ahí); si no, se queda girada y su texto a medio aparecer.
         gsap.utils.toArray<HTMLElement>(".showcase-card").forEach((card) => {
           const shot = card.querySelector(".showcase-shot")
           gsap.fromTo(
@@ -67,7 +70,7 @@ export default function ServiciosShowcase() {
               rotateX: 5,
               scale: 1,
               ease: "none",
-              scrollTrigger: { trigger: card, containerAnimation: move, start: "left right", end: "center 55%", scrub: true },
+              scrollTrigger: { trigger: card, containerAnimation: move, start: "left right", end: "center 78%", scrub: true },
             },
           )
           gsap.fromTo(
@@ -77,7 +80,7 @@ export default function ServiciosShowcase() {
               y: 0,
               opacity: 1,
               ease: "none",
-              scrollTrigger: { trigger: card, containerAnimation: move, start: "left 85%", end: "left 55%", scrub: true },
+              scrollTrigger: { trigger: card, containerAnimation: move, start: "left 92%", end: "left 74%", scrub: true },
             },
           )
         })

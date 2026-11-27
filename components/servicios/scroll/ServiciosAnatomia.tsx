@@ -38,7 +38,7 @@ const LAYERS: Layer[] = [
     level: "crecimiento",
     tools: "Webhooks · React Flow · Socket.io",
     color: "#26FFDF",
-    y: 0.21,
+    y: 0.15,
     side: "right",
   },
   {
@@ -47,7 +47,7 @@ const LAYERS: Layer[] = [
     level: "produccion",
     tools: "Radix UI · metadatos · sitemaps",
     color: "#E4E4E7",
-    y: 0.295,
+    y: 0.267,
     side: "left",
   },
   {
@@ -56,7 +56,7 @@ const LAYERS: Layer[] = [
     level: "diario",
     tools: "Sistemas de diseño · Tailwind",
     color: "#81D3CB",
-    y: 0.38,
+    y: 0.383,
     side: "right",
   },
   {
@@ -65,7 +65,7 @@ const LAYERS: Layer[] = [
     level: "diario",
     tools: "Next.js · React · GSAP",
     color: "#A1A1AA",
-    y: 0.465,
+    y: 0.5,
     side: "left",
   },
   {
@@ -74,7 +74,7 @@ const LAYERS: Layer[] = [
     level: "produccion",
     tools: "Rutas API · NextAuth · Zod",
     color: "#08A696",
-    y: 0.55,
+    y: 0.617,
     side: "right",
   },
   {
@@ -83,7 +83,7 @@ const LAYERS: Layer[] = [
     level: "produccion",
     tools: "Postgres · Drizzle · Recharts",
     color: "#D4D4D8",
-    y: 0.635,
+    y: 0.733,
     side: "left",
   },
   {
@@ -92,7 +92,7 @@ const LAYERS: Layer[] = [
     level: "diario",
     tools: "Vercel · Neon · Uploadthing",
     color: "#C5EBE7",
-    y: 0.72,
+    y: 0.85,
     side: "right",
   },
 ]
@@ -218,7 +218,7 @@ function LayerCard({
         className="p-px transition-[background-color] duration-300"
         style={{ clipPath: CHAMFER, backgroundColor: `${layer.color}${active ? "aa" : "55"}` }}
       >
-        <div className="relative bg-[#070a0b]/95 px-5 py-4" style={{ clipPath: CHAMFER }}>
+        <div className="relative bg-[#070a0b]/95 px-5 py-4 [@media(min-width:1024px)_and_(max-height:780px)]:py-2.5" style={{ clipPath: CHAMFER }}>
           {/* Resplandor tenue del color de la capa */}
           <div
             aria-hidden="true"
@@ -238,10 +238,10 @@ function LayerCard({
               <h3 className="text-[17px] font-bold leading-tight" style={{ color: layer.color }}>
                 {layer.title}
               </h3>
-              <p className="mt-1 text-xs leading-snug" style={{ color: `${layer.color}b3` }}>
+              <p className="mt-1 text-xs leading-snug [@media(min-width:1024px)_and_(max-height:780px)]:hidden" style={{ color: `${layer.color}b3` }}>
                 {layer.text}
               </p>
-              <div className="mt-3 flex items-center gap-3">
+              <div className="mt-3 flex items-center gap-3 [@media(min-width:1024px)_and_(max-height:780px)]:mt-1.5">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: layer.color }}>
                   {level.label}
                 </span>
@@ -257,7 +257,7 @@ function LayerCard({
                   })}
                 </span>
               </div>
-              <p className="mt-2 font-mono text-[10px] tracking-wide text-white/40">{layer.tools}</p>
+              <p className="mt-2 font-mono text-[10px] tracking-wide text-white/40 [@media(min-width:1024px)_and_(max-height:780px)]:hidden">{layer.tools}</p>
             </div>
           </div>
         </div>

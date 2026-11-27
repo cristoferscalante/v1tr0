@@ -1,12 +1,16 @@
 "use client"
 
 import { useEffect } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import BackgroundAnimation from "@/components/home/animations/BackgroundAnimation"
 import ServiciosIntro from "@/components/servicios/scroll/ServiciosIntro"
 import ServiciosShowcase from "@/components/servicios/scroll/ServiciosShowcase"
 import ServiciosChapters from "@/components/servicios/scroll/ServiciosChapters"
 import ServiciosAnatomia from "@/components/servicios/scroll/ServiciosAnatomia"
 import ServiciosCta from "@/components/servicios/scroll/ServiciosCta"
+
+gsap.registerPlugin(ScrollTrigger)
 
 /**
  * /servicios como un recorrido guiado por el scroll (GSAP ScrollTrigger):
@@ -19,6 +23,23 @@ export default function ServiciosPage() {
     const root = document.documentElement
     root.classList.add("servicios-scroll")
     return () => root.classList.remove("servicios-scroll")
+  }, [])
+
+  // Las secciones fijadas miden posiciones al montar; si después cargan las
+  // fuentes o las imágenes, esas medidas quedan viejas y las animaciones se
+  // disparan tarde o nunca (contenido invisible). Se recalcula al terminar.
+  // En móvil, mostrar/ocultar la barra del navegador no debe recalcular todo.
+  useEffect(() => {
+    ScrollTrigger.config({ ignoreMobileResize: true })
+    const refresh = () => ScrollTrigger.refresh()
+    let cancelled = false
+    document.fonts?.ready.then(() => !cancelled && refresh())
+    if (document.readyState === "complete") refresh()
+    else window.addEventListener("load", refresh, { once: true })
+    return () => {
+      cancelled = true
+      window.removeEventListener("load", refresh)
+    }
   }, [])
 
   return (
