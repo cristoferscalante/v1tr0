@@ -124,6 +124,15 @@ export default function PlanoAsistente() {
   /** Zona de la casa bajo el cursor: se marca sin elegirla. */
   const [sobre, setSobre] = useState<string | null>(null)
   const salaRef = useRef<IdSala>("proyecto")
+  /** Escritorio: plano y ficha lado a lado; en teléfono, uno encima del otro. */
+  const [escritorio, setEscritorio] = useState(true)
+  useEffect(() => {
+    const consulta = window.matchMedia("(min-width: 1024px)")
+    const actualizar = () => setEscritorio(consulta.matches)
+    actualizar()
+    consulta.addEventListener("change", actualizar)
+    return () => consulta.removeEventListener("change", actualizar)
+  }, [])
   const relojes = useRef<Array<ReturnType<typeof setTimeout>>>([])
 
   useSnapAnimations({
@@ -196,17 +205,35 @@ export default function PlanoAsistente() {
   // El robot vive en el piso elegido (o en el que está bajo el cursor).
   const enfocada = Boolean(brief.tipoProyecto) && sala !== "proyecto"
   const tipoSobre = ZONAS.find((z) => z.id === sobre)?.tipo ?? null
-  const robot = posicionRobot(brief.tipoProyecto, enfocada ? brief.tipoProyecto : (tipoSobre ?? (brief.tipoProyecto || null)), enfocada)
+  const relato = narrar(sala, sobre, brief.tipoProyecto, listo)
+
+  // Cada frase nueva la "dice": la cara pasa a onda lo que tarda en leerse y,
+  // mientras la cuenta (un poco más), el robot recorre el cuarto.
+  const [relatando, setRelatando] = useState(false)
+  useEffect(() => {
+    setHablando(true)
+    setRelatando(true)
+    const voz = setTimeout(() => setHablando(false), Math.min(500 + relato.frase.length * 22, 2600))
+    const vuelta = setTimeout(() => setRelatando(false), Math.min(1800 + relato.frase.length * 45, 6000))
+    return () => {
+      clearTimeout(voz)
+      clearTimeout(vuelta)
+    }
+  }, [relato.frase])
+  const robot = posicionRobot(brief.tipoProyecto, enfocada ? brief.tipoProyecto : (tipoSobre ?? (brief.tipoProyecto || null)), enfocada, !escritorio)
 
   return (
-    <section className="contacto-asistente-section relative flex min-h-[100dvh] w-full items-center justify-center px-4 pb-10 pt-24">
+    <section className="contacto-asistente-section relative flex overflow-hidden min-h-[100dvh] w-full items-center justify-center px-4 pb-10 pt-24">
       <h2 className="sr-only">Asistente V1TR0: arma tu mensaje</h2>
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 lg:flex-row lg:items-center">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-4 lg:flex-row lg:items-center lg:gap-6">
         {/* Plano */}
         <motion.div
-          className="relative w-full lg:flex-1"
-          style={{ aspectRatio: `${VB.w} / ${VB.h}`, maxWidth: `calc((100dvh - 130px) * ${VB.w / VB.h})` }}
+          className="relative -mx-[6%] w-[112%] max-w-none lg:mx-0 lg:w-full lg:max-w-[var(--plano-max)] lg:flex-1"
+          style={{
+            aspectRatio: `${VB.w} / ${VB.h}`,
+            ["--plano-max" as string]: `calc((100dvh - 130px) * ${VB.w / VB.h})`,
+          }}
           initial={{ opacity: 0, x: -48 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -216,33 +243,59 @@ export default function PlanoAsistente() {
             tipo={brief.tipoProyecto}
             brief={brief}
             enfocada={enfocada}
+            movil={!escritorio}
             sobre={sobre}
             onSobre={setSobre}
             onTipo={elegirTipo}
           />
 
           <motion.div
-            className="pointer-events-none absolute w-[11%]"
+            className="pointer-events-none absolute z-10 w-[11%]"
             initial={false}
             animate={{ left: robot.left, top: robot.top }}
             style={{ x: "-50%", y: "-50%" }}
             transition={{ type: "spring", stiffness: 60, damping: 14, mass: 1 }}
             aria-hidden="true"
           >
+            {/* Globo bajo el robot (encima queda el rótulo del cuarto): cuenta qué pasa aquí. */}
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={relato.frase}
+                className={`absolute left-1/2 top-[96%] w-max max-w-[190px] rounded-2xl px-3 py-2 text-center text-[11px] leading-snug text-textPrimary sm:max-w-[240px] sm:text-xs ${tarjeta}`}
+                style={{ x: "-50%" }}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.3 }}
+                aria-live="polite"
+              >
+                {relato.frase}
+              </motion.p>
+            </AnimatePresence>
+            {/* Mientras narra, da vueltas alrededor del cuarto: al pasar por el fondo
+                se aleja (más pequeño) y vuelve al frente. */}
             <motion.div
-              animate={{ y: [0, -8, 0, 5, 0], rotate: [0, 2, 0, -2, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              animate={relatando ? ORBITA : { x: "0%", y: "0%", scale: 1 }}
+              transition={relatando ? { duration: 4.2, repeat: Infinity, ease: "linear" } : { duration: 0.8, ease: "easeOut" }}
             >
-              <RobotAsistente animo={animo} hablando={hablando} className="w-full" />
+              <motion.div
+                animate={{ y: [0, -8, 0, 5, 0], rotate: [0, 2, 0, -2, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <RobotAsistente animo={animo} hablando={hablando} visor={relato.visor} className="w-full" />
+              </motion.div>
             </motion.div>
           </motion.div>
         </motion.div>
 
+        {/* En teléfono las notas no caben junto al cuarto: van en lista bajo el plano. */}
+        {enfocada && <NotasMovil brief={brief} />}
+
         {/* Ficha de la sala */}
         <motion.div
-          className={`w-full max-w-md shrink-0 rounded-3xl p-6 lg:w-[380px] ${tarjeta}`}
-          initial={{ opacity: 0, x: 48 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          className={`w-full max-w-md shrink-0 rounded-3xl p-5 sm:p-6 lg:w-[380px] ${tarjeta}`}
+          initial={escritorio ? { opacity: 0, x: 48 } : { opacity: 0, y: 48 }}
+          whileInView={{ opacity: 1, x: 0, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7 }}
         >
@@ -336,14 +389,14 @@ function Campo({
           : pregunta(campo, brief.nombre)}
       </label>
       {campo === "tipoProyecto" && (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col gap-1.5 lg:gap-1">
           {fichas.map((opcion) => (
             <button
               key={opcion}
               type="button"
               onClick={() => onElegirTipo?.(opcion)}
               aria-pressed={valor === opcion}
-              className={`flex flex-col items-center justify-start gap-2 rounded-2xl border px-3 pb-3 pt-3.5 text-center text-xs leading-tight transition-colors duration-300 ${
+              className={`flex items-center gap-3 rounded-full border py-2 pl-3 pr-4 text-left text-xs lg:gap-2 lg:py-1.5 lg:pl-2.5 lg:text-[11px] leading-tight transition-colors duration-300 ${
                 valor === opcion
                   ? "border-[#26FFDF]/50 bg-[#0d3b3b]/85 text-[#26FFDF]"
                   : "border-white/[0.07] bg-[#0b1414]/85 text-textMuted hover:border-[#26FFDF]/40 hover:text-[#26FFDF]"
@@ -503,7 +556,7 @@ function IlustracionTipo({ tipo }: { tipo: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className="h-11 w-11 shrink-0"
+      className="h-6 w-6 shrink-0 lg:h-5 lg:w-5"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.1}
@@ -665,6 +718,94 @@ function IlustracionNota({ clave, brief }: { clave: string; brief: Brief }) {
       {dibujo}
     </svg>
   )
+}
+
+/** Las notas del mensaje en teléfono: misma información, en una lista compacta. */
+function NotasMovil({ brief }: { brief: Brief }) {
+  const llenas = NOTAS.filter((n) => n.valor(brief).trim())
+  if (llenas.length === 0) {
+    return null
+  }
+  return (
+    <div className="grid w-full max-w-md grid-cols-2 gap-2 lg:hidden">
+      <AnimatePresence>
+        {llenas.map((n) => (
+          <motion.div
+            key={n.clave}
+            layout
+            className={`flex items-start gap-2 rounded-2xl px-3 py-2 ${tarjeta}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <IlustracionNota clave={n.clave} brief={brief} />
+            <div className="min-w-0">
+              <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#26FFDF]">{n.titulo}</p>
+              <p className="mt-0.5 line-clamp-3 break-words text-[11px] leading-snug text-textPrimary">{n.valor(brief).trim()}</p>
+            </div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/**
+ * El relato del robot: qué cuenta en cada cuarto (mientras se elige) y en
+ * cada paso del mensaje (después), y qué dibuja en su visor.
+ */
+const RELATO_CUARTO: Record<string, string> = {
+  tienda: "Aquí montamos tiendas: catálogo, pagos y envíos en un mismo lugar.",
+  landing: "En este escenario lanzamos sitios que presentan tu marca y convierten visitas.",
+  sistema: "Aquí se programan los sistemas que ordenan el trabajo de tu equipo.",
+  movil: "Este es el taller de apps: se prueban en cada teléfono antes de salir.",
+  datos: "Aquí tus datos se vuelven tableros para decidir con números.",
+  automatizacion: "En la banda corren los bots que hacen las tareas repetitivas por ti.",
+  iot: "Desde esta terraza los sensores LoRa reportan sin plan de datos.",
+  bodega: "¿No encaja en ningún cuarto? Aquí guardamos las ideas que aún no tienen nombre.",
+  conferencias: "La sala de conferencias: aquí te presentamos la propuesta.",
+  bano: "Hasta los robots necesitan una pausa. Sigue por el pasillo.",
+  patio: "El patio de la casa. Los cuartos de trabajo están alrededor.",
+  jardin: "La entrada de la casa V1TR0. Bienvenido.",
+}
+const RELATO_ETAPA: Record<Exclude<IdSala, "proyecto" | "envio">, string> = {
+  idea: "Cuéntame qué quieres resolver; lo anoto en la pizarra.",
+  plazo: "¿Para cuándo lo necesitas? Así planeamos las entregas.",
+  presupuesto: "Con un rango aproximado te proponemos el alcance justo.",
+  contacto: "Último paso: dime quién eres para enviarte la propuesta.",
+}
+const VISOR_DE_ZONA: Record<string, string> = { bodega: "otro" }
+
+function narrar(sala: IdSala, sobre: string | null, tipo: string, listo: boolean) {
+  if (sala === "proyecto") {
+    const zona = ZONAS.find((z) => z.id === sobre) ?? zonaDe(tipo || null)
+    if (!zona) {
+      return { frase: "Esta es la casa V1TR0. Cada cuarto es algo que construimos: entra al tuyo.", visor: null }
+    }
+    return {
+      frase: RELATO_CUARTO[zona.id] ?? zona.titulo,
+      visor: zona.tipo ? (VISOR_DE_ZONA[zona.id] ?? zona.id) : null,
+    }
+  }
+  if (sala === "envio") {
+    return {
+      frase: listo ? "Todo listo. Envíalo y te respondemos con una propuesta." : "Aún me faltan datos: vuelve al paso que marco abajo.",
+      visor: "envio",
+    }
+  }
+  return { frase: RELATO_ETAPA[sala], visor: sala }
+}
+
+/**
+ * Vuelta del robot alrededor de su sitio, en % de su propio tamaño: una elipse
+ * aplanada como el suelo isométrico; arriba (el fondo del cuarto) se hace más
+ * pequeño, como si se alejara.
+ */
+const ORBITA = {
+  x: ["0%", "78%", "110%", "78%", "0%", "-78%", "-110%", "-78%", "0%"],
+  y: ["0%", "-13%", "-45%", "-77%", "-90%", "-77%", "-45%", "-13%", "0%"],
+  scale: [1.0, 0.96, 0.86, 0.76, 0.72, 0.76, 0.86, 0.96, 1.0],
 }
 
 /* -------------------------------- Casa --------------------------------- */
@@ -946,15 +1087,17 @@ const zonaDe = (tipo: string | null) => ZONAS.find((z) => z.tipo === tipo)
 
 /** Zoom sobre un cuarto: lo centra y lo escala para dejar sitio a las notas. */
 const CENTRO = { x: VB.x + VB.w / 2, y: VB.y + VB.h / 2 }
-const zoomDe = (z: Zona) => Math.min(2.2, (VB.w - 2 * NOTA_ANCHO - 80) / ((z.w + z.d) * K))
-function enfoque(z: Zona) {
-  const k = zoomDe(z)
+/** En escritorio se deja sitio a las notas a los lados; en teléfono van debajo y el cuarto llena el ancho. */
+const zoomDe = (z: Zona, movil = false) =>
+  movil ? Math.min(3, (VB.w * 0.72) / ((z.w + z.d) * K)) : Math.min(2.2, (VB.w - 2 * NOTA_ANCHO - 80) / ((z.w + z.d) * K))
+function enfoque(z: Zona, movil = false) {
+  const k = zoomDe(z, movil)
   const [rx, ry] = iso(z.x + z.w / 2, z.y + z.d / 2, 0.5)
   return { tx: CENTRO.x - k * rx, ty: CENTRO.y - k * ry, k }
 }
 /** Punto del cuarto ampliado; las anclas de las notas vienen en 0–3 y se escalan al cuarto. */
-function proyectar(z: Zona, lx: number, ly: number, alto: number): [number, number] {
-  const { tx, ty, k } = enfoque(z)
+function proyectar(z: Zona, lx: number, ly: number, alto: number, movil = false): [number, number] {
+  const { tx, ty, k } = enfoque(z, movil)
   const [px, py] = iso(z.x + (lx * z.w) / 3, z.y + (ly * z.d) / 3, alto)
   return [tx + k * px, ty + k * py]
 }
@@ -964,9 +1107,9 @@ const aPorcentaje = ([px, py]: [number, number]) => ({
 })
 
 /** Dónde flota el robot: en el cuarto elegido o marcado; si no, en el pasillo. */
-function posicionRobot(tipo: string, abiertoTipo: string | null, enfocada: boolean) {
+function posicionRobot(tipo: string, abiertoTipo: string | null, enfocada: boolean, movil = false) {
   const elegido = zonaDe(tipo)
-  if (enfocada && elegido) {return aPorcentaje(proyectar(elegido, 1.5, 1.5, 1.1))}
+  if (enfocada && elegido) {return aPorcentaje(proyectar(elegido, 1.5, 1.5, 1.1, movil))}
   const z = zonaDe(abiertoTipo) ?? elegido
   if (!z) {return aPorcentaje(iso(5, 3.5, 1.6))}
   return aPorcentaje(iso(z.x + z.w / 2, z.y + z.d / 2, 1.0))
@@ -1021,9 +1164,12 @@ function Plano({
   sobre,
   onSobre,
   onTipo,
+  movil = false,
 }: {
   tipo: string
   brief: Brief
+  /** En teléfono el zoom llena el ancho: las notas van debajo. */
+  movil?: boolean
   /** Con el cuarto elegido y ya en las preguntas: solo queda él. */
   enfocada: boolean
   sobre: string | null
@@ -1031,7 +1177,7 @@ function Plano({
   onTipo: (tipo: string) => void
 }) {
   const elegido = zonaDe(tipo)
-  const zoom = enfocada && elegido ? enfoque(elegido) : { tx: 0, ty: 0, k: 1 }
+  const zoom = enfocada && elegido ? enfoque(elegido, movil) : { tx: 0, ty: 0, k: 1 }
   /** `sobre` guarda el id de la zona bajo el cursor (también los añadidos). */
   const marcada = (z: Zona) => (z.tipo !== undefined && z.tipo === tipo) || (!enfocada && z.id === sobre)
   const oculta = (z: Zona) => enfocada && z !== elegido
@@ -1279,7 +1425,7 @@ function Plano({
             const bx = n.lado === "izq" ? VB.x + 10 + NOTA_ANCHO : VB.x + VB.w - 10 - NOTA_ANCHO
             const by = NOTA_FILAS[n.fila]!
             return (
-              <motion.g key={`l-${n.clave}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.5 }} pointerEvents="none">
+              <motion.g key={`l-${n.clave}`} className="hidden lg:block" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.5 }} pointerEvents="none">
                 <polyline points={`${ax},${ay} ${ax},${by} ${bx},${by}`} fill="none" stroke="#26FFDF" strokeOpacity={0.5} strokeWidth={1} />
                 <circle cx={ax} cy={ay} r={3} fill="#26FFDF" />
               </motion.g>
@@ -1297,7 +1443,7 @@ function Plano({
             return (
               <motion.div
                 key={n.clave}
-                className={`pointer-events-none absolute -translate-y-1/2 rounded-2xl px-3 py-2 ${tarjeta}`}
+                className={`pointer-events-none absolute hidden -translate-y-1/2 rounded-2xl px-3 py-2 lg:block ${tarjeta}`}
                 style={{
                   left: `${((bx - VB.x) / VB.w) * 100}%`,
                   top: `${((NOTA_FILAS[n.fila]! - VB.y) / VB.h) * 100}%`,

@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useState, type ReactNode } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 
 /**
  * El robot del asistente: el mismo dibujo vectorial de la marca, con la cara
@@ -130,12 +130,212 @@ const RUTINA: Array<{ animo: Animo; dura: number; mirada?: number; saludo?: bool
 /** Los ojos parpadean solos; en los gestos ya entrecerrados se nota menos. */
 const PARPADEO = { duration: 0.18, repeat: Infinity, repeatDelay: 4.5, repeatType: "reverse" as const }
 
+/**
+ * Lo que muestra el visor en cada momento del recorrido por la casa V1TR0:
+ * un dibujo animado del cuarto o del paso en curso. Va en coordenadas de la
+ * pantalla de la cara (x 78–144, y 52–89), en trazo blanco y acento de marca.
+ */
+const TRAZO = { stroke: "white", strokeWidth: 2.6, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" }
+const ACENTO = "#26FFDF"
+const bucle = (duration: number, delay = 0) => ({ duration, delay, repeat: Infinity, ease: "easeInOut" as const })
+
+const VISORES: Record<string, ReactNode> = {
+  // Un carrito que va y viene.
+  tienda: (
+    <motion.g animate={{ x: [-12, 12, -12] }} transition={bucle(2.4)}>
+      <path d="M93 60h5l4 14h15l4-10h-20" {...TRAZO} />
+      <circle cx={104} cy={80} r={2.4} fill={ACENTO} />
+      <circle cx={115} cy={80} r={2.4} fill={ACENTO} />
+    </motion.g>
+  ),
+  // Una página que se desplaza dentro del navegador.
+  landing: (
+    <g>
+      <rect x={90} y={56} width={42} height={30} rx={4} {...TRAZO} />
+      <path d="M90 63h42" {...TRAZO} />
+      <motion.g animate={{ y: [0, -8, 0] }} transition={bucle(2.6)}>
+        <rect x={95} y={68} width={20} height={4} rx={2} fill={ACENTO} />
+        <rect x={95} y={75} width={32} height={3} rx={1.5} fill="white" opacity={0.7} />
+        <rect x={95} y={81} width={26} height={3} rx={1.5} fill="white" opacity={0.5} />
+      </motion.g>
+    </g>
+  ),
+  // Líneas de código que se escriben, con el cursor parpadeando.
+  sistema: (
+    <g>
+      {[
+        [88, 59, 22],
+        [94, 67, 30],
+        [94, 75, 18],
+        [88, 83, 26],
+      ].map(([x, y, w], i) => (
+        <motion.rect
+          key={i}
+          x={x}
+          y={y}
+          height={3.4}
+          rx={1.7}
+          fill={i === 1 ? ACENTO : "white"}
+          initial={{ width: 0 }}
+          animate={{ width: [0, w!, w!, 0] }}
+          transition={{ duration: 3.2, delay: i * 0.35, repeat: Infinity, times: [0, 0.3, 0.85, 1] }}
+        />
+      ))}
+      <motion.rect x={128} y={81} width={3} height={7} fill={ACENTO} animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.9, repeat: Infinity }} />
+    </g>
+  ),
+  // Un teléfono con pantallas que se deslizan.
+  movil: (
+    <g>
+      <rect x={101} y={53} width={20} height={35} rx={4} {...TRAZO} />
+      <motion.g animate={{ x: [0, -10, -10, 0] }} transition={{ duration: 3, repeat: Infinity, times: [0, 0.4, 0.6, 1] }}>
+        <rect x={105} y={60} width={12} height={18} rx={2} fill={ACENTO} opacity={0.9} />
+        <rect x={115} y={60} width={12} height={18} rx={2} fill="white" opacity={0.4} />
+      </motion.g>
+      <rect x={96} y={53} width={4} height={35} fill="black" />
+      <rect x={122} y={53} width={6} height={35} fill="black" />
+      <circle cx={111} cy={83} r={1.4} fill="white" />
+    </g>
+  ),
+  // Barras que suben y bajan.
+  datos: (
+    <g>
+      {[0, 1, 2, 3].map((i) => (
+        <motion.rect
+          key={i}
+          x={91 + i * 11}
+          width={7}
+          rx={2}
+          fill={i === 3 ? ACENTO : "white"}
+          animate={{ height: [8, 14 + i * 5, 10 + ((i * 7) % 12), 8], y: [80, 74 - i * 5, 78 - ((i * 7) % 12), 80] }}
+          transition={bucle(2.8, i * 0.15)}
+        />
+      ))}
+      <path d="M88 86h46" {...TRAZO} strokeWidth={2} />
+    </g>
+  ),
+  // Un engranaje que gira.
+  automatizacion: (
+    <motion.g animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} style={{ originX: "111px", originY: "70px" }}>
+      <circle cx={111} cy={70} r={9} {...TRAZO} />
+      <circle cx={111} cy={70} r={3} fill={ACENTO} />
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i * Math.PI) / 4
+        return (
+          <path
+            key={i}
+            d={`M${111 + Math.cos(a) * 11} ${70 + Math.sin(a) * 11}L${111 + Math.cos(a) * 15} ${70 + Math.sin(a) * 15}`}
+            {...TRAZO}
+            strokeWidth={4}
+          />
+        )
+      })}
+    </motion.g>
+  ),
+  // Antena que emite: los arcos se encienden en secuencia.
+  iot: (
+    <g>
+      <path d="M111 74v12" {...TRAZO} />
+      <circle cx={111} cy={72} r={2.6} fill={ACENTO} />
+      {[7, 12, 17].map((r, i) => (
+        <motion.path
+          key={r}
+          d={`M${111 - r} ${72 - r * 0.2}A${r} ${r} 0 0 1 ${111 + r} ${72 - r * 0.2}`}
+          {...TRAZO}
+          animate={{ opacity: [0.15, 1, 0.15] }}
+          transition={bucle(1.6, i * 0.25)}
+        />
+      ))}
+    </g>
+  ),
+  // Una caja con una pregunta que flota.
+  otro: (
+    <g>
+      <path d="M98 66l13-6 13 6v14l-13 6-13-6z" {...TRAZO} />
+      <path d="M98 66l13 6 13-6M111 72v14" {...TRAZO} strokeWidth={2} />
+      <motion.text x={111} y={60} textAnchor="middle" fontSize={11} fontWeight={700} fill={ACENTO} animate={{ y: [0, -3, 0] }} transition={bucle(1.6)}>
+        ?
+      </motion.text>
+    </g>
+  ),
+  // La idea: un bombillo cuyos rayos se encienden.
+  idea: (
+    <g>
+      <path d="M105 77a9 9 0 1 1 12 0c-1 1-1.6 2-1.6 3.4v1.6h-8.8v-1.6c0-1.4-.6-2.4-1.6-3.4z" {...TRAZO} />
+      <path d="M107.5 86h7" {...TRAZO} />
+      <motion.g animate={{ opacity: [0.2, 1, 0.2] }} transition={bucle(1.4)}>
+        <path d="M111 53v3M97 62l2.5 1.5M125 62l-2.5 1.5" {...TRAZO} stroke={ACENTO} />
+      </motion.g>
+    </g>
+  ),
+  // El plazo: un reloj con la aguja corriendo.
+  plazo: (
+    <g>
+      <circle cx={111} cy={71} r={14} {...TRAZO} />
+      <path d="M107 54h8" {...TRAZO} />
+      <motion.path d="M111 71V61" {...TRAZO} stroke={ACENTO} animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} style={{ originX: "111px", originY: "71px" }} />
+      <circle cx={111} cy={71} r={1.8} fill="white" />
+    </g>
+  ),
+  // El presupuesto: monedas que caen y se apilan.
+  presupuesto: (
+    <g>
+      {[0, 1, 2].map((i) => (
+        <motion.ellipse
+          key={i}
+          cx={111}
+          rx={11}
+          ry={3.6}
+          fill={i === 2 ? ACENTO : "black"}
+          {...(i === 2 ? {} : { stroke: "white", strokeWidth: 2.4 })}
+          animate={{ cy: [52, 82 - i * 6, 82 - i * 6, 52], opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 3, delay: i * 0.4, repeat: Infinity, times: [0, 0.3, 0.85, 1] }}
+        />
+      ))}
+    </g>
+  ),
+  // El contacto: una credencial que se va llenando.
+  contacto: (
+    <g>
+      <rect x={89} y={57} width={44} height={28} rx={4} {...TRAZO} />
+      <circle cx={100} cy={67} r={4} {...TRAZO} strokeWidth={2.2} />
+      <path d="M94 79c1.4-3 3.6-4 6-4s4.6 1 6 4" {...TRAZO} strokeWidth={2.2} />
+      {[64, 71, 78].map((y, i) => (
+        <motion.rect
+          key={y}
+          x={111}
+          y={y}
+          height={3}
+          rx={1.5}
+          fill={i === 0 ? ACENTO : "white"}
+          initial={{ width: 0 }}
+          animate={{ width: [0, 16 - i * 3, 16 - i * 3, 0] }}
+          transition={{ duration: 2.8, delay: i * 0.3, repeat: Infinity, times: [0, 0.3, 0.85, 1] }}
+        />
+      ))}
+    </g>
+  ),
+  // El envío: un avión de papel que cruza la pantalla.
+  envio: (
+    <motion.g animate={{ x: [-26, 26], y: [6, -6], opacity: [0, 1, 1, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+      <path d="M100 72l22-9-7 20-4-8z" {...TRAZO} stroke={ACENTO} />
+      <path d="M111 75l11-12" {...TRAZO} strokeWidth={2} />
+    </motion.g>
+  ),
+}
+
 export default function RobotAsistente({
   animo = "neutral",
   hablando = false,
   rapido = false,
+  visor = null,
   className = "",
 }: {
+  /**
+   * Tema del visor (cuarto o paso del recorrido). Con tema, la pantalla se
+   * turna entre la cara y su animación; sin él, solo cara.
+   */
+  visor?: string | null
   /** Versión ícono (header): parpadea y se balancea más seguido. */
   rapido?: boolean
   animo?: Animo
@@ -155,6 +355,19 @@ export default function RobotAsistente({
     const id = setTimeout(() => setTramo((actual) => actual + 1), paso.dura)
     return () => clearTimeout(id)
   }, [enReposo, tramo, paso.dura])
+
+  // Con tema, la pantalla se turna: primero el dibujo del cuarto, luego la cara.
+  const [verVisor, setVerVisor] = useState(true)
+  useEffect(() => {
+    setVerVisor(true)
+    if (!visor) {
+      return
+    }
+    const id = setInterval(() => setVerVisor((actual) => !actual), 3400)
+    return () => clearInterval(id)
+  }, [visor])
+  const dibujo = visor ? VISORES[visor] : undefined
+  const mostrarVisor = Boolean(dibujo) && verVisor && !hablando
 
   const gesto = GESTOS[enReposo ? paso.animo : animo]
   const mirada = enReposo ? (paso.mirada ?? 0) : 0
@@ -247,7 +460,7 @@ export default function RobotAsistente({
 
         {/* Cara en reposo: ojos y boca. Se funden mientras habla. */}
         <motion.g
-          animate={{ opacity: hablando ? 0 : 1, x: mirada }}
+          animate={{ opacity: hablando || mostrarVisor ? 0 : 1, x: mirada }}
           transition={{ opacity: { duration: 0.2 }, x: transicion }}
         >
         <motion.rect
@@ -294,6 +507,27 @@ export default function RobotAsistente({
           fill="none"
         />
         </motion.g>
+
+        {/* Visor: el dibujo animado del cuarto o paso en curso. */}
+        <defs>
+          <clipPath id="robot-visor">
+            <path d="M140.678 91.0391H80.0468C77.3218 91.0391 75.2781 88.6875 75.2781 86.3359V57.4453C75.2781 52.7422 79.0249 49.7188 83.1124 49.7188H137.612C142.381 49.7188 146.128 53.4141 146.128 58.1172V87.0078C145.447 89.0234 143.744 91.0391 140.678 91.0391Z" />
+          </clipPath>
+        </defs>
+        <AnimatePresence>
+          {mostrarVisor && (
+            <motion.g
+              key={visor}
+              clipPath="url(#robot-visor)"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              {dibujo}
+            </motion.g>
+          )}
+        </AnimatePresence>
 
         {/* Onda de sonido: ocupa el sitio de los ojos y la boca. */}
         <motion.path

@@ -45,12 +45,8 @@ export default function Home() {
         <BackgroundAnimation />
         <MobileHome />
         <TechnologiesSection />
-        {/* En teléfono el asistente vive en el panel flotante del header (robot
-            del centro). En tablet (md) el header ya muestra los enlaces y no el
-            robot, así que ahí vuelve como sección. */}
-        <div className="hidden md:block">
-          <ContactoAsistenteSection />
-        </div>
+        {/* La casa V1TR0 también en teléfono; el panel del header conserva el chat. */}
+        <ContactoAsistenteSection />
         <BlogsInvestigacionSection />
         <FooterSection />
       </ScrollProvider>
