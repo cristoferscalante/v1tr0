@@ -4,6 +4,7 @@ import { Check, Zap, ShoppingCart } from "lucide-react"
 import Image from "next/image"
 import { ProductCard } from "@/components/shop/products/ProductCard"
 import type { Product as ProductCardType } from "@/components/shop/products/ProductCard"
+import { pedirPorTelegram } from "@/lib/context/CartContext"
 
 export interface Plan {
   id: string
@@ -99,6 +100,7 @@ export function PackagePromotion({
                   <ProductCard
                     key={product.id}
                     product={convertToProductCard(product)}
+                    onAddToCart={(p) => pedirPorTelegram(p.name)}
                   />
                 ))}
               </div>
@@ -152,6 +154,8 @@ export function PackagePromotion({
                     <div className="relative group w-full sm:w-auto">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
                       <button
+                        type="button"
+                        onClick={() => pedirPorTelegram(`${title} – ${plan.name}`)}
                         className={`relative w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] transition-all duration-300 hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transform hover:scale-105 whitespace-nowrap text-xs md:text-sm font-semibold ${
                           plan.isPopular
                             ? "shadow-lg shadow-[#08A696]/10"
@@ -228,7 +232,10 @@ export function PackagePromotion({
 
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-[#08a6961e] to-[#26ffde23] rounded-2xl blur opacity-0 group-hover:opacity-40 transition-all duration-300" />
-                    <button className="relative w-full py-2 px-3 md:px-4 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] font-semibold text-xs md:text-sm hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transition-all duration-300 transform hover:scale-[1.02]">
+                    <button
+                      type="button"
+                      onClick={() => pedirPorTelegram(`${title} – recarga de ${recharge.quantity} folios`)}
+                      className="relative w-full py-2 px-3 md:px-4 bg-white/70 dark:bg-[#08A696]/20 backdrop-blur-sm border border-[#08A696]/80 dark:border-[#08A696]/50 rounded-2xl text-[#085c54] dark:text-[#26FFDF] font-semibold text-xs md:text-sm hover:border-[#08A696] dark:hover:border-[#26FFDF] hover:bg-[#08A696]/10 dark:hover:bg-[#08A696]/30 hover:shadow-lg hover:shadow-[#08A696]/20 dark:hover:shadow-[#26FFDF]/20 transition-all duration-300 transform hover:scale-[1.02]">
                       Agregar
                     </button>
                   </div>

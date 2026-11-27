@@ -156,8 +156,7 @@ export default function TiendaSlugPage({ params }: PageProps) {
 
   const handleAddToCart = () => {
     if (!product) {return}
-    addToCart(product.id)
-    setShowNotification(true)
+    void addToCart(product.id, product.name).then((added) => added && setShowNotification(true))
   }
 
   useEffect(() => {
@@ -218,7 +217,7 @@ export default function TiendaSlugPage({ params }: PageProps) {
             {product.uses && product.uses.length > 0 && <ProductUses uses={product.uses} />}
             {product.specifications && <ProductSpecifications specifications={product.specifications} />}
             {related.length > 0 && (
-              <RelatedProducts products={related} onAddToCart={(p) => { addToCart(p.id); setShowNotification(true) }} />
+              <RelatedProducts products={related} onAddToCart={(p) => { void addToCart(p.id, p.name).then((added) => added && setShowNotification(true)) }} />
             )}
           </div>
 

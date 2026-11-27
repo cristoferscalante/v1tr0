@@ -65,8 +65,8 @@ export default function TiendaPage() {
       .catch(() => setProducts([]));
   }, []);
 
-  const handleAddToCart = async (product: { id: string }) => {
-    await addToCart(product.id)
+  const handleAddToCart = async (product: { id: string; name?: string }) => {
+    if (!(await addToCart(product.id, product.name))) {return}
     setShowCartNotification(true);
     setTimeout(() => setShowCartNotification(false), 2000);
   };
