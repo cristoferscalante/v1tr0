@@ -21,6 +21,7 @@ import useSnapAnimations from "@/hooks/use-snap-animations"
 import RobotAsistente, { type Animo } from "./RobotAsistente"
 import { bleep } from "@/lib/audio/bleeps"
 import ConmutadorVista, { type Vista } from "./ConmutadorVista"
+import PlanoAsistente from "./PlanoAsistente"
 
 /**
  * Cierre del home: el asistente de V1TR0.
@@ -79,7 +80,21 @@ const campoBase = `w-full rounded-xl px-3 py-2 text-sm text-textPrimary placehol
 const botonPildora =
   "inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-textPrimary transition-colors duration-300 hover:border-[#26FFDF]/50 hover:text-[#26FFDF]"
 
+/**
+ * En el home (escritorio y tablet) el brief se arma jugando sobre un plano
+ * isométrico; el panel flotante del header (móvil) conserva el chat.
+ */
 export default function ContactoAsistenteSection({
+  modo = "seccion",
+  onCerrar,
+}: {
+  modo?: "seccion" | "panel"
+  onCerrar?: () => void
+} = {}) {
+  return modo === "panel" ? <ChatAsistente modo="panel" onCerrar={onCerrar} /> : <PlanoAsistente />
+}
+
+function ChatAsistente({
   modo = "seccion",
   onCerrar,
 }: {
@@ -316,6 +331,10 @@ export default function ContactoAsistenteSection({
                       <Loader2 className="h-4 w-4 animate-spin text-textMuted" aria-label="El asistente está escribiendo" />
                     </div>
                   )}
+
+                  {/* En la sección, el diálogo queda centrado en vertical;
+                      al crecer, los espaciadores se encogen y hace scroll. */}
+                  {modo !== "panel" && <div className="flex-1" />}
                 </div>
 
                 <form onSubmit={alEnviar} className="flex items-center gap-2 pt-2">

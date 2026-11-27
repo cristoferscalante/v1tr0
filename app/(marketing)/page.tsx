@@ -65,15 +65,15 @@ export default function Home() {
         {/* Sección 1: Hero de aterrizaje con el h1 */}
         <HomeHero />
 
-        {/* Sección 2: Tarjetas de navegación */}
-        <HomeBanner />
-
         {/* Sección 3: Proyectos de clientes publicados (carrusel curvo) */}
         <ProyectosEnProduccion />
 
         {/* Sección 4: Tecnologías, justo después del carrusel. HomeScrollSnap la
             reconoce por su tipo, no por su posición. */}
         <TechnologiesSection />
+
+        {/* Tarjetas de navegación, después de Tecnologías */}
+        <HomeBanner />
 
         {/* Sección 5: Texto dinámico */}
         <HomeTaglineSection />

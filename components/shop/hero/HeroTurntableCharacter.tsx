@@ -73,7 +73,20 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
           : Math.round(frontIndex + ((current.x - 0.5) / 0.5) * (frames.length - 1 - frontIndex));
       setFrame((prev) => (prev === index ? prev : index));
 
+      // Ya llegó a donde apunta el cursor: el bucle se detiene hasta el
+      // siguiente movimiento, en vez de correr 60 veces por segundo en reposo.
+      if (Math.abs(target.x - current.x) < 0.001) {
+        current.x = target.x;
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(tick);
+    };
+
+    const wake = () => {
+      if (!raf) {
+        raf = requestAnimationFrame(tick);
+      }
     };
 
     const onPointerMove = (event: PointerEvent) => {
@@ -92,13 +105,16 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
           event.clientY > rect.bottom)
       ) {
         target.x = 0.5;
+        wake();
         return;
       }
       target.x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+      wake();
     };
 
     const onPointerLeave = () => {
       target.x = 0.5;
+      wake();
     };
 
     raf = requestAnimationFrame(tick);
@@ -127,6 +143,8 @@ export const HeroTurntableCharacter: React.FC<HeroTurntableCharacterProps> = ({
             aria-hidden={i !== frontIndex}
             fill
             sizes={sizes}
+            // Fotogramas .webp ya a su tamaño final: sin optimizador.
+            unoptimized
             // Todos los fotogramas quedan montados y solo cambia cuál es
             // visible: alternar el `src` provocaría un parpadeo en cada paso.
             className={`object-contain drop-shadow-2xl ${i === frame ? "opacity-100" : "opacity-0"}`}
