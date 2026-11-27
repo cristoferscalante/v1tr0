@@ -7,7 +7,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 ## Software a medida
 - [x] Cuánto cuesta desarrollar un software a medida en Colombia | cuánto cuesta un software a medida | comercial → cuanto-cuesta-software-a-medida-colombia (2026-11-22)
 - [x] Software a medida o software de caja: cómo decidir en tu empresa | software a medida vs software comercial | comparativa → software-a-medida-vs-software-comercial-como-decidir (2026-11-23)
-- [ ] Qué debe incluir un contrato de desarrollo de software | contrato desarrollo de software | comercial
+- [x] Qué debe incluir un contrato de desarrollo de software | contrato desarrollo de software | comercial → que-debe-incluir-un-contrato-de-desarrollo-de-software (2026-11-26)
 - [ ] Cuánto tarda desarrollar una aplicación web empresarial | cuánto tarda desarrollar una aplicación | informativa
 - [x] Propiedad del código fuente: qué exigir al contratar un desarrollo | propiedad del código fuente | comercial → propiedad-codigo-fuente-contratar-desarrollo (2026-11-22)
 - [ ] Mantenimiento de software: cuánto cuesta y qué incluye | mantenimiento de software costo | comercial
@@ -18,7 +18,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 
 ## Comercio electrónico en Colombia
 - [x] Cómo crear una tienda virtual con Wompi paso a paso | tienda virtual Wompi | informativa → como-crear-tienda-virtual-wompi-paso-a-paso (2026-11-22)
-- [ ] Wompi, PayU o Mercado Pago: qué pasarela conviene en Colombia | pasarela de pagos Colombia | comparativa
+- [x] Wompi, PayU o Mercado Pago: qué pasarela conviene en Colombia | pasarela de pagos Colombia | comparativa → wompi-payu-o-mercado-pago-que-pasarela-conviene-colombia (2026-11-26)
 - [ ] Cuánto cuesta una tienda virtual en Colombia | cuánto cuesta una tienda virtual | comercial
 - [ ] Catálogo con pedidos por WhatsApp o tienda con pasarela | catálogo WhatsApp vs tienda online | comparativa
 - [x] Cómo cobrar con PSE y Nequi en tu página web | cobrar con PSE en página web | informativa → como-cobrar-con-pse-y-nequi-en-tu-pagina-web (2026-11-23)
@@ -29,7 +29,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 ## Páginas web y landing pages
 - [x] Cuánto cuesta una página web para empresa en Colombia | cuánto cuesta una página web | comercial → cuanto-cuesta-pagina-web-empresa-colombia (2026-11-22)
 - [ ] Landing page: qué es y cuándo la necesita tu negocio | qué es una landing page | informativa
-- [ ] SEO local: cómo aparecer en Google en tu ciudad | SEO local Colombia | informativa
+- [x] SEO local: cómo aparecer en Google en tu ciudad | SEO local Colombia | informativa → seo-local-colombia-como-aparecer-en-google-en-tu-ciudad (2026-11-26)
 - [x] Google Business Profile: guía para negocios del Huila | Google Business Profile | informativa → google-business-profile-guia-negocios-del-huila (2026-11-24)
 - [ ] Correo corporativo con tu dominio: opciones y costos | correo corporativo | comercial
 - [ ] Por qué tu página web carga lento y cómo arreglarlo | página web lenta | informativa
@@ -45,7 +45,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [ ] Monitoreo de cadena de frío con sensores inalámbricos | monitoreo cadena de frío | informativa
 
 ## Automatización e IA para empresas
-- [ ] Automatizar procesos con n8n: ejemplos para pymes | automatización n8n | informativa
+- [x] Automatizar procesos con n8n: ejemplos para pymes | automatización n8n | informativa → automatizar-procesos-con-n8n-ejemplos-para-pymes (2026-11-26)
 - [ ] Chatbot para empresa: cuándo sirve y cuándo no | chatbot para empresas | informativa
 - [ ] Cómo integrar tus sistemas: facturación, inventario y ventas | integración de sistemas | informativa
 - [x] Inteligencia artificial en pymes colombianas: usos reales | IA para pymes | informativa → inteligencia-artificial-pymes-colombianas-usos-reales (2026-11-23)

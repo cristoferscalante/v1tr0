@@ -1,0 +1,86 @@
+---
+title: "Contrato de desarrollo de software en Colombia: qué incluir"
+date: "2026-11-26"
+excerpt: "Guía con las cláusulas esenciales de un contrato de desarrollo de software en Colombia: propiedad del código, entregables, SLA, Ley 1581 y garantías."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/que-debe-incluir-un-contrato-de-desarrollo-de-software.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Software a medida"
+tags: ["contrato desarrollo de software", "software a medida Colombia", "propiedad del código fuente", "contratar desarrollo de software", "empresas de software Pitalito Huila"]
+resumen: "Un contrato de desarrollo de software en Colombia debe incluir la cesión escrita de los derechos patrimoniales del código fuente (Ley 23 de 1982), un cronograma de pagos atado a entregables verificables en repositorio Git, acuerdos de nivel de servicio (SLA) con garantía contra errores, confidencialidad y cumplimiento de la Ley 1581 de Habeas Data."
+faqs:
+  - q: "¿Si pago el desarrollo de un software a medida en Colombia, el código fuente pasa a ser mío automáticamente?"
+    a: "No automáticamente si el contrato guarda silencio o está mal redactado. Bajo la Ley 23 de 1982 y las normas de la Dirección Nacional de Derecho de Autor, debes exigir una cláusula expresa de obra por encargo y cesión total de derechos patrimoniales de autor a favor de tu empresa."
+  - q: "¿Cuánto tiempo de garantía por defectos de programación debe incluir un contrato de software?"
+    a: "El estándar serio en ingeniería de software en Colombia es una garantía sin costo adicional de entre 60 y 90 días calendario tras la salida a producción para corregir cualquier error o bug que impida el funcionamiento pactado en el anexo técnico."
+  - q: "¿Cómo se regulan en el contrato los cambios de alcance que surgen durante el desarrollo?"
+    a: "El contrato debe establecer un procedimiento formal de control de cambios: todo requerimiento nuevo que no esté en el anexo técnico inicial se cotiza en horas de ingeniería y días adicionales, y solo se ejecuta cuando ambas partes firman una orden de cambio."
+  - q: "¿Qué cláusula de protección de datos personales debe exigirse al proveedor de software?"
+    a: "Debes incluir una cláusula de encargado del tratamiento bajo la Ley 1581 de 2012 vigilada por la Superintendencia de Industria y Comercio (SIC), prohibiendo al proveedor copiar, comercializar o alojar bases de datos reales de tus clientes fuera de los servidores autorizados."
+---
+
+Firmar un **contrato de desarrollo de software** sin revisar sus cláusulas técnicas y patrimoniales es la causa principal por la que decenas de empresas en Colombia terminan pagando por plataformas que no pueden modificar, con proyectos retrasados durante meses o con litigios sobre quién es el dueño real del código fuente. Cuando un gerente contrata la construcción de un sistema de inventarios, una aplicación web logística o un portal transaccional, una cotización comercial de dos páginas no protege la inversión: se necesita un acuerdo mercantil que aterrice qué se construye, cómo se aprueba cada entrega y qué ocurre si algo falla.
+
+En **V1TR0**, desde nuestro centro de ingeniería en **Pitalito (Huila)** atendiendo a empresas del Valle de Laboyos, Neiva, el Huila y toda Colombia, estructuramos cada proyecto bajo estándares claros de propiedad intelectual y entregas verificables. A continuación explicamos bajo la legislación colombiana las cláusulas exactas que debes exigir antes de girar el primer anticipo.
+
+## Por qué una minuta genérica no sirve para contratar software a medida
+
+Muchas pymes y medianas empresas en Bogotá, Medellín, Cali o Neiva usan el mismo formato de prestación de servicios con el que contratan asesoría contable para formalizar el desarrollo de una plataforma tecnológica. El software tiene una naturaleza jurídica y operativa distinta a cualquier otro activo empresarial: en Colombia se rige por el régimen de derechos de autor supervisado por la [Dirección Nacional de Derecho de Autor (DNDA)](https://derechodeautor.gov.co).
+
+Cuando el documento contractual no define la arquitectura entregable, la titularidad del repositorio y los criterios objetivos de aceptación, aparecen cuatro riesgos críticos:
+
+- **Secuestro técnico del proyecto:** el proveedor despliega el sistema en un servidor propio, pero se niega a entregar el código fuente o cobra millones adicionales cuando decides mantenerlo con un ingeniero interno.
+- **Ambigüedad en el alcance funcional:** el cliente asume que «módulo de facturación y cartera» incluye integración automática con la DIAN y alertas por WhatsApp, mientras el desarrollador solo contempló exportar un PDF.
+- **Desembolsos por calendario y no por avance:** la empresa gira pagos mensuales fijos y al cuarto mes descubre que no existe ningún entorno funcional probado, aunque ya desembolsó el 80 % del presupuesto.
+- **Abandono tras el lanzamiento:** cuando el software sale a producción aparecen errores con datos reales y el proveedor argumenta que el contrato ya terminó.
+
+Si estás evaluando presupuestos antes de redactar el acuerdo, revisa nuestra guía sobre [cuánto cuesta desarrollar un software a medida en Colombia](/blog/cuanto-cuesta-software-a-medida-colombia).
+
+## Tabla de las 7 cláusulas obligatorias en un contrato de desarrollo de software
+
+La siguiente tabla resume las cláusulas esenciales que protegen a tu organización, la referencia legal o técnica en Colombia y el problema que previenen:
+
+| Cláusula del contrato | Referencia legal o técnica | Qué debe estipular exactamente | Riesgo empresarial que evita |
+| :--- | :--- | :--- | :--- |
+| **1. Alcance y anexo técnico** | Código de Comercio (obligaciones de resultado) | Listado de módulos, roles de usuario, integraciones API y criterios de aceptación por flujo. | Discusiones sobre qué estaba incluido y cobros sorpresa por funciones básicas. |
+| **2. Cesión patrimonial del código** | Ley 23 de 1982 y Decisión Andina 351 de 1993 | Transferencia del 100 % de los derechos patrimoniales del código fuente, base de datos y manuales. | Que el proveedor reclame propiedad sobre el software o cobre licencias por usuario. |
+| **3. Cronograma de hitos y pagos** | Gestión por entregables en entorno Staging | Pagos atados a entregas funcionales verificadas cada 2 o 3 semanas, nunca solo a fechas. | Pagar la totalidad del proyecto sin haber probado los módulos funcionando en navegador. |
+| **4. Custodia en repositorio Git** | Estándar DevOps (GitHub / GitLab corporativo) | El código se sube semanalmente a un repositorio cuya titularidad pertenece a la empresa cliente. | Quedar en cero si el proveedor o freelancer desaparece, cambia de empleo o incumple. |
+| **5. Garantía y SLA de soporte** | Estatuto del Consumidor (Ley 1480) y acuerdo B2B | Garantía sin costo de 60 a 90 días contra defectos de código y tiempos máximos de respuesta. | Que el sistema falle en plena operación comercial y nadie responda por restablecerlo. |
+| **6. Confidencialidad y Habeas Data** | Ley 1581 de 2012 y Decreto 1377 de 2013 | Acuerdo de no divulgación (NDA) del negocio y obligaciones como encargado de datos personales. | Fuga de listas de precios o sanciones de la SIC por tratamiento inseguro de información. |
+| **7. Salida ordenada y liquidación** | Cláusula de terminación anticipada | Entrega obligatoria de todo el código, credenciales y documentación pagada hasta la fecha. | Perder el anticipo y el avance técnico si se decide terminar el contrato antes de tiempo. |
+
+## Cesión patrimonial bajo la Ley 23 de 1982 y anexo técnico de alcance
+
+En Colombia, los programas de computador se protegen bajo la Ley 23 de 1982 y la Decisión Andina 351. Mientras los **derechos morales** (reconocimiento de autoría) son intransferibles, los **derechos patrimoniales** (el derecho económico exclusivo a usar, modificar, copiar, integrar o comercializar el software sin pedir permiso) sí se transfieren por contrato.
+
+Tu contrato debe estipular expresamente que se trata de una **obra por encargo** con cesión total, exclusiva e ilimitada en el tiempo de los derechos patrimoniales a favor de tu empresa una vez pagado cada hito. Exige que esta entrega incluya el código fuente completo sin ofuscar (frontend y backend), los scripts de base de datos, las variables de configuración y la libertad de modificar el sistema con tu propio equipo o con otro proveedor. Puedes ampliar los detalles legales en nuestro artículo sobre la [propiedad del código fuente al contratar un desarrollo](/blog/propiedad-codigo-fuente-contratar-desarrollo).
+
+Por su parte, el alcance nunca debe resumirse en dos párrafos dentro de la minuta jurídica. En **V1TR0**, para proyectos en **Pitalito, Neiva, el Huila y toda Colombia**, vinculamos un **Anexo Técnico** firmado que detalla:
+
+- **Roles, permisos y flujos:** qué puede ver y ejecutar cada perfil (administrador, bodega, contabilidad, vendedor o cliente) y qué validaciones aplica el sistema.
+- **Integraciones externas (APIs):** conexión con pasarelas como Wompi, proveedores de facturación electrónica DIAN, servicios de mensajería o [soluciones de hardware e IoT industrial](/hardware-iot), aclarando quién paga las suscripciones de terceros.
+- **Stack tecnológico y control de cambios:** tecnologías acordadas (como Next.js, Node.js, Python y PostgreSQL) y el procedimiento formal para cotizar y aprobar mediante orden escrita cualquier requerimiento nuevo que surja durante las pruebas.
+
+## Pagos por hitos funcionales, custodia en Git y niveles de servicio (SLA)
+
+Nunca firmes un contrato que exija pagar el 50 % al inicio y el 50 % al final sin entregas intermedias. El esquema que protege el flujo de caja de una pyme divide el presupuesto en **hitos verificables en un entorno de pruebas (*staging*)**:
+
+- **Hito 1 (30 % al firmar):** entrega de arquitectura, prototipo interactivo de pantallas (UI/UX), diseño de base de datos y configuración del repositorio Git a nombre de tu empresa.
+- **Hito 2 (35 % contra núcleo funcional en pruebas):** despliegue de los módulos centrales en una URL privada donde tu equipo inicia sesión y valida las reglas de negocio con datos de prueba.
+- **Hito 3 (35 % contra despliegue en producción):** puesta en marcha en tu dominio definitivo, capacitación grabada, manual técnico y acta de entrega.
+
+Exige por escrito que el código se aloje desde la primera semana en una cuenta de **GitHub o GitLab propiedad de tu empresa**, y que los servidores en la nube (AWS, DigitalOcean, Google Cloud o Vercel) estén a nombre de tu organización.
+
+Además, una vez el sistema sale a producción, el contrato debe separar la **garantía sin costo** del mantenimiento evolutivo. Exige entre **60 y 90 días calendario de garantía total** para corregir sin cobro cualquier defecto de programación (*bug*) respecto al anexo técnico, junto con un Acuerdo de Nivel de Servicio (SLA) que defina tiempos máximos de respuesta: **1 a 4 horas hábiles** para fallas críticas que detengan la facturación o el acceso, y **24 a 48 horas** para ajustes de severidad media.
+
+## Confidencialidad (NDA), Ley 1581 de Habeas Data y respaldo en Colombia
+
+Durante el desarrollo, el proveedor conocerá tus márgenes comerciales, reglas de precios y bases de datos de clientes. En Colombia, el tratamiento de datos personales está vigilado por la [Superintendencia de Industria y Comercio (SIC)](https://www.sic.gov.co) bajo la Ley Estatutaria 1581 de 2012. Por ello, el contrato debe integrar dos blindajes finales:
+
+1. **Acuerdo de Confidencialidad y secreto empresarial:** prohíbe al contratista divulgar tu lógica operativa o vender una copia de tu arquitectura específica a un competidor directo, fijando una cláusula penal clara.
+2. **Cláusula de Encargado del Tratamiento de Datos:** establece que tu empresa es la única *Responsable* de las bases de datos y que la casa de software actúa solo como *Encargada* temporal, obligándose a usar datos anonimizados en pruebas, cifrar credenciales y borrar copias locales al concluir el proyecto.
+
+Si estás comparando proveedores y quieres auditar su solidez antes de pedir la minuta contractual, consulta nuestra guía sobre [cómo elegir una empresa de desarrollo de software en Colombia](/blog/como-elegir-empresa-desarrollo-de-software-colombia) y conoce nuestro servicio de [desarrollo de software a medida para empresas](/servicios/desarrollo-software).
+
+En **V1TR0** trabajamos desde **Pitalito (Huila)** para empresas del Huila, el sur de Colombia y todo el país con contratos mercantiles transparentes: cesión del 100 % del código fuente, entregas quincenales en tu repositorio Git, pagos por hitos probados y garantía postproducción por escrito. Solicita tu propuesta técnica formal en [/contratar-software](/contratar-software) o escríbenos por Telegram a [@V1tr0](https://t.me/V1tr0) para estructurar tu proyecto con nuestros arquitectos de ingeniería.

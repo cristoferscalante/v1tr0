@@ -1,0 +1,76 @@
+---
+title: "Pasarela de pagos en Colombia: Wompi, PayU o Mercado Pago"
+date: "2026-11-26"
+excerpt: "Comparativa de cada pasarela de pagos en Colombia (Wompi, PayU y Mercado Pago): comisiones reales, PSE, Nequi, Bre-B, desembolsos e integración API."
+author: "Equipo V1TR0"
+coverImage: "/imagenes/blog/wompi-payu-o-mercado-pago-que-pasarela-conviene-colombia.webp"
+authorImage: "/imagenes/logos/v1tr0-logo.svg"
+category: "Comercio electrónico en Colombia"
+tags: ["pasarela de pagos Colombia", "Wompi vs PayU vs Mercado Pago", "comercio electrónico Colombia", "cobrar con PSE y Nequi", "tiendas virtuales Pitalito Huila"]
+resumen: "Para elegir la mejor pasarela de pagos en Colombia entre Wompi, PayU y Mercado Pago debes comparar la comisión por transacción (entre 2,65 % y 3,49 % más costo fijo), la velocidad y costo de retiro a tu cuenta bancaria, la estabilidad en recaudos por PSE, Nequi y llaves Bre-B, y la facilidad de integración vía API con tu tienda virtual o ERP."
+faqs:
+  - q: "¿Cuál pasarela de pagos cobra menos comisión en Colombia para una pyme?"
+    a: "En tarifas estándar de entrada, Wompi suele ofrecer comisiones más bajas (desde 2,65 % + $700 COP + IVA en planes de desembolso diario o tarifas preferenciales Bancolombia), frente al 3,29 % – 3,49 % + costo fijo que manejan Mercado Pago y PayU en su esquema agregador."
+  - q: "¿Qué impuestos y retenciones descuentan las pasarelas cuando un cliente paga con tarjeta en Colombia?"
+    a: "En pagos con tarjeta de crédito o débito se aplican por ley tres retenciones cuando superas las bases vigentes: Retención en la Fuente (1,5 %), ReteIVA (15 % del IVA de la venta si eres responsable de IVA) y ReteICA según el municipio. En pagos por PSE o Nequi no aplican esas retenciones de tarjeta."
+  - q: "¿Necesito tener cámara de comercio y RUT como persona jurídica para abrir Wompi, PayU o Mercado Pago?"
+    a: "Las tres plataformas permiten registrarse tanto a personas naturales con RUT actualizado como a personas jurídicas con Certificado de Existencia y Representación Legal, siempre que la cuenta bancaria donde recibirás el dinero esté a nombre del mismo titular del RUT."
+  - q: "¿Cómo impacta el sistema Bre-B del Banco de la República a las pasarelas de pago en Colombia?"
+    a: "Bre-B estandariza los pagos inmediatos interoperables 24/7 entre bancos y billeteras en Colombia. Para una tienda virtual, la pasarela sigue siendo indispensable porque automatiza la conciliación del pedido, el webhook de confirmación al inventario y los cobros con tarjeta."
+---
+
+Elegir la **pasarela de pagos en Colombia** adecuada para tu tienda virtual, plataforma SaaS o portal de recaudo B2B define directamente qué porcentaje de tu margen bruto se destina a comisiones financieras y cuántos compradores completan el pago sin abandonar el carrito. En el mercado nacional, tres plataformas concentran la mayoría de las transacciones digitales de pymes y medianas empresas: **Wompi** (del Grupo Bancolombia), **PayU Latam** y **Mercado Pago**. Aunque las tres permiten recaudar con tarjetas, PSE, Nequi y efectivo, sus costos de retiro, tiempos de desembolso y calidad de integración técnica presentan diferencias importantes.
+
+En **V1TR0**, desde nuestro centro de ingeniería en **Pitalito (Huila)** desarrollando plataformas de comercio electrónico y sistemas transaccionales para empresas del Huila y de toda Colombia, integramos a diario las APIs y *webhooks* de estas tres pasarelas. En esta guía comparamos con cifras en pesos colombianos cuánto te descuentan realmente y cuál conviene según la operación de tu negocio.
+
+## Qué evaluar antes de elegir pasarela en el mercado colombiano
+
+Muchos comercios en Bogotá, Medellín, Cali o Neiva comparan solo el porcentaje publicitario de comisión y pasan por alto cuatro factores operativos que impactan la tesorería a fin de mes:
+
+- **Conversión real en PSE y billeteras digitales:** en Colombia, más del 55 % de las compras digitales en pymes se pagan mediante transferencia inmediata (PSE, Nequi, Daviplata o Botón Bancolombia). Si el flujo móvil exige demasiados pasos, el comprador cierra la página.
+- **Costo y velocidad de desembolso:** una comisión baja pierde atractivo si la plataforma retiene tu dinero durante 14 días o cobra $6.500 COP + IVA cada vez que transfieres tus ventas a la cuenta bancaria de la empresa.
+- **Calibración del filtro antifraude:** en el modelo agregador la pasarela asume el riesgo de fraude con tarjetas, pero un filtro excesivamente rígido puede rechazar compras legítimas de tus clientes.
+- **Estabilidad de API y Webhooks:** cuando un cliente paga un domingo por la noche, la pasarela debe notificar en menos de tres segundos a tu servidor para descontar inventario y emitir la factura electrónica ante la DIAN sin intervención manual.
+
+## Tabla comparativa: Wompi vs. PayU vs. Mercado Pago en Colombia
+
+Comparamos las condiciones estándar del modelo agregador (donde abres la cuenta directamente con la pasarela sin tramitar códigos únicos por cada red bancaria):
+
+| Criterio de evaluación | [Wompi Colombia](https://wompi.com/es/co) | [PayU Colombia](https://colombia.payu.com) | [Mercado Pago Colombia](https://www.mercadopago.com.co) |
+| :--- | :--- | :--- | :--- |
+| **Comisión base por transacción aprobada** | Desde **2,65 % + $700 COP** (+ IVA) en esquema diario; varía según frecuencia de desembolso. | **3,49 % + $800 COP** (+ IVA) en tarifa base agregador (negociable solo por alto volumen). | **3,29 % + $800 COP** (+ IVA) con dinero al instante; menor si eliges disponibilidad a 14 o 30 días. |
+| **Medios de pago destacados** | Nequi directo (push al celular), Botón Bancolombia, PSE, tarjetas, QR y corresponsales. | Tarjetas locales e internacionales (multimoneda), PSE, Nequi, Efecty y cobros recurrentes. | Saldo en cuenta Mercado Pago, tarjetas hasta en 48 cuotas, PSE, Nequi y Efecty. |
+| **Tiempo de desembolso a tu banco** | Diario, semanal o mensual directo a tu cuenta bancaria (Bancolombia u otros bancos vía ACH). | El saldo se acumula en cuenta virtual PayU y solicitas retiro a banco (tarda 1 a 3 días hábiles). | Inmediato en cuenta Mercado Pago (según plan) y transferencia a tu banco en 1 día hábil. |
+| **Costo por transferir fondos al banco** | **$0 COP** hacia cuentas Bancolombia (y giros incluidos según el esquema de pago elegido). | Primer retiro mensual gratis; cada retiro adicional cuesta cerca de **$6.500 COP + IVA**. | **$0 COP** por retirar el saldo acumulado hacia tu cuenta bancaria registrada en Colombia. |
+| **Calidad de API, Webhooks y Sandbox** | Excelente. API REST moderna, widget ligero en tu dominio y entorno Sandbox muy estable. | Robusta para suscripciones y multimoneda, aunque con documentación más densa de implementar. | Muy buenos SDKs, pero su flujo básico Checkout Pro saca al usuario de tu dominio si no usas API. |
+| **Para qué empresa conviene más** | Comercios B2C y empresas B2B en Colombia con fuerte recaudo nacional por Nequi, PSE y Bancolombia. | Exportadores de café, turismo receptivo o SaaS que cobran en dólares a clientes en el exterior. | Tiendas de retail que ya operan en Mercado Libre o buscan dar financiación rápida al comprador. |
+
+*Nota tributaria:* Todas las comisiones de pasarela causan un **19 % de IVA** calculado solo sobre el valor del servicio de la pasarela (no sobre el total de tu venta).
+
+## Cuándo elegir Wompi, PayU o Mercado Pago según tu empresa
+
+### 1. Wompi: la más eficiente para ventas nacionales con Nequi y PSE
+Para la mayoría de comercios, distribuidoras, clínicas, hoteles y empresas de servicios en **Pitalito, Neiva, el Huila y toda Colombia**, **Wompi** ofrece hoy la mejor relación entre comisión baja y alta tasa de aprobación local. Dado que gran parte de los compradores colombianos utilizan Bancolombia o Nequi, su integración permite enviar una notificación *push* directa a la aplicación Nequi del comprador para aprobar el pago en segundos sin digitar claves dinámicas largas. Además, su API permite incrustar el pago dentro de tu propia web sin redirigir a portales externos. Conoce cómo integrarla en nuestra guía sobre [cómo crear una tienda virtual con Wompi paso a paso](/blog/como-crear-tienda-virtual-wompi-paso-a-paso).
+
+### 2. PayU Latam: ideal para cobros internacionales en dólares y suscripciones
+**PayU** sigue siendo la alternativa recomendada cuando tu empresa necesita **vender fuera de Colombia y cobrar en dólares (USD)** —por ejemplo, una trilladora o marca de café especial del sur del Huila que exporta directo al consumidor, un operador turístico en San Agustín o Tatacoa que recibe reservas de extranjeros, o una plataforma de software con clientes en Latinoamérica—. Para ventas 100 % domésticas de ticket pequeño, su tarifa base de 3,49 % + $800 COP y el cobro por retiros adicionales la hacen más costosa que Wompi.
+
+### 3. Mercado Pago: conversión rápida para retail de consumo masivo
+La ventaja principal de **Mercado Pago** es que millones de compradores en Colombia ya tienen sesión iniciada y tarjetas guardadas en el ecosistema de Mercado Libre. También destaca por no cobrar comisiones al retirar el saldo hacia tu banco. Su limitación aparece en negocios corporativos o marcas propias cuando se usa el botón estándar (*Checkout Pro*), ya que redirige fuera del sitio web; para mantener al cliente dentro de tu página es indispensable que tu equipo de desarrollo integre **Checkout API** o *Checkout Bricks*.
+
+## Retenciones tributarias en Colombia (Tarjetas vs. PSE) y el papel de Bre-B
+
+Al proyectar cuánto dinero neto entrará a tu cuenta bancaria, debes distinguir la comisión de la pasarela de las **retenciones de ley en Colombia**, las cuales aplican igual en las tres plataformas:
+
+- **En pagos por PSE, Nequi, Botón Bancolombia o efectivo:** la pasarela solo descuenta su comisión más el IVA de dicha comisión. **No se practican retenciones bancarias de tarjeta**, por lo que recibes mayor liquidez inmediata.
+- **En pagos con tarjeta de crédito o débito:** por norma tributaria colombiana se descuentan automáticamente tres retenciones (cuando superas las bases vigentes): **Retención en la fuente de renta (1,5 %)** sobre el valor antes de IVA, **ReteIVA (15 % del IVA)** si eres responsable del régimen ordinario (las empresas del Régimen Simple RST deben radicar su RUT en la pasarela para exoneración de Retefuente y ReteIVA) y **ReteICA (0,2 % a 1,1 %)** según el municipio.
+
+Por esta razón financiera, en las plataformas que programamos en **V1TR0** destacamos **PSE y Nequi** como primera opción visual en la pantalla de pago. Revisa cómo estructurar este flujo en nuestro artículo sobre [cómo cobrar con PSE y Nequi en tu página web](/blog/como-cobrar-con-pse-y-nequi-en-tu-pagina-web).
+
+Asimismo, con la llegada de **Bre-B**, el sistema de pagos inmediatos interoperables del [Banco de la República de Colombia](https://www.banrep.gov.co), conviene aclarar un punto técnico: publicar una llave Bre-B o un QR estático para que el comprador envíe la captura por WhatsApp no escala en una tienda virtual, porque obliga a verificar comprobantes manualmente y te expone a capturas adulteradas. Al usar una pasarela conectada con PSE y los rieles de Bre-B, cada pago se valida criptográficamente mediante *Webhook* y actualiza tu inventario en tiempo real.
+
+## Integra la pasarela ideal en tu tienda virtual o sistema web con V1TR0
+
+Muchas empresas medianas que atendemos desde **Pitalito (Huila)** hacia el resto del país incluso combinan **doble pasarela** en su arquitectura: Wompi para maximizar el ahorro y la conversión local con PSE y Nequi, y PayU para procesar tarjetas internacionales.
+
+En **V1TR0** construimos plataformas de [comercio electrónico y tiendas virtuales a medida](/servicios/comercio-electronico) veloces, seguras y conectadas vía API con tu pasarela de pagos, tu inventario y tu facturación electrónica. Si quieres lanzar tu tienda en línea o automatizar el recaudo en tu software empresarial, solicita tu cotización en [/contratar-software](/contratar-software) o escríbenos por Telegram a [@V1tr0](https://t.me/V1tr0) para diseñar la integración que mejor proteja tu margen comercial.
