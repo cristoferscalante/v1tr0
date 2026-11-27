@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowLeft } from "lucide-react"
-import { FaWhatsapp } from "react-icons/fa"
+import { FaTelegramPlane } from "react-icons/fa"
 import { siteConfig } from "@/config/site"
 import {
   briefListo,
   briefVacio,
   CAMPOS_BRIEF,
-  enlaceWhatsApp,
-  mensajeWhatsApp,
+  copiarMensaje,
+  mensajeContacto,
   TIPOS_PROYECTO,
   type Brief,
   type CampoBrief,
@@ -23,7 +23,7 @@ import RobotAsistente, { type Animo } from "./RobotAsistente"
 /**
  * Cierre del home en escritorio: el brief como un plano isométrico del
  * estudio. Cada sala es una parte del mensaje (qué construir, la idea, plazo,
- * presupuesto, quién eres) y la última es la antena que lo envía por WhatsApp.
+ * presupuesto, quién eres) y la última es el envío del mensaje por Telegram.
  *
  * Se juega moviendo al robot de sala en sala. Algunas respuestas se eligen
  * tocando objetos del plano —las cajas del taller, los pilares del plazo, las
@@ -538,17 +538,27 @@ function Envio({ brief, listo, onIr }: { brief: Brief; listo: boolean; onIr: (id
         data-scroll-inside
         className="max-h-56 overflow-y-auto whitespace-pre-wrap rounded-2xl border border-white/[0.07] bg-black/30 p-4 font-sans text-xs leading-relaxed text-textMuted [scrollbar-width:none]"
       >
-        {mensajeWhatsApp(brief).replace(/\*/g, "")}
+        {mensajeContacto(brief)}
       </pre>
+      {/* El resumen va escrito en el chat (t.me/<usuario>?text=); también se copia por si la app no lo precarga. */}
       <a
-        href={enlaceWhatsApp(siteConfig.company.whatsapp, brief)}
+        href={`${siteConfig.company.telegram}?text=${encodeURIComponent(mensajeContacto(brief))}`}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => bleep("listo")}
+        onClick={() => {
+          void copiarMensaje(brief)
+          bleep("listo")
+        }}
         className={botonPildora}
       >
-        <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
-        Enviar por WhatsApp
+        <FaTelegramPlane className="h-4 w-4" aria-hidden="true" />
+        Enviar por Telegram
+      </a>
+      <a
+        href={`mailto:${siteConfig.company.email}?subject=${encodeURIComponent("Proyecto: " + (brief.necesidad || "quiero más información").slice(0, 80))}&body=${encodeURIComponent(mensajeContacto(brief))}`}
+        className="text-center text-xs text-textMuted underline-offset-4 transition-colors hover:text-[#26FFDF] hover:underline"
+      >
+        O envíalo por correo
       </a>
     </div>
   )
