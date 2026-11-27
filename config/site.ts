@@ -20,13 +20,17 @@ export const siteConfig = {
   metadata: {
     keywords: [
       'desarrollo de software',
+      'empresa de desarrollo de software Colombia',
+      'empresa de software Pitalito',
+      'desarrollo de software Huila',
       'soluciones digitales',
-      'automatización',
+      'automatización de procesos',
       'desarrollo web',
-      'aplicaciones móviles',
-      'consultoría tecnológica',
+      'comercio electrónico Colombia',
+      'IoT LoRaWAN Colombia',
       'transformación digital',
-      'ecommerce',
+      'Pitalito',
+      'Huila',
       'Colombia',
     ],
     author: 'V1TR0',
@@ -64,8 +68,8 @@ export const siteConfig = {
     /** Coordenadas del casco urbano de Pitalito; ajustar a la puerta de la oficina. */
     geo: { latitude: 1.8539, longitude: -76.0513 },
     foundingDate: '2023',
-    /** Radio de atención presencial; el resto del país se atiende en remoto. */
-    areaServed: ['Pitalito', 'Huila', 'Colombia'],
+    /** Radio de atención presencial en el Huila; el resto del país se atiende en remoto. */
+    areaServed: ['Pitalito', 'Neiva', 'Garzón', 'San Agustín', 'La Plata', 'Huila', 'Colombia'],
     openingHours: 'Mo-Fr 08:00-18:00',
   },
 

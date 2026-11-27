@@ -37,9 +37,10 @@ export const organizationSchema = {
   priceRange: "$$",
   logo: {
     "@type": "ImageObject",
-    url: `${siteConfig.url}/imagenes/logos/v1tr01.ico`,
+    url: `${siteConfig.url}/imagenes/logos/v1tr0-logo.svg`,
   },
   image: `${siteConfig.url}${siteConfig.seo.openGraph.images[0].url}`,
+  hasMap: `https://www.google.com/maps/search/?api=1&query=${company.geo.latitude},${company.geo.longitude}`,
   address: {
     "@type": "PostalAddress",
     streetAddress: company.address.street,
@@ -71,12 +72,13 @@ export const organizationSchema = {
     "Automatización de procesos",
     "Gestión de proyectos de software",
   ],
-  sameAs: Object.values(siteConfig.social),
+  sameAs: [...Object.values(siteConfig.social), company.telegram],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "sales",
     email: company.email,
     telephone: company.phone,
+    url: company.telegram,
     areaServed: "CO",
     availableLanguage: ["es"],
   },
@@ -90,6 +92,14 @@ export const webSiteSchema = {
   description: siteConfig.description,
   inLanguage: "es-CO",
   publisher: { "@id": ORGANIZATION_ID },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${siteConfig.url}/blog?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
 }
 
 /** Grafo que se inyecta una sola vez, en el layout raíz. */

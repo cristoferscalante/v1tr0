@@ -64,6 +64,8 @@ ${subcategoryPages
 ## Rutas principales
 
 - [Contratar software](${siteConfig.url}/contratar-software): punto de entrada para cotizar un desarrollo
+- [Precios y modalidades legibles por máquina](${siteConfig.url}/pricing.md): rangos de referencia en COP y planes
+- [Feed RSS del blog](${siteConfig.url}/blog/feed.xml): sindicación XML de artículos nuevos
 - [Hardware e IoT](${siteConfig.url}/hardware-iot): soluciones con equipo físico
 - [Tienda](${siteConfig.url}/tienda): productos y paquetes con precio publicado
 - [Portafolio](${siteConfig.url}/portfolio): trabajos realizados
