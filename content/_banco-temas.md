@@ -8,7 +8,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [x] Cuánto cuesta desarrollar un software a medida en Colombia | cuánto cuesta un software a medida | comercial → cuanto-cuesta-software-a-medida-colombia (2026-11-22)
 - [x] Software a medida o software de caja: cómo decidir en tu empresa | software a medida vs software comercial | comparativa → software-a-medida-vs-software-comercial-como-decidir (2026-11-23)
 - [x] Qué debe incluir un contrato de desarrollo de software | contrato desarrollo de software | comercial → que-debe-incluir-un-contrato-de-desarrollo-de-software (2026-11-26)
-- [ ] Cuánto tarda desarrollar una aplicación web empresarial | cuánto tarda desarrollar una aplicación | informativa
+- [x] Cuánto tarda desarrollar una aplicación web empresarial | cuánto tarda desarrollar una aplicación | informativa → cuanto-tarda-desarrollar-una-aplicacion-web-empresarial (2026-11-28)
 - [x] Propiedad del código fuente: qué exigir al contratar un desarrollo | propiedad del código fuente | comercial → propiedad-codigo-fuente-contratar-desarrollo (2026-11-22)
 - [ ] Mantenimiento de software: cuánto cuesta y qué incluye | mantenimiento de software costo | comercial
 - [ ] Cómo escribir los requisitos de un software sin ser programador | requisitos de software | informativa
@@ -19,7 +19,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 ## Comercio electrónico en Colombia
 - [x] Cómo crear una tienda virtual con Wompi paso a paso | tienda virtual Wompi | informativa → como-crear-tienda-virtual-wompi-paso-a-paso (2026-11-22)
 - [x] Wompi, PayU o Mercado Pago: qué pasarela conviene en Colombia | pasarela de pagos Colombia | comparativa → wompi-payu-o-mercado-pago-que-pasarela-conviene-colombia (2026-11-26)
-- [ ] Cuánto cuesta una tienda virtual en Colombia | cuánto cuesta una tienda virtual | comercial
+- [x] Cuánto cuesta una tienda virtual en Colombia | cuánto cuesta una tienda virtual | comercial → cuanto-cuesta-una-tienda-virtual-en-colombia (2026-11-28)
 - [ ] Catálogo con pedidos por WhatsApp o tienda con pasarela | catálogo WhatsApp vs tienda online | comparativa
 - [x] Cómo cobrar con PSE y Nequi en tu página web | cobrar con PSE en página web | informativa → como-cobrar-con-pse-y-nequi-en-tu-pagina-web (2026-11-23)
 - [ ] Envíos para tiendas virtuales en Colombia: opciones y costos | envíos tienda virtual Colombia | informativa
@@ -28,7 +28,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 
 ## Páginas web y landing pages
 - [x] Cuánto cuesta una página web para empresa en Colombia | cuánto cuesta una página web | comercial → cuanto-cuesta-pagina-web-empresa-colombia (2026-11-22)
-- [ ] Landing page: qué es y cuándo la necesita tu negocio | qué es una landing page | informativa
+- [x] Landing page: qué es y cuándo la necesita tu negocio | qué es una landing page | informativa → landing-page-que-es-y-cuando-la-necesita-tu-negocio (2026-11-28)
 - [x] SEO local: cómo aparecer en Google en tu ciudad | SEO local Colombia | informativa → seo-local-colombia-como-aparecer-en-google-en-tu-ciudad (2026-11-26)
 - [x] Google Business Profile: guía para negocios del Huila | Google Business Profile | informativa → google-business-profile-guia-negocios-del-huila (2026-11-24)
 - [ ] Correo corporativo con tu dominio: opciones y costos | correo corporativo | comercial
@@ -56,7 +56,7 @@ Territorio: software a medida, e-commerce, web, IoT, automatización, transforma
 - [x] Empresas de software en Pitalito: qué ofrecen y cómo elegir | empresa de software Pitalito | comercial-local → empresas-de-software-en-pitalito-como-elegir (2026-11-24)
 - [x] Transformación digital para empresas del Huila | transformación digital Huila | informativa → transformacion-digital-empresas-del-huila (2026-11-23)
 - [ ] Digitalizar una cooperativa: por dónde empezar | digitalizar cooperativa | informativa
-- [ ] Software para distribuidoras: pedidos, rutas e inventario | software para distribuidoras | comercial
+- [x] Software para distribuidoras: pedidos, rutas e inventario | software para distribuidoras | comercial → software-para-distribuidoras-pedidos-rutas-e-inventario (2026-11-28)
 - [ ] Software para constructoras pequeñas: obras y materiales | software para constructoras | comercial
 - [ ] Tecnología para empresas de turismo en el sur del Huila | tecnología turismo Huila | informativa
 - [ ] Cómo digitalizar una empresa familiar sin traumatismos | digitalizar empresa familiar | informativa
